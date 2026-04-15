@@ -8,7 +8,7 @@ A full-stack e-commerce web application for a coffee retail business, featuring 
 
 | Name  | Role     | Responsibilities                                      |
 |-------|----------|-------------------------------------------------------|
-| Luận  | Backend  | Authentication, Authorization, Security, Data Init    |
+| Luân  | Backend  | Authentication, Authorization, Security, Data Init    |
 | Hào   | Backend  | Payment, Order Management, VNPay Integration          |
 | Khoa  | Backend  | Product Management, Cloudinary Integration            |
 | Tân   | Backend  | Promotion & Coupon System                             |
@@ -59,16 +59,21 @@ ORDER → VOUCHER
 
 ## 🛠️ Tech Stack
 
-| Layer      | Technology                          |
-|------------|-------------------------------------|
-| Backend    | Java / Spring Boot                  |
-| Frontend   | Thymleaf                    |
-| Database   | MySQL / PostgreSQL                  |
-| Payment    | VNPay                               |
-| Storage    | Cloudinary (product images)         |
-| Auth       | JWT + Spring Security               |
+| Layer       | Technology                              |
+|-------------|------------------------------------------|
+| **Runtime** | Java 21 (JDK 21+)                      |
+| **Framework** | Spring Boot 4.0.5                     |
+| **View Engine** | Thymeleaf 3.x                        |
+| **Database** | H2 (development) / SQL Server (production) |
+| **ORM**     | Spring Data JPA                         |
+| **Build Tool** | Maven 3.6+                           |
+| **Utilities** | Lombok                                 |
+| **Security** | JWT + Spring Security                  |
+| **Payment** | VNPay Gateway                          |
+| **Storage** | Cloudinary (product images)            |
 
-> ⚠️ Update this section to match the actual tech stack used by your team.
+**Note:** Spring Boot 4.0.5 requires Java 21+. Thymeleaf templates are rendered server-side for dynamic content.
+
 
 ---
 
@@ -76,9 +81,9 @@ ORDER → VOUCHER
 
 ### Prerequisites
 
-- Java 17+
-- Node.js 18+
-- MySQL or PostgreSQL
+- Java 21+
+- Maven 3.6+
+- SQL Server or H2 Database
 - Cloudinary account
 - VNPay sandbox credentials
 
@@ -87,7 +92,7 @@ ORDER → VOUCHER
 ```bash
 # Clone the repository
 git clone https://github.com/your-org/legend-coffee.git
-cd legend-coffee/backend
+cd legend-coffee
 
 # Configure environment variables
 cp .env.example .env
@@ -97,21 +102,7 @@ cp .env.example .env
 ./mvnw spring-boot:run
 ```
 
-### Frontend Setup
-
-```bash
-cd legend-coffee/frontend
-
-# Install dependencies
-npm install
-
-# Configure environment
-cp .env.example .env.local
-# Fill in API base URL and other config
-
-# Start development server
-npm run dev
-```
+The application will start at `http://localhost:8080`
 
 ---
 
@@ -119,56 +110,96 @@ npm run dev
 
 ```
 legend-coffee/
-├── backend/
-│   ├── src/
-│   │   ├── auth/          # Luận – Authentication & Security
-│   │   ├── order/         # Hào  – Order & Payment (VNPay)
-│   │   ├── product/       # Khoa – Product & Cloudinary
-│   │   └── promotion/     # Tân  – Promotion & Coupon
-│   └── ...
-├── frontend/              # Huy & Khánh
-│   ├── components/
-│   ├── pages/
-│   └── ...
+├── src/
+│   ├── main/
+│   │   ├── java/fpt/legendcoffee/
+│   │   │   ├── auth/          # Luân – Authentication & Security
+│   │   │   ├── order/         # Hào  – Order & Payment (VNPay)
+│   │   │   ├── product/       # Khoa – Product & Cloudinary
+│   │   │   ├── promotion/     # Tân  – Promotion & Coupon
+│   │   │   ├── controller/    # MVC Controllers (REST & Thymeleaf)
+│   │   │   ├── entity/        # JPA Entities
+│   │   │   ├── repository/    # Spring Data JPA Repositories
+│   │   │   ├── service/       # Business Logic
+│   │   │   └── LegendcoffeeApplication.java
+│   │   └── resources/
+│   │       ├── templates/
+│   │       │   ├── authen/
+│   │       │   │   ├── login/
+│   │       │   │   │   └── login.html
+│   │       │   │   └── register/
+│   │       │   │       └── register.html
+│   │       │   ├── fragments/
+│   │       │   │   ├── navbar.html
+│   │       │   │   ├── footer.html
+│   │       │   │   ├── head.html
+│   │       │   │   └── catalogs.html
+│   │       │   ├── catalog-detail.html
+│   │       │   ├── catalogs.html
+│   │       │   └── index.html
+│   │       ├── static/
+│   │       │   └── assets/
+│   │       │       ├── app.css
+│   │       │       └── effects.js
+│   │       └── application.properties
+│   └── test/
+│       └── java/fpt/legendcoffee/
+├── pom.xml
+├── mvnw
+├── mvnw.cmd
 └── README.md
 ```
+
+**Thymeleaf Template Path Convention:**
+- Templates in `src/main/resources/templates/` are resolved as view names
+- When a controller returns `"authen/login/login"`, Spring Boot looks for `src/main/resources/templates/authen/login/login.html`
+- Fragments (reusable components) are in `src/main/resources/templates/fragments/`
 
 ---
 
 ## 🔑 Environment Variables
 
-### Backend (`backend/.env`)
+### Backend (`application.properties`)
 
-```env
+```properties
+# Application
+spring.application.name=legendcoffee
+server.port=8080
+
 # Database
-DB_URL=jdbc:mysql://localhost:3306/legend_coffee
-DB_USERNAME=root
-DB_PASSWORD=your_password
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+
+# H2 Console
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2-console
+
+# JPA
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.jpa.hibernate.ddl-auto=update
 
 # JWT
-JWT_SECRET=your_jwt_secret
-JWT_EXPIRATION=86400000
+jwt.secret=your_jwt_secret_key_here
+jwt.expiration=86400000
 
 # VNPay
-VNPAY_TMN_CODE=your_tmn_code
-VNPAY_HASH_SECRET=your_hash_secret
-VNPAY_URL=https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+vnpay.tmnCode=your_tmn_code
+vnpay.hashSecret=your_hash_secret
+vnpay.url=https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
 
 # Cloudinary
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-```
-
-### Frontend (`frontend/.env.local`)
-
-```env
-NEXT_PUBLIC_API_URL=http://localhost:8080/api
+cloudinary.cloudName=your_cloud_name
+cloudinary.apiKey=your_api_key
+cloudinary.apiSecret=your_api_secret
 ```
 
 ---
 
 ## 📌 API Overview
+
+### REST Endpoints
 
 | Module       | Base Path           | Owner |
 |--------------|---------------------|-------|
@@ -180,6 +211,10 @@ NEXT_PUBLIC_API_URL=http://localhost:8080/api
 | Payments     | `/api/payments`     | Hào   |
 | Promotions   | `/api/promotions`   | Tân   |
 | Vouchers     | `/api/vouchers`     | Tân   |
+
+### Thymeleaf Views
+
+Thymeleaf templates are located in `src/main/resources/templates/` and handle server-side rendering for web pages.
 
 ---
 
