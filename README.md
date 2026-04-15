@@ -59,17 +59,20 @@ ORDER → VOUCHER
 
 ## 🛠️ Tech Stack
 
-| Layer       | Technology                          |
-|-------------|-------------------------------------|
-| Backend     | Java 21 / Spring Boot 4.0.5         |
-| View Engine | Thymeleaf                           |
-| Database    | H2 (dev) / SQL Server (production)  |
-| ORM         | Spring Data JPA                     |
-| Build Tool  | Maven                               |
-| Utilities   | Lombok                              |
-| Payment     | VNPay                               |
-| Storage     | Cloudinary (product images)         |
-| Auth        | JWT + Spring Security               |
+| Layer       | Technology                              |
+|-------------|------------------------------------------|
+| **Runtime** | Java 21 (JDK 21+)                      |
+| **Framework** | Spring Boot 4.0.5                     |
+| **View Engine** | Thymeleaf 3.x                        |
+| **Database** | H2 (development) / SQL Server (production) |
+| **ORM**     | Spring Data JPA                         |
+| **Build Tool** | Maven 3.6+                           |
+| **Utilities** | Lombok                                 |
+| **Security** | JWT + Spring Security                  |
+| **Payment** | VNPay Gateway                          |
+| **Storage** | Cloudinary (product images)            |
+
+**Note:** Spring Boot 4.0.5 requires Java 21+. Thymeleaf templates are rendered server-side for dynamic content.
 
 
 ---
@@ -114,14 +117,30 @@ legend-coffee/
 │   │   │   ├── order/         # Hào  – Order & Payment (VNPay)
 │   │   │   ├── product/       # Khoa – Product & Cloudinary
 │   │   │   ├── promotion/     # Tân  – Promotion & Coupon
-│   │   │   ├── controller/    # REST & Thymeleaf Controllers
+│   │   │   ├── controller/    # MVC Controllers (REST & Thymeleaf)
 │   │   │   ├── entity/        # JPA Entities
 │   │   │   ├── repository/    # Spring Data JPA Repositories
 │   │   │   ├── service/       # Business Logic
 │   │   │   └── LegendcoffeeApplication.java
 │   │   └── resources/
-│   │       ├── templates/     # Thymeleaf HTML Templates
-│   │       ├── static/        # CSS, JS, Images
+│   │       ├── templates/
+│   │       │   ├── authen/
+│   │       │   │   ├── login/
+│   │       │   │   │   └── login.html
+│   │       │   │   └── register/
+│   │       │   │       └── register.html
+│   │       │   ├── fragments/
+│   │       │   │   ├── navbar.html
+│   │       │   │   ├── footer.html
+│   │       │   │   ├── head.html
+│   │       │   │   └── catalogs.html
+│   │       │   ├── catalog-detail.html
+│   │       │   ├── catalogs.html
+│   │       │   └── index.html
+│   │       ├── static/
+│   │       │   └── assets/
+│   │       │       ├── app.css
+│   │       │       └── effects.js
 │   │       └── application.properties
 │   └── test/
 │       └── java/fpt/legendcoffee/
@@ -130,6 +149,11 @@ legend-coffee/
 ├── mvnw.cmd
 └── README.md
 ```
+
+**Thymeleaf Template Path Convention:**
+- Templates in `src/main/resources/templates/` are resolved as view names
+- When a controller returns `"authen/login/login"`, Spring Boot looks for `src/main/resources/templates/authen/login/login.html`
+- Fragments (reusable components) are in `src/main/resources/templates/fragments/`
 
 ---
 
