@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html class="light" lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title th:text="${pageTitle} ?: 'Industrial Excellence'">Industrial Excellence</title>
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            tertiary: "#352017",
+            "secondary-container": "#fed3c7",
+            "on-error": "#ffffff",
+            "primary-fixed-dim": "#e3beb8",
+            "on-secondary-container": "#795950",
+            "on-primary": "#ffffff",
+            "surface-container-highest": "#e2e3df",
+            "surface-bright": "#faf9f5",
+            "on-tertiary-container": "#c09d91",
+            "on-surface": "#1a1c1a",
+            "primary-container": "#4d3430",
+            "secondary-fixed-dim": "#e7bdb1",
+            "on-error-container": "#93000a",
+            "surface-container-lowest": "#ffffff",
+            "surface-tint": "#745853",
+            "tertiary-fixed": "#ffdbce",
+            "secondary-fixed": "#ffdbd0",
+            secondary: "#77574d",
+            "primary-fixed": "#ffdad4",
+            surface: "#faf9f5",
+            "inverse-primary": "#e3beb8",
+            "on-primary-fixed": "#2b1613",
+            "on-secondary-fixed-variant": "#5d4037",
+            "on-primary-fixed-variant": "#5b403c",
+            "surface-container": "#eeeeea",
+            "on-tertiary-fixed": "#2b160f",
+            "on-background": "#1a1c1a",
+            "on-surface-variant": "#504442",
+            background: "#faf9f5",
+            "tertiary-fixed-dim": "#e4beb2",
+            "on-tertiary-fixed-variant": "#5b4137",
+            "on-primary-container": "#bf9d97",
+            error: "#ba1a1a",
+            "tertiary-container": "#4e352c",
+            "on-secondary": "#ffffff",
+            "inverse-on-surface": "#f1f1ed",
+            "surface-variant": "#e2e3df",
+            "on-tertiary": "#ffffff",
+            "error-container": "#ffdad6",
+            "outline-variant": "#d4c3bf",
+            primary: "#351f1b",
+            "surface-dim": "#dadad6",
+            "surface-container-low": "#f4f4f0",
+            "on-secondary-fixed": "#2c160e",
+            "inverse-surface": "#2f312e",
+            outline: "#827471",
+            "surface-container-high": "#e8e8e4"
+          },
+          borderRadius: {
+            DEFAULT: "0.125rem",
+            lg: "0.25rem",
+            xl: "0.5rem",
+            full: "0.75rem"
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Work+Sans:wght@300;400;500;600&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" />
+  <link rel="stylesheet" href="assets/app.css" th:href="@{/assets/app.css}" />
+</head>
+<body class="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container">
+  <div th:replace="~{fragments/navbar :: navbar(${navItems})}"></div>
+
+  <main>
+    <div th:replace="~{fragments/sections :: hero}"></div>
+    <div th:replace="~{fragments/sections :: features}"></div>
+    <div th:replace="~{fragments/sections :: products}"></div>
+    <div th:replace="~{fragments/sections :: process}"></div>
+    <div th:replace="~{fragments/sections :: partners}"></div>
+    <div th:replace="~{fragments/sections :: support}"></div>
+  </main>
+
+  <div th:replace="~{fragments/footer :: footer}"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+  <script src="assets/effects.js" th:src="@{/assets/effects.js}"></script>
+</body>
+</html>

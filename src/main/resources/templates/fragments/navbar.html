@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+  <nav th:fragment="navbar(navItems)" class="fixed top-0 w-full z-[100] bg-[#faf9f5]/80 dark:bg-[#1a1614]/80 backdrop-blur-md border-b border-outline-variant/10">
+    <div class="flex justify-between items-center max-w-7xl mx-auto px-8 h-20">
+      <div class="text-xl font-black text-[#351f1b] dark:text-[#ffffff] tracking-tighter uppercase font-headline">Industrial Excellence</div>
+
+      <div class="hidden md:flex items-center space-x-8 font-headline font-bold tracking-tight uppercase text-sm">
+        <a th:each="item : ${navItems}"
+           th:href="${item.href}"
+           th:text="${item.label}"
+           th:classappend="${item.active} ? ' text-[#351f1b] border-b-2 border-[#351f1b] pb-1 dark:text-[#ffffff] dark:border-[#ffffff]' : ' text-[#504442] dark:text-[#d4c3bf] hover:text-[#351f1b] dark:hover:text-[#ffffff]'"
+           class="transition-colors duration-300"></a>
+      </div>
+
+      <div class="flex items-center space-x-4">
+        <button class="hidden lg:block text-xs font-headline font-bold uppercase tracking-wider text-[#504442] hover:text-[#351f1b] transition-colors">
+          Trở thành đối tác
+        </button>
+        <button class="bg-primary text-on-primary px-6 py-3 rounded-lg font-headline font-bold uppercase text-xs tracking-widest scale-95 active:opacity-80 transition-all">
+          Yêu cầu báo giá
+        </button>
+      </div>
+    </div>
+  </nav>
+</body>
+</html>
