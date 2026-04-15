@@ -172,8 +172,8 @@ NEXT_PUBLIC_API_URL=http://localhost:8080/api
 
 | Module       | Base Path           | Owner |
 |--------------|---------------------|-------|
-| Auth         | `/api/auth`         | Luận  |
-| Users        | `/api/users`        | Luận  |
+| Auth         | `/api/auth`         | Luân  |
+| Users        | `/api/users`        | Luân  |
 | Products     | `/api/products`     | Khoa  |
 | Categories   | `/api/categories`   | Khoa  |
 | Orders       | `/api/orders`       | Hào   |
