@@ -62,7 +62,7 @@ ORDER → VOUCHER
 | Layer      | Technology                          |
 |------------|-------------------------------------|
 | Backend    | Java / Spring Boot                  |
-| Frontend   | React / Next.js                     |
+| Frontend   | Thymleaf                    |
 | Database   | MySQL / PostgreSQL                  |
 | Payment    | VNPay                               |
 | Storage    | Cloudinary (product images)         |
