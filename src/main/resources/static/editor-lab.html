@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html class="light" lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Editor JSON/HTML Lab</title>
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#351f1b",
+            surface: "#faf9f5",
+            "on-surface": "#1a1c1a",
+            "outline-variant": "#d4c3bf"
+          }
+        }
+      }
+    };
+  </script>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Work+Sans:wght@300;400;500;600&display=swap" />
+  <link rel="stylesheet" href="assets/app.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@2.29.1/dist/editorjs.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@2.8.1/dist/header.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/paragraph@2.11.3/dist/paragraph.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@1.10.0/dist/list.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/quote@2.7.6/dist/quote.umd.min.js"></script>
+</head>
+<body class="bg-surface text-on-surface editor-lab-page">
+  <main class="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12">
+    <header class="mb-8">
+      <p class="text-xs uppercase tracking-[0.18em] text-[#7f716d]">Frontend-only MVP</p>
+      <h1 class="text-3xl md:text-4xl font-headline font-extrabold tracking-tight text-primary mt-2">Editor JSON / HTML Playground</h1>
+      <p class="mt-3 text-[#5a4d49] max-w-3xl">
+        Muc tieu: nhap noi dung kieu Notion, convert thanh JSON va hien thi JSON + log de debug.
+      </p>
+      <a href="editor-load-json.html" class="inline-flex mt-4 text-sm font-semibold text-primary hover:underline">
+        Mo trang "Paste JSON -> Hien thi Article UI"
+      </a>
+    </header>
+
+    <section class="grid lg:grid-cols-2 gap-6">
+      <div class="editor-lab-card">
+        <div class="editor-lab-card-header">
+          <h2 class="editor-lab-title">1) Block Editor</h2>
+          <p class="editor-lab-subtitle">Nhap noi dung, them header/paragraph/list/quote/image-url roi bam nut convert JSON.</p>
+        </div>
+
+        <input type="hidden" id="jsonData" value='{"time":1613560000000,"version":"2.29.1","blocks":[{"type":"header","data":{"text":"Hoc Spring Boot co ban","level":2}},{"type":"paragraph","data":{"text":"Day la noi dung bai viet dau tien..."}}]}' />
+        <div id="editorjs" class="editor-lab-editor"></div>
+
+        <div class="editor-lab-actions">
+          <button id="saveBtn" class="editor-lab-btn editor-lab-btn-primary">Convert ngay (thu cong)</button>
+          <button id="resetBtn" class="editor-lab-btn">Load Sample</button>
+        </div>
+      </div>
+
+      <div class="space-y-6">
+        <div class="editor-lab-card">
+          <div class="editor-lab-card-header">
+            <h2 class="editor-lab-title">2) JSON Output</h2>
+            <p class="editor-lab-subtitle">Gia tri nay tuong duong content_json.</p>
+          </div>
+          <textarea id="jsonOutput" class="editor-lab-textarea" spellcheck="false"></textarea>
+        </div>
+
+        <div class="editor-lab-card">
+          <div class="editor-lab-card-header">
+            <h2 class="editor-lab-title">3) Event Logs</h2>
+            <p class="editor-lab-subtitle">Log su kien save/parse/init de theo doi luong xu ly.</p>
+          </div>
+          <textarea id="logOutput" class="editor-lab-textarea" spellcheck="false" readonly></textarea>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="assets/editor-lab.js"></script>
+</body>
+</html>
