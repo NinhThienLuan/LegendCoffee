@@ -21,9 +21,9 @@ public class AuthenServiceImpl implements AuthenService {
 
     @Override
     public void login(LoginRequestDTO request) {
-        User user = userRepository.findByUsername(request.username()).orElse(null);
+        User user = userRepository.findByEmail(request.email()).orElse(null);
         if (user == null || !passwordEncoder.matches(request.password(), user.getPassword())) {
-            throw new AuthenException("Invalid username or password");
+            throw new AuthenException("Invalid email or password");
         } else if (!user.getIsActive()) {
             throw new AuthenException("User is inactive");
         }

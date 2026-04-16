@@ -3,6 +3,6 @@ package fpt.legendcoffee.dto;
 import jakarta.validation.constraints.NotBlank;
 
 public record LoginRequestDTO(
-        @NotBlank(message = "Username is required") String username,
+        @NotBlank(message = "Email is required") String email,
         @NotBlank(message = "Password is required") String password) {
 }

@@ -146,17 +146,19 @@
 </div>
 <!-- Auth Form -->
 <form class="space-y-6" method="POST" th:action="@{/login}">
-<div th:if="${session.error}" class="bg-error/10 border-l-4 border-error p-3 mb-4">
-<p class="text-xs text-error font-bold" th:text="${session.error}"></p>
-<div th:run="${#session.removeAttribute('error')}"></div>
-</div>
-<div class="space-y-1">
-<label class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1" for="email">Tên đăng nhập</label>
-<div class="ghost-border bg-surface-container-low px-4 py-3 flex items-center gap-3">
-<span class="material-symbols-outlined text-outline text-xl" data-icon="person">person</span>
-<input class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium" id="username" name="username" placeholder="Nhập tên đăng nhập" required="" type="text"/>
-</div>
-</div>
+        <div th:if="${param.error}" class="bg-error/10 border-l-4 border-error p-3 mb-4">
+            <p class="text-xs text-error font-bold" th:text="${param.error[0] == 'auth_failed' ? 'Email hoặc mật khẩu không chính xác.' : 'Có lỗi xảy ra, vui lòng thử lại.'}"></p>
+        </div>
+        <div th:if="${param.success}" class="bg-primary/10 border-l-4 border-primary p-3 mb-4">
+            <p class="text-xs text-primary font-bold" th:text="${param.success[0] == 'register_success' ? 'Đăng ký thành công! Vui lòng đăng nhập.' : ''}"></p>
+        </div>
+        <div class="space-y-1">
+            <label class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1" for="email">Email Hệ thống</label>
+            <div class="ghost-border bg-surface-container-low px-4 py-3 flex items-center gap-3">
+                <span class="material-symbols-outlined text-outline text-xl" data-icon="mail">mail</span>
+                <input class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium" id="email" name="email" placeholder="email@company.vn" required="" type="email"/>
+            </div>
+        </div>
 <div class="space-y-1">
 <div class="flex justify-between items-center mb-1">
 <label class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant" for="password">Mật khẩu</label>

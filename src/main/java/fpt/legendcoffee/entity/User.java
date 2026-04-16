@@ -20,11 +20,11 @@ public class User extends BaseEntity {
     @Column(name = "role")
     private UserRole role;
 
-    @Column(name = "username", columnDefinition = "NVARCHAR(255)", unique = true, nullable = false)
-    private String username;
+    @Column(name = "username", unique = true, nullable = false, length = 255)
+    private String username; //fullname
 
     @Column(name = "email", unique = true, nullable = false)
-    private String email;
+    private String email; //login with this
 
     @Column(name = "password", nullable = false)
     private String password;
@@ -32,7 +32,7 @@ public class User extends BaseEntity {
     @Column(name = "phone", unique = true, nullable = false)
     private String phone;
 
-    @Column(name = "address", columnDefinition = "NVARCHAR(255)")
+    @Column(name = "address", length = 255)
     private String address;
 
     @Column(name = "is_active", nullable = false)

@@ -4,9 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import fpt.legendcoffee.common.infrastructure.BaseEntity;
 import fpt.legendcoffee.entity.enumeration.ShippingStatus;
 
