@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
   <nav th:fragment="navbar(navItems)" class="fixed top-0 w-full z-[100] bg-[#faf9f5]/85 dark:bg-[#1a1614]/85 backdrop-blur-md border-b border-outline-variant/20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -38,9 +38,22 @@
             <button class="h-9 w-9 inline-flex items-center justify-center text-[#5b4a45] hover:text-[#351f1b] hover:bg-[#efe9e5] rounded-full transition-colors" aria-label="Cart">
               <span class="material-symbols-outlined text-[20px]">shopping_cart</span>
             </button>
-            <button class="h-9 w-9 inline-flex items-center justify-center text-[#5b4a45] hover:text-[#351f1b] hover:bg-[#efe9e5] rounded-full transition-colors" aria-label="Account">
-              <span class="material-symbols-outlined text-[20px]">account_circle</span>
-            </button>
+            
+            <!-- Auth Buttons -->
+            <a sec:authorize="isAnonymous()" href="/login" class="h-9 px-4 inline-flex items-center justify-center text-[#5b4a45] hover:text-[#351f1b] hover:bg-[#efe9e5] rounded-full transition-colors text-xs font-bold uppercase tracking-widest" aria-label="Login">
+              Đăng nhập
+            </a>
+            
+            <div sec:authorize="isAuthenticated()" class="flex items-center gap-1">
+              <a href="/profile" class="h-9 w-9 inline-flex items-center justify-center text-[#5b4a45] hover:text-[#351f1b] hover:bg-[#efe9e5] rounded-full transition-colors" aria-label="Account">
+                <span class="material-symbols-outlined text-[20px]">account_circle</span>
+              </a>
+              <form th:action="@{/logout}" method="POST" class="inline">
+                <button type="submit" class="h-9 px-4 inline-flex items-center justify-center text-error hover:bg-error/10 rounded-full transition-colors text-xs font-bold uppercase tracking-widest" aria-label="Logout">
+                  Đăng xuất
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </div>

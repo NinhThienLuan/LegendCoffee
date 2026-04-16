@@ -24,7 +24,12 @@ public class SecurityConfig {
                         .requestMatchers(SecurityConstants.PUBLIC_MATCHERS).permitAll()
                         .anyRequest().authenticated())
                 .securityContext(context -> context
-                        .securityContextRepository(securityContextRepository()));
+                        .securityContextRepository(securityContextRepository()))
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout=true")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID"));
         return http.build();
     }
 

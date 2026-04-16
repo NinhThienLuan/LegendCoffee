@@ -144,20 +144,22 @@
 <div th:run="${#session.removeAttribute('error')}"></div>
 </div>
 <div class="space-y-1">
-<label class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1" for="email">Email hoặc Tên đăng nhập</label>
+<label class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1" for="email">Tên đăng nhập</label>
 <div class="ghost-border bg-surface-container-low px-4 py-3 flex items-center gap-3">
 <span class="material-symbols-outlined text-outline text-xl" data-icon="person">person</span>
-<input class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium" id="username" name="username" placeholder="Nhập email hoặc tên đăng nhập" required="" type="text"/>
+<input class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium" id="username" name="username" placeholder="Nhập tên đăng nhập" required="" type="text"/>
 </div>
 </div>
 <div class="space-y-1">
 <div class="flex justify-between items-center mb-1">
 <label class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant" for="password">Mật khẩu</label>
-<a class="text-[10px] font-bold text-secondary hover:text-primary transition-colors" href="#">Quên mật khẩu?</a>
 </div>
 <div class="ghost-border bg-surface-container-low px-4 py-3 flex items-center gap-3">
 <span class="material-symbols-outlined text-outline text-xl" data-icon="lock">lock</span>
 <input class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+</div>
+<div class="flex justify-between items-center mb-1">
+  <a class="text-[10px] font-bold text-secondary hover:text-primary transition-colors" href="#">Quên mật khẩu?</a>
 </div>
 </div>
 <div class="flex items-center gap-3 py-2">

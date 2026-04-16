@@ -1,6 +1,8 @@
 package fpt.legendcoffee.controller;
 
 import fpt.legendcoffee.dto.LoginRequestDTO;
+import fpt.legendcoffee.dto.RegisterRequestDTO;
+import fpt.legendcoffee.service.AuthenService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -25,9 +27,9 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final SecurityContextRepository securityContextRepository;
-
     private final SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy();
-
+    private final AuthenService authenService;
+    
     @GetMapping("/home")
     public String home() {
         return "index";
@@ -62,11 +64,19 @@ public class AuthController {
 
     @GetMapping("/register")
     public String showRegisterForm() {
+        
         return "authen/register/register";
     }
 
     @PostMapping("/register")
-    public String register(@RequestParam String username, @RequestParam String password) {
-        return "redirect:/login";
+    public String register(@Valid @ModelAttribute("registerDto") RegisterRequestDTO request, HttpSession session) {
+        try {
+            authenService.register(request);
+            session.setAttribute("success", "Đăng ký thành công! Vui lòng đăng nhập.");
+            return "redirect:/login";
+        } catch (Exception e) {
+            session.setAttribute("error", e.getMessage());
+            return "redirect:/register";
+        }
     }
 }

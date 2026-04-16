@@ -1,17 +1,16 @@
 package fpt.legendcoffee.service.serviceImpl;
 
-import java.util.Optional;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import fpt.legendcoffee.common.exception.AuthenException;
 import fpt.legendcoffee.dto.LoginRequestDTO;
 import fpt.legendcoffee.dto.RegisterRequestDTO;
 import fpt.legendcoffee.entity.User;
+import fpt.legendcoffee.entity.enumeration.UserRole;
 import fpt.legendcoffee.repository.UserRepository;
 import fpt.legendcoffee.service.AuthenService;
 import lombok.AllArgsConstructor;
-import fpt.legendcoffee.common.exception.AuthenException;
 
 @Service
 @AllArgsConstructor
@@ -32,7 +31,28 @@ public class AuthenServiceImpl implements AuthenService {
 
     @Override
     public boolean register(RegisterRequestDTO request) {
-        throw new UnsupportedOperationException("Unimplemented method 'register'");
+        if (userRepository.findByUsername(request.username()).isPresent()) {
+            throw new AuthenException("Username already exists");
+        }
+        if (userRepository.findByEmail(request.email()).isPresent()) {
+            throw new AuthenException("Email already exists");
+        }
+        if (userRepository.findByPhone(request.phone()).isPresent()) {
+            throw new AuthenException("Phone number already exists");
+        }
+
+        User user = User.builder()
+                .username(request.username())
+                .password(passwordEncoder.encode(request.password()))
+                .email(request.email())
+                .phone(request.phone())
+                .address(request.address())
+                .role(UserRole.USER)
+                .isActive(true)
+                .build();
+
+        userRepository.save(user);
+        return true;
     }
 
 }
