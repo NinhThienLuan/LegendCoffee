@@ -1,0 +1,215 @@
+:root {
+  --stack-top: 280px;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+body {
+  font-family: 'Work Sans', sans-serif;
+}
+
+h1, h2, h3, h4, .font-headline {
+  font-family: 'Manrope', sans-serif;
+}
+
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+.reveal-word {
+  display: inline-block;
+  white-space: pre;
+  will-change: opacity, filter, transform;
+}
+
+.stack-card {
+  position: sticky;
+  top: var(--stack-top);
+  width: 100%;
+  transition: transform 0.3s ease;
+}
+
+section {
+  scroll-margin-top: 5rem;
+}
+
+@keyframes logo-loop {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.logo-loop-container {
+  mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+}
+
+.logo-loop-track {
+  display: flex;
+  width: fit-content;
+  animation: logo-loop 30s linear infinite;
+}
+
+.product-card {
+  background: #ffffff;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-bottom: 4px solid #351f1b;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.editor-lab-page {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 5% -10%, rgba(53, 31, 27, 0.08), transparent 32%),
+    radial-gradient(circle at 100% 0%, rgba(126, 93, 83, 0.14), transparent 26%),
+    #faf9f5;
+}
+
+.editor-lab-card {
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(130, 116, 113, 0.24);
+  border-radius: 0.75rem;
+  box-shadow: 0 6px 24px rgba(26, 28, 26, 0.06);
+  padding: 1.125rem;
+}
+
+.editor-lab-card-header {
+  margin-bottom: 0.875rem;
+}
+
+.editor-lab-title {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  color: #351f1b;
+  font-size: 1.05rem;
+}
+
+.editor-lab-subtitle {
+  margin-top: 0.275rem;
+  color: #6d5e59;
+  font-size: 0.9rem;
+}
+
+.editor-lab-editor {
+  border: 1px solid rgba(130, 116, 113, 0.24);
+  border-radius: 0.5rem;
+  background: #ffffff;
+  padding: 0.5rem;
+  min-height: 360px;
+}
+
+.editor-lab-actions {
+  margin-top: 0.875rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.editor-lab-btn {
+  background: #efe9e5;
+  color: #351f1b;
+  border: 1px solid rgba(130, 116, 113, 0.24);
+  border-radius: 0.5rem;
+  padding: 0.52rem 0.8rem;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  transition: all 0.2s ease;
+}
+
+.editor-lab-btn:hover {
+  background: #e4dbd6;
+}
+
+.editor-lab-btn-primary {
+  background: #351f1b;
+  color: #ffffff;
+  border-color: #351f1b;
+}
+
+.editor-lab-btn-primary:hover {
+  background: #281613;
+}
+
+.editor-lab-textarea {
+  width: 100%;
+  min-height: 245px;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(130, 116, 113, 0.24);
+  background: #ffffff;
+  padding: 0.8rem;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: #1a1c1a;
+  resize: vertical;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.editor-lab-preview {
+  border-radius: 0.5rem;
+  border: 1px solid rgba(130, 116, 113, 0.24);
+  background: #ffffff;
+  padding: 0.95rem;
+  min-height: 180px;
+}
+
+.editor-lab-preview h1,
+.editor-lab-preview h2,
+.editor-lab-preview h3,
+.editor-lab-preview h4,
+.editor-lab-preview h5,
+.editor-lab-preview h6 {
+  font-family: 'Manrope', sans-serif;
+  color: #2f1a17;
+  margin: 0.5rem 0;
+}
+
+.editor-lab-preview p {
+  margin: 0.5rem 0;
+  color: #2d2c2a;
+}
+
+.editor-lab-preview ul,
+.editor-lab-preview ol {
+  margin: 0.55rem 0 0.55rem 1.25rem;
+}
+
+.editor-lab-preview blockquote {
+  margin: 0.75rem 0;
+  border-left: 3px solid #351f1b;
+  background: #f7f3f0;
+  padding: 0.7rem 0.8rem;
+}
+
+.editor-lab-preview cite {
+  display: block;
+  margin-top: 0.3rem;
+  color: #6d5e59;
+  font-size: 0.85rem;
+}
+
+.editor-lab-muted {
+  color: #827471;
+}
