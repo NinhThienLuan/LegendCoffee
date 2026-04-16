@@ -1,109 +1,11 @@
 <!DOCTYPE html>
-
-<html class="light" lang="vi">
-<head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>RoastLogistics - Đăng nhập Doanh nghiệp</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;700;800&amp;family=Work+Sans:wght@300;400;500;600&amp;display=swap"
-          rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-          rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-          rel="stylesheet"/>
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "on-tertiary": "#ffffff",
-                        "secondary": "#77574d",
-                        "outline": "#827471",
-                        "surface-container-lowest": "#ffffff",
-                        "on-surface": "#1a1c1a",
-                        "on-primary-fixed-variant": "#5b403c",
-                        "tertiary": "#352017",
-                        "surface-dim": "#dadad6",
-                        "on-primary-container": "#bf9d97",
-                        "on-tertiary-fixed-variant": "#5b4137",
-                        "error": "#ba1a1a",
-                        "on-primary-fixed": "#2b1613",
-                        "tertiary-fixed": "#ffdbce",
-                        "surface-bright": "#faf9f5",
-                        "primary-fixed": "#ffdad4",
-                        "on-secondary-container": "#795950",
-                        "tertiary-container": "#4e352c",
-                        "background": "#faf9f5",
-                        "secondary-container": "#fed3c7",
-                        "on-secondary-fixed": "#2c160e",
-                        "surface": "#faf9f5",
-                        "on-error-container": "#93000a",
-                        "surface-variant": "#e2e3df",
-                        "tertiary-fixed-dim": "#e4beb2",
-                        "on-primary": "#ffffff",
-                        "on-surface-variant": "#504442",
-                        "secondary-fixed-dim": "#e7bdb1",
-                        "on-tertiary-fixed": "#2b160f",
-                        "error-container": "#ffdad6",
-                        "surface-container-low": "#f4f4f0",
-                        "on-secondary": "#ffffff",
-                        "outline-variant": "#d4c3bf",
-                        "surface-container": "#eeeeea",
-                        "on-secondary-fixed-variant": "#5d4037",
-                        "primary": "#351f1b",
-                        "on-background": "#1a1c1a",
-                        "surface-container-high": "#e8e8e4",
-                        "primary-container": "#4d3430",
-                        "surface-tint": "#745853",
-                        "secondary-fixed": "#ffdbd0",
-                        "on-tertiary-container": "#c09d91",
-                        "surface-container-highest": "#e2e3df",
-                        "primary-fixed-dim": "#e3beb8",
-                        "inverse-surface": "#2f312e",
-                        "inverse-primary": "#e3beb8",
-                        "inverse-on-surface": "#f1f1ed",
-                        "on-error": "#ffffff"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.125rem",
-                        "lg": "0.25rem",
-                        "xl": "0.5rem",
-                        "full": "0.75rem"
-                    },
-                    "fontFamily": {
-                        "headline": ["Manrope"],
-                        "body": ["Work Sans"],
-                        "label": ["Work Sans"]
-                    }
-                },
-            },
-        }
-    </script>
-    <style>.material-symbols-outlined {
-        font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24
-    }
-
-    .bg-industrial-hero {
-        background-image: linear-gradient(135deg, rgba(53, 31, 27, 0.92) 0%, rgba(77, 52, 48, 0.7) 100%), url(https://lh3.googleusercontent.com/aida-public/AB6AXuAIIW50d3obmeucMrF1DD1tqDklOcwRmI8p_YtcVN4dqV2pWL6ny-oijdABgrOc1ZYCTqSotbbvZJ3FfAX-qq3wdxldTTwzWHUi7HXrHo_gx7PhdrV-WgZkb3f3aHs7ePVMzfQGGHyHIwWPdkQ_3jyLyQ9yMlAxZhYxpinzrhXIT36c0oG1uagGOxu4it9MAEeEJrHiSuZkHMy-YwSudKWqMWZ1CfPtRdG-5LAc9w1FF_E_9y2OYM33au7Y0iH8-5JBqMHQak7I1QAX);
-        background-size: cover;
-        background-position: center
-    }
-
-    .ghost-border {
-        border: 1px solid rgba(212, 195, 191, 0.3)
-    }
-
-    .ghost-border:focus-within {
-        border-bottom: 2px solid #351f1b;
-        border-color: rgba(53, 31, 27, 0.4)
-    }</style>
-</head>
-<body class="bg-background text-on-surface font-body antialiased">
-<main class="min-h-screen flex flex-col md:flex-row">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: sharedHead('Đăng nhập Doanh nghiệp')}"></head>
+<body class="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container font-body antialiased">
+<div th:replace="~{fragments/navbar :: navbar(${navItems})}"></div>
+<main class="min-h-screen flex flex-col md:flex-row pt-20">
 <!-- Left Side: Industrial Branding & Imagery -->
-<section class="hidden md:flex md:w-1/2 bg-industrial-hero p-16 flex-col justify-between relative overflow-hidden" data-alt="close-up of professional industrial coffee roasting machinery with stainless steel parts and glowing heating elements in a dark warehouse">
+<section class="hidden md:flex md:w-1/2 bg-cover bg-center p-16 flex-col justify-between relative overflow-hidden" style="background-image: linear-gradient(135deg, rgba(53, 31, 27, 0.92) 0%, rgba(77, 52, 48, 0.7) 100%), url('https://lh3.googleusercontent.com/aida-public/AB6AXuAIIW50d3obmeucMrF1DD1tqDklOcwRmI8p_YtcVN4dqV2pWL6ny-oijdABgrOc1ZYCTqSotbbvZJ3FfAX-qq3wdxldTTwzWHUi7HXrHo_gx7PhdrV-WgZkb3f3aHs7ePVMzfQGGHyHIwWPdkQ_3jyLyQ9yMlAxZhYxpinzrhXIT36c0oG1uagGOxu4it9MAEeEJrHiSuZkHMy-YwSudKWqMWZ1CfPtRdG-5LAc9w1FF_E_9y2OYM33au7Y0iH8-5JBqMHQak7I1QAX');" data-alt="close-up of professional industrial coffee roasting machinery with stainless steel parts and glowing heating elements in a dark warehouse">
 <div class="z-10">
 <div class="flex items-center gap-3 mb-12">
 <span class="material-symbols-outlined text-on-primary text-4xl" data-icon="factory">factory</span>
@@ -141,8 +43,8 @@
 </div>
 <!-- Form Tabs (Simulated) -->
 <div class="flex gap-8 mb-10 border-b border-surface-container-high">
-<button onclick="setActiveTab(this)" class="tab-btn pb-4 border-b-2 border-primary text-primary font-semibold text-sm transition-all duration-300 hover:scale-105 active-tab">ĐĂNG NHẬP</button>
-<a href="/register" class="tab-link pb-4 border-b-2 border-transparent text-on-surface-variant hover:text-primary font-medium text-sm transition-all duration-300 hover:scale-105">ĐĂNG KÝ MỚI</a>
+<button type="button" class="pb-4 border-b-2 border-primary text-primary font-semibold text-sm">ĐĂNG NHẬP</button>
+<a href="/register" class="pb-4 border-b-2 border-transparent text-on-surface-variant hover:text-primary font-medium text-sm transition-colors">ĐĂNG KÝ MỚI</a>
 </div>
 <!-- Auth Form -->
 <form class="space-y-6" method="POST" th:action="@{/login}">
@@ -154,7 +56,7 @@
         </div>
         <div class="space-y-1">
             <label class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1" for="email">Email Hệ thống</label>
-            <div class="ghost-border bg-surface-container-low px-4 py-3 flex items-center gap-3">
+            <div class="border border-outline-variant/30 bg-surface-container-low px-4 py-3 flex items-center gap-3 focus-within:border-primary/40 focus-within:border-b-2">
                 <span class="material-symbols-outlined text-outline text-xl" data-icon="mail">mail</span>
                 <input class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium" id="email" name="email" placeholder="email@company.vn" required="" type="email"/>
             </div>
@@ -163,7 +65,7 @@
 <div class="flex justify-between items-center mb-1">
 <label class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant" for="password">Mật khẩu</label>
 </div>
-<div class="ghost-border bg-surface-container-low px-4 py-3 flex items-center gap-3">
+<div class="border border-outline-variant/30 bg-surface-container-low px-4 py-3 flex items-center gap-3 focus-within:border-primary/40 focus-within:border-b-2">
 <span class="material-symbols-outlined text-outline text-xl" data-icon="lock">lock</span>
 <input class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium" id="password" name="password" placeholder="••••••••" required="" type="password"/>
 </div>
@@ -207,7 +109,7 @@
 <div class="mt-12 text-center">
 <p class="text-xs text-on-surface-variant">
                         Bạn chưa có tài khoản Doanh nghiệp? 
-                        <a class="font-bold text-primary underline underline-offset-4 ml-1" href="#">Đăng ký ngay</a>
+                        <a class="font-bold text-primary underline underline-offset-4 ml-1" href="/register">Đăng ký ngay</a>
 </p>
 </div>
 </div>
@@ -227,69 +129,6 @@
 <div class="fixed top-0 left-0 w-full h-full pointer-events-none opacity-[0.03] z-[-1]"
      style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB-Q5xJ_vnd3UZIxcQs6kxSV0Ns3dRiFIZRBI1PAz0StqtgQetOc9a_WRQ2dwNT1inEY7m8vea15FwuavsJiuUaUYa8pDrV9wW8jLWJZxfcxDoEmpj4sjnQbY5_iz1Mjotm9eeTApAdEJDln_MShBabhkHZTg6Pri420uNl1Z8UO33c0L8CDKsSMBw4PK6x0Wo6JlVgQmmiQxGg_VXTUWkjdZK1CVykvlwCBLNYxaVany_dp_qBwYuXOjEEcd4Vto-3ObF43rKOUvT3');"></div>
 
-<script>
-    function setActiveTab(button) {
-        // Find all tab buttons in the parent
-        const tabContainer = button.closest('.flex');
-        const allTabs = tabContainer.querySelectorAll('.tab-btn, .tab-link');
-
-        // Remove active state from all
-        allTabs.forEach(tab => {
-            tab.classList.remove('active-tab');
-            tab.classList.add('border-b-2', 'border-transparent', 'text-on-surface-variant');
-            tab.classList.remove('border-primary', 'text-primary', 'font-semibold');
-        });
-
-        // Add active state to clicked button
-        button.classList.add('active-tab');
-        button.classList.remove('border-transparent', 'text-on-surface-variant');
-        button.classList.add('border-b-2', 'border-primary', 'text-primary', 'font-semibold');
-    }
-
-    // Add click animation effect
-    document.querySelectorAll('.tab-btn, .tab-link').forEach(tab => {
-        tab.addEventListener('click', function (e) {
-            // Create ripple effect
-            const ripple = document.createElement('span');
-            ripple.classList.add('ripple');
-            ripple.style.left = e.clientX - this.getBoundingClientRect().left + 'px';
-            ripple.style.top = e.clientY - this.getBoundingClientRect().top + 'px';
-            this.appendChild(ripple);
-            setTimeout(() => ripple.remove(), 600);
-        });
-    });
-</script>
-
-<style>
-    .tab-btn, .tab-link {
-        position: relative;
-        overflow: hidden;
-    }
-
-    .active-tab {
-        box-shadow: 0 2px 8px rgba(53, 31, 27, 0.1);
-    }
-
-    .tab-btn:hover:not(.active-tab), .tab-link:hover:not(.active-tab) {
-        color: #351f1b;
-        border-bottom-color: rgba(53, 31, 27, 0.2);
-    }
-
-    .ripple {
-        position: absolute;
-        border-radius: 50%;
-        background: rgba(53, 31, 27, 0.3);
-        transform: scale(0);
-        animation: ripple-animation 0.6s ease-out;
-        pointer-events: none;
-    }
-
-    @keyframes ripple-animation {
-        to {
-            transform: scale(4);
-            opacity: 0;
-        }
-    }
-</style>
+<div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>
