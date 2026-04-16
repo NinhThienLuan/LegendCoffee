@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add Product Test</title>
+  <style>
+    :root {
+      --bg: #f3f6ef;
+      --card: #ffffff;
+      --text: #1f2a1f;
+      --muted: #5b6759;
+      --line: #d7decd;
+      --primary: #2f6a49;
+      --primary-2: #214c34;
+      --danger: #b02a2a;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: radial-gradient(circle at 10% 10%, #e7f0e1 0%, var(--bg) 45%, #eaf0f6 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .panel {
+      width: min(920px, 100%);
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: 0 20px 50px rgba(44, 59, 43, 0.14);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      background: linear-gradient(110deg, var(--primary) 0%, #4f8b68 70%);
+      color: white;
+      padding: 20px 24px;
+    }
+
+    .panel-header h1 {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: 0.3px;
+    }
+
+    .panel-header p {
+      margin: 8px 0 0;
+      opacity: 0.9;
+    }
+
+    .panel-body {
+      padding: 22px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 14px;
+      color: var(--text);
+      background: #fff;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      outline: 2px solid rgba(47, 106, 73, 0.2);
+      border-color: var(--primary);
+    }
+
+    textarea {
+      min-height: 92px;
+      resize: vertical;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 16px;
+      color: white;
+      background: var(--primary);
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: var(--primary-2);
+    }
+
+    button.secondary {
+      background: #6f7d6d;
+    }
+
+    button.secondary:hover {
+      background: #576554;
+    }
+
+    #status {
+      font-size: 13px;
+      color: var(--muted);
+      min-height: 18px;
+    }
+
+    #status.error {
+      color: var(--danger);
+      font-weight: 600;
+    }
+
+    pre {
+      margin: 0;
+      background: #1f2520;
+      color: #d8f0dc;
+      border-radius: 10px;
+      padding: 12px;
+      overflow: auto;
+      max-height: 260px;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    @media (max-width: 760px) {
+      .row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="panel">
+    <header class="panel-header">
+      <h1>Add Product Form (Test)</h1>
+      <p>Use this page to test multipart product creation with image upload.</p>
+    </header>
+
+    <section class="panel-body">
+      <div class="field full">
+        <label for="apiUrl">API URL</label>
+        <input id="apiUrl" type="text" value="/api/products" placeholder="Example: /api/products or http://localhost:8080/api/products" />
+      </div>
+
+      <form id="addProductForm" enctype="multipart/form-data">
+        <div class="row">
+          <div class="field">
+            <label for="name">Name *</label>
+            <input id="name" name="name" type="text" required />
+          </div>
+
+          <div class="field">
+            <label for="origin">Origin</label>
+            <input id="origin" name="origin" type="text" />
+          </div>
+
+          <div class="field full">
+            <label for="description">Description</label>
+            <textarea id="description" name="description"></textarea>
+          </div>
+
+          <div class="field">
+            <label for="manufacturerDate">Manufacturer Date</label>
+            <input id="manufacturerDate" name="manufacturerDate" type="text" placeholder="yyyy-MM-dd or text" />
+          </div>
+
+          <div class="field">
+            <label for="expiryDate">Expiry Date</label>
+            <input id="expiryDate" name="expiryDate" type="text" placeholder="yyyy-MM-dd or text" />
+          </div>
+
+          <div class="field">
+            <label for="categoryId">Category ID</label>
+            <input id="categoryId" name="categoryId" type="number" min="1" />
+          </div>
+
+          <div class="field">
+            <label for="isActive">Is Active</label>
+            <select id="isActive" name="isActive">
+              <option value="true" selected>true</option>
+              <option value="false">false</option>
+            </select>
+          </div>
+
+          <div class="field full">
+            <label for="image">Image</label>
+            <input id="image" name="image" type="file" accept="image/*" />
+          </div>
+        </div>
+
+        <div class="actions" style="margin-top: 14px;">
+          <button type="submit">Send Request</button>
+          <button class="secondary" type="reset" id="resetBtn">Reset</button>
+          <span id="status"></span>
+        </div>
+      </form>
+
+      <div class="field full">
+        <label for="responseBox">Response</label>
+        <pre id="responseBox">No response yet.</pre>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const form = document.getElementById("addProductForm");
+    const statusEl = document.getElementById("status");
+    const responseBox = document.getElementById("responseBox");
+    const apiUrlInput = document.getElementById("apiUrl");
+
+    function setStatus(text, isError) {
+      statusEl.textContent = text || "";
+      statusEl.className = isError ? "error" : "";
+    }
+
+    function objectFromForm(formData) {
+      const data = {};
+      for (const [key, value] of formData.entries()) {
+        if (value instanceof File) {
+          data[key] = value.name ? "[File] " + value.name : null;
+        } else {
+          data[key] = value;
+        }
+      }
+      return data;
+    }
+
+    form.addEventListener("submit", async function (event) {
+      event.preventDefault();
+      setStatus("Sending...", false);
+      responseBox.textContent = "Waiting for response...";
+
+      const apiUrl = apiUrlInput.value.trim();
+      if (!apiUrl) {
+        setStatus("API URL is required.", true);
+        responseBox.textContent = "Please enter API URL.";
+        return;
+      }
+
+      const formData = new FormData(form);
+
+      try {
+        const response = await fetch(apiUrl, {
+          method: "POST",
+          body: formData
+        });
+
+        const contentType = response.headers.get("content-type") || "";
+        let responseData;
+
+        if (contentType.includes("application/json")) {
+          responseData = await response.json();
+        } else {
+          responseData = await response.text();
+        }
+
+        const debugPayload = {
+          status: response.status,
+          ok: response.ok,
+          request: objectFromForm(formData),
+          response: responseData
+        };
+
+        responseBox.textContent = JSON.stringify(debugPayload, null, 2);
+        setStatus(response.ok ? "Success" : "Request failed", !response.ok);
+      } catch (error) {
+        setStatus("Network error", true);
+        responseBox.textContent = JSON.stringify({
+          request: objectFromForm(formData),
+          error: String(error)
+        }, null, 2);
+      }
+    });
+  </script>
+</body>
+</html>
