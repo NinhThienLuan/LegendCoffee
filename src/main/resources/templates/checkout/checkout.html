@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Work+Sans:wght@300;400;500;600&amp;display=swap"
+          rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+          rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary": "#ffffff",
+                        "on-surface": "#1a1c1a",
+                        "inverse-surface": "#2f312e",
+                        "tertiary-container": "#4e352c",
+                        "on-secondary-fixed-variant": "#5d4037",
+                        "tertiary": "#352017",
+                        "primary-container": "#4d3430",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed": "#ffdbce",
+                        "surface": "#faf9f5",
+                        "secondary-container": "#fed3c7",
+                        "on-tertiary-container": "#c09d91",
+                        "background": "#faf9f5",
+                        "tertiary-fixed-dim": "#e4beb2",
+                        "on-secondary-container": "#795950",
+                        "surface-tint": "#745853",
+                        "outline-variant": "#d4c3bf",
+                        "on-error": "#ffffff",
+                        "primary-fixed": "#ffdad4",
+                        "inverse-primary": "#e3beb8",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed": "#ffdbd0",
+                        "on-secondary-fixed": "#2c160e",
+                        "surface-dim": "#dadad6",
+                        "outline": "#827471",
+                        "on-surface-variant": "#504442",
+                        "inverse-on-surface": "#f1f1ed",
+                        "surface-container": "#eeeeea",
+                        "on-primary-container": "#bf9d97",
+                        "surface-bright": "#faf9f5",
+                        "secondary": "#77574d",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#2b1613",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#e7bdb1",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#5b4137",
+                        "primary-fixed-dim": "#e3beb8",
+                        "on-primary-fixed-variant": "#5b403c",
+                        "surface-container-low": "#f4f4f0",
+                        "on-background": "#1a1c1a",
+                        "surface-container-highest": "#e2e3df",
+                        "error": "#ba1a1a",
+                        "surface-container-high": "#e8e8e4",
+                        "surface-variant": "#e2e3df",
+                        "primary": "#351f1b",
+                        "on-tertiary-fixed": "#2b160f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Work Sans"],
+                        "label": ["Work Sans"]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        body {
+            font-family: 'Work Sans', sans-serif;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Manrope', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col">
+<!-- TopNavBar (Fixed Header) -->
+<nav class="fixed top-0 w-full z-50 bg-[#faf9f5]/80 dark:bg-[#351f1b]/80 backdrop-blur-xl transition-transform">
+    <div class="flex justify-between items-center px-8 py-4 max-w-[1440px] mx-auto">
+        <div class="text-xl font-bold tracking-tighter text-[#351f1b] dark:text-[#faf9f5] uppercase font-headline">
+            Industrial Excellence
+        </div>
+        <div class="hidden md:flex gap-8 items-center">
+            <a class="text-[#504442] dark:text-[#d4c3bf] hover:text-[#351f1b] dark:hover:text-[#ffffff] transition-colors duration-200 font-['Manrope'] tracking-tight"
+               href="#">Bulk Supply</a>
+            <a class="text-[#504442] dark:text-[#d4c3bf] hover:text-[#351f1b] dark:hover:text-[#ffffff] transition-colors duration-200 font-['Manrope'] tracking-tight"
+               href="#">Roasting</a>
+            <a class="text-[#504442] dark:text-[#d4c3bf] hover:text-[#351f1b] dark:hover:text-[#ffffff] transition-colors duration-200 font-['Manrope'] tracking-tight"
+               href="#">Logistics</a>
+            <a class="text-[#504442] dark:text-[#d4c3bf] hover:text-[#351f1b] dark:hover:text-[#ffffff] transition-colors duration-200 font-['Manrope'] tracking-tight"
+               href="#">Spec Sheets</a>
+        </div>
+        <div class="flex items-center gap-4">
+            <button class="active:scale-95 transition-transform"><span
+                    class="material-symbols-outlined text-[#351f1b] dark:text-[#faf9f5]">shopping_cart</span></button>
+            <button class="active:scale-95 transition-transform"><span
+                    class="material-symbols-outlined text-[#351f1b] dark:text-[#faf9f5]">notifications</span></button>
+            <button class="active:scale-95 transition-transform"><span
+                    class="material-symbols-outlined text-[#351f1b] dark:text-[#faf9f5]">account_circle</span></button>
+        </div>
+    </div>
+</nav>
+<!-- Main Canvas -->
+<main class="flex-grow pt-24 pb-20 px-4 md:px-8 max-w-[1440px] mx-auto w-full">
+    <!-- Multi-step Stepper -->
+    <div class="mb-16 max-w-4xl mx-auto px-4">
+        <div class="relative flex items-center justify-between">
+            <!-- Background Progress Line -->
+            <div class="absolute top-1/2 left-0 w-full h-0.5 bg-outline-variant/30 -translate-y-1/2 z-0"></div>
+            <!-- Active Progress Line (50% to step 2) -->
+            <div class="absolute top-1/2 left-0 w-1/2 h-0.5 bg-primary -translate-y-1/2 z-0"></div>
+            <!-- Step 1: GIỎ HÀNG (Completed) -->
+            <div class="relative z-10 flex flex-col items-center group">
+                <div class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center transition-all duration-300 shadow-lg ring-4 ring-surface">
+                    <span class="material-symbols-outlined text-xl">check</span>
+                </div>
+                <div class="absolute -bottom-8 whitespace-nowrap text-center">
+                    <span class="text-[10px] font-black uppercase tracking-[0.2em] text-primary font-label">Giỏ hàng</span>
+                </div>
+            </div>
+            <!-- Step 2: THÔNG TIN GIAO HÀNG (Active) -->
+            <div class="relative z-10 flex flex-col items-center group">
+                <div class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center transition-all duration-300 shadow-lg ring-4 ring-surface">
+                    <span class="text-sm font-black">2</span>
+                </div>
+                <div class="absolute -bottom-8 whitespace-nowrap text-center">
+                    <span class="text-[10px] font-black uppercase tracking-[0.2em] text-primary font-label">Thông tin giao hàng</span>
+                </div>
+            </div>
+            <!-- Step 3: THANH TOÁN (Pending) -->
+            <div class="relative z-10 flex flex-col items-center group">
+                <div class="w-10 h-10 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center transition-all duration-300 ring-4 ring-surface">
+                    <span class="text-sm font-black">3</span>
+                </div>
+                <div class="absolute -bottom-8 whitespace-nowrap text-center">
+                    <span class="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant font-label opacity-60">Thanh toán</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+        <!-- Left Column: Form Content -->
+        <div class="lg:col-span-8 space-y-8">
+            <!-- Section Header -->
+            <div class="border-b border-outline-variant/20 pb-4">
+                <h1 class="text-3xl font-extrabold tracking-tight text-primary uppercase">Thông tin vận chuyển</h1>
+                <p class="text-on-surface-variant mt-2 font-body">Vui lòng cung cấp chính xác thông tin để đảm bảo quy
+                    trình logistics diễn ra thuận lợi.</p>
+            </div>
+            <!-- Checkout Form -->
+            <div class="space-y-10">
+                <!-- Contact Info -->
+                <section class="space-y-6">
+                    <h3 class="text-lg font-bold text-primary flex items-center gap-2">
+                        <span class="material-symbols-outlined text-xl">contact_mail</span>
+                        THÔNG TIN LIÊN HỆ B2B
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="flex flex-col gap-2">
+                            <label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Tên Doanh
+                                Nghiệp / Cá Nhân</label>
+                            <input class="bg-surface-container-low border-none focus:ring-0 focus:border-b-2 focus:border-primary transition-all p-4 rounded-md"
+                                   placeholder="Industrial Excellence Co., Ltd" type="text"/>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Mã Số
+                                Thuế (Nếu có)</label>
+                            <input class="bg-surface-container-low border-none focus:ring-0 focus:border-b-2 focus:border-primary transition-all p-4 rounded-md"
+                                   placeholder="0123456789" type="text"/>
+                        </div>
+                    </div>
+                </section>
+                <!-- Shipping Address -->
+                <section class="space-y-6">
+                    <h3 class="text-lg font-bold text-primary flex items-center gap-2">
+                        <span class="material-symbols-outlined text-xl">local_shipping</span>
+                        ĐỊA CHỈ NHẬN HÀNG
+                    </h3>
+                    <div class="grid grid-cols-1 gap-6">
+                        <div class="flex flex-col gap-2">
+                            <label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Địa chỉ
+                                chi tiết (Kho/Cửa hàng)</label>
+                            <input class="bg-surface-container-low border-none focus:ring-0 focus:border-b-2 focus:border-primary transition-all p-4 rounded-md"
+                                   placeholder="Số 123 Đường Công Nghiệp, Khu Công Nghệ Cao" type="text"/>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="flex flex-col gap-2">
+                                <label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Tỉnh
+                                    / Thành phố</label>
+                                <select class="bg-surface-container-low border-none focus:ring-0 p-4 rounded-md appearance-none">
+                                    <option>Hồ Chí Minh</option>
+                                    <option>Hà Nội</option>
+                                    <option>Đà Nẵng</option>
+                                </select>
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Quận
+                                    / Huyện</label>
+                                <select class="bg-surface-container-low border-none focus:ring-0 p-4 rounded-md appearance-none">
+                                    <option>Quận 1</option>
+                                    <option>Quận 7</option>
+                                    <option>Thủ Đức</option>
+                                </select>
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Phường
+                                    / Xã</label>
+                                <select class="bg-surface-container-low border-none focus:ring-0 p-4 rounded-md appearance-none">
+                                    <option>Bến Nghé</option>
+                                    <option>Đa Kao</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <!-- Shipping Method -->
+                <section class="space-y-6">
+                    <h3 class="text-lg font-bold text-primary flex items-center gap-2">
+                        <span class="material-symbols-outlined text-xl">conveyor_belt</span>
+                        PHƯƠNG THỨC VẬN CHUYỂN
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <label class="relative flex items-center p-6 bg-surface-container-lowest border border-outline-variant/30 rounded-md cursor-pointer hover:bg-surface-container-low transition-colors group">
+                            <input checked="" class="w-5 h-5 text-primary border-outline-variant focus:ring-0"
+                                   name="shipping" type="radio"/>
+                            <div class="ml-4">
+                                <span class="block font-bold text-primary">Vận tải đường bộ tiêu chuẩn</span>
+                                <span class="block text-xs text-on-surface-variant uppercase mt-1">Dự kiến 2-4 ngày làm việc</span>
+                            </div>
+                            <span class="ml-auto font-bold text-primary">FREE</span>
+                        </label>
+                        <label class="relative flex items-center p-6 bg-surface-container-lowest border border-outline-variant/30 rounded-md cursor-pointer hover:bg-surface-container-low transition-colors group">
+                            <input class="w-5 h-5 text-primary border-outline-variant focus:ring-0" name="shipping"
+                                   type="radio"/>
+                            <div class="ml-4">
+                                <span class="block font-bold text-primary">Giao hàng hỏa tốc (Xpress)</span>
+                                <span class="block text-xs text-on-surface-variant uppercase mt-1">Trong vòng 24 giờ</span>
+                            </div>
+                            <span class="ml-auto font-bold text-primary">150.000 ₫</span>
+                        </label>
+                    </div>
+                </section>
+            </div>
+            <!-- Navigation Buttons -->
+            <div class="flex items-center justify-between pt-12">
+                <button class="flex items-center gap-2 text-on-surface-variant font-bold uppercase text-xs tracking-widest hover:text-primary transition-colors">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                    Quay lại giỏ hàng
+                </button>
+                <button class="bg-primary text-on-primary px-10 py-4 rounded-md font-bold uppercase tracking-widest text-sm hover:bg-primary-container active:scale-95 transition-all shadow-lg shadow-primary/10">
+                    Tiếp tục: Thanh toán
+                </button>
+            </div>
+        </div>
+        <!-- Right Column: Order Summary -->
+        <aside class="lg:col-span-4 sticky top-28">
+            <div class="bg-surface-container-low p-8 rounded-md space-y-8">
+                <h2 class="text-xl font-extrabold text-primary border-b border-outline-variant/30 pb-4">TỔNG ĐƠN
+                    HÀNG</h2>
+                <!-- Item List (Compact) -->
+                <div class="space-y-4">
+                    <div class="flex gap-4">
+                        <div class="w-16 h-16 bg-surface-container-highest rounded overflow-hidden flex-shrink-0">
+                            <img class="w-full h-full object-cover"
+                                 data-alt="Close-up of premium roasted dark coffee beans with oily sheen on dark industrial background"
+                                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuDabzU_yzpaXdIiGoVxPEB-TvyX3vW0sKMfV9959c5kTXGImGj1D0V118XG04oFYJIhYrd4bUniT88-qyYkuUVF5gl1NHxX6oGR1V3k8tVMENCpTrNjybjTrO01mA9LmKE1S50EI_-M6YIRC2e7WHjxcacWqMtE9YwUWDcDlz4MRLg4z03K7DUvTOZVhMsJfSsb4A25e5GovIhvCC80-eerkaIyE3C3hCtg1nn3XuzGcqrFO7Vvcp-W8LqnjlqIQ4RE7forWBn93HgF"/>
+                        </div>
+                        <div class="flex-grow">
+                            <h4 class="text-sm font-bold text-primary uppercase leading-tight">Arabica Specialty - Bulk
+                                60kg</h4>
+                            <div class="flex justify-between items-center mt-1">
+                                <span class="text-xs text-on-surface-variant">Số lượng: 05</span>
+                                <span class="text-sm font-bold text-primary">24.500.000 ₫</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="w-16 h-16 bg-surface-container-highest rounded overflow-hidden flex-shrink-0">
+                            <img class="w-full h-full object-cover"
+                                 data-alt="Professional barista pouring water into a large industrial drip coffee machine in a clean modern facility"
+                                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjVPAZEoQVMGV-ifKWrm0ZdtJtxz9GGkOOqho28JGNT5qmsnb6m_vLNZy-yu4qJCZPe8jLG0gwaHy3Cu8rDsaQOwLEYd9yW0YM214Z35g7jnWu3shweXkHySEStJFosTr2voyTXZnDWThgjkpuGI8Uqr5YiPNSCGyiy8Tv59I_mk7R4F4NY2-AWBCfgFEZEPpf-mkt4tsARGi0OXfSOg6SZxigBSb_N_tSA8Vdql1lkjxsLCBxCtvE9aoGGuMWT7AmfKwmm4Vgikxz"/>
+                        </div>
+                        <div class="flex-grow">
+                            <h4 class="text-sm font-bold text-primary uppercase leading-tight">Robusta Honey Process -
+                                10kg</h4>
+                            <div class="flex justify-between items-center mt-1">
+                                <span class="text-xs text-on-surface-variant">Số lượng: 02</span>
+                                <span class="text-sm font-bold text-primary">3.200.000 ₫</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Calculation -->
+                <div class="space-y-4 pt-6 border-t border-outline-variant/30">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-on-surface-variant uppercase tracking-wider">Tạm tính</span>
+                        <span class="font-medium">27.700.000 ₫</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-on-surface-variant uppercase tracking-wider">Phí vận chuyển</span>
+                        <span class="font-medium text-primary">Miễn phí</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-on-surface-variant uppercase tracking-wider">Thuế VAT (10%)</span>
+                        <span class="font-medium">2.770.000 ₫</span>
+                    </div>
+                    <div class="flex justify-between items-end pt-4 border-t-2 border-primary/10">
+                        <span class="text-primary font-bold uppercase tracking-widest text-sm">Tổng cộng</span>
+                        <span class="text-2xl font-extrabold text-primary">30.470.000 ₫</span>
+                    </div>
+                </div>
+                <!-- Discount Code -->
+                <div class="space-y-3">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Mã giảm giá
+                        đối tác</label>
+                    <div class="flex gap-2">
+                        <input class="flex-grow bg-surface-container-lowest border-outline-variant/30 text-xs p-3 rounded"
+                               placeholder="IE-PARTNER-2024" type="text"/>
+                        <button class="bg-on-surface text-on-primary px-4 py-2 text-xs font-bold uppercase rounded">Áp
+                            dụng
+                        </button>
+                    </div>
+                </div>
+                <!-- Trust Badge -->
+                <div class="bg-[#351f1b]/5 p-4 rounded border border-primary/5 flex items-start gap-3">
+                    <span class="material-symbols-outlined text-primary">verified_user</span>
+                    <div>
+                        <p class="text-[10px] font-bold text-primary uppercase">Thanh toán bảo mật</p>
+                        <p class="text-[10px] text-on-surface-variant leading-relaxed">Hệ thống bảo mật tiêu chuẩn ngành
+                            cho giao dịch B2B khối lượng lớn.</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</main>
+<!-- Footer -->
+<footer class="w-full py-12 bg-[#351f1b] dark:bg-[#1a0f0d] flex flex-col items-center justify-center gap-4 px-8 mt-auto">
+    <div class="text-[#ffffff] font-bold uppercase tracking-widest text-lg font-headline">Industrial Excellence</div>
+    <div class="flex flex-wrap justify-center gap-8 text-[#d4c3bf] font-['Work_Sans'] text-xs uppercase tracking-widest">
+        <a class="hover:text-[#ffffff] transition-colors" href="#">Terms of Service</a>
+        <a class="hover:text-[#ffffff] transition-colors underline" href="#">Privacy Policy</a>
+        <a class="hover:text-[#ffffff] transition-colors" href="#">Shipping Specs</a>
+        <a class="hover:text-[#ffffff] transition-colors" href="#">Global Standards</a>
+    </div>
+    <div class="text-[#d4c3bf] font-['Work_Sans'] text-[10px] uppercase tracking-[0.2em] mt-4 opacity-60">
+        © 2024 Industrial Excellence Coffee Corp. All Rights Reserved.
+    </div>
+</footer>
+</body>
+</html>

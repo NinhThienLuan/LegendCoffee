@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Kết quả thanh toán | Industrial Excellence</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;family=Work+Sans:wght@100..900&amp;display=swap"
+          rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+          rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+          rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error": "#ba1a1a",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#d4c3bf",
+                        "tertiary-fixed-dim": "#e4beb2",
+                        "on-secondary-container": "#795950",
+                        "primary-fixed-dim": "#e3beb8",
+                        "primary-container": "#4d3430",
+                        "surface-dim": "#dadad6",
+                        "on-tertiary-container": "#c09d91",
+                        "surface-container": "#eeeeea",
+                        "inverse-primary": "#e3beb8",
+                        "on-surface": "#1a1c1a",
+                        "on-error-container": "#93000a",
+                        "inverse-on-surface": "#f1f1ed",
+                        "on-secondary-fixed-variant": "#5d4037",
+                        "secondary-container": "#fed3c7",
+                        "on-surface-variant": "#504442",
+                        "secondary-fixed": "#ffdbd0",
+                        "surface-tint": "#745853",
+                        "tertiary-container": "#4e352c",
+                        "on-background": "#1a1c1a",
+                        "surface-bright": "#faf9f5",
+                        "on-primary-fixed": "#2b1613",
+                        "primary-fixed": "#ffdad4",
+                        "on-secondary": "#ffffff",
+                        "secondary": "#77574d",
+                        "on-tertiary-fixed": "#2b160f",
+                        "on-tertiary-fixed-variant": "#5b4137",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-container": "#bf9d97",
+                        "surface-variant": "#e2e3df",
+                        "on-secondary-fixed": "#2c160e",
+                        "tertiary-fixed": "#ffdbce",
+                        "inverse-surface": "#2f312e",
+                        "surface-container-low": "#f4f4f0",
+                        "background": "#faf9f5",
+                        "surface": "#faf9f5",
+                        "on-primary-fixed-variant": "#5b403c",
+                        "primary": "#351f1b",
+                        "tertiary": "#352017",
+                        "surface-container-high": "#e8e8e4",
+                        "surface-container-highest": "#e2e3df",
+                        "secondary-fixed-dim": "#e7bdb1",
+                        "on-error": "#ffffff",
+                        "outline": "#827471",
+                        "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Work Sans"],
+                        "label": ["Work Sans"]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        body {
+            font-family: 'Work Sans', sans-serif;
+        }
+
+        h1, h2, h3, .font-headline {
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .bg-industrial-gradient {
+            background: linear-gradient(135deg, #351f1b 0%, #4d3430 100%);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+<header class="bg-[#faf9f5]/80 backdrop-blur-xl fixed top-0 w-full z-50">
+    <nav class="flex justify-between items-center w-full px-8 py-4 max-w-none">
+        <div class="text-xl font-extrabold uppercase tracking-tighter text-[#351f1b] font-headline">
+            Industrial Excellence
+        </div>
+        <div class="hidden md:flex space-x-8 items-center font-headline tracking-tight font-bold">
+            <a class="text-[#504442] hover:text-[#351f1b] transition-colors duration-200" href="#">Inventory</a>
+            <a class="text-[#504442] hover:text-[#351f1b] transition-colors duration-200" href="#">Orders</a>
+            <a class="text-[#504442] hover:text-[#351f1b] transition-colors duration-200" href="#">Logistics</a>
+            <a class="text-[#504442] hover:text-[#351f1b] transition-colors duration-200" href="#">Analytics</a>
+        </div>
+        <div class="flex items-center space-x-6">
+            <span class="material-symbols-outlined text-[#351f1b] cursor-pointer" data-icon="notifications">notifications</span>
+            <span class="material-symbols-outlined text-[#351f1b] cursor-pointer" data-icon="settings">settings</span>
+            <div class="w-10 h-10 rounded-full bg-surface-container overflow-hidden">
+                <img class="w-full h-full object-cover"
+                     data-alt="Professional portrait of a male purchasing manager in a clean corporate attire"
+                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuDeRtrJB_a1871DPwBnWJnLCgWddg049hot_-iwEwI1yZ3ynzHTiFLg0Vj0CwZ1I0_6Gh-R1djl-MoJvA3N8kxfH341Q3_4MsON2J87IXIJI0SX03Yi17sPYjXZZATgW3PkMMsgpw9bSR0dFR8O3JDIYVowfhONhEiQp-TjQhlZlmtJBabke1avSFz3dmHS84y45o1_Q84u7MtZmpS2j-qnBNnGziVolaDN1LGCeHRoc8igmlSP_kG_yjCf2LQPlkAQniY4kMjH_IAm"/>
+            </div>
+        </div>
+    </nav>
+</header>
+<main class="flex-grow pt-24 pb-16 px-6 lg:px-12 flex flex-col items-center">
+    <div class="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <section class="lg:col-span-7 space-y-8">
+            <div class="bg-surface-container-low p-8 md:p-12 rounded-lg">
+                <div class="flex items-center space-x-4 mb-8">
+                    <div class="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-on-primary">
+                        <span class="material-symbols-outlined text-3xl" data-icon="check_circle"
+                              style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl md:text-4xl font-black text-primary tracking-tight leading-none uppercase">
+                            Thanh toán thành công</h1>
+                        <p class="text-on-surface-variant font-medium mt-2">Giao dịch của bạn đã được xác nhận và đang
+                            được xử lý bởi hệ thống logistics.</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-12 border-t border-outline-variant/30 pt-8">
+                    <div>
+                        <span class="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-1 block">Mã tham chiếu giao dịch</span>
+                        <span class="text-lg font-headline font-bold text-primary">#IE-ROAST-2024-8892</span>
+                    </div>
+                    <div>
+                        <span class="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-1 block">Thời gian</span>
+                        <span class="text-lg font-headline font-bold text-primary">24/10/2024 - 14:35 (GMT+7)</span>
+                    </div>
+                    <div>
+                        <span class="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-1 block">Phương thức thanh toán</span>
+                        <span class="text-lg font-headline font-bold text-primary">Chuyển khoản doanh nghiệp</span>
+                    </div>
+                    <div>
+                        <span class="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-1 block">Tổng thanh toán</span>
+                        <span class="text-lg font-headline font-bold text-primary text-2xl">45.500.000 ₫</span>
+                    </div>
+                </div>
+                <div class="mt-12 space-y-4">
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-primary">Trình tự xử lý đơn hàng
+                        (Logistics Pipeline)</h3>
+                    <div class="relative pt-4 pb-8">
+                        <div class="absolute left-4 top-0 bottom-0 w-1 bg-outline-variant/20"></div>
+                        <div class="relative flex items-center space-x-6 mb-8">
+                            <div class="w-8 h-8 rounded-full bg-primary z-10 flex items-center justify-center text-on-primary border-4 border-surface-container-low">
+                                <span class="material-symbols-outlined text-sm" data-icon="done">done</span>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-primary">Thanh toán hoàn tất</p>
+                                <p class="text-xs text-on-surface-variant">Hệ thống đã ghi nhận doanh thu và đối soát mã
+                                    giao dịch.</p>
+                            </div>
+                        </div>
+                        <div class="relative flex items-center space-x-6 mb-8">
+                            <div class="w-8 h-8 rounded-full bg-secondary-container z-10 flex items-center justify-center text-on-secondary-container border-4 border-surface-container-low">
+                                <span class="material-symbols-outlined text-sm animate-pulse" data-icon="coffee_maker">coffee_maker</span>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-primary">Chuẩn bị hạt &amp; Rang xay</p>
+                                <p class="text-xs text-on-surface-variant">Lô hạt cà phê nguyên liệu đang được đưa vào
+                                    máy rang công nghiệp.</p>
+                            </div>
+                        </div>
+                        <div class="relative flex items-center space-x-6">
+                            <div class="w-8 h-8 rounded-full bg-surface-variant z-10 flex items-center justify-center text-on-surface-variant border-4 border-surface-container-low">
+                                <span class="material-symbols-outlined text-sm" data-icon="local_shipping">local_shipping</span>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-on-surface-variant">Vận chuyển B2B</p>
+                                <p class="text-xs text-on-surface-variant/60">Dự kiến bàn giao cho đối vận tải trong 48
+                                    giờ tới.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-4">
+                <button class="bg-industrial-gradient text-on-primary px-8 py-4 rounded-md font-bold tracking-tight hover:opacity-90 transition-all flex items-center justify-center space-x-2 group">
+                    <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform"
+                          data-icon="track_changes">track_changes</span>
+                    <span>Theo dõi đơn hàng</span>
+                </button>
+                <button class="bg-surface-container-highest text-primary px-8 py-4 rounded-md font-bold tracking-tight hover:bg-surface-container-high transition-all flex items-center justify-center space-x-2">
+                    <span class="material-symbols-outlined" data-icon="home">home</span>
+                    <span>Quay lại trang chủ</span>
+                </button>
+            </div>
+        </section>
+        <aside class="lg:col-span-5 space-y-6">
+            <div class="bg-surface-container-lowest p-6 rounded-lg shadow-sm border border-outline-variant/10">
+                <h2 class="text-xl font-black text-primary uppercase tracking-tight mb-6">Chi tiết lô hàng công
+                    nghiệp</h2>
+                <div class="space-y-6">
+                    <div class="flex space-x-4 items-start">
+                        <div class="w-20 h-20 bg-surface-container-low rounded overflow-hidden flex-shrink-0">
+                            <img class="w-full h-full object-cover grayscale contrast-125"
+                                 data-alt="Stacked large burlap sacks of raw coffee beans in a clean industrial warehouse setting"
+                                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQmsnjn4tKShGiWJErLcZirThpE3TaoT3I0MoxfFbfOExeZfMutR91mCTBk02GfSCcqxMz7wAHKK2U6lSPVDoNpulS6FNzGhvQre8Otgdh1qvO0dIcXuI0litdrqgvGshGev1kPY3bgOSod5wk9HlHLm60QISbLQvgzYAyxuQtwk9dAMMZDBzTIXLDY9g86aze-yvM19aznDnIHFYHA2IvdM6BQHAthMNT95aKspCx_l8Fwb_Zc_Dyihhr2_puhFelob0OjgNhPt20"/>
+                        </div>
+                        <div class="flex-grow">
+                            <h4 class="font-bold text-primary leading-tight">Robusta Honey Process - 500kg</h4>
+                            <p class="text-xs text-on-surface-variant mt-1">Sàng 18 | Độ ẩm &lt;12.5% | Tỉ lệ đen vỡ
+                                &lt;0.1%</p>
+                            <p class="text-sm font-bold text-primary mt-2">37.500.000 ₫</p>
+                        </div>
+                    </div>
+                    <div class="flex space-x-4 items-start border-t border-outline-variant/20 pt-6">
+                        <div class="w-20 h-20 bg-surface-container-low rounded overflow-hidden flex-shrink-0">
+                            <img class="w-full h-full object-cover grayscale contrast-125"
+                                 data-alt="Close up of dark roasted coffee beans texture with oily sheen"
+                                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuCke1bJjvPKzi62gl1q97DRPnPkvc0Mfr2BFkNie7fwnDSmAuyXj9ugW_oUo8vovJmHD2VynHI3j8gTJ98p8kSf4U7FXTOYEHbFSpW_vZONR1c1XE1S7fdvxS9JH_7WvWg86QgmdwMnPBAZINJYEv-1Pjpo_xW9qrOOgYAVhlz4Mkurvj9lQPPdCPwsO-44gjdNq0Fjn6I6Uh4PO7-YEmbkvWShdxZcLFMgbeHbaM7_pUQR0roxI2vRaj5QQygt_A6am50HYd-DEJ1G"/>
+                        </div>
+                        <div class="flex-grow">
+                            <h4 class="font-bold text-primary leading-tight">Arabica Cầu Đất (Full Wash) - 100kg</h4>
+                            <p class="text-xs text-on-surface-variant mt-1">Light Roast | Export Quality Standard</p>
+                            <p class="text-sm font-bold text-primary mt-2">8.000.000 ₫</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-8 space-y-3 bg-surface-container-low p-4 rounded">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-on-surface-variant uppercase font-medium">Tạm tính</span>
+                        <span class="font-bold">45.500.000 ₫</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-on-surface-variant uppercase font-medium">Phí Logistics B2B</span>
+                        <span class="font-bold">MIỄN PHÍ</span>
+                    </div>
+                    <div class="flex justify-between text-lg pt-2 border-t border-outline-variant/30">
+                        <span class="text-primary font-black uppercase">Tổng cộng</span>
+                        <span class="font-black text-primary">45.500.000 ₫</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-primary p-6 rounded-lg text-on-primary">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="material-symbols-outlined" data-icon="support_agent">support_agent</span>
+                    <h4 class="font-bold uppercase tracking-widest text-sm">Hỗ trợ doanh nghiệp 24/7</h4>
+                </div>
+                <p class="text-xs text-on-primary-container leading-relaxed">
+                    Mọi thắc mắc về chứng từ thuế, hóa đơn điện tử (e-invoice) hoặc yêu cầu kiểm định CO/CQ, vui lòng
+                    liên hệ trực tiếp với quản lý tài khoản của bạn.
+                </p>
+                <button class="mt-4 w-full py-2 border border-on-primary-container text-on-primary-container text-xs font-bold uppercase tracking-widest hover:bg-on-primary hover:text-primary transition-colors">
+                    Yêu cầu hỗ trợ ngay
+                </button>
+            </div>
+        </aside>
+    </div>
+    <div class="fixed inset-0 bg-background/90 z-40 hidden flex-col items-center justify-center" id="loading-overlay">
+        <div class="w-16 h-16 border-4 border-primary-container border-t-primary rounded-full animate-spin mb-6"></div>
+        <h2 class="font-headline font-black text-2xl text-primary uppercase tracking-tighter">Đang xác thực giao
+            dịch</h2>
+        <p class="text-on-surface-variant font-medium mt-2">Vui lòng không tắt trình duyệt trong quá trình xử lý bảo
+            mật.</p>
+    </div>
+</main>
+<footer class="bg-[#351f1b] w-full py-12">
+    <div class="flex flex-col md:flex-row justify-between items-center px-12 w-full">
+        <div class="mb-6 md:mb-0">
+            <span class="font-manrope font-bold text-[#ffffff] text-lg uppercase tracking-tight">Industrial Excellence</span>
+            <p class="font-work-sans text-xs uppercase tracking-widest text-[#a1928f] mt-2">© 2024 Industrial Excellence
+                Coffee Roasters. B2B Global Logistics Division.</p>
+        </div>
+        <div class="flex flex-wrap justify-center gap-6 font-work-sans text-xs uppercase tracking-widest">
+            <a class="text-[#a1928f] hover:text-[#ffffff] transition-colors" href="#">Terms of Supply</a>
+            <a class="text-[#a1928f] hover:text-[#ffffff] transition-colors" href="#">Quality Assurance</a>
+            <a class="text-[#a1928f] hover:text-[#ffffff] transition-colors" href="#">Privacy Policy</a>
+            <a class="text-[#a1928f] hover:text-[#ffffff] transition-colors" href="#">Contact Support</a>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

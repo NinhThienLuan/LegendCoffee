@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>RoastLogistics - Danh sách đơn hàng</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Work+Sans:wght@300;400;500;600&amp;display=swap"
+          rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+          rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#faf9f5",
+                        "on-tertiary-fixed": "#2b160f",
+                        "on-secondary-fixed-variant": "#5d4037",
+                        "inverse-primary": "#e3beb8",
+                        "surface-bright": "#faf9f5",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#e3beb8",
+                        "on-tertiary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "tertiary-container": "#4e352c",
+                        "primary": "#351f1b",
+                        "secondary-fixed-dim": "#e7bdb1",
+                        "on-secondary-fixed": "#2c160e",
+                        "on-primary-container": "#bf9d97",
+                        "surface-container-high": "#e8e8e4",
+                        "inverse-surface": "#2f312e",
+                        "surface-variant": "#e2e3df",
+                        "on-background": "#1a1c1a",
+                        "surface-tint": "#745853",
+                        "primary-container": "#4d3430",
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#d4c3bf",
+                        "on-tertiary-fixed-variant": "#5b4137",
+                        "secondary-fixed": "#ffdbd0",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#f1f1ed",
+                        "on-primary-fixed-variant": "#5b403c",
+                        "background": "#faf9f5",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed-dim": "#e4beb2",
+                        "surface-container-highest": "#e2e3df",
+                        "surface-container": "#eeeeea",
+                        "surface-dim": "#dadad6",
+                        "secondary-container": "#fed3c7",
+                        "tertiary": "#352017",
+                        "on-surface": "#1a1c1a",
+                        "on-primary-fixed": "#2b1613",
+                        "on-secondary-container": "#795950",
+                        "tertiary-fixed": "#ffdbce",
+                        "outline": "#827471",
+                        "primary-fixed": "#ffdad4",
+                        "on-tertiary-container": "#c09d91",
+                        "on-surface-variant": "#504442",
+                        "error": "#ba1a1a",
+                        "secondary": "#77574d",
+                        "on-secondary": "#ffffff",
+                        "surface-container-low": "#f4f4f0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Work Sans"],
+                        "label": ["Work Sans"]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        body {
+            font-family: 'Work Sans', sans-serif;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Manrope', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<div class="flex flex-col min-h-screen">
+    <!-- TopNavBar - Full Width -->
+    <header class="fixed top-0 right-0 left-0 z-50 bg-[#faf9f5]/80 backdrop-blur-md h-16 border-b border-outline-variant/20">
+        <div class="flex justify-between items-center px-6 md:px-12 h-full w-full max-w-screen-2xl mx-auto">
+            <div class="flex items-center gap-10">
+                <div class="flex flex-col leading-none">
+                    <span class="text-xl font-extrabold tracking-tighter text-[#351f1b] uppercase">Industrial Excellence</span>
+                    <span class="text-[10px] text-on-surface-variant uppercase tracking-[0.2em] font-medium mt-0.5">B2B Coffee Portal</span>
+                </div>
+                <nav class="hidden md:flex gap-8">
+                    <a class="text-[#504442] hover:text-[#351f1b] transition-colors duration-200 text-xs uppercase tracking-widest font-bold flex items-center gap-1.5"
+                       href="#">
+                        <span class="material-symbols-outlined text-lg" data-icon="dashboard">dashboard</span>
+                        Dashboard
+                    </a>
+                    <a class="text-[#351f1b] border-b-2 border-[#351f1b] pb-1 text-xs uppercase tracking-widest font-bold flex items-center gap-1.5"
+                       href="#">
+                        <span class="material-symbols-outlined text-lg" data-icon="inventory"
+                              style="font-variation-settings: 'FILL' 1;">inventory</span>
+                        Đơn hàng
+                    </a>
+                    <a class="text-[#504442] hover:text-[#351f1b] transition-colors duration-200 text-xs uppercase tracking-widest font-bold flex items-center gap-1.5"
+                       href="#">
+                        <span class="material-symbols-outlined text-lg" data-icon="payments">payments</span>
+                        Thanh toán
+                    </a>
+                    <a class="text-[#504442] hover:text-[#351f1b] transition-colors duration-200 text-xs uppercase tracking-widest font-bold flex items-center gap-1.5"
+                       href="#">
+                        <span class="material-symbols-outlined text-lg" data-icon="local_shipping">local_shipping</span>
+                        Kho vận
+                    </a>
+                </nav>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="relative hidden sm:block">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm"
+                          data-icon="search">search</span>
+                    <input class="bg-surface-container-low border-none rounded-md pl-10 pr-4 py-1.5 text-sm focus:ring-1 focus:ring-primary w-64"
+                           placeholder="Tìm kiếm đơn hàng..." type="text"/>
+                </div>
+                <button class="text-[#351f1b] p-2 hover:bg-surface-container-high rounded-full transition-colors relative">
+                    <span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+                    <span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-surface"></span>
+                </button>
+                <button class="flex items-center gap-2 pl-2 border-l border-outline-variant/30 ml-2">
+                    <div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container">
+                        <span class="material-symbols-outlined text-lg" data-icon="person">person</span>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </header>
+    <!-- Main Content - Full Width -->
+    <main class="mt-16 p-6 md:p-12 flex-1">
+        <div class="max-w-7xl mx-auto space-y-8">
+            <!-- Header Section with Stats -->
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <div class="space-y-2 lg:col-span-4">
+                    <h2 class="text-4xl font-extrabold tracking-tight text-primary uppercase">Quản lý Đơn hàng</h2>
+                    <p class="text-on-surface-variant font-body">Theo dõi quy trình từ rang xay đến vận chuyển quy mô
+                        công nghiệp.</p>
+                    <div class="pt-4 flex gap-3">
+                        <button class="bg-primary text-on-primary px-6 py-2.5 rounded-md text-sm font-bold tracking-tight hover:bg-primary-container transition-colors active:scale-95 duration-150 shadow-sm">
+                            Yêu cầu báo giá mới
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- Filter & Search Bar -->
+            <div class="bg-surface-container-low p-4 rounded-lg flex flex-col md:flex-row gap-4 items-center justify-between">
+                <div class="flex flex-wrap gap-2">
+                    <button class="bg-primary text-on-primary px-4 py-2 rounded-md text-sm font-semibold">Tất cả
+                    </button>
+                    <button class="bg-surface-container-lowest text-on-surface-variant border border-outline-variant/10 hover:bg-surface-variant px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                        Đang rang
+                    </button>
+                    <button class="bg-surface-container-lowest text-on-surface-variant border border-outline-variant/10 hover:bg-surface-variant px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                        Đang giao
+                    </button>
+                    <button class="bg-surface-container-lowest text-on-surface-variant border border-outline-variant/10 hover:bg-surface-variant px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                        Hoàn tất
+                    </button>
+                </div>
+                <div class="flex gap-2 w-full md:w-auto">
+                    <div class="relative flex-1">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm"
+                              data-icon="filter_list">filter_list</span>
+                        <select class="bg-surface-container-lowest border-none rounded-md pl-10 pr-8 py-2 text-sm focus:ring-1 focus:ring-primary w-full md:w-48 appearance-none ring-1 ring-outline-variant/20">
+                            <option>Thời gian: Gần nhất</option>
+                            <option>Thời gian: Tháng này</option>
+                            <option>Giá trị: Cao - Thấp</option>
+                        </select>
+                    </div>
+                    <button class="bg-surface-container-highest p-2 rounded-md hover:bg-outline-variant/30 transition-colors border border-outline-variant/10">
+                        <span class="material-symbols-outlined text-on-surface"
+                              data-icon="file_download">file_download</span>
+                    </button>
+                </div>
+            </div>
+            <!-- Order Table -->
+            <div class="bg-surface-container-lowest rounded-xl overflow-hidden border border-outline-variant/10 shadow-sm">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                        <tr class="bg-surface-container-low text-on-surface-variant border-b border-outline-variant/10">
+                            <th class="px-6 py-4 text-xs font-bold uppercase tracking-widest">Mã đơn</th>
+                            <th class="px-6 py-4 text-xs font-bold uppercase tracking-widest">Ngày đặt</th>
+                            <th class="px-6 py-4 text-xs font-bold uppercase tracking-widest">Sản phẩm</th>
+                            <th class="px-6 py-4 text-xs font-bold uppercase tracking-widest text-right">Tổng tiền</th>
+                            <th class="px-6 py-4 text-xs font-bold uppercase tracking-widest text-center">Trạng thái
+                            </th>
+                            <th class="px-6 py-4 text-xs font-bold uppercase tracking-widest"></th>
+                        </tr>
+                        </thead>
+                        <tbody class="divide-y divide-outline-variant/5">
+                        <!-- Row 1 -->
+                        <tr class="hover:bg-surface-container-low transition-colors group">
+                            <td class="px-6 py-5 font-bold text-primary">#RL-90241</td>
+                            <td class="px-6 py-5 text-sm text-on-surface-variant">14/05/2024</td>
+                            <td class="px-6 py-5">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded bg-surface-container-high overflow-hidden flex-shrink-0">
+                                        <img class="w-full h-full object-cover"
+                                             data-alt="close-up of raw high quality green arabica coffee beans ready for industrial roasting process in a warehouse"
+                                             src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgbl51T99b2sxsCER-PtKpwWUibSYHzcxjPaHif1LtbC1b9JVGfM-kqb2sfP37b3IVhzpum6cBtpUZ_OH6wo_uFSWA5NFLyvnvwlevY8lzCeI28zi-9aDG07AB0hK_wPzGGQmunnAsFNpPCi_KWsNfj0ZPdDnAC9BJM7vtdw2mZkpOgdGS7iNQqf1o4apIODBCNDB0uL0-7U6ix-mkAs4HWV-YeE-PvsWH7JdMWeMyzjiXF-V04BQ3cuNDJiIZaAvd6sWkfUWVKAQI"/>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-bold text-on-surface">Arabica Cầu Đất G1</p>
+                                        <p class="text-xs text-on-surface-variant">500kg • Rang đậm</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-5 text-right font-bold text-primary">125.000.000 ₫</td>
+                            <td class="px-6 py-5">
+                                <div class="flex justify-center">
+                                    <span class="bg-[#fed3c7] text-[#795950] px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-widest">Đang rang</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-5 text-right">
+                                <button class="text-on-surface-variant hover:text-primary transition-colors">
+                                    <span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+                                </button>
+                            </td>
+                        </tr>
+                        <!-- Row 2 -->
+                        <tr class="hover:bg-surface-container-low transition-colors group">
+                            <td class="px-6 py-5 font-bold text-primary">#RL-90238</td>
+                            <td class="px-6 py-5 text-sm text-on-surface-variant">12/05/2024</td>
+                            <td class="px-6 py-5">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded bg-surface-container-high overflow-hidden flex-shrink-0">
+                                        <img class="w-full h-full object-cover"
+                                             data-alt="large burlap sack filled with roasted coffee beans in a professional industrial factory setting"
+                                             src="https://lh3.googleusercontent.com/aida-public/AB6AXuCod4HM6VekqoBqHiD2aP17M3hFWtuzzDb-S4pLgldsX7DP8ai67fgsPq5t1PjXacxqL92XXjelUU2lcOuD7GFahb5_3lSVzD3D12zZhNg6DlUkg1zDdY37Ol1KPfPrm3Z2P08X6MZose2J7Zm7NLp_hkZ5xqH0iYP-X9lOq8IcbdxL5bkOyY-TV5es2lu7VYMzXM-a4N9TzF4ZqP_GM5P7e_XUYvBcA-pgv2FjT7EdExB9dR3DgGqxQm1iATeZ8V8tK1fCa-23eqmk"/>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-bold text-on-surface">Robusta Buôn Ma Thuột</p>
+                                        <p class="text-xs text-on-surface-variant">1.2 Tấn • Rang vừa</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-5 text-right font-bold text-primary">240.000.000 ₫</td>
+                            <td class="px-6 py-5">
+                                <div class="flex justify-center">
+                                    <span class="bg-surface-container-high text-on-surface-variant px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-widest">Đang xử lý</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-5 text-right">
+                                <button class="text-on-surface-variant hover:text-primary transition-colors">
+                                    <span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+                                </button>
+                            </td>
+                        </tr>
+                        <!-- Row 3 -->
+                        <tr class="hover:bg-surface-container-low transition-colors group">
+                            <td class="px-6 py-5 font-bold text-primary">#RL-90235</td>
+                            <td class="px-6 py-5 text-sm text-on-surface-variant">10/05/2024</td>
+                            <td class="px-6 py-5">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded bg-surface-container-high overflow-hidden flex-shrink-0">
+                                        <img class="w-full h-full object-cover"
+                                             data-alt="industrial coffee packaging line with bags of coffee moving on a conveyor belt in a clean factory"
+                                             src="https://lh3.googleusercontent.com/aida-public/AB6AXuALA_6f1554SGcTg18egV31Tpo22RguEf9U7z-8FAljlmaMZkfZL1COD7q7eBvxjdpnc3ju3BjIhQ5Yp7d6zqFdfAS3ZYRl89fz9AKfjqmnwPv-v5MgHVq3fFBnSebpm_nhZjLhekU9KBEGQU1YyJANMHq5klYXgkvCaZXm9dY6Kp06CEMwRejA91_G5Cqn0W2yx-UEgCDsHlEmGsKAsk6uWRlNSvx1Y711lRSvKwSjaGExZSlmtLd6DjmQsbCpZbMT0ubszt_3WHZE"/>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-bold text-on-surface">Cold Brew Blend Special</p>
+                                        <p class="text-xs text-on-surface-variant">200kg • Mix Arabica/Robusta</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-5 text-right font-bold text-primary">58.000.000 ₫</td>
+                            <td class="px-6 py-5">
+                                <div class="flex justify-center">
+                                    <span class="bg-primary text-on-primary px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-widest">Đang giao</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-5 text-right">
+                                <button class="text-on-surface-variant hover:text-primary transition-colors">
+                                    <span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+                                </button>
+                            </td>
+                        </tr>
+                        <!-- Row 4 -->
+                        <tr class="hover:bg-surface-container-low transition-colors group">
+                            <td class="px-6 py-5 font-bold text-primary">#RL-90230</td>
+                            <td class="px-6 py-5 text-sm text-on-surface-variant">08/05/2024</td>
+                            <td class="px-6 py-5">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded bg-surface-container-high overflow-hidden flex-shrink-0">
+                                        <img class="w-full h-full object-cover"
+                                             data-alt="steaming hot black coffee in a professional cupping bowl on a wooden table with industrial roast equipment background"
+                                             src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCvqkQd0-Zsk17Xd-Uo5PpTkGfsfmH99YVyDBgZcqLrjU0UvVtmIYqvlHaroE7Q8tcZIa8gM-tVTro_bU5tezHvEE8a7ulwmvg3QOztkcxBrO9ea9wZgEW_9Tpr3XvtZLIA5MwBUN39LsOmbxilaEjAPi1LvSH4iiz1dBhKKUYJCcgHMTcBJtEvtsYecpQ0EnsA1TsTy2DPSFgHgPfuYPKn3WZrSo1L4FVU0r_hJGOwHu3WkTzWlhkMc3FJ-cjNRhJtWPOu4QNgx4e"/>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-bold text-on-surface">Espresso Premium Mix</p>
+                                        <p class="text-xs text-on-surface-variant">800kg • Đóng gói 5kg</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-5 text-right font-bold text-primary">192.000.000 ₫</td>
+                            <td class="px-6 py-5">
+                                <div class="flex justify-center">
+                                    <span class="bg-[#e2e3df] text-[#504442] px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-widest">Hoàn tất</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-5 text-right">
+                                <button class="text-on-surface-variant hover:text-primary transition-colors">
+                                    <span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="p-4 border-t border-outline-variant/10 flex flex-col sm:flex-row justify-between items-center bg-surface-container-low gap-4">
+                    <span class="text-xs text-on-surface-variant font-medium">Hiển thị 1 - 4 trong số 248 đơn hàng</span>
+                    <div class="flex gap-2">
+                        <button class="p-2 border border-outline-variant/30 rounded hover:bg-surface-container-lowest transition-colors">
+                            <span class="material-symbols-outlined text-sm" data-icon="chevron_left">chevron_left</span>
+                        </button>
+                        <button class="px-3 py-1 bg-primary text-on-primary rounded text-xs font-bold">1</button>
+                        <button class="px-3 py-1 hover:bg-surface-container-lowest rounded text-xs font-medium border border-transparent hover:border-outline-variant/30">
+                            2
+                        </button>
+                        <button class="px-3 py-1 hover:bg-surface-container-lowest rounded text-xs font-medium border border-transparent hover:border-outline-variant/30">
+                            3
+                        </button>
+                        <button class="p-2 border border-outline-variant/30 rounded hover:bg-surface-container-lowest transition-colors">
+                            <span class="material-symbols-outlined text-sm"
+                                  data-icon="chevron_right">chevron_right</span></button>
+                    </div>
+                </div>
+            </div>
+            <!-- Asymmetric Featured Section (Bento Style) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="md:col-span-2 relative overflow-hidden rounded-xl h-64 bg-primary p-8 flex flex-col justify-end group shadow-md">
+                    <div class="absolute inset-0 opacity-40 group-hover:scale-105 transition-transform duration-700">
+                        <img class="w-full h-full object-cover"
+                             data-alt="abstract artistic close-up of dark roasted coffee beans with rich oil sheen and dramatic lighting"
+                             src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVsAnkflU2aFpOOsVhuVniQYhIFuO27h1VY7510VjfrgZw3ePekUHSVAZkFtjdXNDO_ibqwirH16SGr_rkJH2c8j34cjcFY2317G89Bu8u0ifNMUKzk8JW7j2xP_oZsqfvw8sC4fAlvYH-Y5MQrNKadAnaYlEY1jtBs4WJ-gGOgxixEPNCyx5-9rqygrBMD6NZmzK0xK1u3VU9rstzNVw953TzUATwSbSz6fithEw19KgwLsSvjLZjbvAxXRLpCHJp7D_Z10ozbRZw"/>
+                        <div class="absolute inset-0 bg-gradient-to-t from-primary via-primary/60 to-transparent"></div>
+                    </div>
+                    <div class="relative z-10">
+                        <h3 class="text-2xl font-extrabold text-on-primary mb-2">QUY TRÌNH RANG TỰ ĐỘNG</h3>
+                        <p class="text-on-primary/70 text-sm max-w-md">Theo dõi chi tiết biểu đồ nhiệt và thời gian rang
+                            cho từng mẻ hàng trong thời gian thực thông qua hệ thống cảm biến IoT.</p>
+                        <button class="mt-4 text-xs font-bold uppercase tracking-widest text-on-primary border-b border-on-primary/30 pb-1 hover:border-on-primary transition-all">
+                            Chi tiết hệ thống
+                        </button>
+                    </div>
+                </div>
+                <div class="bg-surface-container-low rounded-xl p-8 flex flex-col justify-center border border-outline-variant/10 shadow-sm">
+                    <span class="material-symbols-outlined text-primary text-4xl mb-4"
+                          data-icon="verified">verified</span>
+                    <h3 class="text-lg font-bold text-primary mb-2">Chứng nhận B2B</h3>
+                    <p class="text-on-surface-variant text-sm">Toàn bộ đơn hàng đều đi kèm chứng chỉ nguồn gốc (CO) và
+                        kiểm định chất lượng định kỳ (CQ) theo tiêu chuẩn quốc tế.</p>
+                    <a class="mt-4 text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-1"
+                       href="#">
+                        Xem các chứng chỉ <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- Footer -->
+    <footer class="bg-[#351f1b] w-full py-16 px-8 mt-12">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 border-b border-white/10 pb-12 mb-12">
+                <div class="col-span-1 md:col-span-2 space-y-6">
+                    <div class="flex flex-col leading-none">
+                        <h4 class="font-manrope font-bold text-[#ffffff] text-2xl tracking-tighter uppercase">Industrial
+                            Excellence</h4>
+                        <span class="text-[#d4c3bf] text-[10px] uppercase tracking-[0.3em] font-medium mt-1">Nâng tầm chuỗi giá trị cà phê</span>
+                    </div>
+                    <p class="text-[#d4c3bf] text-sm max-w-md font-work-sans leading-relaxed opacity-80">Nền tảng cung
+                        cấp giải pháp chuỗi cung ứng cà phê chuyên nghiệp cho doanh nghiệp toàn cầu, từ khâu tuyển chọn
+                        nguyên liệu đến sản xuất quy mô công nghiệp.</p>
+                </div>
+                <div class="space-y-4">
+                    <h5 class="text-white font-bold text-xs uppercase tracking-widest">Hỗ trợ &amp; Chính sách</h5>
+                    <nav class="flex flex-col gap-3">
+                        <a class="text-[#d4c3bf] text-xs opacity-70 hover:opacity-100 transition-opacity" href="#">Trung
+                            tâm trợ giúp</a>
+                        <a class="text-[#d4c3bf] text-xs opacity-70 hover:opacity-100 transition-opacity" href="#">Chính
+                            sách bảo mật</a>
+                        <a class="text-[#d4c3bf] text-xs opacity-70 hover:opacity-100 transition-opacity" href="#">Điều
+                            khoản dịch vụ</a>
+                        <a class="text-[#d4c3bf] text-xs opacity-70 hover:opacity-100 transition-opacity" href="#">Chính
+                            sách vận chuyển</a>
+                    </nav>
+                </div>
+                <div class="space-y-4">
+                    <h5 class="text-white font-bold text-xs uppercase tracking-widest">Liên kết nhanh</h5>
+                    <nav class="flex flex-col gap-3">
+                        <a class="text-[#d4c3bf] text-xs opacity-70 hover:opacity-100 transition-opacity" href="#">Về
+                            chúng tôi</a>
+                        <a class="text-[#d4c3bf] text-xs opacity-70 hover:opacity-100 transition-opacity" href="#">Kiến
+                            thức cà phê</a>
+                        <a class="text-[#d4c3bf] text-xs opacity-70 hover:opacity-100 transition-opacity" href="#">Hợp
+                            tác đối tác</a>
+                        <a class="text-[#d4c3bf] text-xs opacity-70 hover:opacity-100 transition-opacity" href="#">Liên
+                            hệ báo giá</a>
+                    </nav>
+                </div>
+            </div>
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="font-work-sans text-xs text-[#d4c3bf] opacity-60">© 2024 Industrial Excellence. All rights
+                    reserved.</p>
+                <div class="flex gap-6">
+                    <a class="text-[#d4c3bf] opacity-60 hover:opacity-100" href="#"><span
+                            class="material-symbols-outlined text-lg" data-icon="language">language</span></a>
+                    <a class="text-[#d4c3bf] opacity-60 hover:opacity-100" href="#"><span
+                            class="material-symbols-outlined text-lg" data-icon="share">share</span></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+<!-- Mobile Navigation (Only for small screens) -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-surface-container-low border-t border-outline-variant/10 px-6 py-3 flex justify-between items-center z-50">
+    <a class="flex flex-col items-center gap-1 text-on-surface-variant" href="#">
+        <span class="material-symbols-outlined text-xl" data-icon="dashboard">dashboard</span>
+        <span class="text-[10px] font-bold uppercase">Home</span>
+    </a>
+    <a class="flex flex-col items-center gap-1 text-primary" href="#">
+        <span class="material-symbols-outlined text-xl" data-icon="inventory"
+              style="font-variation-settings: 'FILL' 1;">inventory</span>
+        <span class="text-[10px] font-bold uppercase">Orders</span>
+    </a>
+    <a class="flex flex-col items-center gap-1 text-on-surface-variant" href="#">
+        <span class="material-symbols-outlined text-xl" data-icon="payments">payments</span>
+        <span class="text-[10px] font-bold uppercase">Pay</span>
+    </a>
+    <a class="flex flex-col items-center gap-1 text-on-surface-variant" href="#">
+        <span class="material-symbols-outlined text-xl" data-icon="settings">settings</span>
+        <span class="text-[10px] font-bold uppercase">Settings</span>
+    </a>
+</nav>
+</body>
+</html>

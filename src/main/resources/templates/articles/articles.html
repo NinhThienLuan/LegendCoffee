@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>RoastLogistics - Kiến thức cà phê &amp; Xu hướng B2B</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&amp;family=Work+Sans:wght@300;400;500;600&amp;display=swap"
+          rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+          rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+          rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#faf9f5",
+                        "on-tertiary-fixed": "#2b160f",
+                        "on-secondary-fixed-variant": "#5d4037",
+                        "inverse-primary": "#e3beb8",
+                        "surface-bright": "#faf9f5",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#e3beb8",
+                        "on-tertiary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "tertiary-container": "#4e352c",
+                        "primary": "#351f1b",
+                        "secondary-fixed-dim": "#e7bdb1",
+                        "on-secondary-fixed": "#2c160e",
+                        "on-primary-container": "#bf9d97",
+                        "surface-container-high": "#e8e8e4",
+                        "inverse-surface": "#2f312e",
+                        "surface-variant": "#e2e3df",
+                        "on-background": "#1a1c1a",
+                        "surface-tint": "#745853",
+                        "primary-container": "#4d3430",
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#d4c3bf",
+                        "on-tertiary-fixed-variant": "#5b4137",
+                        "secondary-fixed": "#ffdbd0",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#f1f1ed",
+                        "on-primary-fixed-variant": "#5b403c",
+                        "background": "#faf9f5",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed-dim": "#e4beb2",
+                        "surface-container-highest": "#e2e3df",
+                        "surface-container": "#eeeeea",
+                        "surface-dim": "#dadad6",
+                        "secondary-container": "#fed3c7",
+                        "tertiary": "#352017",
+                        "on-surface": "#1a1c1a",
+                        "on-primary-fixed": "#2b1613",
+                        "on-secondary-container": "#795950",
+                        "tertiary-fixed": "#ffdbce",
+                        "outline": "#827471",
+                        "primary-fixed": "#ffdad4",
+                        "on-tertiary-container": "#c09d91",
+                        "on-surface-variant": "#504442",
+                        "error": "#ba1a1a",
+                        "secondary": "#77574d",
+                        "on-secondary": "#ffffff",
+                        "surface-container-low": "#f4f4f0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Work Sans"],
+                        "label": ["Work Sans"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .article-content p {
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .article-content h2 {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            color: #351f1b;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- Top Navigation -->
+<nav class="fixed top-0 w-full z-50 bg-[#faf9f5]/80 dark:bg-[#351f1b]/80 backdrop-blur-md">
+    <div class="flex justify-between items-center px-8 h-16 w-full max-w-screen-2xl mx-auto">
+        <div class="text-xl font-bold tracking-tighter text-[#351f1b] dark:text-[#faf9f5] font-headline">
+            Industrial Excellence
+        </div>
+        <div class="hidden md:flex items-center space-gap-8 gap-8">
+            <a class="font-label text-sm uppercase tracking-wider text-[#504442] dark:text-[#d4c3bf] hover:text-[#351f1b] transition-colors duration-200"
+               href="#">Đơn hàng</a>
+            <a class="font-label text-sm uppercase tracking-wider text-[#351f1b] dark:text-[#ffffff] border-b-2 border-[#351f1b] dark:border-[#4d3430] pb-1"
+               href="#">Tin tức</a>
+            <a class="font-label text-sm uppercase tracking-wider text-[#504442] dark:text-[#d4c3bf] hover:text-[#351f1b] transition-colors duration-200"
+               href="#">Kiến thức</a>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="material-symbols-outlined text-[#351f1b] cursor-pointer" data-icon="notifications">notifications</span>
+            <span class="material-symbols-outlined text-[#351f1b] cursor-pointer" data-icon="account_circle">account_circle</span>
+        </div>
+    </div>
+</nav>
+<main class="pt-16">
+    <!-- Hero Header Section -->
+    <header class="relative w-full h-[716px] flex items-end pb-16 bg-primary-container overflow-hidden">
+        <img alt="Industrial Roasting Facility"
+             class="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-multiply"
+             data-alt="dramatic wide shot of a modern industrial coffee roasting facility with large steel machinery and warm amber lighting on coffee beans"
+             src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVmpam8rBEQaGz7n9lgu_Ah767F2ji_gFYQMLLXJdcTnXLlJZWyHjUc9yrT0KA-X5jG-z_KMs2cVFwz8ft1yIBPATU6XuKpH96ckMRUxn57EEfzu3ZxaZH_9fP8tJW8ET4r7udnxkPMKErF1RELS4dkppibxWYpHnDF0mVWPVeir1bMdg1mGSJK5wZJi_5ciTQaalpQmXyU5Bxq4qELyT9-2rS126-vIswxx87vmsDJuSsU2jkreBoA4XFHP4nO6-QkgVxbtgzRqMk"/>
+        <div class="relative w-full max-w-5xl mx-auto px-8 z-10">
+            <div class="flex flex-wrap gap-2 mb-6">
+                <span class="bg-surface-container-lowest text-primary px-3 py-1 text-xs font-semibold tracking-widest uppercase rounded-sm">Quy trình công nghiệp</span>
+                <span class="bg-primary text-on-primary px-3 py-1 text-xs font-semibold tracking-widest uppercase rounded-sm">Xu hướng B2B</span>
+            </div>
+            <h1 class="text-5xl md:text-7xl font-headline font-extrabold text-white leading-tight tracking-tighter max-w-4xl">
+                TỐI ƯU HÓA CHUỖI CUNG ỨNG CÀ PHÊ TRONG KỶ NGUYÊN SỐ
+            </h1>
+            <div class="mt-8 flex items-center gap-6 text-on-primary-container font-medium">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+                    <span class="text-sm">24 Tháng 5, 2024</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined" data-icon="schedule">schedule</span>
+                    <span class="text-sm">12 phút đọc</span>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Article Layout -->
+    <section class="max-w-screen-2xl mx-auto px-8 py-20 grid grid-cols-1 lg:grid-cols-12 gap-16">
+        <!-- Left Sidebar: Interaction & Metadata -->
+        <aside class="hidden lg:block lg:col-span-1 border-r border-outline-variant/30 pr-8">
+            <div class="sticky top-28 flex flex-col items-center gap-8 text-on-surface-variant">
+                <div class="flex flex-col items-center gap-2 cursor-pointer group">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center bg-surface-container hover:bg-primary hover:text-white transition-all duration-300">
+                        <span class="material-symbols-outlined" data-icon="favorite">favorite</span>
+                    </div>
+                    <span class="text-xs font-bold">1.2k</span>
+                </div>
+                <div class="flex flex-col items-center gap-2 cursor-pointer group">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center bg-surface-container hover:bg-primary hover:text-white transition-all duration-300">
+                        <span class="material-symbols-outlined" data-icon="mode_comment">mode_comment</span>
+                    </div>
+                    <span class="text-xs font-bold">48</span>
+                </div>
+                <div class="flex flex-col items-center gap-2 cursor-pointer group">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center bg-surface-container hover:bg-primary hover:text-white transition-all duration-300">
+                        <span class="material-symbols-outlined" data-icon="share">share</span>
+                    </div>
+                    <span class="text-xs font-bold">Chia sẻ</span>
+                </div>
+            </div>
+        </aside>
+        <!-- Main Content Canvas -->
+        <article class="lg:col-span-7 article-content">
+            <p class="text-xl font-medium text-on-surface-variant mb-12 border-l-4 border-primary pl-6">
+                Trong bối cảnh thị trường cà phê toàn cầu đang đối mặt với những biến động về khí hậu và logistics, việc
+                áp dụng công nghệ vào quy trình rang xay và vận chuyển không còn là lựa chọn, mà là yêu cầu sống còn cho
+                các doanh nghiệp B2B.
+            </p>
+            <p>Ngành công nghiệp cà phê đang trải qua một sự chuyển mình mạnh mẽ. Từ những xưởng rang thủ công nhỏ lẻ,
+                chúng ta đang chứng kiến sự trỗi dậy của các trung tâm điều hành thông minh, nơi mà dữ liệu đóng vai trò
+                quan trọng không kém gì kỹ thuật của thợ rang.</p>
+            <h2>Sự Trỗi Dậy Của Công Nghệ Rang Thông Minh</h2>
+            <p>Công nghệ rang hiện đại cho phép kiểm soát nhiệt độ và lưu lượng khí một cách chính xác đến từng mili
+                giây. Các hệ thống phần mềm quản lý như RoastLogistics cung cấp biểu đồ thời gian thực, giúp đảm bảo
+                tính nhất quán của từng lô hàng, bất kể quy mô sản xuất lên đến hàng chục tấn mỗi ngày.</p>
+            <div class="my-12 bg-surface-container-low p-2">
+                <img alt="Data Visualization in Roasting"
+                     class="w-full h-auto grayscale hover:grayscale-0 transition-all duration-700"
+                     data-alt="close-up of a digital screen showing complex roasting curves and technical data points in a professional industrial laboratory environment"
+                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbPkwXWBDLo-P6UWlzKZhnuKEp-VJiKLGLhDNwQk7wGg8_OjLehm_WR3SqOhCPTdwyfTOZSmBp5bBy_BgGcyQhwfLYKk1Eh1didlOC1yvVi6hADXDdDTCkNzNmRpSUHHpbdb-MbWCk7uYiYCpySlwXzVqBSNB7FqmHmnl673sPwaQ_G3KP35aPuslrY-5JayMgccnVhQ0uFNuP2PjwyhiuQtGBJDqhA8gGsGlyVR3tKMt_XvhM0oat94ER57JoHGQngoKgZrEnx-my"/>
+                <p class="text-xs text-on-surface-variant mt-4 px-4 italic">Biểu đồ phân tích độ ẩm và phản ứng Maillard
+                    trong quy trình rang công nghiệp.</p>
+            </div>
+            <h2>Logistics: Mắt Xích Quyết Định Giá Thành</h2>
+            <p>Chi phí vận chuyển chiếm tới 15-20% giá thành của một kilogram cà phê xanh. Việc tối ưu hóa lộ trình và
+                quản lý kho vận thông minh giúp giảm thiểu lãng phí và đảm bảo độ tươi mới của hạt khi đến tay khách
+                hàng B2B.</p>
+            <p>Chúng tôi nhận thấy rằng, các doanh nghiệp sử dụng hệ thống tracking thời gian thực có khả năng phản ứng
+                nhanh hơn 40% trước các sự cố trong chuỗi cung ứng so với các mô hình truyền thống.</p>
+            <div class="mt-16 pt-8 border-t border-outline-variant/30">
+                <h3 class="font-headline font-bold text-lg mb-4">Thẻ bài viết</h3>
+                <div class="flex flex-wrap gap-3">
+                    <span class="px-4 py-2 bg-surface-container text-on-surface-variant text-sm font-medium rounded-full hover:bg-surface-container-high transition-colors">Logistics</span>
+                    <span class="px-4 py-2 bg-surface-container text-on-surface-variant text-sm font-medium rounded-full hover:bg-surface-container-high transition-colors">B2B Strategy</span>
+                    <span class="px-4 py-2 bg-surface-container text-on-surface-variant text-sm font-medium rounded-full hover:bg-surface-container-high transition-colors">Công nghệ rang</span>
+                    <span class="px-4 py-2 bg-surface-container text-on-surface-variant text-sm font-medium rounded-full hover:bg-surface-container-high transition-colors">Thị trường 2024</span>
+                </div>
+            </div>
+            <!-- Comment Section -->
+            <section class="mt-20">
+                <h3 class="font-headline font-bold text-2xl mb-8">Bình luận (48)</h3>
+                <div class="space-y-8">
+                    <div class="flex gap-4">
+                        <div class="w-10 h-10 rounded-full bg-surface-container-high flex-shrink-0"></div>
+                        <div class="flex-grow">
+                            <div class="bg-surface-container-low p-6 rounded-lg">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="font-bold text-sm">Trần Anh Quân</span>
+                                    <span class="text-xs text-on-surface-variant">2 giờ trước</span>
+                                </div>
+                                <p class="text-sm text-on-surface-variant mb-0 leading-relaxed">Bài viết rất chuyên sâu.
+                                    Tôi đặc biệt quan tâm đến phần tối ưu hóa nhiệt độ trong rang công nghiệp. Mong có
+                                    thêm bài viết chi tiết về phần cứng sensor.</p>
+                            </div>
+                            <button class="mt-2 text-xs font-bold text-primary px-2 py-1">Trả lời</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-12 bg-surface-container p-8 rounded-lg">
+                    <h4 class="font-bold text-sm mb-4">Gửi bình luận của bạn</h4>
+                    <textarea
+                            class="w-full bg-surface border-none focus:ring-1 focus:ring-primary p-4 rounded-md text-sm h-32 mb-4"
+                            placeholder="Viết suy nghĩ của bạn..."></textarea>
+                    <button class="bg-primary text-white px-8 py-3 font-bold text-sm uppercase tracking-widest rounded-md hover:bg-primary-container transition-colors">
+                        Gửi bình luận
+                    </button>
+                </div>
+            </section>
+        </article>
+        <!-- Right Sidebar: Related News -->
+        <aside class="lg:col-span-4 space-y-12">
+            <div class="bg-surface-container-low p-8 rounded-lg">
+                <h3 class="font-headline font-extrabold text-xl mb-6 tracking-tight">Bài viết liên quan</h3>
+                <div class="space-y-8">
+                    <a class="group block" href="#">
+                        <span class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-2 block">Thị trường</span>
+                        <h4 class="font-bold text-on-surface group-hover:text-primary transition-colors leading-snug">Dự
+                            báo giá cà phê Robusta thế giới trong quý III/2024</h4>
+                    </a>
+                    <a class="group block" href="#">
+                        <span class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-2 block">Kỹ thuật</span>
+                        <h4 class="font-bold text-on-surface group-hover:text-primary transition-colors leading-snug">
+                            Quy trình kiểm định chất lượng hạt xanh (SCA Standard)</h4>
+                    </a>
+                    <a class="group block" href="#">
+                        <span class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-2 block">Logistics</span>
+                        <h4 class="font-bold text-on-surface group-hover:text-primary transition-colors leading-snug">
+                            Giảm thiểu phát thải Carbon trong vận tải đường biển</h4>
+                    </a>
+                </div>
+            </div>
+            <div class="relative group cursor-pointer overflow-hidden rounded-lg">
+                <img alt="Request a Quote"
+                     class="w-full h-80 object-cover brightness-50 group-hover:scale-105 transition-transform duration-700"
+                     data-alt="professional portrait of a coffee roaster in a clean industrial warehouse looking at high quality green beans"
+                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrgzm95n77LeNBOVQhN7Dei7O8j87zqPNFzs0vtUiD9GJ0aNv5ld1E7s4ZiJI76wtYS7meuO8i2UqUwnlE1TMTtac1GsDye25WTzV_pXVAMVIvwvHlwg0QtyAXPAwoPcoX_HA6Ip3duQ3RGb9UZU64oIYCHsOJOto7ai19STqOmdJz3uOzW0YEd8cga9TCD7BIwKl8izA1XdJQtDADbcKhYAIQTV39FzyVCxemM9mBkeojhlWt7hLZOOM6g5LxrUg6Mv82ku_B-cBz"/>
+                <div class="absolute inset-0 flex flex-col justify-end p-8">
+                    <h3 class="text-2xl font-headline font-bold text-white mb-2">Bắt đầu tối ưu hóa ngay hôm nay</h3>
+                    <p class="text-sm text-surface-variant mb-6">Liên hệ với chuyên gia của chúng tôi để nhận báo giá
+                        giải pháp B2B.</p>
+                    <div class="flex">
+                        <span class="bg-white text-primary px-6 py-3 font-bold text-xs uppercase tracking-widest">Yêu cầu báo giá</span>
+                    </div>
+                </div>
+            </div>
+            <div class="p-8 border-l-2 border-surface-container-high">
+                <h3 class="font-bold text-sm uppercase tracking-widest mb-4">Bản tin công nghiệp</h3>
+                <p class="text-sm text-on-surface-variant mb-6">Nhận báo cáo thị trường và kiến thức chuyên môn hàng
+                    tuần vào hộp thư của bạn.</p>
+                <div class="flex flex-col gap-2">
+                    <input class="bg-surface-container-low border-none p-3 text-sm focus:ring-1 focus:ring-primary"
+                           placeholder="Email của bạn" type="email"/>
+                    <button class="bg-primary text-white py-3 font-bold text-xs uppercase tracking-widest">Đăng ký
+                    </button>
+                </div>
+            </div>
+        </aside>
+    </section>
+</main>
+<!-- Footer -->
+<footer class="bg-[#351f1b] dark:bg-[#1a0f0d] w-full py-12 px-8 mt-20 border-t border-[#4d3430]">
+    <div class="flex flex-col md:flex-row justify-between items-center w-full gap-4 max-w-screen-2xl mx-auto">
+        <div class="font-manrope font-bold text-[#ffffff]">Industrial Excellence</div>
+        <div class="flex gap-8">
+            <a class="font-work-sans text-xs text-[#d4c3bf] opacity-80 hover:opacity-100 transition-opacity" href="#">Chính
+                sách bảo mật</a>
+            <a class="font-work-sans text-xs text-[#d4c3bf] opacity-80 hover:opacity-100 transition-opacity" href="#">Điều
+                khoản dịch vụ</a>
+            <a class="font-work-sans text-xs text-[#d4c3bf] opacity-80 hover:opacity-100 transition-opacity" href="#">Liên
+                hệ</a>
+        </div>
+        <div class="font-work-sans text-xs text-[#d4c3bf]">© 2024 Industrial Excellence. All rights reserved.</div>
+    </div>
+</footer>
+</body>
+</html>
