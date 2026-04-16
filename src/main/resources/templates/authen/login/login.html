@@ -138,12 +138,16 @@
 <a href="/register" class="tab-link pb-4 border-b-2 border-transparent text-on-surface-variant hover:text-primary font-medium text-sm transition-all duration-300 hover:scale-105">ĐĂNG KÝ MỚI</a>
 </div>
 <!-- Auth Form -->
-<form class="space-y-6">
+<form class="space-y-6" method="POST" th:action="@{/login}">
+<div th:if="${session.error}" class="bg-error/10 border-l-4 border-error p-3 mb-4">
+<p class="text-xs text-error font-bold" th:text="${session.error}"></p>
+<div th:run="${#session.removeAttribute('error')}"></div>
+</div>
 <div class="space-y-1">
 <label class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1" for="email">Email hoặc Tên đăng nhập</label>
 <div class="ghost-border bg-surface-container-low px-4 py-3 flex items-center gap-3">
 <span class="material-symbols-outlined text-outline text-xl" data-icon="person">person</span>
-<input class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium" id="email" name="email" placeholder="Nhập email hoặc tên đăng nhập" type="email"/>
+<input class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium" id="username" name="username" placeholder="Nhập email hoặc tên đăng nhập" required="" type="text"/>
 </div>
 </div>
 <div class="space-y-1">
@@ -153,7 +157,7 @@
 </div>
 <div class="ghost-border bg-surface-container-low px-4 py-3 flex items-center gap-3">
 <span class="material-symbols-outlined text-outline text-xl" data-icon="lock">lock</span>
-<input class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium" id="password" name="password" placeholder="••••••••" type="password"/>
+<input class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium" id="password" name="password" placeholder="••••••••" required="" type="password"/>
 </div>
 </div>
 <div class="flex items-center gap-3 py-2">

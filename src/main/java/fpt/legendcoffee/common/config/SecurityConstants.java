@@ -8,6 +8,7 @@ public class SecurityConstants {
             "/register",
             "/css/**",
             "/js/**",
-            "/images/**"
+            "/images/**",
+            "/favicon.ico"
     };
 }
