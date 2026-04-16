@@ -43,7 +43,6 @@ public class Order extends BaseEntity {
     @Column(name = "status")
     private OrderStatus status;
 
-    @Column(name = "address", columnDefinition = "NVARCHAR(255)")
-    private String address;
-
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private ShippingInfo shippingInfo;
 }

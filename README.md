@@ -91,8 +91,8 @@ ORDER → VOUCHER
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/legend-coffee.git
-cd legend-coffee
+git clone https://github.com/NinhThienLuan/LegendCoffee.git
+cd LegendCoffee
 
 # Configure environment variables
 cp .env.example .env
@@ -109,7 +109,7 @@ The application will start at `http://localhost:8080`
 ## 📁 Project Structure
 
 ```
-legend-coffee/
+LegendCoffee/
 ├── src/
 │   ├── main/
 │   │   ├── java/fpt/legendcoffee/
