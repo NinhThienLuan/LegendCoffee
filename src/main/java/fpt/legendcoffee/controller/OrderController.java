@@ -39,4 +39,14 @@ public class OrderController {
     public String orderDetailPage(Model model) {
         return "order-detail/orderDetail";
     }
+
+    @GetMapping("/cart")
+    public String cartPage(Model model) {
+        return "cart/cart";
+    }
+
+    @GetMapping("/checkout")
+    public String checkoutPage(Model model) {
+        return "checkout/checkout";
+    }
 }
