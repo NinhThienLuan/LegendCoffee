@@ -7,33 +7,33 @@ import org.springframework.web.bind.annotation.PathVariable;
 @Controller
 public class CatalogController {
 
-    //for view access only
+    // for view access only
     @GetMapping("/")
-    public String getHome(){
+    public String getHome() {
         return "index";
     }
 
-    //for view access only
+    // for view access only
     @GetMapping("/catalogs")
-    public String getCatalogs(){
+    public String getCatalogs() {
         return "catalogs";
     }
 
-    //for view access only
+    // for view access only
     @GetMapping("/catalogs/{id}")
-    public String getCatalogDetails(@PathVariable long id){
+    public String getCatalogDetails(@PathVariable long id) {
         return "catalog-detail";
     }
 
-    //for view access only
+    // for view access only
     @GetMapping("/orders")
-    public String getOrders(){
+    public String getOrders() {
         return "orders";
     }
-    
-    //for view access only
+
+    // for view access only
     @GetMapping("/articles")
-    public String getArticles(){
+    public String getArticles() {
         return "editor-lab";
     }
 
