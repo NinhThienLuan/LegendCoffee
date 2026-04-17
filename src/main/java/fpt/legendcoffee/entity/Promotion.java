@@ -18,10 +18,10 @@ import java.time.LocalDateTime;
 @Table(name = "promotions")
 public class Promotion extends BaseEntity {
 
-    @Column(name = "type")
+    @Column(name = "promotion_type")
     private String type;
 
-    @Column(name = "value", precision = 18)
+    @Column(name = "promotion_value", precision = 18)
     private BigDecimal value;
 
     @Column(name = "start_date")

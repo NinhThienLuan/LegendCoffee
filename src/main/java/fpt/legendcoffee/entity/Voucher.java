@@ -21,7 +21,7 @@ public class Voucher extends BaseEntity {
     @Column(name = "type")
     private String type;
 
-    @Column(name = "value", precision = 18)
+    @Column(name = "voucher_value", precision = 18)
     private BigDecimal value;
 
     @Column(name = "start_date")
