@@ -28,7 +28,7 @@ public class OrderController {
     // .orElse(ResponseEntity.notFound().build());
     // }
 
-    @GetMapping("/order")
+    @GetMapping("/orders")
     public String orderPage(Model model) {
         return "order/order";
     }
