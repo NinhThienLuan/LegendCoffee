@@ -34,3 +34,4 @@ build/
 .agent/
 .code_workspace
 /data
+.env
