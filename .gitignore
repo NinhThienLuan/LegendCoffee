@@ -34,3 +34,5 @@ build/
 .agent/
 .code_workspace
 /data
+.env
+/datasrc/main/resources/application-h2.properties

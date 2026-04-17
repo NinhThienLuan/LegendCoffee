@@ -1,5 +1,7 @@
 package fpt.legendcoffee.service.serviceImpl;
 
+import java.security.SecureRandom;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +12,8 @@ import fpt.legendcoffee.entity.User;
 import fpt.legendcoffee.entity.enumeration.UserRole;
 import fpt.legendcoffee.repository.UserRepository;
 import fpt.legendcoffee.service.AuthenService;
+import fpt.legendcoffee.service.MailService;
+import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -18,6 +22,7 @@ public class AuthenServiceImpl implements AuthenService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final MailService mailService;
 
     @Override
     public void login(LoginRequestDTO request) {
@@ -55,4 +60,43 @@ public class AuthenServiceImpl implements AuthenService {
         return true;
     }
 
+    @Override
+    public void resetPassword(String email, String oldPassword, String newPassword) {
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            throw new AuthenException("User not found");
+        }
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            throw new AuthenException("Invalid old password");
+        }
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+
+    @Override
+    public void forgotPassword(String email) {
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            throw new AuthenException("User not found");
+        }
+        String newPassword = generateRandomPassword();
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        try {
+            mailService.sendHtml(email, "Legend Coffee - Forgot Password", "<h1>Your new password is: " + newPassword + "</h1>");
+        } catch (MessagingException e) {
+            throw new AuthenException("Failed to send email");
+        }
+    }
+
+
+    //Helper method
+    private String generateRandomPassword() {
+        String chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        SecureRandom rnd = new SecureRandom();
+        StringBuilder sb = new StringBuilder(6);
+        for (int i = 0; i < 6; i++)
+            sb.append(chars.charAt(rnd.nextInt(chars.length())));
+        return sb.toString();
+    }
 }

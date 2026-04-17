@@ -26,12 +26,6 @@ public class CatalogController {
     }
 
     // for view access only
-    @GetMapping("/orders")
-    public String getOrders() {
-        return "orders";
-    }
-
-    // for view access only
     @GetMapping("/articles")
     public String getArticles() {
         return "editor-lab";

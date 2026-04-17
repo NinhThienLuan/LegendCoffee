@@ -10,6 +10,8 @@ public class SecurityConstants {
             "/css/**",
             "/js/**",
             "/images/**",
+            "/payment/vnpay/callback",
+            "/payment/vnpay/ipn",
             "/assets/**",
             "/favicon.ico"
     };
