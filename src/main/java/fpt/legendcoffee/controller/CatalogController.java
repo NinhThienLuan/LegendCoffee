@@ -37,4 +37,31 @@ public class CatalogController {
         return "editor-lab";
     }
 
+    @GetMapping("/promotion")
+    public String getPromotion() {
+        return "admin/promotion";
+    }
+
+    // ── ADMIN PAGES (view access only) ────────────────────────────────────────
+
+    @GetMapping("/dashboard")
+    public String adminDashboard() {
+        return "admin/dashboard";
+    }
+
+    @GetMapping("/users")
+    public String adminUsers() {
+        return "admin/users";
+    }
+
+    @GetMapping("/products")
+    public String adminProducts() {
+        return "admin/products";
+    }
+
+    @GetMapping("/posts")
+    public String adminPosts() {
+        return "admin/posts";
+    }
+
 }

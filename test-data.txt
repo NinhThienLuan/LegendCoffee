@@ -3,14 +3,14 @@
 |/////////////|
 
 email: admin@legendcoffee.com
-password: 0123456789
+password: password123
 
 |////////////|
 |USER ACCOUNT|
 |////////////|
 
 email: user@gmail.com
-password: 0987654321
+password: password123
 
 |/////////////|
 |PAYMENT VNPAY|
