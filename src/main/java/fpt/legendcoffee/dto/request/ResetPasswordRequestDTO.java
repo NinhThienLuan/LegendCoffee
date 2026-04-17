@@ -1,4 +1,4 @@
-package fpt.legendcoffee.dto;
+package fpt.legendcoffee.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -10,13 +10,15 @@ public record ResetPasswordRequestDTO(
         String email,
 
         @NotBlank(message = "Old password is required")
+        @Size(min = 6, message = "Password must be at least 6 characters")
         String oldPassword,
 
         @NotBlank(message = "New password is required")
-        @Size(min = 6, message = "New password must be at least 6 characters")
+        @Size(min = 6, message = "Password must be at least 6 characters")
         String newPassword,
 
         @NotBlank(message = "Confirm password is required")
+        @Size(min = 6, message = "Password must be at least 6 characters")
         String confirmPassword
 ) {
 }

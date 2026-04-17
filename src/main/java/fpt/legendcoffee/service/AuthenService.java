@@ -1,8 +1,9 @@
 package fpt.legendcoffee.service;
 
 
-import fpt.legendcoffee.dto.LoginRequestDTO;
-import fpt.legendcoffee.dto.RegisterRequestDTO;
+import fpt.legendcoffee.dto.request.LoginRequestDTO;
+import fpt.legendcoffee.dto.request.RegisterRequestDTO;
+import fpt.legendcoffee.dto.response.ProfileDTO;
 
 public interface AuthenService {
 
@@ -14,4 +15,7 @@ public interface AuthenService {
 
     void resetPassword(String email, String oldPassword, String newPassword);
 
+    ProfileDTO getProfile(long id);
+
+    void updateProfile(long id, ProfileDTO profile);
 }

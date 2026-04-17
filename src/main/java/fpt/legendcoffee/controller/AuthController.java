@@ -1,9 +1,9 @@
 package fpt.legendcoffee.controller;
 
-import fpt.legendcoffee.dto.ForgotPasswordRequestDTO;
-import fpt.legendcoffee.dto.LoginRequestDTO;
-import fpt.legendcoffee.dto.RegisterRequestDTO;
-import fpt.legendcoffee.dto.ResetPasswordRequestDTO;
+import fpt.legendcoffee.dto.request.ForgotPasswordRequestDTO;
+import fpt.legendcoffee.dto.request.LoginRequestDTO;
+import fpt.legendcoffee.dto.request.RegisterRequestDTO;
+import fpt.legendcoffee.dto.request.ResetPasswordRequestDTO;
 import fpt.legendcoffee.service.AuthenService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,8 +20,11 @@ import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import ch.qos.logback.core.model.Model;
 
 @Controller
 @RequiredArgsConstructor
@@ -122,5 +125,11 @@ public class AuthController {
             redirectAttributes.addAttribute("error", e.getMessage());
             return "redirect:/reset-password";
         }
+    }
+
+    @GetMapping("/profile/{id}")
+    public String showProfileForm(RedirectAttributes redirectAttributes, @PathVariable("id") long id) {
+        redirectAttributes.addAttribute("profileDto", authenService.getProfile(id));
+        return "authen/profile";
     }
 }
