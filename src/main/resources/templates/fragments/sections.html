@@ -1,27 +1,30 @@
-<!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
-<body>
-  <section th:fragment="hero" class="relative min-h-screen flex items-center pt-20 overflow-hidden">
+<section th:fragment="hero" class="relative min-h-screen flex items-center pt-20 overflow-hidden">
     <div class="absolute inset-0 z-0">
-      <img alt="Industrial Coffee Roasting" class="w-full h-full object-cover brightness-[0.4] grayscale-[0.2]" data-alt="Massive industrial coffee roasting facility with stainless steel machinery and large cooling trays filled with roasted beans in a high-ceilinged warehouse" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgdaoHbE50LkMuUdsKb1PNFrbeW6ekZNAbvjJrfscAsfjCBJuYw3n817YCMDiE3BXjAXgVsj1K21zwN9KR6mEXdaTXcstvyEx2vBH-TQL-NyEEtKWuCAxGiIMi5u1c_ZhZk9BU1HY1rSLy11FvbgVBre2AMiInDl176LtPGrTmMY6EBm4AXtXuncagPcJ_e7UCR0E45CWsUJyXrJ78fK8F_RHepCZUEH2qMFE9uQstxpTgz3hSJ7w5q2PzXZFjSJrKP645ItUGcIhJ"/>
+      <img alt="Industrial Coffee Roasting" class="w-full h-full object-cover brightness-[0.4] grayscale-[0.2]"
+        data-alt="Massive industrial coffee roasting facility with stainless steel machinery and large cooling trays filled with roasted beans in a high-ceilinged warehouse"
+        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgdaoHbE50LkMuUdsKb1PNFrbeW6ekZNAbvjJrfscAsfjCBJuYw3n817YCMDiE3BXjAXgVsj1K21zwN9KR6mEXdaTXcstvyEx2vBH-TQL-NyEEtKWuCAxGiIMi5u1c_ZhZk9BU1HY1rSLy11FvbgVBre2AMiInDl176LtPGrTmMY6EBm4AXtXuncagPcJ_e7UCR0E45CWsUJyXrJ78fK8F_RHepCZUEH2qMFE9uQstxpTgz3hSJ7w5q2PzXZFjSJrKP645ItUGcIhJ" />
       <div class="absolute inset-0 bg-gradient-to-tr from-primary/80 via-transparent to-transparent"></div>
     </div>
-    <div class="relative z-10 max-w-7xl mx-auto px-8 grid grid-cols-1 lg:grid-cols-12 gap-12">
+    <div class="relative z-10 max-w-7xl w-full px-8 sm:px-12 lg:px-20 grid grid-cols-1 lg:grid-cols-12 gap-12">
       <div class="lg:col-span-8">
-        <span class="inline-block py-1 px-3 bg-secondary-container text-on-secondary-container text-[10px] font-bold uppercase tracking-[0.2em] mb-6 rounded-sm">
+        <span
+          class="inline-block py-1 px-3 bg-secondary-container text-on-secondary-container text-[10px] font-bold uppercase tracking-[0.2em] mb-6 rounded-sm">
           Giải pháp B2B toàn diện
         </span>
         <h1 class="text-5xl md:text-7xl font-extrabold text-white leading-[1.1] tracking-tighter mb-8 font-headline">
-          CUNG CẤP CÀ PHÊ <br/>SỐ LƯỢNG LỚN <span class="text-secondary-fixed">QUY MÔ CÔNG NGHIỆP</span>
+          CUNG CẤP CÀ PHÊ <br />SỐ LƯỢNG LỚN <span class="text-secondary-fixed">QUY MÔ CÔNG NGHIỆP</span>
         </h1>
-        <p class="text-xl text-surface-variant max-w-2xl mb-12 font-light leading-relaxed">
-          Hệ thống rang xay đạt chuẩn HACCP với công suất 50 tấn/tháng. Đối tác cung ứng chiến lược cho các chuỗi khách sạn, nhà hàng và xuất khẩu quốc tế.
+        <p class="text-xl text-surface-variant mb-12 font-light leading-relaxed">
+          Hệ thống rang xay đạt chuẩn HACCP với công suất 50 tấn/tháng. Đối tác cung ứng chiến lược cho các chuỗi khách
+          sạn, nhà hàng và xuất khẩu quốc tế.
         </p>
         <div class="flex flex-col sm:flex-row gap-4">
-          <button class="bg-primary-fixed text-on-primary-fixed px-10 py-5 rounded-lg font-headline font-bold uppercase text-sm tracking-widest hover:bg-white transition-all">
+          <button
+            class="bg-primary-fixed text-on-primary-fixed px-10 py-5 rounded-lg font-headline font-bold uppercase text-sm tracking-widest hover:bg-white transition-all">
             Nhận báo giá ngay
           </button>
-          <button class="border border-outline-variant/30 backdrop-blur-sm text-white px-10 py-5 rounded-lg font-headline font-bold uppercase text-sm tracking-widest hover:bg-white/10 transition-all">
+          <button
+            class="border border-outline-variant/30 backdrop-blur-sm text-white px-10 py-5 rounded-lg font-headline font-bold uppercase text-sm tracking-widest hover:bg-white/10 transition-all">
             Xem năng lực sản xuất
           </button>
         </div>
@@ -29,43 +32,54 @@
     </div>
   </section>
 
-  <section th:fragment="features" class="pt-24 pb-24 px-8 bg-surface relative min-h-screen" id="features">
-    <div class="max-w-7xl mx-auto">
-      <div class="mb-32 sticky top-20 z-[50] bg-surface py-6">
-        <h2 class="text-3xl font-black uppercase tracking-tight text-primary font-headline scroll-reveal-text">Tại sao chọn Industrial Excellence?</h2>
+  <section th:fragment="features" class="py-24 bg-surface relative min-h-screen" id="features">
+    <div class="max-w-7xl w-full px-8 sm:px-12 lg:px-20">
+      <div class="mb-12 sticky top-20 z-[50] bg-surface py-6">
+        <h2 class="text-3xl font-black uppercase tracking-tight text-primary font-headline scroll-reveal-text">Tại sao
+          chọn Industrial Excellence?</h2>
         <div class="h-1 w-24 bg-primary mt-4"></div>
       </div>
       <div class="space-y-12 pb-32">
         <div class="stack-card z-[1]">
-          <div class="bg-surface-container-low p-10 md:p-16 rounded-3xl border border-outline-variant/30 shadow-sm flex flex-col md:flex-row gap-10 items-center">
+          <div
+            class="bg-surface-container-low p-10 md:p-16 rounded-3xl border border-outline-variant/30 shadow-sm flex flex-col md:flex-row gap-10 items-center">
             <div class="flex-1">
               <span class="material-symbols-outlined text-5xl text-primary mb-6" data-icon="factory">factory</span>
               <h3 class="text-3xl font-bold mb-6 font-headline">Công suất vượt trội</h3>
-              <p class="text-on-surface-variant leading-relaxed text-xl scroll-reveal-text">Hệ thống lò rang Probat hiện đại cho phép duy trì sự ổn định tuyệt đối về hương vị trên mọi lô hàng từ 500kg đến hàng chục tấn.</p>
+              <p class="text-on-surface-variant leading-relaxed text-xl scroll-reveal-text">Hệ thống lò rang Probat hiện
+                đại cho phép duy trì sự ổn định tuyệt đối về hương vị trên mọi lô hàng từ 500kg đến hàng chục tấn.</p>
             </div>
             <div class="hidden md:block w-1/3 opacity-20">
-              <span class="material-symbols-outlined text-[120px]" data-icon="precision_manufacturing">precision_manufacturing</span>
+              <span class="material-symbols-outlined text-[120px]"
+                data-icon="precision_manufacturing">precision_manufacturing</span>
             </div>
           </div>
         </div>
         <div class="stack-card z-[2]">
-          <div class="bg-primary p-10 md:p-16 rounded-3xl text-on-primary shadow-xl flex flex-col md:flex-row gap-10 items-center">
+          <div
+            class="bg-primary p-10 md:p-16 rounded-3xl text-on-primary shadow-xl flex flex-col md:flex-row gap-10 items-center">
             <div class="flex-1">
-              <span class="material-symbols-outlined text-5xl mb-6" data-icon="verified" data-weight="fill">verified</span>
+              <span class="material-symbols-outlined text-5xl mb-6" data-icon="verified"
+                data-weight="fill">verified</span>
               <h3 class="text-3xl font-bold mb-6 font-headline">Chứng nhận HACCP</h3>
-              <p class="text-primary-fixed-dim leading-relaxed text-xl scroll-reveal-text">Quy trình sản xuất khép kín đạt tiêu chuẩn an toàn thực phẩm quốc tế, sẵn sàng cho các đơn hàng xuất khẩu khó tính nhất.</p>
+              <p class="text-primary-fixed-dim leading-relaxed text-xl scroll-reveal-text">Quy trình sản xuất khép kín
+                đạt tiêu chuẩn an toàn thực phẩm quốc tế, sẵn sàng cho các đơn hàng xuất khẩu khó tính nhất.</p>
             </div>
             <div class="hidden md:block w-1/3 opacity-10">
-              <span class="material-symbols-outlined text-[120px]" data-icon="workspace_premium">workspace_premium</span>
+              <span class="material-symbols-outlined text-[120px]"
+                data-icon="workspace_premium">workspace_premium</span>
             </div>
           </div>
         </div>
         <div class="stack-card z-[3]">
-          <div class="bg-surface-container-high p-10 md:p-16 rounded-3xl border border-outline-variant/30 shadow-sm flex flex-col md:flex-row gap-10 items-center">
+          <div
+            class="bg-surface-container-high p-10 md:p-16 rounded-3xl border border-outline-variant/30 shadow-sm flex flex-col md:flex-row gap-10 items-center">
             <div class="flex-1">
-              <span class="material-symbols-outlined text-5xl text-primary mb-6" data-icon="travel_explore">travel_explore</span>
+              <span class="material-symbols-outlined text-5xl text-primary mb-6"
+                data-icon="travel_explore">travel_explore</span>
               <h3 class="text-3xl font-bold mb-6 font-headline">Nguồn gốc minh bạch</h3>
-              <p class="text-on-surface-variant leading-relaxed text-xl scroll-reveal-text">Trực tiếp liên kết với các nông hộ tại Lâm Đồng và Đắk Lắk, kiểm soát chất lượng từ khâu thu hoạch và sơ chế ướt.</p>
+              <p class="text-on-surface-variant leading-relaxed text-xl scroll-reveal-text">Trực tiếp liên kết với các
+                nông hộ tại Lâm Đồng và Đắk Lắk, kiểm soát chất lượng từ khâu thu hoạch và sơ chế ướt.</p>
             </div>
             <div class="hidden md:block w-1/3 opacity-20">
               <span class="material-symbols-outlined text-[120px]" data-icon="local_shipping">local_shipping</span>
@@ -73,11 +87,15 @@
           </div>
         </div>
         <div class="stack-card z-[4]">
-          <div class="bg-secondary-fixed text-on-secondary-fixed p-10 md:p-16 rounded-3xl shadow-sm flex flex-col md:flex-row gap-10 items-center">
+          <div
+            class="bg-secondary-fixed text-on-secondary-fixed p-10 md:p-16 rounded-3xl shadow-sm flex flex-col md:flex-row gap-10 items-center">
             <div class="flex-1">
-              <span class="material-symbols-outlined text-5xl mb-6" data-icon="precision_manufacturing">precision_manufacturing</span>
+              <span class="material-symbols-outlined text-5xl mb-6"
+                data-icon="precision_manufacturing">precision_manufacturing</span>
               <h3 class="text-3xl font-bold mb-6 font-headline">Chuyên gia kỹ thuật</h3>
-              <p class="text-on-secondary-fixed-variant leading-relaxed text-xl scroll-reveal-text">Đội ngũ kỹ thuật viên giàu kinh nghiệm hỗ trợ tùy chỉnh profile rang riêng biệt theo yêu cầu đặc thù của từng thương hiệu khách hàng.</p>
+              <p class="text-on-secondary-fixed-variant leading-relaxed text-xl scroll-reveal-text">Đội ngũ kỹ thuật
+                viên giàu kinh nghiệm hỗ trợ tùy chỉnh profile rang riêng biệt theo yêu cầu đặc thù của từng thương hiệu
+                khách hàng.</p>
             </div>
             <div class="hidden md:block w-1/3 opacity-20">
               <span class="material-symbols-outlined text-[120px]" data-icon="settings">settings</span>
@@ -88,11 +106,12 @@
     </div>
   </section>
 
-  <section th:fragment="products" class="pt-32 pb-32 px-8 bg-surface-container-low min-h-screen flex items-center">
-    <div class="max-w-7xl mx-auto w-full">
+  <section th:fragment="products" class="py-32 bg-surface-container-low min-h-screen flex items-center">
+    <div class="max-w-7xl w-full px-8 sm:px-12 lg:px-20">
       <div class="flex justify-between items-end mb-16">
         <div>
-          <h2 class="text-3xl font-black uppercase tracking-tight text-primary font-headline">Danh mục sản phẩm bán sỉ</h2>
+          <h2 class="text-3xl font-black uppercase tracking-tight text-primary font-headline">Danh mục sản phẩm bán sỉ
+          </h2>
           <p class="text-on-surface-variant mt-2">Áp dụng cho đơn hàng tối thiểu từ 50kg</p>
         </div>
         <div class="text-right hidden md:block">
@@ -100,13 +119,16 @@
         </div>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div class="bg-surface-container-lowest overflow-hidden flex flex-col h-full border-b-4 border-primary shadow-sm hover:shadow-xl transition-shadow duration-500">
+        <div
+          class="bg-surface-container-lowest overflow-hidden flex flex-col h-full border-b-4 border-primary shadow-sm hover:shadow-xl transition-shadow duration-500">
           <div class="h-64 overflow-hidden">
-            <img alt="Robusta S18" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiKCTU6_7_1dgUF32Jq4vdb_irlsQ4MHpx3CUuICItKHhJdcNXhLIszs6RJ2nBN6TW-Fc1h5bKxs-xQV6luILUoI0aO9vp9eBR4-2rnxCQj8013EBvKbcg-hZC9o9-F8Ur7psrNiAwrYEnu_xf3M5kYRFs3WafDrFC2TyOq-D1oi8RIFLFPTYXRK0Ap3mpwNbDGZh5vX_ikKzplpyMp2Xumje8yxrjZzMTfPgtC3WtNqxEej-09luM9vVCxEzLuF5Gd6tSErRxaEEn"/>
+            <img alt="Robusta S18" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiKCTU6_7_1dgUF32Jq4vdb_irlsQ4MHpx3CUuICItKHhJdcNXhLIszs6RJ2nBN6TW-Fc1h5bKxs-xQV6luILUoI0aO9vp9eBR4-2rnxCQj8013EBvKbcg-hZC9o9-F8Ur7psrNiAwrYEnu_xf3M5kYRFs3WafDrFC2TyOq-D1oi8RIFLFPTYXRK0Ap3mpwNbDGZh5vX_ikKzplpyMp2Xumje8yxrjZzMTfPgtC3WtNqxEej-09luM9vVCxEzLuF5Gd6tSErRxaEEn" />
           </div>
           <div class="p-8 flex-grow">
             <h3 class="text-xl font-extrabold mb-2 font-headline uppercase">Robusta Honey S18</h3>
-            <p class="text-sm text-on-surface-variant mb-6 leading-relaxed">Hạt sàng 18, chế biến Honey, hậu vị ngọt đậm, body dày. Phù hợp cho pha phin và espresso gu mạnh.</p>
+            <p class="text-sm text-on-surface-variant mb-6 leading-relaxed">Hạt sàng 18, chế biến Honey, hậu vị ngọt
+              đậm, body dày. Phù hợp cho pha phin và espresso gu mạnh.</p>
             <div class="space-y-3 mb-8">
               <div class="flex justify-between text-xs border-b border-outline-variant/20 pb-2">
                 <span class="uppercase text-on-surface-variant">Độ ẩm</span>
@@ -122,13 +144,17 @@
             </div>
           </div>
         </div>
-        <div class="bg-surface-container-lowest overflow-hidden flex flex-col h-full border-b-4 border-primary shadow-sm hover:shadow-xl transition-shadow duration-500">
+        <div
+          class="bg-surface-container-lowest overflow-hidden flex flex-col h-full border-b-4 border-primary shadow-sm hover:shadow-xl transition-shadow duration-500">
           <div class="h-64 overflow-hidden">
-            <img alt="Arabica Cầu Đất" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAiIt76Z2iimBtXearhfg4KE0UU0foD-DQNjVy7dt9HcPdDBTe1m0F54pfffm0ehMT4fX3JcONqcj_EmEAW0f0WLHz1vgPw25qaI8xMbT22cOdwxzDrlcFS7xh9E9xARFedriWOv8NucAKjh2edAfFsHEkN_1YQzjR2lhkadd_1_nvPbJems0PDPp8Q-DS1PVpxkG6mgn-wVl1NEai90JDMzIEFXm0rWxsEavgbKy9HOwxZ0LlKke_C0jSoO30a1hJYVMwVKLGSLRQE"/>
+            <img alt="Arabica Cầu Đất"
+              class="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAiIt76Z2iimBtXearhfg4KE0UU0foD-DQNjVy7dt9HcPdDBTe1m0F54pfffm0ehMT4fX3JcONqcj_EmEAW0f0WLHz1vgPw25qaI8xMbT22cOdwxzDrlcFS7xh9E9xARFedriWOv8NucAKjh2edAfFsHEkN_1YQzjR2lhkadd_1_nvPbJems0PDPp8Q-DS1PVpxkG6mgn-wVl1NEai90JDMzIEFXm0rWxsEavgbKy9HOwxZ0LlKke_C0jSoO30a1hJYVMwVKLGSLRQE" />
           </div>
           <div class="p-8 flex-grow">
             <h3 class="text-xl font-extrabold mb-2 font-headline uppercase">Arabica Cầu Đất (Full Wash)</h3>
-            <p class="text-sm text-on-surface-variant mb-6 leading-relaxed">Độ cao 1500m, hương thơm thanh khiết, vị chua trái cây nhẹ nhàng. Tiêu chuẩn xuất khẩu Grade 1.</p>
+            <p class="text-sm text-on-surface-variant mb-6 leading-relaxed">Độ cao 1500m, hương thơm thanh khiết, vị
+              chua trái cây nhẹ nhàng. Tiêu chuẩn xuất khẩu Grade 1.</p>
             <div class="space-y-3 mb-8">
               <div class="flex justify-between text-xs border-b border-outline-variant/20 pb-2">
                 <span class="uppercase text-on-surface-variant">Độ cao</span>
@@ -144,13 +170,17 @@
             </div>
           </div>
         </div>
-        <div class="bg-surface-container-lowest overflow-hidden flex flex-col h-full border-b-4 border-primary shadow-sm hover:shadow-xl transition-shadow duration-500">
+        <div
+          class="bg-surface-container-lowest overflow-hidden flex flex-col h-full border-b-4 border-primary shadow-sm hover:shadow-xl transition-shadow duration-500">
           <div class="h-64 overflow-hidden">
-            <img alt="Signature Blend" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_IU2m1unLuvt5J2j1UysP1xVymthNaWGvpRwW0Ct-y-CaPTYRIuILOB0HGJ_RIZ1WUHzjUgNiPh7FBmkW00kI5FW87t9EPJ5ppNqoXLxNkFFrp2qH-8d8AGEzJ8_wVqfFQ_QZZMLWMRxLPvzcRMbMX4RIDGFntrSFwqKr-sJUYRg0959fYvfjInsVcI7Q2ZbBhjx7zyHVI1W5RHlgXdm1nGKFf0_GNk9D7dvBcgyXN_S8sIC8XuVy9kGL_tz6krRoQtF3CLOZkFBm"/>
+            <img alt="Signature Blend"
+              class="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_IU2m1unLuvt5J2j1UysP1xVymthNaWGvpRwW0Ct-y-CaPTYRIez1WUHzjUgNiPh7FBmkW00kI5FW87t9EPJ5ppNqoXLxNkFFrp2qH-8d8AGEzJ8_wVqfFQ_QZZMLWMRxLPvzcRMbMX4RIDGFntrSFwqKr-sJUYRg0959fYvfjInsVcI7Q2ZbBhjx7zyHVI1W5RHlgXdm1nGKFf0_GNk9D7dvBcgyXN_S8sIC8XuVy9kGL_tz6krRoQtF3CLOZkFBm" />
           </div>
           <div class="p-8 flex-grow">
             <h3 class="text-xl font-extrabold mb-2 font-headline uppercase">Signature B2B Blend</h3>
-            <p class="text-sm text-on-surface-variant mb-6 leading-relaxed">Công thức phối trộn độc quyền giữa Arabica và Robusta cao cấp. Cân bằng tuyệt đối cho các dòng máy Espresso.</p>
+            <p class="text-sm text-on-surface-variant mb-6 leading-relaxed">Công thức phối trộn độc quyền giữa Arabica
+              và Robusta cao cấp. Cân bằng tuyệt đối cho các dòng máy Espresso.</p>
             <div class="space-y-3 mb-8">
               <div class="flex justify-between text-xs border-b border-outline-variant/20 pb-2">
                 <span class="uppercase text-on-surface-variant">Tỷ lệ</span>
@@ -170,12 +200,13 @@
     </div>
   </section>
 
-  <section th:fragment="process" class="pt-32 pb-32 bg-white overflow-hidden min-h-screen flex items-center">
-    <div class="max-w-7xl mx-auto px-8 w-full">
+  <section th:fragment="process" class="py-32 bg-white overflow-hidden min-h-screen flex items-center">
+    <div class="max-w-7xl w-full px-8 sm:px-12 lg:px-20">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
         <div class="relative">
           <div class="aspect-square bg-surface-container rounded-sm overflow-hidden shadow-2xl">
-            <img alt="Industrial Logistics" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCC9CEDyEL9k5kNLaio1287_IMrnCleyVwHgPUlRS6_vcNl5y21Ix385WFdAA3QpTeUDSkEu3jUcD8h9ipB3Yqmhv0lOg0JM6e8Po4fv3SJTb1n-56zx3hM6i5gcslGnE5or6LLJuM_3DKbc7-WJEwPYy7-nEOIh86005tJQpfrzzxS88Pp2GmikkQS6J_ldimcYlOyNNu9TarasanC7jKAjRWYl4AtEQn3xToAZIEDhKVh8RC-J0vmJdrTNNaojMsW-cCb_xY9geQw"/>
+            <img alt="Industrial Logistics" class="w-full h-full object-cover"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCC9CEDyEL9k5kNLaio1287_IMrnCleyVwHgPUlRS6_vcNl5y21Ix385WFdAA3QpTeUDSkEu3jUcD8h9ipB3Yqmhv0lOg0JM6e8Po4fv3SJTb1n-56zx3hM6i5gcslGnE5or6LLJuM_3DKbc7-WJEwPYy7-nEOIh86005tJQpfrzzxS88Pp2GmikkQS6J_ldimcYlOyNNu9TarasanC7jKAjRWYl4AtEQn3xToAZIEDhKVh8RC-J0vmJdrTNNaojMsW-cCb_xY9geQw" />
           </div>
           <div class="absolute -bottom-8 -right-8 bg-primary text-on-primary p-8 hidden md:block">
             <p class="text-4xl font-black font-headline mb-1">12+</p>
@@ -183,27 +214,37 @@
           </div>
         </div>
         <div>
-          <h2 class="text-4xl font-black text-primary leading-tight font-headline uppercase mb-8 scroll-reveal-text">Quy trình cung ứng chuẩn công nghiệp</h2>
+          <h2 class="text-4xl font-black text-primary leading-tight font-headline uppercase mb-8 scroll-reveal-text">Quy
+            trình cung ứng chuẩn công nghiệp</h2>
           <div class="space-y-12">
             <div class="flex gap-6">
-              <div class="flex-shrink-0 w-12 h-12 bg-surface-container-high rounded-full flex items-center justify-center font-headline font-bold text-primary">01</div>
+              <div
+                class="flex-shrink-0 w-12 h-12 bg-surface-container-high rounded-full flex items-center justify-center font-headline font-bold text-primary">
+                01</div>
               <div>
                 <h4 class="text-xl font-bold mb-2 font-headline uppercase tracking-tight">Thu mua &amp; Kiểm định</h4>
-                <p class="text-on-surface-variant scroll-reveal-text">Lựa chọn trực tiếp những hạt cà phê đạt tiêu chuẩn từ vùng nguyên liệu, kiểm tra độ ẩm và mật độ hạt ngay tại trạm thu mua.</p>
+                <p class="text-on-surface-variant scroll-reveal-text">Lựa chọn trực tiếp những hạt cà phê đạt tiêu chuẩn
+                  từ vùng nguyên liệu, kiểm tra độ ẩm và mật độ hạt ngay tại trạm thu mua.</p>
               </div>
             </div>
             <div class="flex gap-6">
-              <div class="flex-shrink-0 w-12 h-12 bg-surface-container-high rounded-full flex items-center justify-center font-headline font-bold text-primary">02</div>
+              <div
+                class="flex-shrink-0 w-12 h-12 bg-surface-container-high rounded-full flex items-center justify-center font-headline font-bold text-primary">
+                02</div>
               <div>
                 <h4 class="text-xl font-bold mb-2 font-headline uppercase tracking-tight">Rang xay Precision</h4>
-                <p class="text-on-surface-variant scroll-reveal-text">Áp dụng công nghệ điều khiển nhiệt độ kỹ thuật số, đảm bảo mỗi mẻ rang đều tuân thủ nghiêm ngặt profile hương vị đã cam kết.</p>
+                <p class="text-on-surface-variant scroll-reveal-text">Áp dụng công nghệ điều khiển nhiệt độ kỹ thuật số,
+                  đảm bảo mỗi mẻ rang đều tuân thủ nghiêm ngặt profile hương vị đã cam kết.</p>
               </div>
             </div>
             <div class="flex gap-6">
-              <div class="flex-shrink-0 w-12 h-12 bg-surface-container-high rounded-full flex items-center justify-center font-headline font-bold text-primary">03</div>
+              <div
+                class="flex-shrink-0 w-12 h-12 bg-surface-container-high rounded-full flex items-center justify-center font-headline font-bold text-primary">
+                03</div>
               <div>
                 <h4 class="text-xl font-bold mb-2 font-headline uppercase tracking-tight">Đóng gói &amp; Vận chuyển</h4>
-                <p class="text-on-surface-variant scroll-reveal-text">Hệ thống túi van 1 chiều giúp bảo quản hương vị tối ưu trong quá trình lưu kho và vận chuyển logictics toàn quốc.</p>
+                <p class="text-on-surface-variant scroll-reveal-text">Hệ thống túi van 1 chiều giúp bảo quản hương vị
+                  tối ưu trong quá trình lưu kho và vận chuyển logictics toàn quốc.</p>
               </div>
             </div>
           </div>
@@ -212,13 +253,15 @@
     </div>
   </section>
 
-  <section th:fragment="partners" class="pt-32 pb-32 bg-surface-container-low overflow-hidden min-h-screen flex items-center">
-    <div class="max-w-7xl mx-auto px-8 w-full">
+  <section th:fragment="partners" class="py-32 bg-surface-container-low overflow-hidden min-h-screen flex items-center">
+    <div class="max-w-7xl w-full px-8 sm:px-12 lg:px-20">
       <div class="text-center mb-12">
-        <h2 class="text-sm font-bold uppercase tracking-[0.3em] text-on-surface-variant mb-4">Đối tác tin cậy toàn cầu</h2>
+        <h2 class="text-sm font-bold uppercase tracking-[0.3em] text-on-surface-variant mb-4">Đối tác tin cậy toàn cầu
+        </h2>
       </div>
       <div class="logo-loop-container relative w-full h-24 flex items-center">
-        <div class="logo-loop-track space-x-20 md:space-x-32 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-700">
+        <div
+          class="logo-loop-track space-x-20 md:space-x-32 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-700">
           <span class="text-2xl md:text-3xl font-black font-headline whitespace-nowrap">LOTTE HOTEL</span>
           <span class="text-2xl md:text-3xl font-black font-headline whitespace-nowrap">INTERCONTINENTAL</span>
           <span class="text-2xl md:text-3xl font-black font-headline whitespace-nowrap">HIGHLANDS COFFEE</span>
@@ -237,12 +280,16 @@
         <div class="absolute top-0 right-0 p-10 opacity-10">
           <span class="material-symbols-outlined text-[120px]" data-icon="format_quote">format_quote</span>
         </div>
-        <div class="relative z-10 max-w-3xl">
+        <div class="relative z-10">
           <p class="text-2xl md:text-3xl font-light italic leading-relaxed mb-10">
-            "Khả năng duy trì chất lượng ổn định ở quy mô lớn là điều khiến Industrial Excellence trở thành đối tác chiến lược của chúng tôi trong suốt 5 năm qua. Sự chuyên nghiệp trong vận hành giúp chúng tôi hoàn toàn yên tâm về nguồn cung."
+            "Khả năng duy trì chất lượng ổn định ở quy mô lớn là điều khiến Industrial Excellence trở thành đối tác
+            chiến lược của chúng tôi trong suốt 5 năm qua. Sự chuyên nghiệp trong vận hành giúp chúng tôi hoàn toàn yên
+            tâm về nguồn cung."
           </p>
           <div class="flex items-center gap-4">
-            <div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-bold">NH</div>
+            <div
+              class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-bold">
+              NH</div>
             <div>
               <p class="font-bold font-headline uppercase tracking-tight">Nguyễn Hải Nam</p>
               <p class="text-sm opacity-70">Giám đốc thu mua, Tập đoàn Khách sạn Quốc tế</p>
@@ -253,75 +300,97 @@
     </div>
   </section>
 
-  <section th:fragment="support" class="pt-32 pb-32 px-8 bg-surface min-h-screen flex items-center overflow-hidden">
-    <div class="max-w-7xl mx-auto w-full">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+  <section th:fragment="articles" class="py-32 bg-surface overflow-hidden">
+    <div class="max-w-7xl w-full px-8 sm:px-12 lg:px-20">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-24 gap-8">
         <div>
-          <div class="mb-12">
-            <h2 class="text-4xl font-black text-primary font-headline uppercase mb-6 scroll-reveal-text">Hỗ trợ Nhà bán lẻ &amp; Đơn hàng nhỏ</h2>
-            <p class="text-xl text-on-surface-variant leading-relaxed mb-8 scroll-reveal-text">Dành riêng cho các quán cà phê specialty, văn phòng cao cấp và nhà phân phối nhỏ lẻ. Chúng tôi mang chất lượng công nghiệp đến với quy mô của bạn.</p>
-            <div class="flex flex-wrap gap-4">
-              <a class="inline-flex items-center gap-2 bg-[#25D366] text-white px-6 py-4 rounded-lg font-headline font-bold uppercase text-xs tracking-widest hover:opacity-90 transition-all" href="#">
-                <span class="material-symbols-outlined text-lg">chat</span> Chat Zalo / WhatsApp
-              </a>
-              <button class="bg-surface-container-high text-primary px-6 py-4 rounded-lg font-headline font-bold uppercase text-xs tracking-widest hover:bg-outline-variant/20 transition-all">
-                Xem bảng giá sỉ nhỏ
-              </button>
-            </div>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-12 border-t border-outline-variant/30">
-            <div>
-              <h4 class="font-bold font-headline text-primary uppercase text-sm mb-3">Thời gian giao hàng?</h4>
-              <p class="text-sm text-on-surface-variant leading-relaxed">Đơn hàng nhỏ lẻ được rang mới mỗi tuần và giao trong vòng 24-48 giờ tại nội thành.</p>
-            </div>
-            <div>
-              <h4 class="font-bold font-headline text-primary uppercase text-sm mb-3">Số lượng tối thiểu?</h4>
-              <p class="text-sm text-on-surface-variant leading-relaxed">Chỉ từ 5kg cho các dòng sản phẩm tiêu chuẩn để đảm bảo cà phê luôn tươi mới nhất.</p>
-            </div>
-            <div>
-              <h4 class="font-bold font-headline text-primary uppercase text-sm mb-3">Hỗ trợ xay sẵn?</h4>
-              <p class="text-sm text-on-surface-variant leading-relaxed">Chúng tôi hỗ trợ xay theo yêu cầu (Phin, Espresso, Cold Brew) bằng máy xay công nghiệp Mahlkönig.</p>
-            </div>
-            <div>
-              <h4 class="font-bold font-headline text-primary uppercase text-sm mb-3">Thử mẫu miễn phí?</h4>
-              <p class="text-sm text-on-surface-variant leading-relaxed">Vui lòng để lại thông tin, chuyên viên của chúng tôi sẽ gửi bộ mẫu thử đến tận nơi.</p>
-            </div>
-          </div>
+          <span class="inline-block py-1 px-3 bg-primary text-on-primary text-[10px] font-bold uppercase tracking-[0.2em] mb-6 rounded-sm">
+            Knowledge Center
+          </span>
+          <h2 class="text-4xl md:text-5xl font-extrabold text-primary font-headline uppercase leading-tight -tracking-[0.02em] scroll-reveal-text">
+            Bảo tàng kiến thức
+          </h2>
         </div>
-        <div class="bg-surface-container-low p-8 md:p-12 rounded-3xl border border-outline-variant/20 shadow-sm relative">
-          <div class="absolute -top-6 -right-6 bg-secondary-container text-on-secondary-container p-4 rounded-full rotate-12 hidden md:block">
-            <span class="material-symbols-outlined text-4xl">local_cafe</span>
+        <div class="flex-shrink-0">
+          <a href="#" class="group flex items-center gap-3 text-sm font-bold uppercase tracking-widest text-primary hover:text-secondary-fixed transition-colors">
+            Xem tất cả tin tức
+            <span class="material-symbols-outlined text-lg transition-transform group-hover:translate-x-1">arrow_forward</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-0 md:gap-px bg-surface-container-low overflow-hidden rounded-md">
+        <article class="bg-surface-container-lowest p-8 md:p-12 flex flex-col group hover:bg-surface transition-colors duration-500">
+          <div class="aspect-[4/3] mb-8 overflow-hidden rounded-sm">
+            <img src="/assets/images/news_vietnam_specialty.png" th:src="@{/assets/images/news_vietnam_specialty.png}" alt="Vietnam Specialty Coffee" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"/>
           </div>
-          <h3 class="text-2xl font-black text-primary font-headline uppercase mb-4">Danh sách Small-Batch</h3>
-          <p class="text-on-surface-variant mb-8">Đăng ký nhận thông báo về các mẻ rang đặc biệt số lượng giới hạn và cập nhật giá sỉ mới nhất hàng tháng.</p>
-          <form class="space-y-4">
-            <div>
-              <label class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-2">Họ và tên của bạn</label>
-              <input class="w-full bg-white border-outline-variant/30 focus:ring-2 focus:ring-primary/20 focus:border-primary px-4 py-4 rounded-lg transition-all" placeholder="Nguyễn Văn A" type="text"/>
-            </div>
-            <div>
-              <label class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-2">Địa chỉ Email</label>
-              <input class="w-full bg-white border-outline-variant/30 focus:ring-2 focus:ring-primary/20 focus:border-primary px-4 py-4 rounded-lg transition-all" placeholder="email@cuahang.com" type="email"/>
-            </div>
-            <div>
-              <label class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-2">Lĩnh vực hoạt động</label>
-              <select class="w-full bg-white border-outline-variant/30 focus:ring-2 focus:ring-primary/20 focus:border-primary px-4 py-4 rounded-lg transition-all">
-                <option>Chủ quán Cà phê</option>
-                <option>Văn phòng / Công ty</option>
-                <option>Cá nhân sử dụng</option>
-                <option>Khác</option>
-              </select>
-            </div>
-            <div class="pt-4">
-              <button class="w-full bg-primary text-on-primary py-5 rounded-lg font-headline font-bold uppercase text-sm tracking-[0.2em] hover:bg-primary/90 transition-all shadow-lg shadow-primary/10" type="submit">
-                Tham gia danh sách ngay
-              </button>
-            </div>
-            <p class="text-[10px] text-on-surface-variant/60 text-center mt-6">Bằng cách đăng ký, bạn đồng ý nhận thông tin tiếp thị từ Industrial Excellence. Hủy đăng ký bất cứ lúc nào.</p>
+          <div class="flex items-center gap-4 mb-4">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-secondary-container bg-on-secondary-container px-2 py-0.5 rounded-sm">Xu hướng</span>
+            <span class="text-[10px] font-medium uppercase tracking-widest text-on-surface-variant">16 Th4, 2024</span>
+          </div>
+          <h3 class="text-xl font-bold text-primary font-headline mb-4 leading-snug group-hover:text-secondary transition-colors">
+            Tương lai của ngành cà phê Specialty tại Việt Nam 2024
+          </h3>
+          <p class="text-sm text-on-surface-variant font-body leading-relaxed mb-8 flex-grow">
+            Khám phá những chuyển dịch quan trọng trong chuỗi cung ứng và tác động của biến đổi khí hậu đến các vùng nguyên liệu trọng điểm tại Tây Nguyên.
+          </p>
+          <button class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-primary group-hover:gap-4 transition-all">
+            Chi tiết <span class="material-symbols-outlined text-sm">trending_flat</span>
+          </button>
+        </article>
+
+        <article class="bg-surface-container-lowest p-8 md:p-12 flex flex-col group hover:bg-surface transition-colors duration-500">
+          <div class="aspect-[4/3] mb-8 overflow-hidden rounded-sm">
+            <img src="/assets/images/news_precision_roasting.png" th:src="@{/assets/images/news_precision_roasting.png}" alt="Precision Roasting" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"/>
+          </div>
+          <div class="flex items-center gap-4 mb-4">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-secondary-container bg-on-secondary-container px-2 py-0.5 rounded-sm">Kỹ thuật</span>
+            <span class="text-[10px] font-medium uppercase tracking-widest text-on-surface-variant">12 Th4, 2024</span>
+          </div>
+          <h3 class="text-xl font-bold text-primary font-headline mb-4 leading-snug group-hover:text-secondary transition-colors">
+            Kỹ thuật rang Precision: Chìa khóa ổn định chất lượng
+          </h3>
+          <p class="text-sm text-on-surface-variant font-body leading-relaxed mb-8 flex-grow">
+            Phân tích cách tích hợp hệ thống điều khiển kỹ thuật số để duy trì profile hương vị đồng nhất trên hàng chục tấn cà phê mỗi tháng.
+          </p>
+          <button class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-primary group-hover:gap-4 transition-all">
+            Chi tiết <span class="material-symbols-outlined text-sm">trending_flat</span>
+          </button>
+        </article>
+
+        <article class="bg-surface-container-lowest p-8 md:p-12 flex flex-col group hover:bg-surface transition-colors duration-500">
+          <div class="aspect-[4/3] mb-8 overflow-hidden rounded-sm">
+            <img src="/assets/images/news_market_report.png" th:src="@{/assets/images/news_market_report.png}" alt="Market Report" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"/>
+          </div>
+          <div class="flex items-center gap-4 mb-4">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-secondary-container bg-on-secondary-container px-2 py-0.5 rounded-sm">Thị trường</span>
+            <span class="text-[10px] font-medium uppercase tracking-widest text-on-surface-variant">08 Th4, 2024</span>
+          </div>
+          <h3 class="text-xl font-bold text-primary font-headline mb-4 leading-snug group-hover:text-secondary transition-colors">
+            Báo cáo thị trường cà phê B2B toàn cầu quý 1/2024
+          </h3>
+          <p class="text-sm text-on-surface-variant font-body leading-relaxed mb-8 flex-grow">
+            Dữ liệu chuyên sâu về biến động giá Robusta toàn cầu và các cơ hội xuất khẩu mới vào thị trường Châu Âu trong bối cảnh lạm phát.
+          </p>
+          <button class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-primary group-hover:gap-4 transition-all">
+            Chi tiết <span class="material-symbols-outlined text-sm">trending_flat</span>
+          </button>
+        </article>
+      </div>
+
+      <div class="mt-32 bg-surface-container-low p-12 md:p-16 rounded-3xl flex flex-col md:flex-row items-center gap-12">
+        <div class="flex-1 text-center md:text-left">
+          <h4 class="text-2xl font-bold font-headline uppercase mb-4 text-primary tracking-tight">Cập nhật báo cáo ngành</h4>
+          <p class="text-on-surface-variant">Nhận thông tin thị trường và kỹ thuật rang mới nhất trực tiếp vào hộp thư của bạn.</p>
+        </div>
+        <div class="w-full md:w-auto flex-shrink-0">
+          <form class="flex flex-col sm:flex-row gap-4">
+            <input type="email" placeholder="Email của đối tác" class="bg-surface-container-lowest border-none px-6 py-4 rounded-md w-full sm:w-80 focus:ring-2 focus:ring-primary/20 transition-all text-sm"/>
+            <button class="bg-primary text-on-primary px-10 py-4 rounded-md font-headline font-bold uppercase text-[10px] tracking-[0.2em] hover:bg-primary-container transition-all">
+              Đăng ký ngay
+            </button>
           </form>
         </div>
       </div>
     </div>
   </section>
-</body>
-</html>
