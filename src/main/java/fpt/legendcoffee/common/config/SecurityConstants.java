@@ -6,6 +6,7 @@ public class SecurityConstants {
             "/home",
             "/login",
             "/register",
+            "/catalogs",
             "/css/**",
             "/js/**",
             "/images/**",

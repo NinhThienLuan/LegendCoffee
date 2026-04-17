@@ -84,4 +84,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
 </head>
+
+<head th:fragment="head(pageTitle)" th:replace="~{fragments/head :: sharedHead(${pageTitle})}"></head>
 </html>

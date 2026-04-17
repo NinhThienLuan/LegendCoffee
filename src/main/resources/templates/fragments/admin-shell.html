@@ -1,0 +1,77 @@
+<!-- Admin Sidebar Fragment -->
+<div th:fragment="adminSidebar">
+  <aside class="fixed left-0 top-0 h-screen w-64 z-50 flex flex-col p-4 border-r border-stone-200 bg-stone-100">
+    <div class="mb-10 px-4">
+      <h1 class="text-lg font-black text-stone-900 font-manrope tracking-tighter uppercase">RoastLogistics</h1>
+      <p class="text-xs font-semibold uppercase tracking-widest text-stone-500">Cong thong tin Cong nghiep</p>
+    </div>
+    <nav class="flex-1 space-y-1">
+      <a th:href="@{/a/dashboard}" class="flex items-center gap-3 text-stone-500 px-4 py-3 mb-1 hover:bg-stone-200/50 hover:text-stone-900 transition-all">
+        <span class="material-symbols-outlined">dashboard</span>
+        <span class="font-manrope text-sm font-semibold uppercase tracking-widest">Bang dieu khien</span>
+      </a>
+      <a th:href="@{/orders}" class="flex items-center gap-3 text-stone-500 px-4 py-3 mb-1 hover:bg-stone-200/50 hover:text-stone-900 transition-all">
+        <span class="material-symbols-outlined">package_2</span>
+        <span class="font-manrope text-sm font-semibold uppercase tracking-widest">Don hang</span>
+      </a>
+      <a th:href="@{/a/products}" class="flex items-center gap-3 text-stone-500 px-4 py-3 mb-1 hover:bg-stone-200/50 hover:text-stone-900 transition-all">
+        <span class="material-symbols-outlined">coffee</span>
+        <span class="font-manrope text-sm font-semibold uppercase tracking-widest">San pham</span>
+      </a>
+      <a th:href="@{/a/promotion}" class="flex items-center gap-3 text-stone-500 px-4 py-3 mb-1 hover:bg-stone-200/50 hover:text-stone-900 transition-all">
+        <span class="material-symbols-outlined">local_activity</span>
+        <span class="font-manrope text-sm font-semibold uppercase tracking-widest">Ma giam gia</span>
+      </a>
+      <a th:href="@{/a/users}" class="flex items-center gap-3 text-stone-500 px-4 py-3 mb-1 hover:bg-stone-200/50 hover:text-stone-900 transition-all">
+        <span class="material-symbols-outlined">group</span>
+        <span class="font-manrope text-sm font-semibold uppercase tracking-widest">Nguoi dung</span>
+      </a>
+      <a th:href="@{/a/posts}" class="flex items-center gap-3 text-stone-500 px-4 py-3 mb-1 hover:bg-stone-200/50 hover:text-stone-900 transition-all">
+        <span class="material-symbols-outlined">article</span>
+        <span class="font-manrope text-sm font-semibold uppercase tracking-widest">Bai viet</span>
+      </a>
+    </nav>
+    <div class="mt-auto pt-4 border-t border-stone-200/50 space-y-1">
+      <a th:href="@{/logout}" class="flex items-center gap-3 text-stone-500 px-4 py-2 hover:text-stone-900 transition-all">
+        <span class="material-symbols-outlined">logout</span>
+        <span class="text-xs font-semibold uppercase tracking-widest">Dang xuat</span>
+      </a>
+    </div>
+  </aside>
+</div>
+
+<!-- Admin Topbar Fragment -->
+<div th:fragment="adminTopbar(title)">
+  <header class="sticky top-0 w-full h-16 z-40 bg-surface/80 backdrop-blur-md border-b border-stone-200/30 flex items-center justify-between px-8">
+    <h2 class="text-xl font-bold tracking-tighter text-stone-900 font-manrope" th:text="${title}">Quan tri</h2>
+    <div class="flex items-center gap-4">
+      <span class="text-stone-600 text-sm">Hello, <span th:text="${adminName}">Admin</span></span>
+      <a th:href="@{/logout}" class="text-stone-600 hover:text-stone-900 text-sm font-semibold">Logout</a>
+    </div>
+  </header>
+</div>
+
+<!-- Admin Footer Fragment -->
+<div th:fragment="adminFooter">
+  <footer class="p-8 mt-12 border-t border-stone-200/30">
+    <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+      <div class="flex items-center gap-2">
+        <div class="h-6 w-6 bg-primary rounded-sm"></div>
+        <span class="font-manrope font-bold text-sm tracking-tighter">Cong thong tin Cong nghiep RoastLogistics</span>
+      </div>
+      <div class="flex flex-wrap justify-center gap-6 md:gap-8 text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">
+        <a class="hover:text-primary transition-colors" href="#">Chinh sach bao mat</a>
+        <a class="hover:text-primary transition-colors" href="#">Nhat ky kiem soat</a>
+        <a class="hover:text-primary transition-colors" href="#">Tai lieu API</a>
+        <span class="text-stone-300">© 2026 ROASTLOGISTICS INC.</span>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- Admin Floating Action Button Fragment -->
+<div th:fragment="adminFab">
+  <button class="fixed bottom-8 right-8 bg-primary text-white h-14 w-14 rounded-full shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-50 group">
+    <span class="material-symbols-outlined text-2xl group-hover:rotate-90 transition-transform">add</span>
+  </button>
+</div>

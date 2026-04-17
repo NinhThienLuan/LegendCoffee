@@ -1,0 +1,23 @@
+|/////////////|
+|ADMIN ACCOUNT|
+|/////////////|
+
+email: admin@legendcoffee.com
+password: password123
+
+|////////////|
+|USER ACCOUNT|
+|////////////|
+
+email: user@gmail.com
+password: password123
+
+|/////////////|
+|PAYMENT VNPAY|
+|/////////////|
+
+NCB
+9704198526191432198
+NGUYEN VAN A
+07/15
+123456

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-
-<html class="light" lang="vi">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 
 <head th:replace="~{fragments/head :: sharedHead('RoastLogistics - Đăng nhập Doanh nghiệp')}"></head>
 
@@ -34,7 +33,8 @@
                         RoastLogistics</h1>
                 </div>
                 <div class="max-w-md">
-                    <h2 class="font-headline text-5xl font-extrabold text-on-primary leading-tight tracking-tight mb-6">
+                    <h2
+                        class="font-headline text-5xl font-extrabold text-on-primary leading-tight tracking-tight mb-6 uppercase">
                         KIẾN TẠO CHUỖI CUNG ỨNG CÀ PHÊ TOÀN CẦU
                     </h2>
                     <p class="text-on-primary-container text-lg font-light leading-relaxed">
@@ -56,6 +56,7 @@
                 </div>
             </div>
         </section>
+
         <!-- Right Side: Auth Forms Canvas -->
         <section class="flex-1 flex items-center justify-center p-6 md:p-12 lg:p-24 bg-surface">
             <div class="w-full max-w-[480px]">
@@ -65,8 +66,7 @@
                     <div class="flex justify-between items-end mb-12">
                         <div>
                             <h3 class="font-headline text-3xl font-bold text-primary tracking-tight mb-2">Chào mừng trở
-                                lại
-                            </h3>
+                                lại</h3>
                             <p class="text-on-surface-variant text-sm">Truy cập hệ thống quản trị cung ứng của bạn</p>
                         </div>
                     </div>
@@ -126,8 +126,7 @@
                             <input class="w-4 h-4 rounded-sm border-outline-variant text-primary focus:ring-primary/20"
                                 id="remember" type="checkbox" />
                             <label class="text-sm text-on-surface-variant font-medium" for="remember">Ghi nhớ đăng nhập
-                                trên
-                                thiết bị này</label>
+                                trên thiết bị này</label>
                         </div>
                         <div class="pt-4">
                             <button
@@ -164,13 +163,6 @@
                                 <span class="text-[9px] font-bold uppercase">Global Logistics</span>
                             </div>
                         </div>
-                    </div>
-                    <div class="mt-12 text-center">
-                        <p class="text-xs text-on-surface-variant">
-                            Bạn chưa có tài khoản Doanh nghiệp?
-                            <a class="font-bold text-primary underline underline-offset-4 ml-1" href="#">Đăng ký
-                                ngay</a>
-                        </p>
                     </div>
                 </div>
 
@@ -273,18 +265,7 @@
             </div>
         </section>
     </main>
-    <!-- Success Toast Mockup (Hidden by default) -->
-    <div
-        class="hidden fixed bottom-8 right-8 bg-surface-container-lowest border-l-4 border-primary p-4 shadow-2xl flex items-center gap-4 max-w-sm">
-        <div class="bg-primary-container p-2 rounded-full">
-            <span class="material-symbols-outlined text-on-primary-container"
-                data-icon="check_circle">check_circle</span>
-        </div>
-        <div>
-            <p class="font-headline font-bold text-sm text-primary">Xác thực thành công</p>
-            <p class="text-xs text-on-surface-variant">Đang chuyển hướng đến Dashboard quản trị...</p>
-        </div>
-    </div>
+
     <!-- Background Decoration -->
     <div class="fixed top-0 left-0 w-full h-full pointer-events-none opacity-[0.03] z-[-1]"
         style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB-Q5xJ_vnd3UZIxcQs6kxSV0Ns3dRiFIZRBI1PAz0StqtgQetOc9a_WRQ2dwNT1inEY7m8vea15FwuavsJiuUaUYa8pDrV9wW8jLWJZxfcxDoEmpj4sjnQbY5_iz1Mjotm9eeTApAdEJDln_MShBabhkHZTg6Pri420uNl1Z8UO33c0L8CDKsSMBw4PK6x0Wo6JlVgQmmiQxGg_VXTUWkjdZK1CVykvlwCBLNYxaVany_dp_qBwYuXOjEEcd4Vto-3ObF43rKOUvT3');">
@@ -292,37 +273,20 @@
 
     <script>
         function setActiveTab(button) {
-            // Find all tab buttons in the parent
             const tabContainer = button.closest('.flex');
             const allTabs = tabContainer.querySelectorAll('.tab-btn, .tab-link');
 
-            // Remove active state from all
             allTabs.forEach(tab => {
                 tab.classList.remove('active-tab');
                 tab.classList.add('border-b-2', 'border-transparent', 'text-on-surface-variant');
                 tab.classList.remove('border-primary', 'text-primary', 'font-semibold');
             });
 
-            // Add active state to clicked button
             button.classList.add('active-tab');
             button.classList.remove('border-transparent', 'text-on-surface-variant');
             button.classList.add('border-b-2', 'border-primary', 'text-primary', 'font-semibold');
         }
 
-        // Add click animation effect
-        document.querySelectorAll('.tab-btn, .tab-link').forEach(tab => {
-            tab.addEventListener('click', function (e) {
-                // Create ripple effect
-                const ripple = document.createElement('span');
-                ripple.classList.add('ripple');
-                ripple.style.left = e.clientX - this.getBoundingClientRect().left + 'px';
-                ripple.style.top = e.clientY - this.getBoundingClientRect().top + 'px';
-                this.appendChild(ripple);
-                setTimeout(() => ripple.remove(), 600);
-            });
-        });
-
-        // Reset Password Form Functions
         function showResetFlow() {
             document.getElementById('mainLoginWrapper').classList.add('hidden');
             document.getElementById('resetPasswordWrapper').classList.remove('hidden');
@@ -343,7 +307,6 @@
             showLogin();
         }
 
-        // Post-login Force Change Functions
         function showForceChangeInputs() {
             document.getElementById('forceChangePrompt').classList.add('hidden');
             document.getElementById('forceChangeInputs').classList.remove('hidden');
@@ -351,12 +314,10 @@
 
         function continueSession() {
             alert('Tiếp tục đăng nhập với mật khẩu cũ...');
-            // Redirect logic (e.g., window.location.href = '/dashboard';)
         }
 
         function confirmForceChange() {
             alert('Đổi mật khẩu thành công!');
-            // Redirect logic
         }
     </script>
 
