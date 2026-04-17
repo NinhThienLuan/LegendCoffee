@@ -10,4 +10,9 @@ public class ArticleController {
     public String article(Model model) {
         return "articles/articles";
     }
+
+    @GetMapping("/article/detail")
+    public String articleDetail(Model model) {
+        return "articles/article-detail";
+    }
 }
