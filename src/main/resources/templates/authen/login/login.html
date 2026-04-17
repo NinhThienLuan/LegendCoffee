@@ -59,109 +59,216 @@
         <!-- Right Side: Auth Forms Canvas -->
         <section class="flex-1 flex items-center justify-center p-6 md:p-12 lg:p-24 bg-surface">
             <div class="w-full max-w-[480px]">
-                <!-- Toggle Header -->
-                <div class="flex justify-between items-end mb-12">
-                    <div>
-                        <h3 class="font-headline text-3xl font-bold text-primary tracking-tight mb-2">Chào mừng trở lại
+                <!-- Authentication Flow Container -->
+                <div id="mainLoginWrapper" th:classappend="${param.forceChange != null} ? 'hidden' : ''">
+                    <!-- Toggle Header -->
+                    <div class="flex justify-between items-end mb-12">
+                        <div>
+                            <h3 class="font-headline text-3xl font-bold text-primary tracking-tight mb-2">Chào mừng trở
+                                lại
+                            </h3>
+                            <p class="text-on-surface-variant text-sm">Truy cập hệ thống quản trị cung ứng của bạn</p>
+                        </div>
+                    </div>
+                    <!-- Form Tabs (Simulated) -->
+                    <div class="flex gap-8 mb-10 border-b border-surface-container-high">
+                        <button onclick="setActiveTab(this)"
+                            class="tab-btn pb-4 border-b-2 border-primary text-primary font-semibold text-sm transition-all duration-300 hover:scale-105 active-tab">ĐĂNG
+                            NHẬP</button>
+                        <a href="/register"
+                            class="tab-link pb-4 border-b-2 border-transparent text-on-surface-variant hover:text-primary font-medium text-sm transition-all duration-300 hover:scale-105">ĐĂNG
+                            KÝ MỚI</a>
+                    </div>
+                    <!-- Auth Form -->
+                    <form class="space-y-6" method="POST" th:action="@{/login}">
+                        <div th:if="${param.error}" class="bg-error/10 border-l-4 border-error p-3 mb-4">
+                            <p class="text-xs text-error font-bold"
+                                th:text="${param.error[0] == 'auth_failed' ? 'Email hoặc mật khẩu không chính xác.' : 'Có lỗi xảy ra, vui lòng thử lại.'}">
+                            </p>
+                        </div>
+                        <div th:if="${param.success}" class="bg-primary/10 border-l-4 border-primary p-3 mb-4">
+                            <p class="text-xs text-primary font-bold"
+                                th:text="${param.success[0] == 'register_success' ? 'Đăng ký thành công! Vui lòng đăng nhập.' : ''}">
+                            </p>
+                        </div>
+                        <div class="space-y-1">
+                            <label
+                                class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1"
+                                for="email">Email Hệ thống</label>
+                            <div class="ghost-border bg-surface-container-low px-4 py-3 flex items-center gap-3">
+                                <span class="material-symbols-outlined text-outline text-xl"
+                                    data-icon="mail">mail</span>
+                                <input
+                                    class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium"
+                                    id="email" name="email" placeholder="email@company.vn" required="" type="email" />
+                            </div>
+                        </div>
+                        <div class="space-y-1">
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant"
+                                    for="password">Mật khẩu</label>
+                            </div>
+                            <div class="ghost-border bg-surface-container-low px-4 py-3 flex items-center gap-3">
+                                <span class="material-symbols-outlined text-outline text-xl"
+                                    data-icon="lock">lock</span>
+                                <input
+                                    class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium"
+                                    id="password" name="password" placeholder="••••••••" required="" type="password" />
+                            </div>
+                            <div class="flex justify-between items-center mb-1 mt-1">
+                                <button type="button" onclick="showResetFlow()"
+                                    class="text-[10px] font-bold text-secondary hover:text-primary transition-colors cursor-pointer">
+                                    Quên mật khẩu?
+                                </button>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 py-2">
+                            <input class="w-4 h-4 rounded-sm border-outline-variant text-primary focus:ring-primary/20"
+                                id="remember" type="checkbox" />
+                            <label class="text-sm text-on-surface-variant font-medium" for="remember">Ghi nhớ đăng nhập
+                                trên
+                                thiết bị này</label>
+                        </div>
+                        <div class="pt-4">
+                            <button
+                                class="w-full bg-primary text-on-primary font-headline font-bold py-4 rounded-md shadow-sm hover:bg-primary-container transition-all active:scale-[0.98] flex justify-center items-center gap-2"
+                                type="submit">
+                                TRUY CẬP HỆ THỐNG
+                                <span class="material-symbols-outlined text-xl"
+                                    data-icon="arrow_forward">arrow_forward</span>
+                            </button>
+                        </div>
+                    </form>
+                    <!-- B2B Trust Badges -->
+                    <div class="mt-16 pt-8 border-t border-surface-container-high">
+                        <p
+                            class="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant/60 mb-6 text-center">
+                            Tiêu chuẩn vận hành Công nghiệp</p>
+                        <div
+                            class="flex justify-between opacity-50 grayscale hover:grayscale-0 transition-all duration-500 px-4">
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="material-symbols-outlined text-2xl" data-icon="verified">verified</span>
+                                <span class="text-[9px] font-bold uppercase">ISO 9001</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="material-symbols-outlined text-2xl" data-icon="security">security</span>
+                                <span class="text-[9px] font-bold uppercase">SSL Encrypted</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="material-symbols-outlined text-2xl" data-icon="inventory">inventory</span>
+                                <span class="text-[9px] font-bold uppercase">HACCP Cert</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="material-symbols-outlined text-2xl"
+                                    data-icon="local_shipping">local_shipping</span>
+                                <span class="text-[9px] font-bold uppercase">Global Logistics</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-12 text-center">
+                        <p class="text-xs text-on-surface-variant">
+                            Bạn chưa có tài khoản Doanh nghiệp?
+                            <a class="font-bold text-primary underline underline-offset-4 ml-1" href="#">Đăng ký
+                                ngay</a>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Reset Password Wrapper (Hidden initially) -->
+                <div id="resetPasswordWrapper" class="hidden">
+                    <div class="mb-10">
+                        <h3 class="font-headline text-3xl font-bold text-primary tracking-tight mb-2">Khôi phục Mật khẩu
                         </h3>
-                        <p class="text-on-surface-variant text-sm">Truy cập hệ thống quản trị cung ứng của bạn</p>
+                        <p class="text-on-surface-variant text-sm">Điền email để nhận liên kết thay đổi mật khẩu.</p>
+                    </div>
+
+                    <!-- Step 1: Request Reset Form -->
+                    <div id="resetStep1">
+                        <div class="space-y-1 mb-6">
+                            <label
+                                class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1"
+                                for="resetEmail">Email Hệ thống</label>
+                            <div class="ghost-border bg-surface-container-low px-4 py-3 flex items-center gap-3">
+                                <span class="material-symbols-outlined text-outline text-xl"
+                                    data-icon="mail">mail</span>
+                                <input
+                                    class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium"
+                                    id="resetEmail" type="email" placeholder="Nhập email của bạn..." />
+                            </div>
+                        </div>
+                        <div class="pt-4 space-y-4 text-center">
+                            <button onclick="submitResetPassword()"
+                                class="w-full bg-primary text-on-primary font-headline font-bold py-4 rounded-md shadow-sm hover:bg-primary-container transition-all active:scale-[0.98] flex justify-center items-center gap-2">
+                                GỬI EMAIL KHÔI PHỤC
+                                <span class="material-symbols-outlined text-xl" data-icon="send">send</span>
+                            </button>
+                            <button onclick="showLogin()"
+                                class="text-xs font-bold text-on-surface-variant hover:text-primary underline underline-offset-4 cursor-pointer">
+                                Quay lại Đăng nhập
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <!-- Form Tabs (Simulated) -->
-                <div class="flex gap-8 mb-10 border-b border-surface-container-high">
-                    <button onclick="setActiveTab(this)"
-                        class="tab-btn pb-4 border-b-2 border-primary text-primary font-semibold text-sm transition-all duration-300 hover:scale-105 active-tab">ĐĂNG
-                        NHẬP</button>
-                    <a href="/register"
-                        class="tab-link pb-4 border-b-2 border-transparent text-on-surface-variant hover:text-primary font-medium text-sm transition-all duration-300 hover:scale-105">ĐĂNG
-                        KÝ MỚI</a>
-                </div>
-                <!-- Auth Form -->
-                <form class="space-y-6" method="POST" th:action="@{/login}">
-                    <div th:if="${param.error}" class="bg-error/10 border-l-4 border-error p-3 mb-4">
-                        <p class="text-xs text-error font-bold"
-                            th:text="${param.error[0] == 'auth_failed' ? 'Email hoặc mật khẩu không chính xác.' : 'Có lỗi xảy ra, vui lòng thử lại.'}">
+
+                <!-- Post-login Password Change Prompt -->
+                <div id="forceChangePasswordWrapper" th:classappend="${param.forceChange != null} ? '' : 'hidden'">
+                    <div class="mb-8">
+                        <h3 class="font-headline text-3xl font-bold text-primary tracking-tight mb-2">Cập nhật Bảo mật
+                        </h3>
+                        <p class="text-on-surface-variant text-sm border-l-4 border-secondary pl-3 bg-secondary/5 py-2">
+                            Bạn đang sử dụng mật khẩu được thiết lập qua email. Bạn có muốn đổi mật khẩu mới ngay không?
                         </p>
                     </div>
-                    <div th:if="${param.success}" class="bg-primary/10 border-l-4 border-primary p-3 mb-4">
-                        <p class="text-xs text-primary font-bold"
-                            th:text="${param.success[0] == 'register_success' ? 'Đăng ký thành công! Vui lòng đăng nhập.' : ''}">
-                        </p>
-                    </div>
-                    <div class="space-y-1">
-                        <label
-                            class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1"
-                            for="email">Email Hệ thống</label>
-                        <div class="ghost-border bg-surface-container-low px-4 py-3 flex items-center gap-3">
-                            <span class="material-symbols-outlined text-outline text-xl" data-icon="mail">mail</span>
-                            <input
-                                class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium"
-                                id="email" name="email" placeholder="email@company.vn" required="" type="email" />
+
+                    <div id="forceChangePrompt">
+                        <div class="flex flex-col gap-4">
+                            <button onclick="showForceChangeInputs()"
+                                class="w-full bg-primary text-on-primary font-headline font-semibold py-4 rounded-md shadow-sm hover:bg-primary-container transition-all">
+                                CÓ, ĐỔI MẬT KHẨU
+                            </button>
+                            <button onclick="continueSession()"
+                                class="w-full bg-surface-container-high text-on-surface-variant font-semibold py-4 rounded-md hover:bg-surface-variant transition-all hover:text-primary">
+                                KHÔNG, TIẾP TỤC ĐĂNG NHẬP
+                            </button>
                         </div>
                     </div>
-                    <div class="space-y-1">
-                        <div class="flex justify-between items-center mb-1">
-                            <label class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant"
-                                for="password">Mật khẩu</label>
+
+                    <div id="forceChangeInputs" class="hidden">
+                        <div class="space-y-4 mb-6">
+                            <div class="space-y-1">
+                                <label
+                                    class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Mật
+                                    khẩu mới</label>
+                                <div class="ghost-border bg-surface-container-low px-4 py-3 flex items-center gap-3">
+                                    <span class="material-symbols-outlined text-outline text-xl"
+                                        data-icon="lock_open">lock_open</span>
+                                    <input
+                                        class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium"
+                                        type="password" placeholder="Mật khẩu ít nhất 8 ký tự..." />
+                                </div>
+                            </div>
+                            <div class="space-y-1">
+                                <label
+                                    class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Xác
+                                    nhận mật khẩu mới</label>
+                                <div class="ghost-border bg-surface-container-low px-4 py-3 flex items-center gap-3">
+                                    <span class="material-symbols-outlined text-outline text-xl"
+                                        data-icon="lock">lock</span>
+                                    <input
+                                        class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium"
+                                        type="password" placeholder="Nhập lại mật khẩu..." />
+                                </div>
+                            </div>
                         </div>
-                        <div class="ghost-border bg-surface-container-low px-4 py-3 flex items-center gap-3">
-                            <span class="material-symbols-outlined text-outline text-xl" data-icon="lock">lock</span>
-                            <input
-                                class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium"
-                                id="password" name="password" placeholder="••••••••" required="" type="password" />
-                        </div>
-                        <div class="flex justify-between items-center mb-1">
-                            <a class="text-[10px] font-bold text-secondary hover:text-primary transition-colors"
-                                href="#">Quên mật khẩu?</a>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-3 py-2">
-                        <input class="w-4 h-4 rounded-sm border-outline-variant text-primary focus:ring-primary/20"
-                            id="remember" type="checkbox" />
-                        <label class="text-sm text-on-surface-variant font-medium" for="remember">Ghi nhớ đăng nhập trên
-                            thiết bị này</label>
-                    </div>
-                    <div class="pt-4">
-                        <button
-                            class="w-full bg-primary text-on-primary font-headline font-bold py-4 rounded-md shadow-sm hover:bg-primary-container transition-all active:scale-[0.98] flex justify-center items-center gap-2"
-                            type="submit">
-                            TRUY CẬP HỆ THỐNG
-                            <span class="material-symbols-outlined text-xl"
-                                data-icon="arrow_forward">arrow_forward</span>
-                        </button>
-                    </div>
-                </form>
-                <!-- B2B Trust Badges -->
-                <div class="mt-16 pt-8 border-t border-surface-container-high">
-                    <p
-                        class="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant/60 mb-6 text-center">
-                        Tiêu chuẩn vận hành Công nghiệp</p>
-                    <div
-                        class="flex justify-between opacity-50 grayscale hover:grayscale-0 transition-all duration-500 px-4">
-                        <div class="flex flex-col items-center gap-1">
-                            <span class="material-symbols-outlined text-2xl" data-icon="verified">verified</span>
-                            <span class="text-[9px] font-bold uppercase">ISO 9001</span>
-                        </div>
-                        <div class="flex flex-col items-center gap-1">
-                            <span class="material-symbols-outlined text-2xl" data-icon="security">security</span>
-                            <span class="text-[9px] font-bold uppercase">SSL Encrypted</span>
-                        </div>
-                        <div class="flex flex-col items-center gap-1">
-                            <span class="material-symbols-outlined text-2xl" data-icon="inventory">inventory</span>
-                            <span class="text-[9px] font-bold uppercase">HACCP Cert</span>
-                        </div>
-                        <div class="flex flex-col items-center gap-1">
-                            <span class="material-symbols-outlined text-2xl"
-                                data-icon="local_shipping">local_shipping</span>
-                            <span class="text-[9px] font-bold uppercase">Global Logistics</span>
+                        <div class="pt-4 space-y-4">
+                            <button onclick="confirmForceChange()"
+                                class="w-full bg-primary text-on-primary font-headline font-bold py-4 rounded-md shadow-sm hover:bg-primary-container transition-all active:scale-[0.98] flex justify-center items-center gap-2">
+                                LƯU VÀ TIẾP TỤC
+                                <span class="material-symbols-outlined text-xl"
+                                    data-icon="check_circle">check_circle</span>
+                            </button>
                         </div>
                     </div>
-                </div>
-                <div class="mt-12 text-center">
-                    <p class="text-xs text-on-surface-variant">
-                        Bạn chưa có tài khoản Doanh nghiệp?
-                        <a class="font-bold text-primary underline underline-offset-4 ml-1" href="#">Đăng ký ngay</a>
-                    </p>
                 </div>
             </div>
         </section>
@@ -214,6 +321,43 @@
                 setTimeout(() => ripple.remove(), 600);
             });
         });
+
+        // Reset Password Form Functions
+        function showResetFlow() {
+            document.getElementById('mainLoginWrapper').classList.add('hidden');
+            document.getElementById('resetPasswordWrapper').classList.remove('hidden');
+        }
+
+        function showLogin() {
+            document.getElementById('resetPasswordWrapper').classList.add('hidden');
+            document.getElementById('mainLoginWrapper').classList.remove('hidden');
+        }
+
+        function submitResetPassword() {
+            const emailValue = document.getElementById('resetEmail').value;
+            if (!emailValue) {
+                alert('Vui lòng nhập Email.');
+                return;
+            }
+            alert('Mật khẩu mới đã được gửi tới email của bạn!');
+            showLogin();
+        }
+
+        // Post-login Force Change Functions
+        function showForceChangeInputs() {
+            document.getElementById('forceChangePrompt').classList.add('hidden');
+            document.getElementById('forceChangeInputs').classList.remove('hidden');
+        }
+
+        function continueSession() {
+            alert('Tiếp tục đăng nhập với mật khẩu cũ...');
+            // Redirect logic (e.g., window.location.href = '/dashboard';)
+        }
+
+        function confirmForceChange() {
+            alert('Đổi mật khẩu thành công!');
+            // Redirect logic
+        }
     </script>
 
     <style>
