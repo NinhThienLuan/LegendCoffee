@@ -9,8 +9,8 @@
         <!-- TopNavBar -->
         <div th:replace="~{fragments/navbar :: navbar(${navItems})}"></div>
         <!-- Main Content - Full Width -->
-        <main class="mt-16 p-6 md:p-12 flex-1">
-            <div class="max-w-7xl mx-auto space-y-8">
+        <main class="mt-16 pt-6 flex-1">
+            <div class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20 space-y-8">
                 <!-- Header Section with Stats -->
                 <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
                     <div class="space-y-2 lg:col-span-4">
@@ -57,11 +57,6 @@
                                 <option>Giá trị: Cao - Thấp</option>
                             </select>
                         </div>
-                        <button
-                            class="bg-surface-container-highest p-2 rounded-md hover:bg-outline-variant/30 transition-colors border border-outline-variant/10">
-                            <span class="material-symbols-outlined text-on-surface"
-                                data-icon="file_download">file_download</span>
-                        </button>
                     </div>
                 </div>
                 <!-- Order Table -->

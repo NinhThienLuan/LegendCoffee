@@ -3,6 +3,7 @@ package fpt.legendcoffee.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.ui.Model;
 
 @Controller
 public class CatalogController {
@@ -21,7 +22,8 @@ public class CatalogController {
 
     // for view access only
     @GetMapping("/catalogs/{id}")
-    public String getCatalogDetails(@PathVariable long id) {
+    public String getCatalogDetails(@PathVariable long id, Model model) {
+        model.addAttribute("catalogId", id);
         return "catalog-detail";
     }
 

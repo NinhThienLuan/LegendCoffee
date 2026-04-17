@@ -3,8 +3,9 @@
 
 <body>
   <nav th:fragment="navbar(navItems)"
-    class="fixed top-0 w-full z-[100] bg-[#faf9f5]/85 dark:bg-[#1a1614]/85 backdrop-blur-md border-b border-outline-variant/20">
-    <div class="max-w-7xl px-8 sm:px-12 lg:px-20">
+    id="mainNavbar"
+    class="fixed top-0 w-full z-[100] bg-[#faf9f5]/85 dark:bg-[#1a1614]/85 backdrop-blur-md border-b border-outline-variant/20 transition-transform duration-300">
+    <div class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20">
       <!-- Container chính dùng flex và justify-between để đẩy 3 cụm ra 2 đầu và giữa -->
       <div class="relative flex items-center justify-between h-20 gap-4">
 
@@ -36,16 +37,14 @@
         <div class="flex-1 lg:flex-none flex items-center justify-end gap-1">
           <!-- Desktop & Mobile Icons Group -->
           <div class="flex items-center gap-1">
-            <button
-              class="h-9 w-9 inline-flex items-center justify-center text-[#5b4a45] hover:text-[#351f1b] hover:bg-[#efe9e5] rounded-full transition-colors"
-              aria-label="Notifications">
-              <span class="material-symbols-outlined text-[20px]">notifications</span>
-            </button>
-            <button
-              class="h-9 w-9 inline-flex items-center justify-center text-[#5b4a45] hover:text-[#351f1b] hover:bg-[#efe9e5] rounded-full transition-colors"
-              aria-label="Cart">
-              <span class="material-symbols-outlined text-[20px]">shopping_cart</span>
-            </button>
+            <div class="relative group">
+              <a href="/cart"
+                class="h-9 w-9 inline-flex items-center justify-center text-[#5b4a45] hover:text-[#351f1b] hover:bg-[#efe9e5] rounded-full transition-colors"
+                aria-label="Cart">
+                <span class="material-symbols-outlined text-[20px]">shopping_cart</span>
+                <span id="cart-badge" class="absolute -top-1 -right-1 bg-primary text-on-primary text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center opacity-0 transition-opacity">0</span>
+              </a>
+            </div>
 
             <!-- Auth Buttons -->
             <a sec:authorize="isAnonymous()" href="/login"
@@ -89,6 +88,38 @@
       </div>
     </div>
   </nav>
+</div>
+<script>
+// Navbar scroll behavior
+let lastScrollY = window.scrollY;
+const navbar = document.getElementById('mainNavbar');
+window.addEventListener('scroll', () => {
+  if (!navbar) return;
+  if (window.scrollY > lastScrollY && window.scrollY > 40) {
+    navbar.style.transform = 'translateY(-100%)';
+  } else {
+    navbar.style.transform = 'translateY(0)';
+  }
+  lastScrollY = window.scrollY;
+});
+
+// Cart Badge Update Logic
+function updateNavbarCartBadge() {
+  const badge = document.getElementById('cart-badge');
+  if (!badge || !window.CartSystem) return;
+  
+  const count = window.CartSystem.getCartCount();
+  if (count > 0) {
+    badge.innerText = count;
+    badge.classList.remove('opacity-0');
+  } else {
+    badge.classList.add('opacity-0');
+  }
+}
+
+window.addEventListener('load', updateNavbarCartBadge);
+window.addEventListener('cartUpdated', updateNavbarCartBadge);
+</script>
 </body>
 
 </html>
