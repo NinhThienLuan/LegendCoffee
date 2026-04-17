@@ -1,295 +1,254 @@
 <!DOCTYPE html>
 
 <html class="light" lang="vi">
-<head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>RoastLogistics - Đăng nhập Doanh nghiệp</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;700;800&amp;family=Work+Sans:wght@300;400;500;600&amp;display=swap"
-          rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-          rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-          rel="stylesheet"/>
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "on-tertiary": "#ffffff",
-                        "secondary": "#77574d",
-                        "outline": "#827471",
-                        "surface-container-lowest": "#ffffff",
-                        "on-surface": "#1a1c1a",
-                        "on-primary-fixed-variant": "#5b403c",
-                        "tertiary": "#352017",
-                        "surface-dim": "#dadad6",
-                        "on-primary-container": "#bf9d97",
-                        "on-tertiary-fixed-variant": "#5b4137",
-                        "error": "#ba1a1a",
-                        "on-primary-fixed": "#2b1613",
-                        "tertiary-fixed": "#ffdbce",
-                        "surface-bright": "#faf9f5",
-                        "primary-fixed": "#ffdad4",
-                        "on-secondary-container": "#795950",
-                        "tertiary-container": "#4e352c",
-                        "background": "#faf9f5",
-                        "secondary-container": "#fed3c7",
-                        "on-secondary-fixed": "#2c160e",
-                        "surface": "#faf9f5",
-                        "on-error-container": "#93000a",
-                        "surface-variant": "#e2e3df",
-                        "tertiary-fixed-dim": "#e4beb2",
-                        "on-primary": "#ffffff",
-                        "on-surface-variant": "#504442",
-                        "secondary-fixed-dim": "#e7bdb1",
-                        "on-tertiary-fixed": "#2b160f",
-                        "error-container": "#ffdad6",
-                        "surface-container-low": "#f4f4f0",
-                        "on-secondary": "#ffffff",
-                        "outline-variant": "#d4c3bf",
-                        "surface-container": "#eeeeea",
-                        "on-secondary-fixed-variant": "#5d4037",
-                        "primary": "#351f1b",
-                        "on-background": "#1a1c1a",
-                        "surface-container-high": "#e8e8e4",
-                        "primary-container": "#4d3430",
-                        "surface-tint": "#745853",
-                        "secondary-fixed": "#ffdbd0",
-                        "on-tertiary-container": "#c09d91",
-                        "surface-container-highest": "#e2e3df",
-                        "primary-fixed-dim": "#e3beb8",
-                        "inverse-surface": "#2f312e",
-                        "inverse-primary": "#e3beb8",
-                        "inverse-on-surface": "#f1f1ed",
-                        "on-error": "#ffffff"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.125rem",
-                        "lg": "0.25rem",
-                        "xl": "0.5rem",
-                        "full": "0.75rem"
-                    },
-                    "fontFamily": {
-                        "headline": ["Manrope"],
-                        "body": ["Work Sans"],
-                        "label": ["Work Sans"]
-                    }
-                },
-            },
+
+<head th:replace="~{fragments/head :: sharedHead('RoastLogistics - Đăng nhập Doanh nghiệp')}"></head>
+
+<body
+    class="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container font-body antialiased">
+    <style>
+        .bg-industrial-hero {
+            background-image: linear-gradient(135deg, rgba(53, 31, 27, 0.92) 0%, rgba(77, 52, 48, 0.7) 100%), url(https://lh3.googleusercontent.com/aida-public/AB6AXuAIIW50d3obmeucMrF1DD1tqDklOcwRmI8p_YtcVN4dqV2pWL6ny-oijdABgrOc1ZYCTqSotbbvZJ3FfAX-qq3wdxldTTwzWHUi7HXrHo_gx7PhdrV-WgZkb3f3aHs7ePVMzfQGGHyHIwWPdkQ_3jyLyQ9yMlAxZhYxpinzrhXIT36c0oG1uagGOxu4it9MAEeEJrHiSuZkHMy-YwSudKWqMWZ1CfPtRdG-5LAc9w1FF_E_9y2OYM33au7Y0iH8-5JBqMHQak7I1QAX);
+            background-size: cover;
+            background-position: center
         }
-    </script>
-    <style>.material-symbols-outlined {
-        font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24
-    }
 
-    .bg-industrial-hero {
-        background-image: linear-gradient(135deg, rgba(53, 31, 27, 0.92) 0%, rgba(77, 52, 48, 0.7) 100%), url(https://lh3.googleusercontent.com/aida-public/AB6AXuAIIW50d3obmeucMrF1DD1tqDklOcwRmI8p_YtcVN4dqV2pWL6ny-oijdABgrOc1ZYCTqSotbbvZJ3FfAX-qq3wdxldTTwzWHUi7HXrHo_gx7PhdrV-WgZkb3f3aHs7ePVMzfQGGHyHIwWPdkQ_3jyLyQ9yMlAxZhYxpinzrhXIT36c0oG1uagGOxu4it9MAEeEJrHiSuZkHMy-YwSudKWqMWZ1CfPtRdG-5LAc9w1FF_E_9y2OYM33au7Y0iH8-5JBqMHQak7I1QAX);
-        background-size: cover;
-        background-position: center
-    }
+        .ghost-border {
+            border: 1px solid rgba(212, 195, 191, 0.3)
+        }
 
-    .ghost-border {
-        border: 1px solid rgba(212, 195, 191, 0.3)
-    }
-
-    .ghost-border:focus-within {
-        border-bottom: 2px solid #351f1b;
-        border-color: rgba(53, 31, 27, 0.4)
-    }</style>
-</head>
-<body class="bg-background text-on-surface font-body antialiased">
-<main class="min-h-screen flex flex-col md:flex-row">
-<!-- Left Side: Industrial Branding & Imagery -->
-<section class="hidden md:flex md:w-1/2 bg-industrial-hero p-16 flex-col justify-between relative overflow-hidden" data-alt="close-up of professional industrial coffee roasting machinery with stainless steel parts and glowing heating elements in a dark warehouse">
-<div class="z-10">
-<div class="flex items-center gap-3 mb-12">
-<span class="material-symbols-outlined text-on-primary text-4xl" data-icon="factory">factory</span>
-<h1 class="font-headline font-black text-2xl text-on-primary tracking-tighter uppercase">RoastLogistics</h1>
-</div>
-<div class="max-w-md">
-<h2 class="font-headline text-5xl font-extrabold text-on-primary leading-tight tracking-tight mb-6">
+        .ghost-border:focus-within {
+            border-bottom: 2px solid #351f1b;
+            border-color: rgba(53, 31, 27, 0.4)
+        }
+    </style>
+    <main class="min-h-screen flex flex-col md:flex-row">
+        <!-- Left Side: Industrial Branding & Imagery -->
+        <section
+            class="hidden md:flex md:w-1/2 bg-industrial-hero p-16 flex-col justify-between relative overflow-hidden"
+            data-alt="close-up of professional industrial coffee roasting machinery with stainless steel parts and glowing heating elements in a dark warehouse">
+            <div class="z-10">
+                <div class="flex items-center gap-3 mb-12">
+                    <span class="material-symbols-outlined text-on-primary text-4xl" data-icon="factory">factory</span>
+                    <h1 class="font-headline font-black text-2xl text-on-primary tracking-tighter uppercase">
+                        RoastLogistics</h1>
+                </div>
+                <div class="max-w-md">
+                    <h2 class="font-headline text-5xl font-extrabold text-on-primary leading-tight tracking-tight mb-6">
                         KIẾN TẠO CHUỖI CUNG ỨNG CÀ PHÊ TOÀN CẦU
                     </h2>
-<p class="text-on-primary-container text-lg font-light leading-relaxed">
-                        Hệ thống vận hành công nghiệp dành riêng cho nhà rang xay và đối tác thu mua quy mô lớn. Minh bạch, chính xác và tối ưu hóa chi phí.
+                    <p class="text-on-primary-container text-lg font-light leading-relaxed">
+                        Hệ thống vận hành công nghiệp dành riêng cho nhà rang xay và đối tác thu mua quy mô lớn. Minh
+                        bạch, chính xác và tối ưu hóa chi phí.
                     </p>
-</div>
-</div>
-<div class="z-10 grid grid-cols-2 gap-8 border-l-2 border-on-primary-container/30 pl-8">
-<div>
-<p class="text-on-primary font-headline text-3xl font-bold mb-1">500+</p>
-<p class="text-on-primary-container text-xs uppercase tracking-widest font-medium">Đối tác Doanh nghiệp</p>
-</div>
-<div>
-<p class="text-on-primary font-headline text-3xl font-bold mb-1">12.5k</p>
-<p class="text-on-primary-container text-xs uppercase tracking-widest font-medium">Tấn/Năm Vận chuyển</p>
-</div>
-</div>
-</section>
-<!-- Right Side: Auth Forms Canvas -->
-<section class="flex-1 flex items-center justify-center p-6 md:p-12 lg:p-24 bg-surface">
-<div class="w-full max-w-[480px]">
-<!-- Toggle Header -->
-<div class="flex justify-between items-end mb-12">
-<div>
-<h3 class="font-headline text-3xl font-bold text-primary tracking-tight mb-2">Chào mừng trở lại</h3>
-<p class="text-on-surface-variant text-sm">Truy cập hệ thống quản trị cung ứng của bạn</p>
-</div>
-</div>
-<!-- Form Tabs (Simulated) -->
-<div class="flex gap-8 mb-10 border-b border-surface-container-high">
-<button onclick="setActiveTab(this)" class="tab-btn pb-4 border-b-2 border-primary text-primary font-semibold text-sm transition-all duration-300 hover:scale-105 active-tab">ĐĂNG NHẬP</button>
-<a href="/register" class="tab-link pb-4 border-b-2 border-transparent text-on-surface-variant hover:text-primary font-medium text-sm transition-all duration-300 hover:scale-105">ĐĂNG KÝ MỚI</a>
-</div>
-<!-- Auth Form -->
-<form class="space-y-6" method="POST" th:action="@{/login}">
-        <div th:if="${param.error}" class="bg-error/10 border-l-4 border-error p-3 mb-4">
-            <p class="text-xs text-error font-bold" th:text="${param.error[0] == 'auth_failed' ? 'Email hoặc mật khẩu không chính xác.' : 'Có lỗi xảy ra, vui lòng thử lại.'}"></p>
-        </div>
-        <div th:if="${param.success}" class="bg-primary/10 border-l-4 border-primary p-3 mb-4">
-            <p class="text-xs text-primary font-bold" th:text="${param.success[0] == 'register_success' ? 'Đăng ký thành công! Vui lòng đăng nhập.' : ''}"></p>
-        </div>
-        <div class="space-y-1">
-            <label class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1" for="email">Email Hệ thống</label>
-            <div class="ghost-border bg-surface-container-low px-4 py-3 flex items-center gap-3">
-                <span class="material-symbols-outlined text-outline text-xl" data-icon="mail">mail</span>
-                <input class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium" id="email" name="email" placeholder="email@company.vn" required="" type="email"/>
+                </div>
             </div>
-        </div>
-<div class="space-y-1">
-<div class="flex justify-between items-center mb-1">
-<label class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant" for="password">Mật khẩu</label>
-</div>
-<div class="ghost-border bg-surface-container-low px-4 py-3 flex items-center gap-3">
-<span class="material-symbols-outlined text-outline text-xl" data-icon="lock">lock</span>
-<input class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium" id="password" name="password" placeholder="••••••••" required="" type="password"/>
-</div>
-<div class="flex justify-between items-center mb-1">
-  <a class="text-[10px] font-bold text-secondary hover:text-primary transition-colors" href="#">Quên mật khẩu?</a>
-</div>
-</div>
-<div class="flex items-center gap-3 py-2">
-<input class="w-4 h-4 rounded-sm border-outline-variant text-primary focus:ring-primary/20" id="remember" type="checkbox"/>
-<label class="text-sm text-on-surface-variant font-medium" for="remember">Ghi nhớ đăng nhập trên thiết bị này</label>
-</div>
-<div class="pt-4">
-<button class="w-full bg-primary text-on-primary font-headline font-bold py-4 rounded-md shadow-sm hover:bg-primary-container transition-all active:scale-[0.98] flex justify-center items-center gap-2" type="submit">
+            <div class="z-10 grid grid-cols-2 gap-8 border-l-2 border-on-primary-container/30 pl-8">
+                <div>
+                    <p class="text-on-primary font-headline text-3xl font-bold mb-1">500+</p>
+                    <p class="text-on-primary-container text-xs uppercase tracking-widest font-medium">Đối tác Doanh
+                        nghiệp</p>
+                </div>
+                <div>
+                    <p class="text-on-primary font-headline text-3xl font-bold mb-1">12.5k</p>
+                    <p class="text-on-primary-container text-xs uppercase tracking-widest font-medium">Tấn/Năm Vận
+                        chuyển</p>
+                </div>
+            </div>
+        </section>
+        <!-- Right Side: Auth Forms Canvas -->
+        <section class="flex-1 flex items-center justify-center p-6 md:p-12 lg:p-24 bg-surface">
+            <div class="w-full max-w-[480px]">
+                <!-- Toggle Header -->
+                <div class="flex justify-between items-end mb-12">
+                    <div>
+                        <h3 class="font-headline text-3xl font-bold text-primary tracking-tight mb-2">Chào mừng trở lại
+                        </h3>
+                        <p class="text-on-surface-variant text-sm">Truy cập hệ thống quản trị cung ứng của bạn</p>
+                    </div>
+                </div>
+                <!-- Form Tabs (Simulated) -->
+                <div class="flex gap-8 mb-10 border-b border-surface-container-high">
+                    <button onclick="setActiveTab(this)"
+                        class="tab-btn pb-4 border-b-2 border-primary text-primary font-semibold text-sm transition-all duration-300 hover:scale-105 active-tab">ĐĂNG
+                        NHẬP</button>
+                    <a href="/register"
+                        class="tab-link pb-4 border-b-2 border-transparent text-on-surface-variant hover:text-primary font-medium text-sm transition-all duration-300 hover:scale-105">ĐĂNG
+                        KÝ MỚI</a>
+                </div>
+                <!-- Auth Form -->
+                <form class="space-y-6" method="POST" th:action="@{/login}">
+                    <div th:if="${param.error}" class="bg-error/10 border-l-4 border-error p-3 mb-4">
+                        <p class="text-xs text-error font-bold"
+                            th:text="${param.error[0] == 'auth_failed' ? 'Email hoặc mật khẩu không chính xác.' : 'Có lỗi xảy ra, vui lòng thử lại.'}">
+                        </p>
+                    </div>
+                    <div th:if="${param.success}" class="bg-primary/10 border-l-4 border-primary p-3 mb-4">
+                        <p class="text-xs text-primary font-bold"
+                            th:text="${param.success[0] == 'register_success' ? 'Đăng ký thành công! Vui lòng đăng nhập.' : ''}">
+                        </p>
+                    </div>
+                    <div class="space-y-1">
+                        <label
+                            class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1"
+                            for="email">Email Hệ thống</label>
+                        <div class="ghost-border bg-surface-container-low px-4 py-3 flex items-center gap-3">
+                            <span class="material-symbols-outlined text-outline text-xl" data-icon="mail">mail</span>
+                            <input
+                                class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium"
+                                id="email" name="email" placeholder="email@company.vn" required="" type="email" />
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant"
+                                for="password">Mật khẩu</label>
+                        </div>
+                        <div class="ghost-border bg-surface-container-low px-4 py-3 flex items-center gap-3">
+                            <span class="material-symbols-outlined text-outline text-xl" data-icon="lock">lock</span>
+                            <input
+                                class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium"
+                                id="password" name="password" placeholder="••••••••" required="" type="password" />
+                        </div>
+                        <div class="flex justify-between items-center mb-1">
+                            <a class="text-[10px] font-bold text-secondary hover:text-primary transition-colors"
+                                href="#">Quên mật khẩu?</a>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 py-2">
+                        <input class="w-4 h-4 rounded-sm border-outline-variant text-primary focus:ring-primary/20"
+                            id="remember" type="checkbox" />
+                        <label class="text-sm text-on-surface-variant font-medium" for="remember">Ghi nhớ đăng nhập trên
+                            thiết bị này</label>
+                    </div>
+                    <div class="pt-4">
+                        <button
+                            class="w-full bg-primary text-on-primary font-headline font-bold py-4 rounded-md shadow-sm hover:bg-primary-container transition-all active:scale-[0.98] flex justify-center items-center gap-2"
+                            type="submit">
                             TRUY CẬP HỆ THỐNG
-                            <span class="material-symbols-outlined text-xl" data-icon="arrow_forward">arrow_forward</span>
-</button>
-</div>
-</form>
-<!-- B2B Trust Badges -->
-<div class="mt-16 pt-8 border-t border-surface-container-high">
-<p class="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant/60 mb-6 text-center">Tiêu chuẩn vận hành Công nghiệp</p>
-<div class="flex justify-between opacity-50 grayscale hover:grayscale-0 transition-all duration-500 px-4">
-<div class="flex flex-col items-center gap-1">
-<span class="material-symbols-outlined text-2xl" data-icon="verified">verified</span>
-<span class="text-[9px] font-bold uppercase">ISO 9001</span>
-</div>
-<div class="flex flex-col items-center gap-1">
-<span class="material-symbols-outlined text-2xl" data-icon="security">security</span>
-<span class="text-[9px] font-bold uppercase">SSL Encrypted</span>
-</div>
-<div class="flex flex-col items-center gap-1">
-<span class="material-symbols-outlined text-2xl" data-icon="inventory">inventory</span>
-<span class="text-[9px] font-bold uppercase">HACCP Cert</span>
-</div>
-<div class="flex flex-col items-center gap-1">
-<span class="material-symbols-outlined text-2xl" data-icon="local_shipping">local_shipping</span>
-<span class="text-[9px] font-bold uppercase">Global Logistics</span>
-</div>
-</div>
-</div>
-<div class="mt-12 text-center">
-<p class="text-xs text-on-surface-variant">
-                        Bạn chưa có tài khoản Doanh nghiệp? 
+                            <span class="material-symbols-outlined text-xl"
+                                data-icon="arrow_forward">arrow_forward</span>
+                        </button>
+                    </div>
+                </form>
+                <!-- B2B Trust Badges -->
+                <div class="mt-16 pt-8 border-t border-surface-container-high">
+                    <p
+                        class="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant/60 mb-6 text-center">
+                        Tiêu chuẩn vận hành Công nghiệp</p>
+                    <div
+                        class="flex justify-between opacity-50 grayscale hover:grayscale-0 transition-all duration-500 px-4">
+                        <div class="flex flex-col items-center gap-1">
+                            <span class="material-symbols-outlined text-2xl" data-icon="verified">verified</span>
+                            <span class="text-[9px] font-bold uppercase">ISO 9001</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1">
+                            <span class="material-symbols-outlined text-2xl" data-icon="security">security</span>
+                            <span class="text-[9px] font-bold uppercase">SSL Encrypted</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1">
+                            <span class="material-symbols-outlined text-2xl" data-icon="inventory">inventory</span>
+                            <span class="text-[9px] font-bold uppercase">HACCP Cert</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1">
+                            <span class="material-symbols-outlined text-2xl"
+                                data-icon="local_shipping">local_shipping</span>
+                            <span class="text-[9px] font-bold uppercase">Global Logistics</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-12 text-center">
+                    <p class="text-xs text-on-surface-variant">
+                        Bạn chưa có tài khoản Doanh nghiệp?
                         <a class="font-bold text-primary underline underline-offset-4 ml-1" href="#">Đăng ký ngay</a>
-</p>
-</div>
-</div>
-</section>
-</main>
-<!-- Success Toast Mockup (Hidden by default) -->
-<div class="hidden fixed bottom-8 right-8 bg-surface-container-lowest border-l-4 border-primary p-4 shadow-2xl flex items-center gap-4 max-w-sm">
-    <div class="bg-primary-container p-2 rounded-full">
-        <span class="material-symbols-outlined text-on-primary-container" data-icon="check_circle">check_circle</span>
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+    <!-- Success Toast Mockup (Hidden by default) -->
+    <div
+        class="hidden fixed bottom-8 right-8 bg-surface-container-lowest border-l-4 border-primary p-4 shadow-2xl flex items-center gap-4 max-w-sm">
+        <div class="bg-primary-container p-2 rounded-full">
+            <span class="material-symbols-outlined text-on-primary-container"
+                data-icon="check_circle">check_circle</span>
+        </div>
+        <div>
+            <p class="font-headline font-bold text-sm text-primary">Xác thực thành công</p>
+            <p class="text-xs text-on-surface-variant">Đang chuyển hướng đến Dashboard quản trị...</p>
+        </div>
     </div>
-    <div>
-        <p class="font-headline font-bold text-sm text-primary">Xác thực thành công</p>
-        <p class="text-xs text-on-surface-variant">Đang chuyển hướng đến Dashboard quản trị...</p>
+    <!-- Background Decoration -->
+    <div class="fixed top-0 left-0 w-full h-full pointer-events-none opacity-[0.03] z-[-1]"
+        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB-Q5xJ_vnd3UZIxcQs6kxSV0Ns3dRiFIZRBI1PAz0StqtgQetOc9a_WRQ2dwNT1inEY7m8vea15FwuavsJiuUaUYa8pDrV9wW8jLWJZxfcxDoEmpj4sjnQbY5_iz1Mjotm9eeTApAdEJDln_MShBabhkHZTg6Pri420uNl1Z8UO33c0L8CDKsSMBw4PK6x0Wo6JlVgQmmiQxGg_VXTUWkjdZK1CVykvlwCBLNYxaVany_dp_qBwYuXOjEEcd4Vto-3ObF43rKOUvT3');">
     </div>
-</div>
-<!-- Background Decoration -->
-<div class="fixed top-0 left-0 w-full h-full pointer-events-none opacity-[0.03] z-[-1]"
-     style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB-Q5xJ_vnd3UZIxcQs6kxSV0Ns3dRiFIZRBI1PAz0StqtgQetOc9a_WRQ2dwNT1inEY7m8vea15FwuavsJiuUaUYa8pDrV9wW8jLWJZxfcxDoEmpj4sjnQbY5_iz1Mjotm9eeTApAdEJDln_MShBabhkHZTg6Pri420uNl1Z8UO33c0L8CDKsSMBw4PK6x0Wo6JlVgQmmiQxGg_VXTUWkjdZK1CVykvlwCBLNYxaVany_dp_qBwYuXOjEEcd4Vto-3ObF43rKOUvT3');"></div>
 
-<script>
-    function setActiveTab(button) {
-        // Find all tab buttons in the parent
-        const tabContainer = button.closest('.flex');
-        const allTabs = tabContainer.querySelectorAll('.tab-btn, .tab-link');
+    <script>
+        function setActiveTab(button) {
+            // Find all tab buttons in the parent
+            const tabContainer = button.closest('.flex');
+            const allTabs = tabContainer.querySelectorAll('.tab-btn, .tab-link');
 
-        // Remove active state from all
-        allTabs.forEach(tab => {
-            tab.classList.remove('active-tab');
-            tab.classList.add('border-b-2', 'border-transparent', 'text-on-surface-variant');
-            tab.classList.remove('border-primary', 'text-primary', 'font-semibold');
-        });
+            // Remove active state from all
+            allTabs.forEach(tab => {
+                tab.classList.remove('active-tab');
+                tab.classList.add('border-b-2', 'border-transparent', 'text-on-surface-variant');
+                tab.classList.remove('border-primary', 'text-primary', 'font-semibold');
+            });
 
-        // Add active state to clicked button
-        button.classList.add('active-tab');
-        button.classList.remove('border-transparent', 'text-on-surface-variant');
-        button.classList.add('border-b-2', 'border-primary', 'text-primary', 'font-semibold');
-    }
-
-    // Add click animation effect
-    document.querySelectorAll('.tab-btn, .tab-link').forEach(tab => {
-        tab.addEventListener('click', function (e) {
-            // Create ripple effect
-            const ripple = document.createElement('span');
-            ripple.classList.add('ripple');
-            ripple.style.left = e.clientX - this.getBoundingClientRect().left + 'px';
-            ripple.style.top = e.clientY - this.getBoundingClientRect().top + 'px';
-            this.appendChild(ripple);
-            setTimeout(() => ripple.remove(), 600);
-        });
-    });
-</script>
-
-<style>
-    .tab-btn, .tab-link {
-        position: relative;
-        overflow: hidden;
-    }
-
-    .active-tab {
-        box-shadow: 0 2px 8px rgba(53, 31, 27, 0.1);
-    }
-
-    .tab-btn:hover:not(.active-tab), .tab-link:hover:not(.active-tab) {
-        color: #351f1b;
-        border-bottom-color: rgba(53, 31, 27, 0.2);
-    }
-
-    .ripple {
-        position: absolute;
-        border-radius: 50%;
-        background: rgba(53, 31, 27, 0.3);
-        transform: scale(0);
-        animation: ripple-animation 0.6s ease-out;
-        pointer-events: none;
-    }
-
-    @keyframes ripple-animation {
-        to {
-            transform: scale(4);
-            opacity: 0;
+            // Add active state to clicked button
+            button.classList.add('active-tab');
+            button.classList.remove('border-transparent', 'text-on-surface-variant');
+            button.classList.add('border-b-2', 'border-primary', 'text-primary', 'font-semibold');
         }
-    }
-</style>
+
+        // Add click animation effect
+        document.querySelectorAll('.tab-btn, .tab-link').forEach(tab => {
+            tab.addEventListener('click', function (e) {
+                // Create ripple effect
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+                ripple.style.left = e.clientX - this.getBoundingClientRect().left + 'px';
+                ripple.style.top = e.clientY - this.getBoundingClientRect().top + 'px';
+                this.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+    </script>
+
+    <style>
+        .tab-btn,
+        .tab-link {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .active-tab {
+            box-shadow: 0 2px 8px rgba(53, 31, 27, 0.1);
+        }
+
+        .tab-btn:hover:not(.active-tab),
+        .tab-link:hover:not(.active-tab) {
+            color: #351f1b;
+            border-bottom-color: rgba(53, 31, 27, 0.2);
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(53, 31, 27, 0.3);
+            transform: scale(0);
+            animation: ripple-animation 0.6s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+    </style>
 </body>
+
 </html>
