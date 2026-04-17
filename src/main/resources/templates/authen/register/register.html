@@ -3,7 +3,8 @@
 
 <head th:replace="~{fragments/head :: sharedHead('RoastLogistics - Hệ thống Doanh nghiệp')}"></head>
 
-<body class="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container font-body antialiased">
+<body
+    class="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container font-body antialiased">
     <style>
         .bg-industrial-hero {
             background-image: linear-gradient(135deg, rgba(53, 31, 27, 0.92) 0%, rgba(77, 52, 48, 0.7) 100%), url(https://lh3.googleusercontent.com/aida-public/AB6AXuAIIW50d3obmeucMrF1DD1tqDklOcwRmI8p_YtcVN4dqV2pWL6ny-oijdABgrOc1ZYCTqSotbbvZJ3FfAX-qq3wdxldTTwzWHUi7HXrHo_gx7PhdrV-WgZkb3f3aHs7ePVMzfQGGHyHIwWPdkQ_3jyLyQ9yMlAxZhYxpinzrhXIT36c0oG1uagGOxu4it9MAEeEJrHiSuZkHMy-YwSudKWqMWZ1CfPtRdG-5LAc9w1FF_E_9y2OYM33au7Y0iH8-5JBqMHQak7I1QAX);
@@ -22,29 +23,36 @@
     </style>
     <main class="min-h-screen flex flex-col md:flex-row">
         <!-- Left Side: Industrial Branding & Imagery -->
-        <section class="hidden md:flex md:w-1/2 bg-industrial-hero p-16 flex-col justify-between relative overflow-hidden" data-alt="close-up of professional industrial coffee roasting machinery">
+        <section
+            class="hidden md:flex md:w-1/2 bg-industrial-hero p-16 flex-col justify-between relative overflow-hidden"
+            data-alt="close-up of professional industrial coffee roasting machinery">
             <div class="z-10">
                 <div class="flex items-center gap-3 mb-12">
                     <span class="material-symbols-outlined text-on-primary text-4xl" data-icon="factory">factory</span>
-                    <h1 class="font-headline font-black text-2xl text-on-primary tracking-tighter uppercase">RoastLogistics</h1>
+                    <h1 class="font-headline font-black text-2xl text-on-primary tracking-tighter uppercase">
+                        RoastLogistics</h1>
                 </div>
                 <div class="max-w-md">
-                    <h2 class="font-headline text-5xl font-extrabold text-on-primary leading-tight tracking-tight mb-6 uppercase">
+                    <h2
+                        class="font-headline text-5xl font-extrabold text-on-primary leading-tight tracking-tight mb-6 uppercase">
                         KIẾN TẠO CHUỖI CUNG ỨNG CÀ PHÊ TOÀN CẦU
                     </h2>
                     <p class="text-on-primary-container text-lg font-light leading-relaxed">
-                        Hệ thống vận hành công nghiệp dành riêng cho nhà rang xay và đối tác thu mua quy mô lớn. Minh bạch, chính xác và tối ưu hóa chi phí.
+                        Hệ thống vận hành công nghiệp dành riêng cho nhà rang xay và đối tác thu mua quy mô lớn. Minh
+                        bạch, chính xác và tối ưu hóa chi phí.
                     </p>
                 </div>
             </div>
             <div class="z-10 grid grid-cols-2 gap-8 border-l-2 border-on-primary-container/30 pl-8">
                 <div>
                     <p class="text-on-primary font-headline text-3xl font-bold mb-1">500+</p>
-                    <p class="text-on-primary-container text-xs uppercase tracking-widest font-medium">Đối tác Doanh nghiệp</p>
+                    <p class="text-on-primary-container text-xs uppercase tracking-widest font-medium">Đối tác Doanh
+                        nghiệp</p>
                 </div>
                 <div>
                     <p class="text-on-primary font-headline text-3xl font-bold mb-1">12.5k</p>
-                    <p class="text-on-primary-container text-xs uppercase tracking-widest font-medium">Tấn/Năm Vận chuyển</p>
+                    <p class="text-on-primary-container text-xs uppercase tracking-widest font-medium">Tấn/Năm Vận
+                        chuyển</p>
                 </div>
             </div>
         </section>
@@ -55,75 +63,113 @@
                 <!-- Toggle Header -->
                 <div class="flex justify-between items-end mb-12">
                     <div>
-                        <h3 class="font-headline text-3xl font-bold text-primary tracking-tight mb-2">Đăng ký Tài khoản</h3>
+                        <h3 class="font-headline text-3xl font-bold text-primary tracking-tight mb-2">Đăng ký Tài khoản
+                        </h3>
                         <p class="text-on-surface-variant text-sm">Quản lý quy trình cung ứng của bạn</p>
                     </div>
                 </div>
                 <!-- Form Tabs (Simulated) -->
                 <div class="flex gap-8 mb-10 border-b border-surface-container-high">
-                    <a href="/login" class="tab-link pb-4 border-b-2 border-transparent text-on-surface-variant hover:text-primary font-medium text-sm transition-all duration-300 hover:scale-105">ĐĂNG NHẬP</a>
-                    <button onclick="setActiveTab(this)" class="tab-btn pb-4 border-b-2 border-primary text-primary font-semibold text-sm transition-all duration-300 hover:scale-105 active-tab">ĐĂNG KÝ MỚI</button>
+                    <a href="/login"
+                        class="tab-link pb-4 border-b-2 border-transparent text-on-surface-variant hover:text-primary font-medium text-sm transition-all duration-300 hover:scale-105">ĐĂNG
+                        NHẬP</a>
+                    <button onclick="setActiveTab(this)"
+                        class="tab-btn pb-4 border-b-2 border-primary text-primary font-semibold text-sm transition-all duration-300 hover:scale-105 active-tab">ĐĂNG
+                        KÝ MỚI</button>
                 </div>
                 <!-- Auth Form -->
                 <form class="space-y-6" method="POST" th:action="@{/register}">
                     <div th:if="${param.error}" class="bg-error/10 border-l-4 border-error p-3 mb-4">
-                        <p class="text-xs text-error font-bold" th:text="${param.error[0] == 'reg_failed' ? 'Thông tin không hợp lệ hoặc đã tồn tại.' : 'Có lỗi xảy ra, vui lòng thử lại.'}"></p>
+                        <p class="text-xs text-error font-bold"
+                            th:text="${param.error[0] == 'reg_failed' ? 'Thông tin không hợp lệ hoặc đã tồn tại.' : 'Có lỗi xảy ra, vui lòng thử lại.'}">
+                        </p>
                     </div>
                     <!-- Username -->
                     <div class="space-y-1">
-                        <label class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1" for="username">Tên đăng nhập</label>
+                        <label
+                            class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1"
+                            for="username">Tên đăng nhập</label>
                         <div class="ghost-border bg-surface-container-low px-4 py-3 flex items-center gap-3">
-                            <span class="material-symbols-outlined text-outline text-xl" data-icon="person">person</span>
-                            <input class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium" id="username" name="username" placeholder="nguyen.van.a" type="text" required />
+                            <span class="material-symbols-outlined text-outline text-xl"
+                                data-icon="person">person</span>
+                            <input
+                                class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium"
+                                id="username" name="username" placeholder="nguyen.van.a" type="text" required />
                         </div>
                     </div>
                     <!-- Email -->
                     <div class="space-y-1">
-                        <label class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1" for="email">Email Hệ thống</label>
+                        <label
+                            class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1"
+                            for="email">Email Hệ thống</label>
                         <div class="ghost-border bg-surface-container-low px-4 py-3 flex items-center gap-3">
                             <span class="material-symbols-outlined text-outline text-xl" data-icon="mail">mail</span>
-                            <input class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium" id="email" name="email" placeholder="purchasing@company.vn" type="email" required />
+                            <input
+                                class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium"
+                                id="email" name="email" placeholder="purchasing@company.vn" type="email" required />
                         </div>
                     </div>
                     <!-- Password -->
                     <div class="space-y-1">
-                        <label class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1" for="password">Mật khẩu</label>
+                        <label
+                            class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1"
+                            for="password">Mật khẩu</label>
                         <div class="ghost-border bg-surface-container-low px-4 py-3 flex items-center gap-3">
                             <span class="material-symbols-outlined text-outline text-xl" data-icon="lock">lock</span>
-                            <input class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium" id="password" name="password" placeholder="••••••••" type="password" required />
+                            <input
+                                class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium"
+                                id="password" name="password" placeholder="••••••••" type="password" required />
                         </div>
                     </div>
                     <!-- Phone -->
                     <div class="space-y-1">
-                        <label class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1" for="phone">Số điện thoại</label>
+                        <label
+                            class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1"
+                            for="phone">Số điện thoại</label>
                         <div class="ghost-border bg-surface-container-low px-4 py-3 flex items-center gap-3">
                             <span class="material-symbols-outlined text-outline text-xl" data-icon="phone">phone</span>
-                            <input class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium" id="phone" name="phone" placeholder="0901234567" type="tel" required />
+                            <input
+                                class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium"
+                                id="phone" name="phone" placeholder="0901234567" type="tel" required />
                         </div>
                     </div>
                     <!-- Address -->
                     <div class="space-y-1">
-                        <label class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1" for="address">Địa chỉ Doanh nghiệp</label>
+                        <label
+                            class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1"
+                            for="address">Địa chỉ Doanh nghiệp</label>
                         <div class="ghost-border bg-surface-container-low px-4 py-3 flex items-center gap-3">
-                            <span class="material-symbols-outlined text-outline text-xl" data-icon="location_on">location_on</span>
-                            <input class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium" id="address" name="address" placeholder="123 Đường Công Nghiệp, TP. HCM" type="text" required />
+                            <span class="material-symbols-outlined text-outline text-xl"
+                                data-icon="location_on">location_on</span>
+                            <input
+                                class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium"
+                                id="address" name="address" placeholder="123 Đường Công Nghiệp, TP. HCM" type="text"
+                                required />
                         </div>
                     </div>
                     <div class="flex items-center gap-3 py-2">
-                        <input class="w-4 h-4 rounded-sm border-outline-variant text-primary focus:ring-primary/20" id="remember" type="checkbox" />
-                        <label class="text-sm text-on-surface-variant font-medium" for="remember">Ghi nhớ đăng nhập trên thiết bị này</label>
+                        <input class="w-4 h-4 rounded-sm border-outline-variant text-primary focus:ring-primary/20"
+                            id="remember" type="checkbox" />
+                        <label class="text-sm text-on-surface-variant font-medium" for="remember">Ghi nhớ đăng nhập trên
+                            thiết bị này</label>
                     </div>
                     <div class="pt-4">
-                        <button class="w-full bg-primary text-on-primary font-headline font-bold py-4 rounded-md shadow-sm hover:bg-primary-container transition-all active:scale-[0.98] flex justify-center items-center gap-2" type="submit">
+                        <button
+                            class="w-full bg-primary text-on-primary font-headline font-bold py-4 rounded-md shadow-sm hover:bg-primary-container transition-all active:scale-[0.98] flex justify-center items-center gap-2"
+                            type="submit">
                             KHỞI TẠO TÀI KHOẢN
-                            <span class="material-symbols-outlined text-xl" data-icon="arrow_forward">arrow_forward</span>
+                            <span class="material-symbols-outlined text-xl"
+                                data-icon="arrow_forward">arrow_forward</span>
                         </button>
                     </div>
                 </form>
                 <!-- B2B Trust Badges -->
                 <div class="mt-16 pt-8 border-t border-surface-container-high">
-                    <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant/60 mb-6 text-center">Tiêu chuẩn vận hành Công nghiệp</p>
-                    <div class="flex justify-between opacity-50 grayscale hover:grayscale-0 transition-all duration-500 px-4">
+                    <p
+                        class="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant/60 mb-6 text-center">
+                        Tiêu chuẩn vận hành Công nghiệp</p>
+                    <div
+                        class="flex justify-between opacity-50 grayscale hover:grayscale-0 transition-all duration-500 px-4">
                         <div class="flex flex-col items-center gap-1">
                             <span class="material-symbols-outlined text-2xl" data-icon="verified">verified</span>
                             <span class="text-[9px] font-bold uppercase">ISO 9001</span>
@@ -137,7 +183,8 @@
                             <span class="text-[9px] font-bold uppercase">HACCP Cert</span>
                         </div>
                         <div class="flex flex-col items-center gap-1">
-                            <span class="material-symbols-outlined text-2xl" data-icon="local_shipping">local_shipping</span>
+                            <span class="material-symbols-outlined text-2xl"
+                                data-icon="local_shipping">local_shipping</span>
                             <span class="text-[9px] font-bold uppercase">Global Logistics</span>
                         </div>
                     </div>
@@ -145,14 +192,16 @@
                 <div class="mt-12 text-center">
                     <p class="text-xs text-on-surface-variant">
                         Bạn cần hỗ trợ về tài khoản?
-                        <a class="font-bold text-primary underline underline-offset-4 ml-1" href="#">Liên hệ quản trị viên</a>
+                        <a class="font-bold text-primary underline underline-offset-4 ml-1" href="#">Liên hệ quản trị
+                            viên</a>
                     </p>
                 </div>
             </div>
         </section>
     </main>
     <!-- Background Decoration -->
-    <div class="fixed top-0 left-0 w-full h-full pointer-events-none opacity-[0.03] z-[-1]" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB-Q5xJ_vnd3UZIxcQs6kxSV0Ns3dRiFIZRBI1PAz0StqtgQetOc9a_WRQ2dwNT1inEY7m8vea15FwuavsJiuUaUYa8pDrV9wW8jLWJZxfcxDoEmpj4sjnQbY5_iz1Mjotm9eeTApAdEJDln_MShBabhkHZTg6Pri420uNl1Z8UO33c0L8CDKsSMBw4PK6x0Wo6JlVgQmmiQxGg_VXTUWkjdZK1CVykvlwCBLNYxaVany_dp_qBwYuXOjEEcd4Vto-3ObF43rKOUvT3');">
+    <div class="fixed top-0 left-0 w-full h-full pointer-events-none opacity-[0.03] z-[-1]"
+        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB-Q5xJ_vnd3UZIxcQs6kxSV0Ns3dRiFIZRBI1PAz0StqtgQetOc9a_WRQ2dwNT1inEY7m8vea15FwuavsJiuUaUYa8pDrV9wW8jLWJZxfcxDoEmpj4sjnQbY5_iz1Mjotm9eeTApAdEJDln_MShBabhkHZTg6Pri420uNl1Z8UO33c0L8CDKsSMBw4PK6x0Wo6JlVgQmmiQxGg_VXTUWkjdZK1CVykvlwCBLNYxaVany_dp_qBwYuXOjEEcd4Vto-3ObF43rKOUvT3');">
     </div>
 
     <script>
