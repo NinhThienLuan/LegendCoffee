@@ -11,9 +11,18 @@ public class SecurityConstants {
             "/css/**",
             "/js/**",
             "/images/**",
+<<<<<<< HEAD
             "/payment/vnpay/callback",
             "/payment/vnpay/ipn",
             "/assets/**",
             "/favicon.ico"
+=======
+ 
+            "/favicon.ico",
+            "/payment/vnpay/callback",
+            "/payment/vnpay/ipn",
+            "/assets/**",
+         
+>>>>>>> feature/product-service
     };
 }

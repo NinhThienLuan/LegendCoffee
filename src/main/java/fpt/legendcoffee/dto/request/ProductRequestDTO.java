@@ -1,32 +1,109 @@
 package fpt.legendcoffee.dto.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.time.LocalDate;
+
 import org.springframework.web.multipart.MultipartFile;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
-@Data
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class ProductRequestDTO {
 
+    /** Tên sản phẩm hiển thị trên hệ thống. */
     private String name;
 
+    /** Mô tả chi tiết về sản phẩm. */
     private String description;
 
+    /** Nguồn gốc/xuất xứ của sản phẩm. */
     private String origin;
 
-    private String expiryDate;
+    /** Ngày hết hạn của sản phẩm. */
+    private LocalDate expiryDate;
 
-    private String manufacturerDate;
+    /** Ngày sản xuất của sản phẩm. */
+    private LocalDate manufacturerDate;
 
-    private Long categoryId; // Dùng ID để tìm Category trong Service
+    /** ID danh mục, dùng để liên kết Category khi lưu Product. */
+    private Long categoryId;
 
+    /** Trạng thái kích hoạt sản phẩm (true: hoạt động, false: ẩn). */
     private Boolean isActive;
 
-    // Thuộc tính ảnh gộp vào DTO
+    /** File ảnh upload từ form thêm/sửa sản phẩm. */
     private MultipartFile image;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(String origin) {
+        this.origin = origin;
+    }
+
+    public LocalDate getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(LocalDate expiryDate) {
+        this.expiryDate = expiryDate;
+    }
+
+    public LocalDate getManufacturerDate() {
+        return manufacturerDate;
+    }
+
+    public void setManufacturerDate(LocalDate manufacturerDate) {
+        this.manufacturerDate = manufacturerDate;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public MultipartFile getImage() {
+        return image;
+    }
+
+    public void setImage(MultipartFile image) {
+        this.image = image;
+    }
+    // Hàm tiện ích để kiểm tra logic
+    public boolean isValidDateRange() {
+        if (manufacturerDate == null || expiryDate == null) return false;
+        return expiryDate.isAfter(manufacturerDate);
+    }
 }
