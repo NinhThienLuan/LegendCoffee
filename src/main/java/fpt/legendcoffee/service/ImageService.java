@@ -1,8 +1,8 @@
 package fpt.legendcoffee.service;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import java.util.Map;
+
+import org.springframework.web.multipart.MultipartFile;
 
 public interface ImageService {
     // Trả về Map chứa toàn bộ thông tin từ Cloudinary (URL, Public ID, size,...)

@@ -1,5 +1,7 @@
 package fpt.legendcoffee.entity;
 
+import java.time.LocalDate;
+
 import fpt.legendcoffee.common.infrastructure.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -38,10 +40,10 @@ public class Product extends BaseEntity {
     private String origin;
 
     @Column(name = "expiry_date")
-    private String expiryDate;
+    private LocalDate expiryDate;
 
     @Column(name = "manufacturer_date")
-    private String manufacturerDate;
+    private LocalDate manufacturerDate;
 
     @Column(name = "image_url", columnDefinition = "NVARCHAR(1000)")
     private String imageUrl;

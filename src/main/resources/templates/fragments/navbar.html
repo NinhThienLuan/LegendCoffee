@@ -27,6 +27,9 @@
           <a href="/catalogs"
             th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/catalog')} ? ' text-[#351f1b] dark:text-[#ffffff]' : ' text-[#5b4a45] dark:text-[#d4c3bf] hover:text-[#351f1b] dark:hover:text-[#ffffff]'"
             class="transition-colors duration-300">Sản Phẩm</a>
+          <a href="/products"
+            th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/products')} ? ' text-[#351f1b] dark:text-[#ffffff]' : ' text-[#5b4a45] dark:text-[#d4c3bf] hover:text-[#351f1b] dark:hover:text-[#ffffff]'"
+            class="transition-colors duration-300">View Product</a>
           <a href="/orders"
             th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/orders')} ? ' text-[#351f1b] dark:text-[#ffffff]' : ' text-[#5b4a45] dark:text-[#d4c3bf] hover:text-[#351f1b] dark:hover:text-[#ffffff]'"
             class="transition-colors duration-300">Đơn hàng</a>
@@ -82,6 +85,9 @@
           <a href="/catalogs"
             th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/catalog')} ? ' text-[#351f1b]' : ' text-[#6f605c] hover:text-[#351f1b]'"
             class="transition-colors">Sản Phẩm</a>
+          <a href="/products"
+            th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/products')} ? ' text-[#351f1b]' : ' text-[#6f605c] hover:text-[#351f1b]'"
+            class="transition-colors">View Product</a>
           <a href="/orders"
             th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/orders')} ? ' text-[#351f1b]' : ' text-[#6f605c] hover:text-[#351f1b]'"
             class="transition-colors">Đơn hàng</a>
