@@ -1,5 +1,6 @@
 package fpt.legendcoffee.service.serviceImpl;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -117,10 +118,48 @@ public class ProductServiceImpl implements ProductService {
     }
 
     private void validateDateRange(ProductRequestDTO request) {
-        if (request.getManufacturerDate() != null
-                && request.getExpiryDate() != null
-                && !request.getExpiryDate().isAfter(request.getManufacturerDate())) {
+        LocalDate today = LocalDate.now();
+        LocalDate manufacturerDate = request.getManufacturerDate();
+        LocalDate expiryDate = request.getExpiryDate();
+
+        if (manufacturerDate != null && manufacturerDate.isAfter(today)) {
+            throw new IllegalArgumentException("Ngày sản xuất không được ở tương lai");
+        }
+        if (expiryDate != null && expiryDate.isBefore(today)) {
+            throw new IllegalArgumentException("Ngày hết hạn phải ở tương lai");
+        }
+        if (manufacturerDate == null || expiryDate == null) {
+            return;
+        }
+        if (!expiryDate.isAfter(manufacturerDate)) {
             throw new IllegalArgumentException("Ngày hết hạn phải sau ngày sản xuất");
         }
     }
+    @Override
+@Transactional(readOnly = true)
+public ProductRequestDTO getProductRequestById(Long id) {
+    Product product = getProductById(id);
+    return ProductRequestDTO.builder()
+            .name(product.getName())
+            .description(product.getDescription())
+            .origin(product.getOrigin())
+            .manufacturerDate(product.getManufacturerDate())
+            .expiryDate(product.getExpiryDate())
+            .categoryId(product.getCategory() != null ? product.getCategory().getId() : null)
+            .isActive(product.getIsActive())
+            .build();
+}
+
+@Override
+public ProductRequestDTO sanitize(ProductRequestDTO request) {
+    return ProductRequestDTO.builder()
+            .name(request.getName())
+            .description(request.getDescription())
+            .origin(request.getOrigin())
+            .manufacturerDate(request.getManufacturerDate())
+            .expiryDate(request.getExpiryDate())
+            .categoryId(request.getCategoryId())
+            .isActive(request.getIsActive())
+            .build();
+}
 }
