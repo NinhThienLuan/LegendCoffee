@@ -14,7 +14,10 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import fpt.legendcoffee.dto.request.ProductRequestDTO;
+import fpt.legendcoffee.dto.response.ProductResponseDTO;
 import fpt.legendcoffee.entity.Product;
+import fpt.legendcoffee.entity.ProductVariant;
+import fpt.legendcoffee.repository.ProductVariantRepository;
 import fpt.legendcoffee.service.ProductService;
 import lombok.RequiredArgsConstructor;
 
@@ -24,15 +27,16 @@ import lombok.RequiredArgsConstructor;
 public class ProductController {
 
     private final ProductService productService;
+    private final ProductVariantRepository productVariantRepository;
 
     @GetMapping
     public String listProducts(Model model) {
-        List<Product> products = productService.getAllProducts();
+        List<ProductResponseDTO> products = productService.getAllProductResponses();
         model.addAttribute("products", products);
-        return "product/catalogs";
-    }
+        return "product/products";
+    } //cần thêm phân quyền để hiển thị đúng nếu customer thì return "product/catalog" còn admin thì return "product/products"
 
-    @GetMapping({"/view", "/list"})
+    @GetMapping({ "/view", "/list" })
     public String listProductsAlias(Model model) {
         return listProducts(model);
     }
@@ -42,7 +46,7 @@ public class ProductController {
         List<Product> products = productService.getAllProducts();
         if (products.isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Chưa có sản phẩm để xem.");
-            return "redirect:/products";
+            return "redirect:product/products";
         }
         model.addAttribute("product", products.get(0));
         return "product/view-product";
@@ -56,16 +60,20 @@ public class ProductController {
             return "product/catalog-detail";
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/products";
+            return "redirect:product/products";
         }
     }
+
+    // ── Add Form ─────────────────────────────────────────────────────────────
 
     @GetMapping("/form-add")
     public String addProductForm(Model model) {
         if (!model.containsAttribute("request")) {
             model.addAttribute("request", new ProductRequestDTO());
         }
-        return "product/add-product";
+        model.addAttribute("categories", productService.getAllCategories());
+        model.addAttribute("editMode", false);
+        return "product/product-form";
     }
 
     @PostMapping("/add")
@@ -74,17 +82,21 @@ public class ProductController {
         try {
             productService.addProduct(request);
             redirectAttributes.addFlashAttribute("success", "Thêm sản phẩm thành công!");
-            return "redirect:/products/form-add";
+            return "redirect:/products";
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             redirectAttributes.addFlashAttribute("request", request);
+            e.printStackTrace();
             return "redirect:/products/form-add";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra khi thêm sản phẩm. Vui lòng thử lại.");
             redirectAttributes.addFlashAttribute("request", request);
+            e.printStackTrace();
             return "redirect:/products/form-add";
         }
     }
+
+    // ── Edit Form ─────────────────────────────────────────────────────────────
 
     @GetMapping("/{id}/form-edit")
     public String editProductForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
@@ -101,12 +113,19 @@ public class ProductController {
                 request.setCategoryId(product.getCategory() != null ? product.getCategory().getId() : null);
                 model.addAttribute("request", request);
             }
+
+            // Load existing variants for the edit form
+            List<ProductVariant> existingVariants = productVariantRepository.findByProduct(product);
+
             model.addAttribute("productId", id);
             model.addAttribute("currentImageUrl", product.getImageUrl());
-            return "product/edit-product";
+            model.addAttribute("existingVariants", existingVariants);
+            model.addAttribute("categories", productService.getAllCategories());
+            model.addAttribute("editMode", true);
+            return "product/product-form";
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/products";
+            return "redirect:product/products";
         }
     }
 
@@ -117,7 +136,7 @@ public class ProductController {
         try {
             productService.updateProduct(id, request);
             redirectAttributes.addFlashAttribute("success", "Cập nhật sản phẩm thành công!");
-            return "redirect:/products/" + id;
+            return "redirect:/products";
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             redirectAttributes.addFlashAttribute("request", request);
@@ -128,6 +147,8 @@ public class ProductController {
             return "redirect:/products/" + id + "/form-edit";
         }
     }
+
+    // ── Delete ────────────────────────────────────────────────────────────────
 
     @PostMapping("/{id}/delete")
     public String deleteProduct(@PathVariable Long id, RedirectAttributes redirectAttributes) {

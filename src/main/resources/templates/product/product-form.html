@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html class="light" lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head
+    th:replace="~{fragments/head :: sharedHead(${editMode} ? 'Cập nhật Sản phẩm | LegendCoffee Admin' : 'Thêm Sản phẩm | LegendCoffee Admin')}">
+</head>
+
+<body class="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container">
+
+    <main class="flex min-h-screen">
+        <aside th:replace="~{fragments/admin-sidebar :: adminSidebar}"></aside>
+
+        <!-- Main Content Canvas -->
+        <section class="flex-1 ml-64 min-h-screen bg-surface">
+            <header
+                th:replace="~{fragments/admin-topbar :: adminTopbar(${editMode} ? 'Cập nhật Sản phẩm' : 'Thêm Sản phẩm Mới', 'Tìm kiếm sản phẩm...')}">
+            </header>
+
+            <div class="p-8 space-y-8">
+
+                <!-- ── Page header + breadcrumb ──────────────────────────────────── -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Quản lý
+                            Sản phẩm</p>
+                        <h3 class="text-3xl font-extrabold text-primary font-manrope tracking-tighter"
+                            th:text="${editMode} ? 'Cập nhật sản phẩm' : 'Thêm sản phẩm mới'">Thêm sản phẩm mới</h3>
+                    </div>
+                    <a th:href="@{/products}"
+                        class="flex items-center gap-2 px-5 py-2.5 text-xs font-bold bg-surface-container-low text-on-surface rounded-lg hover:bg-surface-container transition-colors uppercase tracking-wider">
+                        <span class="material-symbols-outlined text-sm">arrow_back</span>
+                        Quay lại
+                    </a>
+                </div>
+
+                <!-- ── Alert messages ─────────────────────────────────────────────── -->
+                <div th:if="${success}"
+                    class="flex items-center gap-3 rounded-lg bg-green-50 border border-green-200 px-5 py-4 text-sm text-green-800">
+                    <span class="material-symbols-outlined text-green-600 text-base">check_circle</span>
+                    <span th:text="${success}"></span>
+                </div>
+                <div th:if="${error}"
+                    class="flex items-center gap-3 rounded-lg bg-red-50 border border-red-200 px-5 py-4 text-sm text-red-800">
+                    <span class="material-symbols-outlined text-red-500 text-base">error</span>
+                    <span th:text="${error}"></span>
+                </div>
+
+                <!-- ── Two-column layout ──────────────────────────────────────────── -->
+                <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+
+                    <!-- Left: Info Panel -->
+                    <aside class="xl:col-span-3 space-y-6">
+                        <div class="bg-surface-container-low rounded-lg p-6">
+                            <p class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-4">
+                                Hướng dẫn</p>
+                            <ul class="space-y-3 text-sm text-on-surface-variant">
+                                <li class="flex items-start gap-2">
+                                    <span class="material-symbols-outlined text-primary text-base mt-0.5">check</span>
+                                    Tên sản phẩm và xuất xứ là bắt buộc.
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="material-symbols-outlined text-primary text-base mt-0.5">check</span>
+                                    Ngày hết hạn phải sau ngày sản xuất.
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="material-symbols-outlined text-primary text-base mt-0.5">check</span>
+                                    Khi thêm mới, phải có <strong>ít nhất một biến thể</strong>.
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="material-symbols-outlined text-primary text-base mt-0.5">check</span>
+                                    File ảnh: khuyến nghị dưới 5MB.
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Current image preview (edit mode) -->
+                        <div th:if="${editMode and currentImageUrl != null}"
+                            class="bg-surface-container-low rounded-lg p-6">
+                            <p class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-4">Ảnh
+                                hiện tại</p>
+                            <img th:src="${currentImageUrl}" alt="Ảnh sản phẩm hiện tại"
+                                class="w-full aspect-square object-cover rounded-lg" />
+                            <p class="mt-3 text-xs text-on-surface-variant">Tải ảnh mới để thay thế ảnh hiện tại.</p>
+                        </div>
+
+                        <div class="bg-surface-container-low rounded-lg p-6">
+                            <p class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-3">
+                                Đường dẫn API</p>
+                            <p class="text-xs text-on-surface-variant font-mono"
+                                th:text="${editMode} ? ('POST /products/' + productId + '/update') : 'POST /products/add'">
+                                POST /products/add
+                            </p>
+                        </div>
+                    </aside>
+
+                    <!-- Right: Main form -->
+                    <section class="xl:col-span-9 space-y-6">
+
+                        <form id="productForm"
+                            th:action="@{${editMode ? '/products/' + productId + '/update' : '/products/add'}}"
+                            th:object="${request}" method="post" enctype="multipart/form-data" novalidate>
+
+                            <!-- ── Product Core Info ────────────────────────────────────── -->
+                            <div class="bg-surface-container-lowest rounded-lg shadow-sm">
+                                <div class="px-6 py-4 bg-surface-container-low rounded-t-lg">
+                                    <p class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">
+                                        Thông tin sản phẩm</p>
+                                </div>
+                                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                                    <!-- Product Name -->
+                                    <div class="md:col-span-2">
+                                        <label for="name" class="block text-sm font-semibold text-on-surface mb-2">
+                                            Tên sản phẩm <span class="text-red-500">*</span>
+                                        </label>
+                                        <input id="name" type="text" th:field="*{name}" required maxlength="255"
+                                            placeholder="Ví dụ: Arabica Premium Cầu Đất"
+                                            class="w-full rounded-lg bg-surface-container-low border-0 px-4 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:ring-2 focus:ring-primary/40 focus:outline-none transition" />
+                                        <p id="nameError" class="mt-1.5 text-xs text-red-500 hidden">Vui lòng nhập tên
+                                            sản phẩm.</p>
+                                    </div>
+
+                                    <!-- Description -->
+                                    <div class="md:col-span-2">
+                                        <label for="description"
+                                            class="block text-sm font-semibold text-on-surface mb-2">Mô tả</label>
+                                        <textarea id="description" th:field="*{description}" rows="4"
+                                            placeholder="Mô tả ngắn về đặc điểm, hương vị, quy trình rang..."
+                                            class="w-full rounded-lg bg-surface-container-low border-0 px-4 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:ring-2 focus:ring-primary/40 focus:outline-none transition resize-none"></textarea>
+                                    </div>
+
+                                    <!-- Origin -->
+                                    <div>
+                                        <label for="origin" class="block text-sm font-semibold text-on-surface mb-2">
+                                            Xuất xứ <span class="text-red-500">*</span>
+                                        </label>
+                                        <input id="origin" type="text" th:field="*{origin}" required maxlength="255"
+                                            placeholder="Ví dụ: Đà Lạt, Lâm Đồng"
+                                            class="w-full rounded-lg bg-surface-container-low border-0 px-4 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:ring-2 focus:ring-primary/40 focus:outline-none transition" />
+                                        <p id="originError" class="mt-1.5 text-xs text-red-500 hidden">Vui lòng nhập
+                                            xuất xứ.</p>
+                                    </div>
+
+                                    <!-- Category -->
+                                    <div>
+                                        <label for="categoryId"
+                                            class="block text-sm font-semibold text-on-surface mb-2">Danh mục</label>
+                                        <select id="categoryId" th:field="*{categoryId}"
+                                            class="w-full rounded-lg bg-surface-container-low border-0 px-4 py-2.5 text-sm text-on-surface focus:ring-2 focus:ring-primary/40 focus:outline-none transition">
+                                            <option value="">-- Chọn danh mục --</option>
+                                            <option th:each="cat : ${categories}" th:value="${cat.id}"
+                                                th:text="${cat.categoryName}"
+                                                th:selected="${request.categoryId != null and request.categoryId == cat.id}">
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Manufacturer Date -->
+                                    <div>
+                                        <label for="manufacturerDate"
+                                            class="block text-sm font-semibold text-on-surface mb-2">Ngày sản
+                                            xuất</label>
+                                        <input id="manufacturerDate" type="date" name="manufacturerDate"
+                                            th:value="${request.manufacturerDate != null ? #temporals.format(request.manufacturerDate, 'yyyy-MM-dd') : ''}"
+                                            class="w-full rounded-lg bg-surface-container-low border-0 px-4 py-2.5 text-sm text-on-surface focus:ring-2 focus:ring-primary/40 focus:outline-none transition" />
+                                    </div>
+
+                                    <!-- Expiry Date -->
+                                    <div>
+                                        <label for="expiryDate"
+                                            class="block text-sm font-semibold text-on-surface mb-2">Ngày hết
+                                            hạn</label>
+                                        <input id="expiryDate" type="date" name="expiryDate"
+                                            th:value="${request.expiryDate != null ? #temporals.format(request.expiryDate, 'yyyy-MM-dd') : ''}"
+                                            class="w-full rounded-lg bg-surface-container-low border-0 px-4 py-2.5 text-sm text-on-surface focus:ring-2 focus:ring-primary/40 focus:outline-none transition" />
+                                        <p id="dateError" class="mt-1.5 text-xs text-red-500 hidden">Ngày hết hạn phải
+                                            sau ngày sản xuất.</p>
+                                    </div>
+
+                                    <!-- Image Upload -->
+                                    <div class="md:col-span-2">
+                                        <label for="image" class="block text-sm font-semibold text-on-surface mb-2">Ảnh
+                                            sản phẩm</label>
+                                        <input id="image" type="file" th:field="*{image}" accept="image/*"
+                                            class="w-full rounded-lg bg-surface-container-low border-0 px-4 py-2 text-sm text-on-surface
+                                  file:mr-4 file:border-0 file:bg-primary file:px-4 file:py-1.5 file:text-xs file:font-bold file:text-white file:uppercase file:rounded-md file:cursor-pointer hover:file:bg-primary-container focus:outline-none transition" />
+                                        <p class="mt-1.5 text-xs text-on-surface-variant">Định dạng: JPG, PNG, WEBP.
+                                            Dung lượng khuyến nghị: dưới 5MB.</p>
+                                    </div>
+
+                                    <!-- Active toggle -->
+                                    <div class="md:col-span-2">
+                                        <label
+                                            class="inline-flex items-center gap-3 bg-surface-container-low rounded-lg px-4 py-3 cursor-pointer hover:bg-surface-container transition-colors">
+                                            <input type="checkbox" th:field="*{isActive}"
+                                                class="w-4 h-4 rounded border-outline text-primary focus:ring-primary" />
+                                            <span class="text-sm font-semibold text-on-surface">Kích hoạt sản
+                                                phẩm</span>
+                                            <span class="text-xs text-on-surface-variant">(Ẩn sản phẩm khỏi gian hàng
+                                                nếu bỏ chọn)</span>
+                                        </label>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!-- ── Variants Section ─────────────────────────────────────── -->
+                            <div class="bg-surface-container-lowest rounded-lg shadow-sm">
+                                <div
+                                    class="px-6 py-4 bg-surface-container-low rounded-t-lg flex items-center justify-between">
+                                    <div>
+                                        <p
+                                            class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">
+                                            Biến thể sản phẩm</p>
+                                        <p class="text-xs text-on-surface-variant mt-0.5">Mỗi biến thể đại diện cho một
+                                            quy cách đóng gói / kích cỡ khác nhau.</p>
+                                    </div>
+                                    <button type="button" id="addVariantBtn"
+                                        class="flex items-center gap-2 px-4 py-2 text-xs font-bold bg-primary text-on-primary rounded-lg hover:bg-primary-container hover:text-primary transition-colors uppercase tracking-wider">
+                                        <span class="material-symbols-outlined text-sm">add</span>
+                                        Thêm biến thể
+                                    </button>
+                                </div>
+
+                                <!-- Variant row error -->
+                                <div id="variantError"
+                                    class="hidden mx-6 mt-4 flex items-center gap-2 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+                                    <span class="material-symbols-outlined text-red-500 text-base">warning</span>
+                                    <span>Phải có ít nhất một biến thể khi thêm sản phẩm mới.</span>
+                                </div>
+
+                                <!-- Variant table -->
+                                <div class="p-6">
+                                    <div id="variantsWrapper" class="space-y-3">
+                                        <!-- Existing variants (edit mode) -->
+                                        <div th:each="v, vStat : ${existingVariants}"
+                                            class="variant-row grid grid-cols-12 gap-3 items-end bg-surface-container-low rounded-lg p-4">
+
+                                            <div class="col-span-12 sm:col-span-3">
+                                                <label
+                                                    class="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Tên
+                                                    biến thể <span class="text-red-500">*</span></label>
+                                                <input type="text"
+                                                    th:name="'variants[' + ${vStat.index} + '].variantName'"
+                                                    th:value="${v.variantName}" placeholder="Ví dụ: Robusta 60kg"
+                                                    required
+                                                    class="variant-name w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none" />
+                                            </div>
+
+                                            <div class="col-span-6 sm:col-span-2">
+                                                <label
+                                                    class="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Đóng
+                                                    gói</label>
+                                                <input type="text"
+                                                    th:name="'variants[' + ${vStat.index} + '].packaging'"
+                                                    th:value="${v.packaging}" placeholder="Ví dụ: Bao, Túi"
+                                                    class="w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none" />
+                                            </div>
+
+                                            <div class="col-span-6 sm:col-span-1">
+                                                <label
+                                                    class="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Kích
+                                                    cỡ (g)</label>
+                                                <input type="number" th:name="'variants[' + ${vStat.index} + '].size'"
+                                                    th:value="${v.size}" placeholder="250" min="0"
+                                                    class="w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none" />
+                                            </div>
+
+                                            <div class="col-span-6 sm:col-span-2">
+                                                <label
+                                                    class="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Giá
+                                                    (₫) <span class="text-red-500">*</span></label>
+                                                <input type="number" th:name="'variants[' + ${vStat.index} + '].price'"
+                                                    th:value="${v.price}" placeholder="500000" min="0" required
+                                                    class="variant-price w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none" />
+                                            </div>
+
+                                            <div class="col-span-6 sm:col-span-2">
+                                                <label
+                                                    class="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Tồn
+                                                    kho <span class="text-red-500">*</span></label>
+                                                <input type="number"
+                                                    th:name="'variants[' + ${vStat.index} + '].stockQuantity'"
+                                                    th:value="${v.stockQuantity}" placeholder="100" min="0" required
+                                                    class="w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none" />
+                                            </div>
+
+                                            <div class="col-span-10 sm:col-span-1 flex items-center gap-1.5 pb-1">
+                                                <input type="checkbox"
+                                                    th:name="'variants[' + ${vStat.index} + '].isActive'"
+                                                    th:checked="${v.isActive}"
+                                                    class="w-3.5 h-3.5 rounded text-primary focus:ring-primary" />
+                                                <label
+                                                    class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">Bật</label>
+                                            </div>
+
+                                            <div class="col-span-2 sm:col-span-1 flex justify-end pb-1">
+                                                <button type="button" onclick="removeVariantRow(this)"
+                                                    class="p-1.5 text-stone-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors">
+                                                    <span class="material-symbols-outlined text-base">delete</span>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Empty state placeholder (shown when no variants) -->
+                                        <div id="variantEmptyState"
+                                            class="flex flex-col items-center justify-center py-12 text-center text-on-surface-variant"
+                                            th:classappend="${existingVariants != null and !existingVariants.isEmpty()} ? 'hidden' : ''">
+                                            <span
+                                                class="material-symbols-outlined text-4xl mb-3 text-on-surface-variant/40">inventory_2</span>
+                                            <p class="text-sm font-semibold">Chưa có biến thể nào</p>
+                                            <p class="text-xs mt-1">Nhấn <strong>Thêm biến thể</strong> để thêm quy cách
+                                                đầu tiên.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ── Submit Actions ───────────────────────────────────────── -->
+                            <div class="flex flex-wrap gap-3 pt-2">
+                                <button type="submit" id="submitBtn"
+                                    class="inline-flex items-center gap-2 justify-center rounded-lg bg-primary px-8 py-3 text-sm font-bold uppercase tracking-[0.08em] text-white hover:bg-primary-container hover:text-primary transition-colors">
+                                    <span class="material-symbols-outlined text-base"
+                                        th:text="${editMode} ? 'save' : 'add_circle'">add_circle</span>
+                                    <span th:text="${editMode} ? 'Lưu cập nhật' : 'Thêm sản phẩm'">Thêm sản phẩm</span>
+                                </button>
+                                <a th:href="@{/products}"
+                                    class="inline-flex items-center gap-2 justify-center rounded-lg bg-surface-container-low px-8 py-3 text-sm font-bold uppercase tracking-[0.08em] text-on-surface hover:bg-surface-container transition-colors">
+                                    Huỷ
+                                </a>
+                            </div>
+
+                        </form>
+                    </section>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <script th:src="@{/assets/effects.js}" src="/assets/effects.js"></script>
+    <script th:inline="javascript">
+        // ──────────────────────────────────────────────────────────────────────────
+        // Add / Edit Product Form — Variant Manager & Validation
+        // ──────────────────────────────────────────────────────────────────────────
+
+        const isEditMode = /*[[${editMode}]]*/ false;
+
+        // ── Variant counter (tracks next index even after rows are removed) ────
+        let variantIndex = document.querySelectorAll('.variant-row').length;
+
+        function getVariantRows() {
+            return document.querySelectorAll('#variantsWrapper .variant-row');
+        }
+
+        function updateEmptyState() {
+            const empty = document.getElementById('variantEmptyState');
+            if (!empty) return;
+            const count = getVariantRows().length;
+            empty.classList.toggle('hidden', count > 0);
+        }
+
+        function reindexVariants() {
+            getVariantRows().forEach((row, i) => {
+                row.querySelectorAll('[name]').forEach(el => {
+                    el.name = el.name.replace(/variants\[\d+\]/, `variants[${i}]`);
+                });
+            });
+            variantIndex = getVariantRows().length;
+        }
+
+        function createVariantRow(index) {
+            const row = document.createElement('div');
+            row.className = 'variant-row grid grid-cols-12 gap-3 items-end bg-surface-container-low rounded-lg p-4';
+            row.innerHTML = `
+        <div class="col-span-12 sm:col-span-3">
+          <label class="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Tên biến thể <span class="text-red-500">*</span></label>
+          <input type="text" name="variants[${index}].variantName"
+                 placeholder="Ví dụ: Robusta 60kg" required
+                 class="variant-name w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none" />
+        </div>
+        <div class="col-span-6 sm:col-span-2">
+          <label class="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Đóng gói</label>
+          <input type="text" name="variants[${index}].packaging"
+                 placeholder="Bao, Túi, Lon..."
+                 class="w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none" />
+        </div>
+        <div class="col-span-6 sm:col-span-1">
+          <label class="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Kích cỡ (g)</label>
+          <input type="number" name="variants[${index}].size" placeholder="250" min="0"
+                 class="w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none" />
+        </div>
+        <div class="col-span-6 sm:col-span-2">
+          <label class="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Giá (₫) <span class="text-red-500">*</span></label>
+          <input type="number" name="variants[${index}].price" placeholder="500000" min="0" required
+                 class="variant-price w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none" />
+        </div>
+        <div class="col-span-6 sm:col-span-2">
+          <label class="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Tồn kho <span class="text-red-500">*</span></label>
+          <input type="number" name="variants[${index}].stockQuantity" placeholder="100" min="0" required
+                 class="w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none" />
+        </div>
+        <div class="col-span-10 sm:col-span-1 flex items-center gap-1.5 pb-1">
+          <input type="checkbox" name="variants[${index}].isActive" checked
+                 class="w-3.5 h-3.5 rounded text-primary focus:ring-primary" />
+          <label class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">Bật</label>
+        </div>
+        <div class="col-span-2 sm:col-span-1 flex justify-end pb-1">
+          <button type="button" onclick="removeVariantRow(this)"
+                  class="p-1.5 text-stone-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors">
+            <span class="material-symbols-outlined text-base">delete</span>
+          </button>
+        </div>
+      `;
+            return row;
+        }
+
+        document.getElementById('addVariantBtn').addEventListener('click', () => {
+            const wrapper = document.getElementById('variantsWrapper');
+            const emptyState = document.getElementById('variantEmptyState');
+            const row = createVariantRow(variantIndex++);
+            if (emptyState) wrapper.insertBefore(row, emptyState);
+            else wrapper.appendChild(row);
+            updateEmptyState();
+            // Hide variant error
+            document.getElementById('variantError').classList.add('hidden');
+            // Focus the first input of the new row
+            row.querySelector('input[type="text"]').focus();
+        });
+
+        function removeVariantRow(btn) {
+            btn.closest('.variant-row').remove();
+            reindexVariants();
+            updateEmptyState();
+        }
+
+        // ── Form Validation ────────────────────────────────────────────────────
+        document.getElementById('productForm').addEventListener('submit', function (e) {
+            let valid = true;
+
+            // Name
+            const name = document.getElementById('name');
+            const nameError = document.getElementById('nameError');
+            if (!name.value.trim()) {
+                nameError.classList.remove('hidden');
+                name.classList.add('ring-2', 'ring-red-400');
+                valid = false;
+            } else {
+                nameError.classList.add('hidden');
+                name.classList.remove('ring-2', 'ring-red-400');
+            }
+
+            // Origin
+            const origin = document.getElementById('origin');
+            const originError = document.getElementById('originError');
+            if (!origin.value.trim()) {
+                originError.classList.remove('hidden');
+                origin.classList.add('ring-2', 'ring-red-400');
+                valid = false;
+            } else {
+                originError.classList.add('hidden');
+                origin.classList.remove('ring-2', 'ring-red-400');
+            }
+
+            // Date range
+            const mfg = document.getElementById('manufacturerDate');
+            const exp = document.getElementById('expiryDate');
+            const dateError = document.getElementById('dateError');
+            if (mfg.value && exp.value && exp.value <= mfg.value) {
+                dateError.classList.remove('hidden');
+                exp.classList.add('ring-2', 'ring-red-400');
+                valid = false;
+            } else {
+                dateError.classList.add('hidden');
+                exp.classList.remove('ring-2', 'ring-red-400');
+            }
+
+            // Variant required for Add mode
+            const variantError = document.getElementById('variantError');
+            const variantRows = getVariantRows();
+            if (!isEditMode && variantRows.length === 0) {
+                variantError.classList.remove('hidden');
+                valid = false;
+            } else {
+                variantError.classList.add('hidden');
+            }
+
+            // Validate each variant row
+            variantRows.forEach((row) => {
+                const nameInput = row.querySelector('.variant-name');
+                const priceInput = row.querySelector('.variant-price');
+                if (nameInput && !nameInput.value.trim()) {
+                    nameInput.classList.add('ring-2', 'ring-red-400');
+                    valid = false;
+                } else if (nameInput) {
+                    nameInput.classList.remove('ring-2', 'ring-red-400');
+                }
+                if (priceInput && (priceInput.value === '' || Number(priceInput.value) < 0)) {
+                    priceInput.classList.add('ring-2', 'ring-red-400');
+                    valid = false;
+                } else if (priceInput) {
+                    priceInput.classList.remove('ring-2', 'ring-red-400');
+                }
+            });
+
+            if (!valid) {
+                e.preventDefault();
+                // Scroll to first error
+                const firstError = document.querySelector('.ring-red-400, [id$="Error"]:not(.hidden)');
+                if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+
+        // Clear errors on input
+        ['name', 'origin'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener('input', () => {
+                document.getElementById(id + 'Error').classList.add('hidden');
+                el.classList.remove('ring-2', 'ring-red-400');
+            });
+        });
+
+        // Initialise empty state on load
+        updateEmptyState();
+    </script>
+
+</body>
+
+</html>

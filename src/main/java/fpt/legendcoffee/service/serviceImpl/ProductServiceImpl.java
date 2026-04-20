@@ -1,14 +1,20 @@
 package fpt.legendcoffee.service.serviceImpl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import fpt.legendcoffee.dto.request.ProductRequestDTO;
+import fpt.legendcoffee.dto.request.ProductVariantRequestDTO;
+import fpt.legendcoffee.dto.response.ProductResponseDTO;
 import fpt.legendcoffee.entity.Category;
 import fpt.legendcoffee.entity.Product;
+import fpt.legendcoffee.entity.ProductVariant;
+import fpt.legendcoffee.repository.CategoryRepository;
 import fpt.legendcoffee.repository.ProductRepository;
+import fpt.legendcoffee.repository.ProductVariantRepository;
 import fpt.legendcoffee.service.ImageService;
 import fpt.legendcoffee.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +25,8 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final ImageService imageService;
+    private final CategoryRepository categoryRepository;
+    private final ProductVariantRepository productVariantRepository;
 
     @Override
     @Transactional
@@ -50,13 +58,58 @@ public class ProductServiceImpl implements ProductService {
             product.setCategory(category);
         }
 
-        return productRepository.save(product);
+        product = productRepository.save(product);
+
+        // Lưu các biến thể
+        if (request.getVariants() != null) {
+            for (ProductVariantRequestDTO variantDTO : request.getVariants()) {
+                ProductVariant variant = buildVariant(variantDTO, product);
+                productVariantRepository.save(variant);
+            }
+        }
+
+        return product;
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Product> getAllProducts() {
         return productRepository.findAll();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductResponseDTO> getAllProductResponses() {
+        List<Product> products = productRepository.findAll();
+        return products.stream().map(product -> {
+            List<ProductVariant> variants = productVariantRepository.findByProduct(product);
+
+            BigDecimal minPrice = null;
+            int totalStock = 0;
+
+            if (!variants.isEmpty()) {
+                minPrice = variants.stream()
+                        .map(ProductVariant::getPrice)
+                        .filter(p -> p != null)
+                        .min(java.math.BigDecimal::compareTo)
+                        .orElse(null);
+
+                totalStock = variants.stream()
+                        .mapToInt(v -> v.getStockQuantity() != null ? v.getStockQuantity() : 0)
+                        .sum();
+            }
+
+            return ProductResponseDTO.builder()
+                    .id(product.getId())
+                    .name(product.getName())
+                    .categoryName(product.getCategory() != null ? product.getCategory().getCategoryName() : null)
+                    .price(minPrice)
+                    .stockQuantity(totalStock)
+                    .soldCount(0) // Default 0 as requested
+                    .isActive(product.getIsActive())
+                    .imageUrl(product.getImageUrl())
+                    .build();
+        }).toList();
     }
 
     @Override
@@ -103,17 +156,50 @@ public class ProductServiceImpl implements ProductService {
             product.setCategory(null);
         }
 
-        return productRepository.save(product);
+        product = productRepository.save(product);
+
+        // Xóa biến thể cũ và thêm lại từ form
+        productVariantRepository.deleteByProduct(product);
+        if (request.getVariants() != null) {
+            for (ProductVariantRequestDTO variantDTO : request.getVariants()) {
+                ProductVariant variant = buildVariant(variantDTO, product);
+                productVariantRepository.save(variant);
+            }
+        }
+
+        return product;
     }
 
     @Override
     @Transactional
     public void deleteProduct(Long id) {
         Product product = getProductById(id);
+        // Xóa biến thể trước khi xóa sản phẩm
+        productVariantRepository.deleteByProduct(product);
         if (product.getImagePublicId() != null && !product.getImagePublicId().isBlank()) {
             imageService.delete(product.getImagePublicId());
         }
         productRepository.delete(product);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Category> getAllCategories() {
+        return categoryRepository.findAll();
+    }
+
+    // ── Helpers ──────────────────────────────────────────────────────────────
+
+    private ProductVariant buildVariant(ProductVariantRequestDTO dto, Product product) {
+        return ProductVariant.builder()
+                .product(product)
+                .variantName(dto.getVariantName())
+                .packaging(dto.getPackaging())
+                .size(dto.getSize())
+                .price(dto.getPrice())
+                .stockQuantity(dto.getStockQuantity())
+                .isActive(dto.getIsActive() != null ? dto.getIsActive() : Boolean.TRUE)
+                .build();
     }
 
     private void validateDateRange(ProductRequestDTO request) {
