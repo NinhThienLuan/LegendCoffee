@@ -27,11 +27,11 @@ public class PromotionController {
         return promotionService.update(id, request);
     }
 
-    // DELETE (cẩn thận xóa data gốc)
-//    @DeleteMapping("/{id}")
-//    public void delete(@PathVariable Long id) {
-//        promotionService.delete(id);
-//    }
+     //DELETE (cẩn thận xóa data gốc)
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        promotionService.delete(id);
+    }
 
     // GET ALL
     @GetMapping("/promotion")
