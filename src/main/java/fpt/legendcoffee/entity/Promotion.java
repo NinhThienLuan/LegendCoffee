@@ -1,6 +1,7 @@
 package fpt.legendcoffee.entity;
 
 import fpt.legendcoffee.common.infrastructure.BaseEntity;
+import fpt.legendcoffee.entity.enumeration.PromotionType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -18,8 +19,9 @@ import java.time.LocalDateTime;
 @Table(name = "promotions")
 public class Promotion extends BaseEntity {
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "promotion_type")
-    private String type;
+    private PromotionType type;
 
     @Column(name = "promotion_value", precision = 18)
     private BigDecimal value;
