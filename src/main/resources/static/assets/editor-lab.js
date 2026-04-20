@@ -11,7 +11,14 @@
 
   var jsonInput = document.getElementById("jsonData");
   var jsonOutput = document.getElementById("jsonOutput");
+  var payloadOutput = document.getElementById("payloadOutput");
   var logOutput = document.getElementById("logOutput");
+
+  var postTitle = document.getElementById("postTitle");
+  var postSlug = document.getElementById("postSlug");
+  var postSummary = document.getElementById("postSummary");
+  var postCoverImageUrl = document.getElementById("postCoverImageUrl");
+  var postStatus = document.getElementById("postStatus");
 
   function normalizeSafeImageUrl(rawUrl) {
     if (!rawUrl) {
@@ -150,6 +157,46 @@
     jsonOutput.value = JSON.stringify(data, null, 2);
   }
 
+  function safeSlug(raw) {
+    if (!raw) {
+      return "";
+    }
+
+    var base = String(raw).toLowerCase();
+    var normalized = base.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    normalized = normalized.replace(/[^a-z0-9\s-]/g, " ");
+    normalized = normalized.trim().replace(/\s+/g, "-");
+    normalized = normalized.replace(/-+/g, "-");
+    return normalized;
+  }
+
+  function buildPostPayload(serializedContentJson) {
+    var title = sanitizePlainText(postTitle ? postTitle.value : "");
+    var slugSource = postSlug && postSlug.value ? postSlug.value : title;
+    var slug = safeSlug(slugSource);
+    var summary = sanitizePlainText(postSummary ? postSummary.value : "");
+    var coverImageUrl = normalizeSafeImageUrl(postCoverImageUrl ? postCoverImageUrl.value : "");
+    var status = (postStatus && postStatus.value) ? String(postStatus.value) : "DRAFT";
+
+    return {
+      title: title,
+      slug: slug,
+      summary: summary,
+      coverImageUrl: coverImageUrl,
+      status: status,
+      contentJson: serializedContentJson
+    };
+  }
+
+  function setPayloadOutput(serializedContentJson) {
+    if (!payloadOutput) {
+      return;
+    }
+
+    var payload = buildPostPayload(serializedContentJson);
+    payloadOutput.value = JSON.stringify(payload, null, 2);
+  }
+
   function sanitizePlainText(raw) {
     if (raw === null || raw === undefined) {
       return "";
@@ -239,6 +286,7 @@
       var data = sanitizedResult.data;
       var serialized = JSON.stringify(data);
       setJsonOutput(data, serialized);
+      setPayloadOutput(serialized);
 
       if (sanitizedResult.changed) {
         logEvent("input.sanitized", { message: "Unsafe html/script patterns were removed from input" });
@@ -295,6 +343,7 @@
     await editor.render(sample);
     var serialized = JSON.stringify(sample);
     setJsonOutput(sample, serialized);
+    setPayloadOutput(serialized);
     logEvent("reset.sample_loaded", { blocks: sample.blocks.length });
   }
 
@@ -359,6 +408,7 @@
         onReady: function () {
           var serialized = JSON.stringify(initialData);
           setJsonOutput(initialData, serialized);
+          setPayloadOutput(serialized);
           logEvent("init.ready");
         }
       });
@@ -380,6 +430,16 @@
 
   saveBtn.addEventListener("click", saveEditorData);
   resetBtn.addEventListener("click", resetWithSample);
+
+  [postTitle, postSlug, postSummary, postCoverImageUrl, postStatus].forEach(function (inputEl) {
+    if (!inputEl) {
+      return;
+    }
+
+    inputEl.addEventListener("input", function () {
+      setPayloadOutput(jsonInput.value || "{}");
+    });
+  });
 
   initEditor();
   logEvent("page.loaded");
