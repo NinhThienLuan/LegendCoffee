@@ -120,11 +120,5 @@ public class ShippingInfo extends BaseEntity {
     @Column(name = "note", length = 500)
     private String note;
 
-    @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
 
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 }

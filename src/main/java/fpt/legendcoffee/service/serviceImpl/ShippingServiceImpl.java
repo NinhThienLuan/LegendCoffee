@@ -176,6 +176,7 @@ public class ShippingServiceImpl implements ShippingService {
                 .toWardCode(checkout.getWardCode())
                 .toDistrictId(checkout.getDistrictId())
                 .serviceId(checkout.getServiceId())
+                .serviceTypeId(2) // Bắt buộc truyền 2 (Giao chuẩn) để tránh lỗi lệch serviceId của tuyến đường
                 .paymentTypeId(checkout.getPaymentTypeId())
                 .weight(500)   // TODO: tính từ giỏ hàng thực tế
                 .length(20)
@@ -185,6 +186,14 @@ public class ShippingServiceImpl implements ShippingService {
                 .codAmount(checkout.getPaymentTypeId() == 2 ? checkout.getShippingFee() : 0L)
                 .note(checkout.getNote())
                 .requiredNote("CHOTHUHANG")
+                // BUG GHN "Tên hàng hoá bắt buộc": Thêm mock item cho đến khi tích hợp với cart thật
+                .items(List.of(
+                        CreateOrderRequestDTO.OrderItemDTO.builder()
+                                .name("Đơn hàng Legend Coffee") // Tên bắt buộc
+                                .quantity(1)                    // Số lượng bắt buộc
+                                .weight(500)                    // Cân nặng bắt buộc
+                                .build()
+                ))
                 .build();
 
         // Gọi GHN API tạo đơn
