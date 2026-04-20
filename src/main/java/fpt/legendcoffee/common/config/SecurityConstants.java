@@ -14,6 +14,8 @@ public class SecurityConstants {
             "/webhook/ghn",               // Webhook GHN — phải public để GHN gọi được
             "/articles/**",
             "/products/**",
+            "/combos",
+            "/combos/**",
             "/css/**",
             "/js/**",
             "/images/**",

@@ -15,7 +15,6 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "combos")
 public class Combo extends BaseEntity {
@@ -39,7 +38,7 @@ public class Combo extends BaseEntity {
     @Builder.Default
     private Boolean isActive = true;
 
-    @OneToMany(mappedBy = "combo")
+    @OneToMany(mappedBy = "combo", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private Set<ComboItem> comboItems = new LinkedHashSet<>();
 }

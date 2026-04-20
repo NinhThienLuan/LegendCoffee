@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,17 +27,19 @@ public class DataInit implements CommandLineRunner {
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
     private final ProductVariantRepository productVariantRepository;
+    private final ComboRepository comboRepository;
     private final ArticleRepository articleRepository;
     private final CategoryRepository categoryRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
-    public void run(String... args) throws Exception {
+    public void run(@NonNull String... args) {
         log.info("Starting data initialization...");
 
         seedUsers();
         seedData();
+        seedCombos();
 
         log.info("Data initialization completed.");
     }
@@ -296,5 +299,53 @@ public class DataInit implements CommandLineRunner {
 
             System.out.println("  [DataInit] Seed Categories, Products & Variants thành công");
         }
+    }
+
+    private void seedCombos() {
+        if (comboRepository.count() > 0 || productVariantRepository.count() == 0) {
+            return;
+        }
+
+        ProductVariant arabica250 = productVariantRepository.findAll().stream()
+                .filter(variant -> variant.getProduct() != null
+                        && "Legend Arabica Special".equals(variant.getProduct().getName())
+                        && "Túi 250g".equals(variant.getVariantName()))
+                .findFirst()
+                .orElse(null);
+
+        ProductVariant robusta500 = productVariantRepository.findAll().stream()
+                .filter(variant -> variant.getProduct() != null
+                        && "Legend Robusta Bold".equals(variant.getProduct().getName())
+                        && "Túi 500g".equals(variant.getVariantName()))
+                .findFirst()
+                .orElse(null);
+
+        ProductVariant ground200 = productVariantRepository.findAll().stream()
+                .filter(variant -> variant.getProduct() != null
+                        && "Espresso Premium Blend (Xay)".equals(variant.getProduct().getName())
+                        && "Hộp 200g".equals(variant.getVariantName()))
+                .findFirst()
+                .orElse(null);
+
+        if (arabica250 == null || robusta500 == null || ground200 == null) {
+            log.warn("Skipping combo seed because one or more required variants were not found.");
+            return;
+        }
+
+        Combo discoveryCombo = Combo.builder()
+                .name("Combo Discovery 3 vị")
+                .description("Bộ thử vị gồm 3 dòng sản phẩm chủ lực với giá ưu đãi.")
+                .price(new BigDecimal("540000"))
+                .startDate(LocalDateTime.now().minusDays(7))
+                .endDate(LocalDateTime.now().plusMonths(2))
+                .isActive(true)
+                .build();
+
+        discoveryCombo.getComboItems().add(ComboItem.builder().combo(discoveryCombo).variant(arabica250).quantity(1).build());
+        discoveryCombo.getComboItems().add(ComboItem.builder().combo(discoveryCombo).variant(robusta500).quantity(1).build());
+        discoveryCombo.getComboItems().add(ComboItem.builder().combo(discoveryCombo).variant(ground200).quantity(1).build());
+
+        comboRepository.save(discoveryCombo);
+        log.info("Seeded combo data successfully.");
     }
 }

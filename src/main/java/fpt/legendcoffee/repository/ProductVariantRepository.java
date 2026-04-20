@@ -3,6 +3,7 @@ package fpt.legendcoffee.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.stereotype.Repository;
 
 import fpt.legendcoffee.entity.Product;
@@ -16,4 +17,8 @@ public interface ProductVariantRepository extends JpaRepository<ProductVariant, 
 
     /** Xóa tất cả biến thể của một sản phẩm (dùng khi update). */
     void deleteByProduct(Product product);
+
+    @SuppressWarnings("unused")
+    @EntityGraph(attributePaths = { "product" })
+    List<ProductVariant> findAllBy();
 }
