@@ -2,6 +2,7 @@ package fpt.legendcoffee.controller;
 
 import java.util.List;
 
+import fpt.legendcoffee.service.ProductVariantService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,14 +28,15 @@ import lombok.RequiredArgsConstructor;
 public class ProductController {
 
     private final ProductService productService;
-    private final ProductVariantRepository productVariantRepository;
+    private final ProductVariantService productVariantService;
 
     @GetMapping
     public String listProducts(Model model) {
         List<ProductResponseDTO> products = productService.getAllProductResponses();
         model.addAttribute("products", products);
         return "product/products";
-    } //cần thêm phân quyền để hiển thị đúng nếu customer thì return "product/catalog" còn admin thì return "product/products"
+    } // cần thêm phân quyền để hiển thị đúng nếu customer thì return
+      // "product/catalog" còn admin thì return "product/products"
 
     @GetMapping({ "/view", "/list" })
     public String listProductsAlias(Model model) {
@@ -56,7 +58,7 @@ public class ProductController {
     public String viewProduct(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         try {
             model.addAttribute("productId", id);
-//            model.addAttribute("product", productService.getProductById(id));
+            // model.addAttribute("product", productService.getProductById(id));
             return "product/catalog-detail";
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
@@ -115,7 +117,7 @@ public class ProductController {
             }
 
             // Load existing variants for the edit form
-            List<ProductVariant> existingVariants = productVariantRepository.findByProduct(product);
+            List<ProductVariant> existingVariants = productVariantService.findByProduct(product);
 
             model.addAttribute("productId", id);
             model.addAttribute("currentImageUrl", product.getImageUrl());
