@@ -35,4 +35,4 @@ build/
 .code_workspace
 /data
 .env
-/datasrc/main/resources/application.properties
+src/main/resources/application.properties
