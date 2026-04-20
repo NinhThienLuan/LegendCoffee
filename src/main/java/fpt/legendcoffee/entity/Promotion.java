@@ -19,9 +19,8 @@ import java.time.LocalDateTime;
 @Table(name = "promotions")
 public class Promotion extends BaseEntity {
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "promotion_type")
-    private PromotionType type;
+    private String type;
 
     @Column(name = "promotion_value", precision = 18)
     private BigDecimal value;

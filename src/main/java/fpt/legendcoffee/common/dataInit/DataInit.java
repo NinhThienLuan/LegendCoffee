@@ -2,6 +2,7 @@ package fpt.legendcoffee.common.dataInit;
 
 import fpt.legendcoffee.entity.*;
 import fpt.legendcoffee.entity.enumeration.ArticleStatus;
+import fpt.legendcoffee.entity.enumeration.OrderStatus;
 import fpt.legendcoffee.entity.enumeration.UserRole;
 import fpt.legendcoffee.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class DataInit implements CommandLineRunner {
 
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
+    private final OrderRepository orderRepository;
     private final ProductVariantRepository productVariantRepository;
     private final ArticleRepository articleRepository;
     private final CategoryRepository categoryRepository;
@@ -52,15 +54,6 @@ public class DataInit implements CommandLineRunner {
                     .isActive(true)
                     .build();
 
-            User staff = User.builder()
-                    .username("Staff Member")
-                    .email("staff@legendcoffee.com")
-                    .password(passwordEncoder.encode("staff123"))
-                    .phone("0987654321")
-                    .role(UserRole.STAFF)
-                    .isActive(true)
-                    .build();
-
             User customer = User.builder()
                     .username("John Doe")
                     .email("user@gmail.com")
@@ -70,7 +63,7 @@ public class DataInit implements CommandLineRunner {
                     .isActive(true)
                     .build();
 
-            userRepository.saveAll(List.of(admin, staff, customer));
+            userRepository.saveAll(List.of(admin, customer));
         }
     }
 
@@ -102,8 +95,8 @@ public class DataInit implements CommandLineRunner {
                     .name("Legend Arabica Special")
                     .description("Hạt Arabica từ vùng cầu đất Đà Lạt, hương thơm nhẹ nhàng, vị chua thanh.")
                     .origin("Đà Lạt, Việt Nam")
-                    .expiryDate("12 tháng")
-                    .manufacturerDate("01/04/2026")
+                    .expiryDate(LocalDate.now().plusMonths(12))
+                    .manufacturerDate(LocalDate.now())
                     .imageUrl("/images/arabica.png")
                     .isActive(true)
                     .build();
@@ -135,8 +128,8 @@ public class DataInit implements CommandLineRunner {
                     .name("Legend Robusta Bold")
                     .description("Hạt Robusta Buôn Ma Thuột rang đậm, vị đắng mạnh mẽ, hậu vị ngọt.")
                     .origin("Đắk Lắk, Việt Nam")
-                    .expiryDate("12 tháng")
-                    .manufacturerDate("10/04/2026")
+                    .expiryDate(LocalDate.now().plusMonths(12))
+                    .manufacturerDate(LocalDate.now())
                     .imageUrl("/images/robusta.png")
                     .isActive(true)
                     .build();
@@ -159,8 +152,8 @@ public class DataInit implements CommandLineRunner {
                     .name("Espresso Premium Blend (Xay)")
                     .description("Sự kết hợp hoàn hảo giữa Arabica và Robusta theo tỷ lệ 7:3.")
                     .origin("Lâm Đồng, Việt Nam")
-                    .expiryDate("6 tháng")
-                    .manufacturerDate("15/04/2026")
+                    .expiryDate(LocalDate.now().plusMonths(12))
+                    .manufacturerDate(LocalDate.now())
                     .imageUrl("/images/ground.png")
                     .isActive(true)
                     .build();
@@ -190,20 +183,10 @@ public class DataInit implements CommandLineRunner {
                     .isActive(true)
                     .build();
 
-            Article article2 = Article.builder()
-                    .user(admin)
-                    .title("Lợi ích của cà phê đối với sức khỏe")
-                    .summary("Nhiều nghiên cứu cho thấy uống cà phê điều độ giúp cải thiện sự tập trung và tốt cho tim mạch.")
-                    .contentJson("{\"content\": [{\"type\": \"paragraph\", \"text\": \"Caffein giúp tăng cường trao đổi chất và bảo vệ gan...\"}]}")
-                    .coverImageUrl("/images/health.png")
-                    .status(ArticleStatus.PUBLISHED)
-                    .publishedAt(LocalDateTime.now().minusDays(1))
-                    .isActive(true)
-            orderRepository.save(order1);
-
+            User customer = userRepository.findByEmail("user@gmail.com").orElse(null);
             // Order #2 — PENDING, amount lớn hơn để test case khác
             Order order2 = Order.builder()
-                    .user(user)
+                    .user(customer)
                     .orderDate(LocalDateTime.now().minusHours(1))
                     .subTotal(new BigDecimal("320000"))
                     .discount(new BigDecimal("20000"))
@@ -212,7 +195,7 @@ public class DataInit implements CommandLineRunner {
                     .build();
             orderRepository.save(order2);
 
-            articleRepository.saveAll(List.of(article1, article2));
+            articleRepository.saveAll(List.of(article1));
         }
 
         // ===== Categories, Products & Variants =====

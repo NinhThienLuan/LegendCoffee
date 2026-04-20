@@ -1,6 +1,5 @@
 package fpt.legendcoffee.dto.response;
 
-import fpt.legendcoffee.entity.Voucher;
 import fpt.legendcoffee.entity.enumeration.VoucherType;
 import lombok.*;
 

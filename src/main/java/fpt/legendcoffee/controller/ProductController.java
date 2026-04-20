@@ -2,6 +2,9 @@ package fpt.legendcoffee.controller;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -30,15 +33,19 @@ public class ProductController {
     private final ProductVariantRepository productVariantRepository;
 
     @GetMapping
-    public String listProducts(Model model) {
+    public String listProducts(Model model, Authentication authentication) {
         List<ProductResponseDTO> products = productService.getAllProductResponses();
         model.addAttribute("products", products);
-        return "product/products";
-    } //cần thêm phân quyền để hiển thị đúng nếu customer thì return "product/catalog" còn admin thì return "product/products"
+        if (authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN") || a.getAuthority().equals("ROLE_STAFF"))) {
+            return "product/products";
+        }
+        return "product/catalogs";
+    }
 
     @GetMapping({ "/view", "/list" })
-    public String listProductsAlias(Model model) {
-        return listProducts(model);
+    public String listProductsAlias(Model model, Authentication authentication) {
+        return listProducts(model, authentication);
     }
 
     @GetMapping("/view-product")
@@ -67,6 +74,7 @@ public class ProductController {
     // ── Add Form ─────────────────────────────────────────────────────────────
 
     @GetMapping("/form-add")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public String addProductForm(Model model) {
         if (!model.containsAttribute("request")) {
             model.addAttribute("request", new ProductRequestDTO());
@@ -77,6 +85,7 @@ public class ProductController {
     }
 
     @PostMapping("/add")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public String addProduct(@ModelAttribute("request") ProductRequestDTO request,
             RedirectAttributes redirectAttributes) {
         try {
@@ -99,6 +108,7 @@ public class ProductController {
     // ── Edit Form ─────────────────────────────────────────────────────────────
 
     @GetMapping("/{id}/form-edit")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public String editProductForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         try {
             Product product = productService.getProductById(id);
@@ -130,6 +140,7 @@ public class ProductController {
     }
 
     @PostMapping("/{id}/update")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public String updateProduct(@PathVariable Long id,
             @ModelAttribute("request") ProductRequestDTO request,
             RedirectAttributes redirectAttributes) {
@@ -151,6 +162,7 @@ public class ProductController {
     // ── Delete ────────────────────────────────────────────────────────────────
 
     @PostMapping("/{id}/delete")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public String deleteProduct(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             productService.deleteProduct(id);
