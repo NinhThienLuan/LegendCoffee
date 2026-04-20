@@ -1,56 +1,69 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <body>
-  <nav th:fragment="navbar(navItems)" class="fixed top-0 w-full z-[100] bg-[#faf9f5]/85 dark:bg-[#1a1614]/85 backdrop-blur-md border-b border-outline-variant/20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <nav th:fragment="navbar(navItems)"
+    id="mainNavbar"
+    class="fixed top-0 w-full z-[100] bg-[#faf9f5]/85 dark:bg-[#1a1614]/85 backdrop-blur-md border-b border-outline-variant/20 transition-transform duration-300">
+    <div class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20">
       <!-- Container chính dùng flex và justify-between để đẩy 3 cụm ra 2 đầu và giữa -->
       <div class="relative flex items-center justify-between h-20 gap-4">
-        
+
         <!-- 1. CỤM TRÁI: LOGO -->
         <div class="flex-1 lg:flex-none">
           <a href="/" class="shrink-0 leading-tight">
-            <div class="text-lg sm:text-xl font-black text-[#351f1b] dark:text-[#ffffff] tracking-tight uppercase font-headline">
+            <div
+              class="text-lg sm:text-xl font-black text-[#351f1b] dark:text-[#ffffff] tracking-tight uppercase font-headline">
               Industrial Excellence
             </div>
           </a>
         </div>
 
         <!-- 2. CỤM GIỮA: MENU (Sẽ nằm chính giữa nhờ justify-between của cha) -->
-        <div class="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center justify-center gap-7 font-headline font-semibold tracking-tight text-sm whitespace-nowrap">
+        <div
+          class="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center justify-center gap-7 font-headline font-semibold tracking-tight text-sm whitespace-nowrap">
           <a href="/"
-             th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI == '/'} ? ' text-[#351f1b] dark:text-[#ffffff]' : ' text-[#5b4a45] dark:text-[#d4c3bf] hover:text-[#351f1b] dark:hover:text-[#ffffff]'"
-             class="transition-colors duration-300">Trang chủ</a>
-          <a href="/catalogs"
-             th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/catalog')} ? ' text-[#351f1b] dark:text-[#ffffff]' : ' text-[#5b4a45] dark:text-[#d4c3bf] hover:text-[#351f1b] dark:hover:text-[#ffffff]'"
-             class="transition-colors duration-300">Sản Phẩm</a>
+            th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI == '/'} ? ' text-[#351f1b] dark:text-[#ffffff]' : ' text-[#5b4a45] dark:text-[#d4c3bf] hover:text-[#351f1b] dark:hover:text-[#ffffff]'"
+            class="transition-colors duration-300">Trang chủ</a>
+          <a href="/products"
+            th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/products')} ? ' text-[#351f1b] dark:text-[#ffffff]' : ' text-[#5b4a45] dark:text-[#d4c3bf] hover:text-[#351f1b] dark:hover:text-[#ffffff]'"
+            class="transition-colors duration-300">Sản Phẩm</a>
           <a href="/orders"
-             th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/orders')} ? ' text-[#351f1b] dark:text-[#ffffff]' : ' text-[#5b4a45] dark:text-[#d4c3bf] hover:text-[#351f1b] dark:hover:text-[#ffffff]'"
-             class="transition-colors duration-300">Đơn hàng</a>
+            th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/orders')} ? ' text-[#351f1b] dark:text-[#ffffff]' : ' text-[#5b4a45] dark:text-[#d4c3bf] hover:text-[#351f1b] dark:hover:text-[#ffffff]'"
+            class="transition-colors duration-300">Đơn hàng</a>
         </div>
 
         <!-- 3. CỤM PHẢI: ICONS -->
         <div class="flex-1 lg:flex-none flex items-center justify-end gap-1">
           <!-- Desktop & Mobile Icons Group -->
           <div class="flex items-center gap-1">
-            <button class="h-9 w-9 inline-flex items-center justify-center text-[#5b4a45] hover:text-[#351f1b] hover:bg-[#efe9e5] rounded-full transition-colors" aria-label="Notifications">
-              <span class="material-symbols-outlined text-[20px]">notifications</span>
-            </button>
-            <button class="h-9 w-9 inline-flex items-center justify-center text-[#5b4a45] hover:text-[#351f1b] hover:bg-[#efe9e5] rounded-full transition-colors" aria-label="Cart">
-              <span class="material-symbols-outlined text-[20px]">shopping_cart</span>
-            </button>
-            
+            <div class="relative group">
+              <a href="/cart"
+                class="h-9 w-9 inline-flex items-center justify-center text-[#5b4a45] hover:text-[#351f1b] hover:bg-[#efe9e5] rounded-full transition-colors"
+                aria-label="Cart">
+                <span class="material-symbols-outlined text-[20px]">shopping_cart</span>
+                <span id="cart-badge" class="absolute -top-1 -right-1 bg-primary text-on-primary text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center opacity-0 transition-opacity">0</span>
+              </a>
+            </div>
+
             <!-- Auth Buttons -->
-            <a sec:authorize="isAnonymous()" href="/login" class="h-9 px-4 inline-flex items-center justify-center text-[#5b4a45] hover:text-[#351f1b] hover:bg-[#efe9e5] rounded-full transition-colors text-xs font-bold uppercase tracking-widest" aria-label="Login">
+            <a sec:authorize="isAnonymous()" href="/login"
+              class="h-9 px-4 inline-flex items-center justify-center text-[#5b4a45] hover:text-[#351f1b] hover:bg-[#efe9e5] rounded-full transition-colors text-xs font-bold uppercase tracking-widest"
+              aria-label="Login">
               Đăng nhập
             </a>
-            
+
             <div sec:authorize="isAuthenticated()" class="flex items-center gap-1">
-              <a href="/profile" class="h-9 w-9 inline-flex items-center justify-center text-[#5b4a45] hover:text-[#351f1b] hover:bg-[#efe9e5] rounded-full transition-colors" aria-label="Account">
+              <a href="/profile"
+                class="h-9 w-9 inline-flex items-center justify-center text-[#5b4a45] hover:text-[#351f1b] hover:bg-[#efe9e5] rounded-full transition-colors"
+                aria-label="Account">
                 <span class="material-symbols-outlined text-[20px]">account_circle</span>
               </a>
               <form th:action="@{/logout}" method="POST" class="inline">
-                <button type="submit" class="h-9 px-4 inline-flex items-center justify-center text-error hover:bg-error/10 rounded-full transition-colors text-xs font-bold uppercase tracking-widest" aria-label="Logout">
-                  Đăng xuất
+                <button type="submit"
+                  class="h-9 w-9 inline-flex items-center justify-center text-error hover:bg-error/10 rounded-full transition-colors"
+                  aria-label="Logout">
+                  <span class="material-symbols-outlined text-[20px]">logout</span>
                 </button>
               </form>
             </div>
@@ -60,19 +73,53 @@
 
       <!-- Mobile Menu (Dòng phụ bên dưới khi ở màn hình nhỏ) -->
       <div class="lg:hidden border-t border-outline-variant/20 pb-3 pt-2">
-        <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-headline font-semibold uppercase tracking-[0.09em]">
+        <div
+          class="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-headline font-semibold uppercase tracking-[0.09em]">
           <a href="/"
-             th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI == '/'} ? ' text-[#351f1b]' : ' text-[#6f605c] hover:text-[#351f1b]'"
-             class="transition-colors">Trang chủ</a>
-          <a href="/catalogs"
-             th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/catalog')} ? ' text-[#351f1b]' : ' text-[#6f605c] hover:text-[#351f1b]'"
-             class="transition-colors">Sản Phẩm</a>
-          <a href="/orders"
-             th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/orders')} ? ' text-[#351f1b]' : ' text-[#6f605c] hover:text-[#351f1b]'"
-             class="transition-colors">Đơn hàng</a>
+            th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI == '/'} ? ' text-[#351f1b]' : ' text-[#6f605c] hover:text-[#351f1b]'"
+            class="transition-colors">Trang chủ</a>
+          <a href="/products"
+            th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/products')} ? ' text-[#351f1b]' : ' text-[#6f605c] hover:text-[#351f1b]'"
+            class="transition-colors">Sản Phẩm</a>
+          <a href="/products"
+            th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/orders')} ? ' text-[#351f1b]' : ' text-[#6f605c] hover:text-[#351f1b]'"
+            class="transition-colors">Đơn hàng</a>
         </div>
       </div>
     </div>
   </nav>
+</div>
+<script>
+// Navbar scroll behavior
+let lastScrollY = window.scrollY;
+const navbar = document.getElementById('mainNavbar');
+window.addEventListener('scroll', () => {
+  if (!navbar) return;
+  if (window.scrollY > lastScrollY && window.scrollY > 40) {
+    navbar.style.transform = 'translateY(-100%)';
+  } else {
+    navbar.style.transform = 'translateY(0)';
+  }
+  lastScrollY = window.scrollY;
+});
+
+// Cart Badge Update Logic
+function updateNavbarCartBadge() {
+  const badge = document.getElementById('cart-badge');
+  if (!badge || !window.CartSystem) return;
+  
+  const count = window.CartSystem.getCartCount();
+  if (count > 0) {
+    badge.innerText = count;
+    badge.classList.remove('opacity-0');
+  } else {
+    badge.classList.add('opacity-0');
+  }
+}
+
+window.addEventListener('load', updateNavbarCartBadge);
+window.addEventListener('cartUpdated', updateNavbarCartBadge);
+</script>
 </body>
+
 </html>

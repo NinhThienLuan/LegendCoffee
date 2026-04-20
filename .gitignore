@@ -33,4 +33,6 @@ build/
 .vscode/
 .agent/
 .code_workspace
-/datasrc/main/resources/application-h2.properties
+/data
+.env
+/datasrc/main/resources/application.properties

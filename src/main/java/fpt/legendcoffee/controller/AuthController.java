@@ -39,7 +39,7 @@ public class AuthController {
     public String showLoginForm(HttpSession session) {
         // Clear session messages after they are accessed by the view
         // In a real app, you might use RedirectAttributes for this
-        return "authen/login/login";
+        return "authen/login";
     }
 
     @PostMapping("/login")
@@ -67,7 +67,7 @@ public class AuthController {
 
     @GetMapping("/register")
     public String showRegisterForm(HttpSession session) {
-        return "authen/register/register";
+        return "authen/register";
     }
 
     @PostMapping("/register")

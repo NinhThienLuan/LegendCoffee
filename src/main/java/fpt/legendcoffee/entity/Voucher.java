@@ -1,6 +1,7 @@
 package fpt.legendcoffee.entity;
 
 import fpt.legendcoffee.common.infrastructure.BaseEntity;
+import fpt.legendcoffee.entity.enumeration.VoucherType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -18,8 +19,12 @@ import java.time.LocalDateTime;
 @Table(name = "vouchers")
 public class Voucher extends BaseEntity {
 
+    @Column(name = "code", nullable = false, length = 100, unique = true)
+    private String code;
+
+    @Enumerated(EnumType.STRING)
     @Column(name = "type")
-    private String type;
+    private VoucherType type;
 
     @Column(name = "voucher_value", precision = 18)
     private BigDecimal value;
@@ -33,4 +38,12 @@ public class Voucher extends BaseEntity {
     @Column(name = "condition_min", precision = 18)
     private BigDecimal conditionMin;
 
+    @Column(name = "usage_limit")
+    private Integer usageLimit;
+
+    @Column(name = "used_count")
+    private Integer usedCount;
+
+    @Column(name = "is_active")
+    private Boolean active;
 }
