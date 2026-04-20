@@ -13,11 +13,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import fpt.legendcoffee.dto.request.ProductRequestDTO;
 import fpt.legendcoffee.entity.Product;
+import fpt.legendcoffee.service.ImageService;
 import fpt.legendcoffee.service.ProductService;
 import lombok.RequiredArgsConstructor;
 @Controller
@@ -28,6 +31,36 @@ public class ProductController {
     private static final Logger log = LoggerFactory.getLogger(ProductController.class);
 
     private final ProductService productService;
+    private final ImageService imageService;
+
+    @GetMapping("/image-upload")
+    public String imageUploadPage() {
+        return "product/image-upload";
+    }
+
+    @PostMapping("/image-upload")
+    public String uploadImageOnly(@RequestParam("image") MultipartFile image, Model model) {
+        if (image == null || image.isEmpty()) {
+            model.addAttribute("error", "Vui lòng chọn ảnh trước khi upload.");
+            return "product/image-upload";
+        }
+
+        try {
+            var uploadResult = imageService.upload(image);
+            String imageUrl = (String) uploadResult.get("secure_url");
+            String imagePublicId = (String) uploadResult.get("public_id");
+
+            model.addAttribute("uploadedImageUrl", imageUrl);
+            model.addAttribute("imagePublicId", imagePublicId);
+            model.addAttribute("success", "Upload ảnh thành công.");
+            return "product/image-upload";
+        } catch (Exception e) {
+            log.error("[Product] Upload ảnh thất bại | type={} | rootCause={}",
+                    e.getClass().getName(), getRootCauseMessage(e), e);
+            model.addAttribute("error", "Upload ảnh thất bại: " + getRootCauseMessage(e));
+            return "product/image-upload";
+        }
+    }
 
     @GetMapping
     public String listProducts(Model model) {
@@ -98,7 +131,7 @@ public class ProductController {
             redirectAttributes.addFlashAttribute("error", "Lỗi hệ thống, vui lòng thử lại. Mã lỗi: " + errorCode);
             redirectAttributes.addFlashAttribute("request", sanitizeOrEmpty(request));
             return "redirect:/products/form-add";
-        }
+        }   
     }
 
     @GetMapping("/{id}/form-edit")
