@@ -8,7 +8,8 @@
     <section class="grid grid-cols-1 xl:grid-cols-5 gap-6 md:gap-8">
       <article class="xl:col-span-2 rounded-xl border border-outline-variant/30 bg-white p-6 md:p-8 shadow-[0_16px_40px_-30px_rgba(53,31,27,0.65)]">
         <p class="text-xs uppercase tracking-[0.18em] text-[#827471]">Product Management</p>
-        <h1 class="mt-2 text-3xl md:text-4xl font-headline font-extrabold tracking-tight text-primary">Create New Product</h1>
+        <h1 class="mt-2 text-3xl md:text-4xl font-headline font-extrabold tracking-tight text-primary"
+          th:text="${isEdit} ? 'Update Product' : 'Create New Product'">Create New Product</h1>
         <p class="mt-4 text-sm md:text-base text-[#5d524e] leading-relaxed">
           Fill all required fields, upload a product image, then submit to create a new product record.
           This form is connected to ProductRequestDTO and supports multipart image upload.
@@ -26,7 +27,8 @@
 
           <div class="rounded-lg border border-outline-variant/30 bg-surface-container-low p-4">
             <p class="text-sm font-semibold text-[#4d3430]">Submit Target</p>
-            <p class="mt-1 text-sm text-[#665956]">POST /products/add</p>
+            <p class="mt-1 text-sm text-[#665956]"
+              th:text="${isEdit} ? ('POST /products/' + productId + '/update') : 'POST /products/add'">POST /products/add</p>
           </div>
         </div>
       </article>
@@ -35,7 +37,7 @@
         <div th:if="${success != null}" class="mb-5 rounded-lg border border-green-300 bg-green-50 px-4 py-3 text-sm text-green-800" th:text="${success}"></div>
         <div th:if="${error != null}" class="mb-5 rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-800" th:text="${error}"></div>
 
-        <form th:action="@{/products/add}" th:object="${request}" method="post" enctype="multipart/form-data" class="space-y-5" novalidate>
+        <form th:action="${isEdit} ? @{/products/{id}/update(id=${productId})} : @{/products/add}" th:object="${request}" method="post" enctype="multipart/form-data" class="space-y-5" novalidate>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div class="md:col-span-2">
               <label for="name" class="block text-sm font-semibold text-[#4d3430]">Product Name <span class="text-error">*</span></label>
@@ -96,7 +98,7 @@
           <div class="flex flex-wrap gap-3 pt-2">
             <button type="submit"
               class="inline-flex items-center justify-center rounded-lg bg-primary px-6 py-2.5 text-sm font-bold uppercase tracking-[0.08em] text-white hover:bg-[#2b1613] transition-colors">
-              Add Product
+              <span th:text="${isEdit} ? 'Update Product' : 'Add Product'">Add Product</span>
             </button>
             <a th:href="@{/catalogs}"
               class="inline-flex items-center justify-center rounded-lg border border-outline-variant/60 px-6 py-2.5 text-sm font-bold uppercase tracking-[0.08em] text-[#4d3430] hover:bg-surface-container-low transition-colors">
