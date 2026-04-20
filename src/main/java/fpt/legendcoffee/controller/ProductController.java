@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import fpt.legendcoffee.dto.request.ProductRequestDTO;
+import fpt.legendcoffee.dto.response.ProductDetailDTO;
 import fpt.legendcoffee.dto.response.ProductResponseDTO;
 import fpt.legendcoffee.entity.Product;
 import fpt.legendcoffee.entity.ProductVariant;
@@ -39,7 +40,6 @@ public class ProductController {
     private final ProductService productService;
     private final ImageService imageService;
     private final ProductVariantService productVariantService;
-
 
     @PostMapping("/image-upload")
     public String uploadImageOnly(@RequestParam("image") MultipartFile image, Model model) {
@@ -76,26 +76,26 @@ public class ProductController {
         return "product/catalogs";
     }
 
-    @GetMapping({ "/view", "/list" })
-    public String listProductsAlias(Model model, Authentication authentication) {
-        return listProducts(model, authentication);
-    }
-
-    @GetMapping("/view-product")
-    public String viewProductPage(Model model, RedirectAttributes redirectAttributes) {
-        List<Product> products = productService.getAllProducts();
-        if (products.isEmpty()) {
-            redirectAttributes.addFlashAttribute("error", "Chưa có sản phẩm để xem.");
-            return "redirect:product/products";
-        }
-        model.addAttribute("product", products.get(0));
-        return "product/view-product";
-    }
-
     @GetMapping("/{id}")
     public String viewProduct(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         try {
+            ProductDetailDTO product = productService.getProductDetail(id);
+            List<ProductVariant> variants = productVariantService.getVariantsByProductId(id);
+            ProductVariant selectedVariant = null;
+            for (ProductVariant variant : variants) {
+                if (Boolean.TRUE.equals(variant.getIsActive())) {
+                    selectedVariant = variant;
+                    break;
+                }
+            }
+            if (selectedVariant == null && !variants.isEmpty()) {
+                selectedVariant = variants.get(0);
+            }
+
             model.addAttribute("productId", id);
+            model.addAttribute("product", product);
+            model.addAttribute("variants", variants);
+            model.addAttribute("selectedVariant", selectedVariant);
             return "product/catalog-detail";
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());

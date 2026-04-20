@@ -4,6 +4,10 @@
 
 const CART_STORAGE_KEY = 'industrial_legend_cart';
 
+function normalizeVariant(variant) {
+    return (variant && String(variant).trim()) ? String(variant).trim() : '__default__';
+}
+
 const CartSystem = {
     getCart() {
         try {
@@ -23,14 +27,20 @@ const CartSystem = {
     addToCart(product) {
         // product: { id, name, price, image, variant, quantity }
         const cart = this.getCart();
-        const existingItem = cart.find(item => item.id === product.id && item.variant === product.variant);
+        const incoming = {
+            ...product,
+            id: String(product.id),
+            variant: normalizeVariant(product.variant),
+            price: Number(product.price) || 0,
+            quantity: Number(product.quantity) || 1
+        };
+        const existingItem = cart.find(item => String(item.id) === incoming.id && normalizeVariant(item.variant) === incoming.variant);
 
         if (existingItem) {
-            existingItem.quantity += (product.quantity || 1);
+            existingItem.quantity += incoming.quantity;
         } else {
             cart.push({
-                ...product,
-                quantity: product.quantity || 1
+                ...incoming
             });
         }
 
@@ -38,7 +48,7 @@ const CartSystem = {
     },
 
     removeFromCart(id, variant) {
-        const cart = this.getCart().filter(item => !(item.id === id && item.variant === variant));
+        const cart = this.getCart().filter(item => !(String(item.id) === String(id) && normalizeVariant(item.variant) === normalizeVariant(variant)));
         this.saveCart(cart);
     },
 
@@ -49,7 +59,7 @@ const CartSystem = {
         }
 
         const cart = this.getCart();
-        const item = cart.find(i => i.id === id && i.variant === variant);
+        const item = cart.find(i => String(i.id) === String(id) && normalizeVariant(i.variant) === normalizeVariant(variant));
         if (item) {
             item.quantity = quantity;
             this.saveCart(cart);
