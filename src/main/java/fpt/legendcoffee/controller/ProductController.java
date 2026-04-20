@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,9 +24,9 @@ import fpt.legendcoffee.dto.request.ProductRequestDTO;
 import fpt.legendcoffee.dto.response.ProductResponseDTO;
 import fpt.legendcoffee.entity.Product;
 import fpt.legendcoffee.entity.ProductVariant;
-import fpt.legendcoffee.repository.ProductVariantRepository;
 import fpt.legendcoffee.service.ImageService;
 import fpt.legendcoffee.service.ProductService;
+import fpt.legendcoffee.service.ProductVariantService;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -36,12 +38,8 @@ public class ProductController {
 
     private final ProductService productService;
     private final ImageService imageService;
-    private final ProductVariantRepository productVariantRepository;
+    private final ProductVariantService productVariantService;
 
-    @GetMapping("/image-upload")
-    public String imageUploadPage() {
-        return "product/image-upload";
-    }
 
     @PostMapping("/image-upload")
     public String uploadImageOnly(@RequestParam("image") MultipartFile image, Model model) {
@@ -68,10 +66,30 @@ public class ProductController {
     }
 
     @GetMapping
-    public String listProducts(Model model) {
+    public String listProducts(Model model, Authentication authentication) {
         List<ProductResponseDTO> products = productService.getAllProductResponses();
         model.addAttribute("products", products);
-        return "product/products";
+        if (authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN") || a.getAuthority().equals("ROLE_STAFF"))) {
+            return "product/products";
+        }
+        return "product/catalogs";
+    }
+
+    @GetMapping({ "/view", "/list" })
+    public String listProductsAlias(Model model, Authentication authentication) {
+        return listProducts(model, authentication);
+    }
+
+    @GetMapping("/view-product")
+    public String viewProductPage(Model model, RedirectAttributes redirectAttributes) {
+        List<Product> products = productService.getAllProducts();
+        if (products.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Chưa có sản phẩm để xem.");
+            return "redirect:product/products";
+        }
+        model.addAttribute("product", products.get(0));
+        return "product/view-product";
     }
 
     @GetMapping("/{id}")
@@ -86,6 +104,7 @@ public class ProductController {
     }
 
     @GetMapping("/form-add")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public String addProductForm(Model model) {
         Object requestAttr = model.getAttribute("request");
         if (!(requestAttr instanceof ProductRequestDTO)) {
@@ -97,6 +116,7 @@ public class ProductController {
     }
 
     @PostMapping("/add")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public String addProduct(@ModelAttribute("request") ProductRequestDTO request,
             RedirectAttributes redirectAttributes) {
         try {
@@ -139,8 +159,8 @@ public class ProductController {
     }
 
     @GetMapping("/{id}/form-edit")
-    public String editProductForm(@PathVariable Long id, Model model,
-            RedirectAttributes redirectAttributes) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    public String editProductForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         try {
             Product product = productService.getProductById(id);
 
@@ -148,7 +168,7 @@ public class ProductController {
                 model.addAttribute("request", productService.getProductRequestById(id));
             }
 
-            List<ProductVariant> existingVariants = productVariantRepository.findByProduct(product);
+            List<ProductVariant> existingVariants = productVariantService.findByProduct(product);
 
             model.addAttribute("productId", id);
             model.addAttribute("currentImageUrl", product.getImageUrl());
@@ -164,6 +184,7 @@ public class ProductController {
     }
 
     @PostMapping("/{id}/update")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public String updateProduct(@PathVariable Long id,
             @ModelAttribute("request") ProductRequestDTO request,
             RedirectAttributes redirectAttributes) {
@@ -207,6 +228,7 @@ public class ProductController {
     }
 
     @PostMapping("/{id}/delete")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public String deleteProduct(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             productService.deleteProduct(id);

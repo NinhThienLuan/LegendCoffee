@@ -1,7 +1,7 @@
 package fpt.legendcoffee.common.config;
 
 
-import fpt.legendcoffee.common.properties.GhnProperties;
+import fpt.legendcoffee.common.properties.GHNProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +11,7 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 @Configuration
 public class AppConfig {
-    private final GhnProperties ghnProperties;
+    private final GHNProperties ghnProperties;
 
     @Bean(name = "ghnRestTemplate")
     public RestTemplate ghnRestTemplate() {

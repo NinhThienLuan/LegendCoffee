@@ -6,6 +6,7 @@ import fpt.legendcoffee.service.VoucherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 
@@ -20,11 +21,13 @@ public class VoucherController {
     }
 
     @PostMapping("/voucher/create")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public VoucherResponseDTO create(VoucherRequestDTO request) {
         return voucherService.create(request);
     }
 
     @PutMapping("/voucher/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public VoucherResponseDTO update(@PathVariable Long id,
                                      @RequestBody VoucherRequestDTO request) {
         return voucherService.update(id, request);
@@ -36,6 +39,7 @@ public class VoucherController {
     }
 
     @PutMapping("/voucher/{id}/unactive")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public void unActive(@PathVariable Long id) {
         voucherService.unActiveVoucher(id);
     }

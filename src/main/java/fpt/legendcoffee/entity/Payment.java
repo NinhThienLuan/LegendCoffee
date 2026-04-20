@@ -3,6 +3,7 @@ package fpt.legendcoffee.entity;
 import fpt.legendcoffee.common.infrastructure.BaseEntity;
 import fpt.legendcoffee.entity.enumeration.PaymentMethod;
 import fpt.legendcoffee.entity.enumeration.PaymentStatus;
+import fpt.legendcoffee.entity.enumeration.PaymentType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -31,8 +32,9 @@ public class Payment extends BaseEntity {
     @Column(name = "status")
     private PaymentStatus status;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "payment_type")
-    private String paymentType;
+    private PaymentType paymentType;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_method")
