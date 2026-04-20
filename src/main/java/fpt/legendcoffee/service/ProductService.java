@@ -3,6 +3,7 @@ package fpt.legendcoffee.service;
 import java.util.List;
 
 import fpt.legendcoffee.dto.request.ProductRequestDTO;
+import fpt.legendcoffee.dto.response.ProductDetailDTO;
 import fpt.legendcoffee.dto.response.ProductResponseDTO;
 import fpt.legendcoffee.entity.Category;
 import fpt.legendcoffee.entity.Product;
@@ -15,6 +16,8 @@ public interface ProductService {
     List<ProductResponseDTO> getAllProductResponses();
 
     Product getProductById(Long id);
+
+    ProductDetailDTO getProductDetail(Long id);
 
     Product updateProduct(Long id, ProductRequestDTO request);
 

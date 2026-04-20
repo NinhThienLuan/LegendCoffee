@@ -97,7 +97,7 @@ public class DataInit implements CommandLineRunner {
                     .origin("Đà Lạt, Việt Nam")
                     .expiryDate(LocalDate.now().plusMonths(12))
                     .manufacturerDate(LocalDate.now())
-                    .imageUrl("/images/arabica.png")
+                    .imageUrl("https://res.cloudinary.com/myimagename/image/upload/q_auto/f_auto/v1776703528/Gemini_Generated_Image_ymu9s0ymu9s0ymu9_jqlxbd.png")
                     .isActive(true)
                     .build();
             productRepository.save(arabica);
@@ -130,7 +130,7 @@ public class DataInit implements CommandLineRunner {
                     .origin("Đắk Lắk, Việt Nam")
                     .expiryDate(LocalDate.now().plusMonths(12))
                     .manufacturerDate(LocalDate.now())
-                    .imageUrl("/images/robusta.png")
+                    .imageUrl("https://res.cloudinary.com/myimagename/image/upload/q_auto/f_auto/v1776704007/39e9e7ac-801d-4380-80c0-a6aeabd3590e_s8s2jh.jpg")
                     .isActive(true)
                     .build();
             productRepository.save(robusta);
@@ -154,7 +154,7 @@ public class DataInit implements CommandLineRunner {
                     .origin("Lâm Đồng, Việt Nam")
                     .expiryDate(LocalDate.now().plusMonths(12))
                     .manufacturerDate(LocalDate.now())
-                    .imageUrl("/images/ground.png")
+                    .imageUrl("https://res.cloudinary.com/myimagename/image/upload/q_auto/f_auto/v1776704017/3530370d-f499-49b9-949c-f8ca3780dfa9_xmutfc.jpg")
                     .isActive(true)
                     .build();
             productRepository.save(espressoGround);
@@ -174,10 +174,55 @@ public class DataInit implements CommandLineRunner {
             User admin = userRepository.findByEmail("admin@legendcoffee.com").orElse(null);
             Article article1 = Article.builder()
                     .user(admin)
-                    .title("Cách pha cà phê Pour-over chuẩn vị tại nhà")
-                    .summary("Khám phá kỹ thuật pha Pour-over để tận hưởng trọn vẹn hương vị của hạt Arabica.")
-                    .contentJson("{\"content\": [{\"type\": \"paragraph\", \"text\": \"Dụng cụ cần thiết: Phễu lọc, giấy lọc, bình đựng, cân điện tử...\"}]}")
-                    .coverImageUrl("/images/pourover.png")
+                    .title("Tối ưu hóa chuỗi cung ứng cà phê trong kỷ nguyên số")
+                    .summary("Bài viết mô phỏng dữ liệu từ model để render nội dung động theo format Editor.js.")
+                    .contentJson("""
+                                {
+                                    "time": 1713550000000,
+                                    "version": "2.29.1",
+                                    "blocks": [
+                                        {
+                                            "type": "header",
+                                            "data": {
+                                                "text": "Tư duy vận hành hiện đại cho ngành cà phê",
+                                                "level": 2
+                                            }
+                                        },
+                                        {
+                                            "type": "paragraph",
+                                            "data": {
+                                                "text": "Doanh nghiệp B2B cần kết nối rang xay, kho vận và dữ liệu thời gian thực để giảm rủi ro và tăng hiệu suất."
+                                            }
+                                        },
+                                        {
+                                            "type": "image",
+                                            "data": {
+                                                "url": "https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=1200&q=80",
+                                                "caption": "Theo dõi chất lượng hạt và dữ liệu vận hành theo thời gian thực"
+                                            }
+                                        },
+                                        {
+                                            "type": "list",
+                                            "data": {
+                                                "style": "unordered",
+                                                "items": [
+                                                    "Theo dõi tồn kho theo lô hàng",
+                                                    "Chuẩn hóa chất lượng theo profile rang",
+                                                    "Tối ưu chi phí logistics liên vùng"
+                                                ]
+                                            }
+                                        },
+                                        {
+                                            "type": "quote",
+                                            "data": {
+                                                "text": "Dữ liệu tốt giúp quyết định nhanh và đúng trong chuỗi cung ứng.",
+                                                "caption": "RoastLogistics Insight"
+                                            }
+                                        }
+                                    ]
+                                }
+                                """)
+                    .coverImageUrl("https://res.cloudinary.com/myimagename/image/upload/q_auto/f_auto/v1776704026/45933f08-70d1-4bbf-805f-54690cd822ef_rhtyhx.jpg")
                     .status(ArticleStatus.PUBLISHED)
                     .publishedAt(LocalDateTime.now())
                     .isActive(true)
@@ -196,105 +241,6 @@ public class DataInit implements CommandLineRunner {
             orderRepository.save(order2);
 
             articleRepository.saveAll(List.of(article1));
-        }
-
-        // ===== Categories, Products & Variants =====
-        if (categoryRepository.count() == 0) {
-            Category hat = Category.builder()
-                    .categoryName("Cà phê hạt")
-                    .description("Các loại cà phê hạt nguyên chất Robusta, Arabica...")
-                    .build();
-            categoryRepository.save(hat);
-
-            Category bot = Category.builder()
-                    .categoryName("Cà phê bột")
-                    .description("Cà phê rang xay sẵn đóng túi")
-                    .build();
-            categoryRepository.save(bot);
-
-            Category dungCu = Category.builder()
-                    .categoryName("Dụng cụ pha chế")
-                    .description("Phin, máy pha cà phê, giấy lọc...")
-                    .build();
-            categoryRepository.save(dungCu);
-
-            // Seed Products
-            Product p1 = Product.builder()
-                    .name("Cà phê Robusta Nguyên Chất")
-                    .category(hat)
-                    .origin("Lâm Đồng")
-                    .description("Cà phê Robusta đậm đà, hậu vị ngọt, phù hợp pha phin.")
-                    .manufacturerDate(LocalDate.now().minusMonths(1))
-                    .expiryDate(LocalDate.now().plusMonths(11))
-                    .isActive(true)
-                    .build();
-            productRepository.save(p1);
-
-            Product p2 = Product.builder()
-                    .name("Cà phê Arabica Cầu Đất")
-                    .category(hat)
-                    .origin("Cầu Đất, Đà Lạt")
-                    .description("Cà phê Arabica thơm nhẹ, vị chua thanh, chuẩn gu thượng hạng.")
-                    .manufacturerDate(LocalDate.now().minusDays(15))
-                    .expiryDate(LocalDate.now().plusMonths(11).plusDays(15))
-                    .isActive(true)
-                    .build();
-            productRepository.save(p2);
-
-            Product p3 = Product.builder()
-                    .name("Phin Pha Cà Phê Inox")
-                    .category(dungCu)
-                    .origin("Việt Nam")
-                    .description("Phin inox cao cấp, lọc chậm, giữ trọn hương vị cà phê.")
-                    .isActive(true)
-                    .build();
-            productRepository.save(p3);
-
-            // Seed Variants
-            ProductVariant v1_1 = ProductVariant.builder()
-                    .product(p1)
-                    .variantName("Bao 1kg - Hạt")
-                    .packaging("Bao")
-                    .size(1000)
-                    .price(new BigDecimal("210000"))
-                    .stockQuantity(100)
-                    .isActive(true)
-                    .build();
-            productVariantRepository.save(v1_1);
-
-            ProductVariant v1_2 = ProductVariant.builder()
-                    .product(p1)
-                    .variantName("Túi 500g - Hạt")
-                    .packaging("Túi")
-                    .size(500)
-                    .price(new BigDecimal("110000"))
-                    .stockQuantity(250)
-                    .isActive(true)
-                    .build();
-            productVariantRepository.save(v1_2);
-
-            ProductVariant v2_1 = ProductVariant.builder()
-                    .product(p2)
-                    .variantName("Gói 250g - Hạt")
-                    .packaging("Gói")
-                    .size(250)
-                    .price(new BigDecimal("145000"))
-                    .stockQuantity(150)
-                    .isActive(true)
-                    .build();
-            productVariantRepository.save(v2_1);
-
-            ProductVariant v3_1 = ProductVariant.builder()
-                    .product(p3)
-                    .variantName("Size M")
-                    .packaging("Hộp")
-                    .price(new BigDecimal("45000"))
-                    .stockQuantity(300)
-                    .isActive(true)
-                    .build();
-            productVariantRepository.save(v3_1);
-
-            System.out.println("  [DataInit] Seed Categories, Products & Variants thành công");
         }
     }
 }
