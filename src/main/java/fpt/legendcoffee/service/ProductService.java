@@ -8,17 +8,21 @@ import fpt.legendcoffee.entity.Category;
 import fpt.legendcoffee.entity.Product;
 
 public interface ProductService {
-	Product addProduct(ProductRequestDTO request);
+    Product addProduct(ProductRequestDTO request);
 
-	List<Product> getAllProducts();
+    List<Product> getAllProducts();
 
-	List<ProductResponseDTO> getAllProductResponses();
+    List<ProductResponseDTO> getAllProductResponses();
 
-	Product getProductById(Long id);
+    Product getProductById(Long id);
 
-	Product updateProduct(Long id, ProductRequestDTO request);
+    Product updateProduct(Long id, ProductRequestDTO request);
 
-	void deleteProduct(Long id);
+    void deleteProduct(Long id);
 
-	List<Category> getAllCategories();
+    ProductRequestDTO getProductRequestById(Long id);
+
+    ProductRequestDTO sanitize(ProductRequestDTO request);
+
+    List<Category> getAllCategories();
 }

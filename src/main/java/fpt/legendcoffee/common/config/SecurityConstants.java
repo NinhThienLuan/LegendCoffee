@@ -23,4 +23,3 @@ public class SecurityConstants {
             "/favicon.ico"
     };
 }
-

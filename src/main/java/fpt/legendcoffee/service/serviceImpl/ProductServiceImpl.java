@@ -1,6 +1,7 @@
 package fpt.legendcoffee.service.serviceImpl;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -60,7 +61,6 @@ public class ProductServiceImpl implements ProductService {
 
         product = productRepository.save(product);
 
-        // Lưu các biến thể
         if (request.getVariants() != null) {
             for (ProductVariantRequestDTO variantDTO : request.getVariants()) {
                 ProductVariant variant = buildVariant(variantDTO, product);
@@ -91,7 +91,7 @@ public class ProductServiceImpl implements ProductService {
                 minPrice = variants.stream()
                         .map(ProductVariant::getPrice)
                         .filter(p -> p != null)
-                        .min(java.math.BigDecimal::compareTo)
+                        .min(BigDecimal::compareTo)
                         .orElse(null);
 
                 totalStock = variants.stream()
@@ -105,7 +105,7 @@ public class ProductServiceImpl implements ProductService {
                     .categoryName(product.getCategory() != null ? product.getCategory().getCategoryName() : null)
                     .price(minPrice)
                     .stockQuantity(totalStock)
-                    .soldCount(0) // Default 0 as requested
+                    .soldCount(0)
                     .isActive(product.getIsActive())
                     .imageUrl(product.getImageUrl())
                     .build();
@@ -158,7 +158,6 @@ public class ProductServiceImpl implements ProductService {
 
         product = productRepository.save(product);
 
-        // Xóa biến thể cũ và thêm lại từ form
         productVariantRepository.deleteByProduct(product);
         if (request.getVariants() != null) {
             for (ProductVariantRequestDTO variantDTO : request.getVariants()) {
@@ -174,7 +173,6 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public void deleteProduct(Long id) {
         Product product = getProductById(id);
-        // Xóa biến thể trước khi xóa sản phẩm
         productVariantRepository.deleteByProduct(product);
         if (product.getImagePublicId() != null && !product.getImagePublicId().isBlank()) {
             imageService.delete(product.getImagePublicId());
@@ -187,8 +185,6 @@ public class ProductServiceImpl implements ProductService {
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
-
-    // ── Helpers ──────────────────────────────────────────────────────────────
 
     private ProductVariant buildVariant(ProductVariantRequestDTO dto, Product product) {
         return ProductVariant.builder()
@@ -203,10 +199,50 @@ public class ProductServiceImpl implements ProductService {
     }
 
     private void validateDateRange(ProductRequestDTO request) {
-        if (request.getManufacturerDate() != null
-                && request.getExpiryDate() != null
-                && !request.getExpiryDate().isAfter(request.getManufacturerDate())) {
+        LocalDate today = LocalDate.now();
+        LocalDate manufacturerDate = request.getManufacturerDate();
+        LocalDate expiryDate = request.getExpiryDate();
+
+        if (manufacturerDate != null && manufacturerDate.isAfter(today)) {
+            throw new IllegalArgumentException("Ngày sản xuất không được ở tương lai");
+        }
+        if (expiryDate != null && expiryDate.isBefore(today)) {
+            throw new IllegalArgumentException("Ngày hết hạn phải ở tương lai");
+        }
+        if (manufacturerDate == null || expiryDate == null) {
+            return;
+        }
+        if (!expiryDate.isAfter(manufacturerDate)) {
             throw new IllegalArgumentException("Ngày hết hạn phải sau ngày sản xuất");
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ProductRequestDTO getProductRequestById(Long id) {
+        Product product = getProductById(id);
+        return ProductRequestDTO.builder()
+                .name(product.getName())
+                .description(product.getDescription())
+                .origin(product.getOrigin())
+                .manufacturerDate(product.getManufacturerDate())
+                .expiryDate(product.getExpiryDate())
+                .categoryId(product.getCategory() != null ? product.getCategory().getId() : null)
+                .isActive(product.getIsActive())
+                .build();
+    }
+
+    @Override
+    public ProductRequestDTO sanitize(ProductRequestDTO request) {
+        return ProductRequestDTO.builder()
+                .name(request.getName())
+                .description(request.getDescription())
+                .origin(request.getOrigin())
+                .manufacturerDate(request.getManufacturerDate())
+                .expiryDate(request.getExpiryDate())
+                .categoryId(request.getCategoryId())
+                .isActive(request.getIsActive())
+                .variants(request.getVariants())
+                .build();
     }
 }
