@@ -1,13 +1,14 @@
 package fpt.legendcoffee.dto.request;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -37,6 +38,9 @@ public class ProductRequestDTO {
 
     /** File ảnh upload từ form thêm/sửa sản phẩm. */
     private MultipartFile image;
+
+    /** Danh sách biến thể gửi từ form. */
+    private List<ProductVariantRequestDTO> variants = new ArrayList<>();
 
     public String getName() {
         return name;
@@ -101,9 +105,19 @@ public class ProductRequestDTO {
     public void setImage(MultipartFile image) {
         this.image = image;
     }
+
+    public List<ProductVariantRequestDTO> getVariants() {
+        return variants;
+    }
+
+    public void setVariants(List<ProductVariantRequestDTO> variants) {
+        this.variants = variants;
+    }
+
     // Hàm tiện ích để kiểm tra logic
     public boolean isValidDateRange() {
-        if (manufacturerDate == null || expiryDate == null) return false;
+        if (manufacturerDate == null || expiryDate == null)
+            return false;
         return expiryDate.isAfter(manufacturerDate);
     }
 }
