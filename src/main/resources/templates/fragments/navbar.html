@@ -25,12 +25,9 @@
           <a href="/"
             th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI == '/'} ? ' text-[#351f1b] dark:text-[#ffffff]' : ' text-[#5b4a45] dark:text-[#d4c3bf] hover:text-[#351f1b] dark:hover:text-[#ffffff]'"
             class="transition-colors duration-300">Trang chủ</a>
-          <a href="/catalogs"
-            th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/catalog')} ? ' text-[#351f1b] dark:text-[#ffffff]' : ' text-[#5b4a45] dark:text-[#d4c3bf] hover:text-[#351f1b] dark:hover:text-[#ffffff]'"
-            class="transition-colors duration-300">Sản Phẩm</a>
           <a href="/products"
             th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/products')} ? ' text-[#351f1b] dark:text-[#ffffff]' : ' text-[#5b4a45] dark:text-[#d4c3bf] hover:text-[#351f1b] dark:hover:text-[#ffffff]'"
-            class="transition-colors duration-300">View Product</a>
+            class="transition-colors duration-300">Sản Phẩm</a>
           <a href="/orders"
             th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/orders')} ? ' text-[#351f1b] dark:text-[#ffffff]' : ' text-[#5b4a45] dark:text-[#d4c3bf] hover:text-[#351f1b] dark:hover:text-[#ffffff]'"
             class="transition-colors duration-300">Đơn hàng</a>
@@ -64,9 +61,9 @@
               </a>
               <form th:action="@{/logout}" method="POST" class="inline">
                 <button type="submit"
-                  class="h-9 px-4 inline-flex items-center justify-center text-error hover:bg-error/10 rounded-full transition-colors text-xs font-bold uppercase tracking-widest"
+                  class="h-9 w-9 inline-flex items-center justify-center text-error hover:bg-error/10 rounded-full transition-colors"
                   aria-label="Logout">
-                  Đăng xuất
+                  <span class="material-symbols-outlined text-[20px]">logout</span>
                 </button>
               </form>
             </div>
@@ -81,13 +78,10 @@
           <a href="/"
             th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI == '/'} ? ' text-[#351f1b]' : ' text-[#6f605c] hover:text-[#351f1b]'"
             class="transition-colors">Trang chủ</a>
-          <a href="/catalogs"
-            th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/catalog')} ? ' text-[#351f1b]' : ' text-[#6f605c] hover:text-[#351f1b]'"
-            class="transition-colors">Sản Phẩm</a>
           <a href="/products"
             th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/products')} ? ' text-[#351f1b]' : ' text-[#6f605c] hover:text-[#351f1b]'"
-            class="transition-colors">View Product</a>
-          <a href="/orders"
+            class="transition-colors">Sản Phẩm</a>
+          <a href="/products"
             th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/orders')} ? ' text-[#351f1b]' : ' text-[#6f605c] hover:text-[#351f1b]'"
             class="transition-colors">Đơn hàng</a>
         </div>

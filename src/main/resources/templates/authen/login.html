@@ -89,10 +89,8 @@
                     </div>
                     <!-- Auth Form -->
                     <form class="space-y-6" method="POST" th:action="@{/login}">
-                        <div th:if="${param.error}" class="bg-error/10 border-l-4 border-error p-3 mb-4">
-                            <p class="text-xs text-error font-bold"
-                                th:text="${param.error[0] == 'auth_failed' ? 'Email hoặc mật khẩu không chính xác.' : 'Có lỗi xảy ra, vui lòng thử lại.'}">
-                            </p>
+                        <div id="login-error-message" th:if="${param.error}" class="hidden"
+                            th:text="${param.error[0] == 'auth_failed' ? 'Email hoặc mật khẩu không chính xác.' : param.error[0]}">
                         </div>
                         <div th:if="${param.success}" class="bg-primary/10 border-l-4 border-primary p-3 mb-4">
                             <p class="text-xs text-primary font-bold"
@@ -279,6 +277,8 @@
         style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB-Q5xJ_vnd3UZIxcQs6kxSV0Ns3dRiFIZRBI1PAz0StqtgQetOc9a_WRQ2dwNT1inEY7m8vea15FwuavsJiuUaUYa8pDrV9wW8jLWJZxfcxDoEmpj4sjnQbY5_iz1Mjotm9eeTApAdEJDln_MShBabhkHZTg6Pri420uNl1Z8UO33c0L8CDKsSMBw4PK6x0Wo6JlVgQmmiQxGg_VXTUWkjdZK1CVykvlwCBLNYxaVany_dp_qBwYuXOjEEcd4Vto-3ObF43rKOUvT3');">
     </div>
 
+    <div th:replace="~{fragments/toast :: errorToast('login-error-toast')}"></div>
+
     <script>
         function setActiveTab(button) {
             const tabContainer = button.closest('.flex');
@@ -327,6 +327,28 @@
         function confirmForceChange() {
             alert('Đổi mật khẩu thành công!');
         }
+
+        function showLoginErrorToast(message) {
+            const toast = document.getElementById('login-error-toast');
+            if (!toast || !message) return;
+
+            toast.textContent = message;
+            toast.classList.remove('opacity-0', 'translate-y-[-8px]', 'pointer-events-none');
+
+            window.setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-[-8px]', 'pointer-events-none');
+            }, 3200);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const loginErrorEl = document.getElementById('login-error-message');
+            if (!loginErrorEl) return;
+
+            const message = loginErrorEl.textContent ? loginErrorEl.textContent.trim() : '';
+            if (message) {
+                showLoginErrorToast(message);
+            }
+        });
     </script>
 
     <style>

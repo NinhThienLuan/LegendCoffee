@@ -115,13 +115,13 @@
     </div>
   </section>
 
-  <section th:fragment="catalogDetail(catalogId)" class="pt-24 pb-20 max-w-7xl mx-auto px-8 sm:px-12 lg:px-20">
+  <section th:fragment="catalogDetail(productId)" class="pt-24 pb-20 max-w-7xl mx-auto px-8 sm:px-12 lg:px-20">
     <nav class="flex items-center space-x-2 text-sm text-on-surface-variant mb-8 font-medium">
       <a th:href="@{/}" href="/" class="hover:text-primary">Trang chủ</a>
       <span class="material-symbols-outlined text-xs">chevron_right</span>
-      <a th:href="@{/catalogs}" href="/catalogs" class="hover:text-primary">Catalog</a>
+      <a th:href="@{/products}" href="/products" class="hover:text-primary">Sản phẩm</a>
       <span class="material-symbols-outlined text-xs">chevron_right</span>
-      <span class="text-primary truncate font-bold" th:text="${catalogId} ?: 'N/A'">ID</span>
+      <span class="text-primary truncate font-bold" th:text="${productId} ?: 'N/A'">ID</span>
     </nav>
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
@@ -152,7 +152,7 @@
           <div class="flex items-center space-x-4 text-sm text-on-surface-variant font-medium">
             <p>Vùng trồng: <span class="text-primary font-bold">Đắk Lắk, Việt Nam</span></p>
             <span class="text-outline-variant">|</span>
-            <p>Mã sản phẩm: <span class="text-primary" th:text="${catalogId} ?: 'PVN12'">PVN12</span></p>
+            <p>Mã sản phẩm: <span class="text-primary" th:text="${productId} ?: 'PVN12'">PVN12</span></p>
           </div>
         </div>
 
@@ -194,12 +194,12 @@
             <button onclick="changeQty(1)" class="px-4 py-3 hover:bg-surface-container transition-colors"><span
                 class="material-symbols-outlined text-sm">add</span></button>
           </div>
-          <button onclick="handleAddToCartDetail(this)" th:data-id="${catalogId} ?: '1'" data-name="ROBUSTA ĐẮK LẮK S18"
-            data-price="145000"
-            data-img="https://lh3.googleusercontent.com/aida-public/AB6AXuB4lq69W_0vxQX9WrYx0D-yUYqLj9MoxJf25w9BumnWXMHhxLxbTrd680H_iMugNlmkm2vSknm6i4zMS7ciyOZPrrKp_X7DUs8IMmW-ntBahZwLhLzb9oPADd4ZluBL-ktojxwjyjl_pxa29ybxnKdBlBDxRKdoIc3JRkKdggtSEF3rpA_9pAxHeNn2AHvVKMbg1Afvphf9cBMMHMuwHLlIChYSwGLLaUspyNLlWjzkXoHhD-sUyD84NAEmrZtnvltVSj1IwGAAc1n5"
-            data-variant="Standard" data-s1-lab="Đồng đều" data-s1-val="Sàng 18" data-s2-lab="Tỷ lệ đen"
-            data-s2-val="< 0.1%" data-s3-lab="Độ ẩm" data-s3-val="< 12.5%"
-            class="flex-1 bg-primary text-on-primary py-4 rounded-md font-bold uppercase tracking-widest hover:bg-primary-container transition-all flex items-center justify-center gap-3 shadow-md shadow-primary/20 active:scale-95">
+          <button onclick="handleAddToCartDetail(this)" th:data-id="${productId} ?: '1'" data-name="ROBUSTA ĐẮK LẮK S18"
+                  data-price="145000"
+                  data-img="https://lh3.googleusercontent.com/aida-public/AB6AXuB4lq69W_0vxQX9WrYx0D-yUYqLj9MoxJf25w9BumnWXMHhxLxbTrd680H_iMugNlmkm2vSknm6i4zMS7ciyOZPrrKp_X7DUs8IMmW-ntBahZwLhLzb9oPADd4ZluBL-ktojxwjyjl_pxa29ybxnKdBlBDxRKdoIc3JRkKdggtSEF3rpA_9pAxHeNn2AHvVKMbg1Afvphf9cBMMHMuwHLlIChYSwGLLaUspyNLlWjzkXoHhD-sUyD84NAEmrZtnvltVSj1IwGAAc1n5"
+                  data-variant="Standard" data-s1-lab="Đồng đều" data-s1-val="Sàng 18" data-s2-lab="Tỷ lệ đen"
+                  data-s2-val="< 0.1%" data-s3-lab="Độ ẩm" data-s3-val="< 12.5%"
+                  class="flex-1 bg-primary text-on-primary py-4 rounded-md font-bold uppercase tracking-widest hover:bg-primary-container transition-all flex items-center justify-center gap-3 shadow-md shadow-primary/20 active:scale-95">
             <span class="material-symbols-outlined">shopping_cart</span>
             THÊM VÀO GIỎ HÀNG
           </button>

@@ -29,7 +29,7 @@ public class ProductController {
     public String listProducts(Model model) {
         List<Product> products = productService.getAllProducts();
         model.addAttribute("products", products);
-        return "product/products";
+        return "product/catalogs";
     }
 
     @GetMapping({"/view", "/list"})
@@ -51,8 +51,9 @@ public class ProductController {
     @GetMapping("/{id}")
     public String viewProduct(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         try {
-            model.addAttribute("product", productService.getProductById(id));
-            return "product/view-product";
+            model.addAttribute("productId", id);
+//            model.addAttribute("product", productService.getProductById(id));
+            return "product/catalog-detail";
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/products";

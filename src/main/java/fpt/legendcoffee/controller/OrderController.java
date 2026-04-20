@@ -35,7 +35,7 @@ public class OrderController {
 
     @GetMapping("/order-detail")
     public String orderDetailPage(Model model) {
-        return "order-detail/orderDetail";
+        return "order/orderDetail";
     }
 
     @GetMapping("/cart")
@@ -45,6 +45,6 @@ public class OrderController {
 
     @GetMapping("/checkout")
     public String checkoutPage(Model model) {
-        return "checkout/checkout";
+        return "cart/checkout";
     }
 }
