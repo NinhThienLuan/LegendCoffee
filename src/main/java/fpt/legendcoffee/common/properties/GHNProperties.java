@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Data
 @Component
 @ConfigurationProperties(prefix = "ghn.api")
-public class GhnProperties {
+public class GHNProperties {
     private String baseUrl;
     private String devUrl;
     private String token;
