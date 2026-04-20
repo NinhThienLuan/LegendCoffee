@@ -29,6 +29,7 @@
             <img alt="Industrial Roasting Facility"
                 class="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-multiply"
                 data-alt="dramatic wide shot of a modern industrial coffee roasting facility with large steel machinery and warm amber lighting on coffee beans"
+                th:src="${article != null and article.coverImageUrl != null and !#strings.isEmpty(article.coverImageUrl) ? article.coverImageUrl : 'https://lh3.googleusercontent.com/aida-public/AB6AXuBVmpam8rBEQaGz7n9lgu_Ah767F2ji_gFYQMLLXJdcTnXLlJZWyHjUc9yrT0KA-X5jG-z_KMs2cVFwz8ft1yIBPATU6XuKpH96ckMRUxn57EEfzu3ZxaZH_9fP8tJW8ET4r7udnxkPMKErF1RELS4dkppibxWYpHnDF0mVWPVeir1bMdg1mGSJK5wZJi_5ciTQaalpQmXyU5Bxq4qELyT9-2rS126-vIswxx87vmsDJuSsU2jkreBoA4XFHP4nO6-QkgVxbtgzRqMk'}"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVmpam8rBEQaGz7n9lgu_Ah767F2ji_gFYQMLLXJdcTnXLlJZWyHjUc9yrT0KA-X5jG-z_KMs2cVFwz8ft1yIBPATU6XuKpH96ckMRUxn57EEfzu3ZxaZH_9fP8tJW8ET4r7udnxkPMKErF1RELS4dkppibxWYpHnDF0mVWPVeir1bMdg1mGSJK5wZJi_5ciTQaalpQmXyU5Bxq4qELyT9-2rS126-vIswxx87vmsDJuSsU2jkreBoA4XFHP4nO6-QkgVxbtgzRqMk" />
             <div class="relative w-full max-w-5xl mx-auto px-8 z-10">
                 <div class="flex flex-wrap gap-2 mb-6">
@@ -40,13 +41,15 @@
                         hướng B2B</span>
                 </div>
                 <h1
-                    class="text-5xl md:text-7xl font-headline font-extrabold text-white leading-tight tracking-tighter max-w-4xl">
+                    class="text-5xl md:text-7xl font-headline font-extrabold text-white leading-tight tracking-tighter max-w-4xl"
+                    th:text="${article != null and article.title != null ? article.title : 'TỐI ƯU HÓA CHUỖI CUNG ỨNG CÀ PHÊ TRONG KỶ NGUYÊN SỐ'}">
                     TỐI ƯU HÓA CHUỖI CUNG ỨNG CÀ PHÊ TRONG KỶ NGUYÊN SỐ
                 </h1>
                 <div class="mt-8 flex items-center gap-6 text-on-primary-container font-medium">
                     <div class="flex items-center gap-2">
                         <span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
-                        <span class="text-sm">24 Tháng 5, 2024</span>
+                        <span class="text-sm"
+                            th:text="${article != null and article.createdAt != null ? #temporals.format(article.createdAt, 'dd/MM/yyyy') : '24 Tháng 5, 2024'}">24 Tháng 5, 2024</span>
                     </div>
                     <div class="flex items-center gap-2">
                         <span class="material-symbols-outlined" data-icon="schedule">schedule</span>
@@ -85,6 +88,18 @@
             </aside>
             <!-- Main Content Canvas -->
             <article class="lg:col-span-7 article-content">
+                <p th:if="${article != null and article.summary != null and !#strings.isEmpty(article.summary)}"
+                    class="text-xl font-medium text-on-surface-variant mb-12 border-l-4 border-primary pl-6"
+                    th:text="${article.summary}"></p>
+
+                <div id="article-content-render" class="space-y-4"
+                    th:if="${article != null and article.contentJson != null and !#strings.isEmpty(article.contentJson)}"></div>
+                <script th:inline="javascript"
+                    th:if="${article != null and article.contentJson != null and !#strings.isEmpty(article.contentJson)}">
+                    window.__ARTICLE_CONTENT_JSON = /*[[${article.contentJson}]]*/ '';
+                </script>
+
+                <div th:if="${article == null or article.contentJson == null or #strings.isEmpty(article.contentJson)}">
                 <p class="text-xl font-medium text-on-surface-variant mb-12 border-l-4 border-primary pl-6">
                     Trong bối cảnh thị trường cà phê toàn cầu đang đối mặt với những biến động về khí hậu và logistics,
                     việc
@@ -118,6 +133,7 @@
                 <p>Chúng tôi nhận thấy rằng, các doanh nghiệp sử dụng hệ thống tracking thời gian thực có khả năng phản
                     ứng
                     nhanh hơn 40% trước các sự cố trong chuỗi cung ứng so với các mô hình truyền thống.</p>
+                </div>
                 <div class="mt-16 pt-8 border-t border-outline-variant/30">
                     <h3 class="font-headline font-bold text-lg mb-4">Thẻ bài viết</h3>
                     <div class="flex flex-wrap gap-3">
@@ -234,6 +250,221 @@
     <!-- Footer -->
     <!-- Footer -->
     <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+    <script>
+        (function renderArticleContentFromJson() {
+            var contentRoot = document.getElementById('article-content-render');
+            if (!contentRoot) {
+                return;
+            }
+
+            function escapeHtml(value) {
+                return String(value)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/\"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            }
+
+            function sanitizeImageUrl(rawUrl) {
+                if (!rawUrl) {
+                    return '';
+                }
+
+                var value = String(rawUrl).trim();
+                if (!value) {
+                    return '';
+                }
+
+                var lower = value.toLowerCase();
+                if (lower.indexOf('javascript:') === 0 || lower.indexOf('data:') === 0 || lower.indexOf('vbscript:') === 0) {
+                    return '';
+                }
+
+                try {
+                    var parsed = new URL(value, window.location.href);
+                    if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+                        return parsed.href;
+                    }
+
+                    if (parsed.protocol === 'file:') {
+                        return parsed.href;
+                    }
+                } catch (error) {
+                    return '';
+                }
+
+                return '';
+            }
+
+            function sanitizePlainText(raw) {
+                if (raw === null || raw === undefined) {
+                    return '';
+                }
+
+                var value = String(raw);
+                var decoder = document.createElement('textarea');
+                decoder.innerHTML = value;
+                value = decoder.value;
+
+                value = value.replace(/<[^>]*>/g, '');
+                value = value.replace(/javascript\s*:/gi, '');
+                value = value.replace(/vbscript\s*:/gi, '');
+                value = value.replace(/on[a-z]+\s*=/gi, '');
+                value = value.replace(/script/gi, '');
+                value = value.replace(/[^\p{L}\p{N}\s.,!?;:()\-]/gu, '');
+                value = value.replace(/\s+/g, ' ');
+                return value.trim();
+            }
+
+            function sanitizeIncomingData(data) {
+                var blocks = Array.isArray(data.blocks) ? data.blocks : [];
+                var sanitizedBlocks = [];
+
+                blocks.forEach(function (block) {
+                    if (!block || !block.type || !block.data) {
+                        return;
+                    }
+
+                    var nextBlock = {
+                        type: block.type,
+                        data: {}
+                    };
+
+                    if (block.type === 'header') {
+                        nextBlock.data.text = sanitizePlainText(block.data.text);
+                        nextBlock.data.level = Number(block.data.level || 2);
+                    } else if (block.type === 'paragraph') {
+                        nextBlock.data.text = sanitizePlainText(block.data.text);
+                    } else if (block.type === 'list') {
+                        var items = Array.isArray(block.data.items) ? block.data.items : [];
+                        nextBlock.data.style = block.data.style === 'ordered' ? 'ordered' : 'unordered';
+                        nextBlock.data.items = items.map(function (item) {
+                            return sanitizePlainText(item);
+                        });
+                    } else if (block.type === 'quote') {
+                        nextBlock.data.text = sanitizePlainText(block.data.text);
+                        nextBlock.data.caption = sanitizePlainText(block.data.caption);
+                    } else if (block.type === 'image') {
+                        var imageUrl = '';
+                        if (block.data.file && block.data.file.url) {
+                            imageUrl = String(block.data.file.url);
+                        } else if (block.data.url) {
+                            imageUrl = String(block.data.url);
+                        }
+
+                        imageUrl = sanitizeImageUrl(imageUrl);
+                        if (!imageUrl) {
+                            return;
+                        }
+
+                        nextBlock.data.url = imageUrl;
+                        nextBlock.data.caption = sanitizePlainText(block.data.caption);
+                    } else {
+                        return;
+                    }
+
+                    sanitizedBlocks.push(nextBlock);
+                });
+
+                return {
+                    time: data.time || Date.now(),
+                    version: data.version || '2.29.1',
+                    blocks: sanitizedBlocks
+                };
+            }
+
+            function renderBlocksToHtml(data) {
+                var blocks = Array.isArray(data.blocks) ? data.blocks : [];
+
+                return blocks
+                    .map(function (block) {
+                        if (!block || !block.type || !block.data) {
+                            return '';
+                        }
+
+                        if (block.type === 'header') {
+                            var level = Number(block.data.level || 2);
+                            if (level < 1 || level > 6) {
+                                level = 2;
+                            }
+                            return '<h' + level + '>' + escapeHtml(block.data.text || '') + '</h' + level + '>';
+                        }
+
+                        if (block.type === 'paragraph') {
+                            return '<p>' + escapeHtml(block.data.text || '') + '</p>';
+                        }
+
+                        if (block.type === 'list') {
+                            var tag = block.data.style === 'ordered' ? 'ol' : 'ul';
+                            var items = Array.isArray(block.data.items) ? block.data.items : [];
+                            var htmlItems = items.map(function (item) {
+                                return '<li>' + escapeHtml(item) + '</li>';
+                            }).join('');
+                            return '<' + tag + '>' + htmlItems + '</' + tag + '>';
+                        }
+
+                        if (block.type === 'quote') {
+                            var quote = escapeHtml(block.data.text || '');
+                            var caption = escapeHtml(block.data.caption || '');
+                            return '<blockquote><p>' + quote + '</p><cite>' + caption + '</cite></blockquote>';
+                        }
+
+                        if (block.type === 'image') {
+                            var imageUrl = block.data.url ? String(block.data.url) : '';
+                            imageUrl = sanitizeImageUrl(imageUrl);
+                            if (!imageUrl) {
+                                return '';
+                            }
+
+                            var imageCaption = escapeHtml(block.data.caption || '');
+                            var altText = imageCaption || 'Article image';
+                            var figure = '<figure><img src="' + escapeHtml(imageUrl) + '" alt="' + altText + '" loading="lazy" />';
+                            if (imageCaption) {
+                                figure += '<figcaption>' + imageCaption + '</figcaption>';
+                            }
+                            figure += '</figure>';
+                            return figure;
+                        }
+
+                        return '';
+                    })
+                    .join('\n');
+            }
+
+            try {
+                var raw = typeof window.__ARTICLE_CONTENT_JSON === 'string'
+                    ? window.__ARTICLE_CONTENT_JSON.trim()
+                    : '';
+                if (!raw) {
+                    return;
+                }
+
+                var parsed = JSON.parse(raw);
+                if (!parsed || !Array.isArray(parsed.blocks)) {
+                    return;
+                }
+
+                var sanitized = sanitizeIncomingData(parsed);
+                var articleHtml = renderBlocksToHtml(sanitized);
+                var safeHtml = articleHtml;
+
+                if (typeof DOMPurify !== 'undefined') {
+                    safeHtml = DOMPurify.sanitize(articleHtml, {
+                        ALLOWED_TAGS: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'ul', 'ol', 'li', 'blockquote', 'cite', 'figure', 'img', 'figcaption'],
+                        ALLOWED_ATTR: ['src', 'alt', 'loading'],
+                        ALLOW_DATA_ATTR: false
+                    });
+                }
+
+                contentRoot.innerHTML = safeHtml || '<p class="text-on-surface-variant">Khong co block hop le de hien thi.</p>';
+            } catch (e) {
+                console.error('Cannot parse article.contentJson:', e);
+            }
+        })();
+    </script>
 </body>
 
 </html>
