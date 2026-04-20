@@ -20,8 +20,8 @@ import fpt.legendcoffee.dto.request.ProductRequestDTO;
 import fpt.legendcoffee.dto.response.ProductResponseDTO;
 import fpt.legendcoffee.entity.Product;
 import fpt.legendcoffee.entity.ProductVariant;
-import fpt.legendcoffee.repository.ProductVariantRepository;
 import fpt.legendcoffee.service.ProductService;
+import fpt.legendcoffee.service.ProductVariantService;
 import lombok.RequiredArgsConstructor;
 
 @Controller
