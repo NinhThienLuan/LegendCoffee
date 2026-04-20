@@ -1,8 +1,19 @@
 package fpt.legendcoffee.entity;
 
+import java.time.LocalDate;
+
 import fpt.legendcoffee.common.infrastructure.BaseEntity;
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 @Getter
@@ -29,13 +40,19 @@ public class Product extends BaseEntity {
     private String origin;
 
     @Column(name = "expiry_date")
-    private String expiryDate;
+    private LocalDate expiryDate;
 
     @Column(name = "manufacturer_date")
-    private String manufacturerDate;
+    private LocalDate manufacturerDate;
+
+    @Column(name = "image_url", columnDefinition = "NVARCHAR(1000)")
+    private String imageUrl;
+
+    @Column(name = "image_public_id", columnDefinition = "NVARCHAR(255)")
+    private String imagePublicId;
 
     @Column(name = "is_active")
-    @Builder.Default
+    @lombok.Builder.Default
     private Boolean isActive = true;
 
 }

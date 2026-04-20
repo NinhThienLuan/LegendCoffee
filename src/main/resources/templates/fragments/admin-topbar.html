@@ -1,0 +1,22 @@
+<header th:fragment="adminTopbar(pageTitle, searchPlaceholder)" class="sticky top-0 w-full flex justify-between items-center px-8 h-16 bg-surface/80 dark:bg-stone-900/80 backdrop-blur-md border-b border-stone-200/30 dark:border-stone-800/30 z-40">
+  <div class="flex items-center gap-8">
+    <h2 class="text-xl font-bold tracking-tighter text-stone-900 font-manrope" th:text="${pageTitle}">Quản lý Mã giảm giá</h2>
+    <div class="relative">
+      <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-stone-400">
+        <span class="material-symbols-outlined text-sm">search</span>
+      </span>
+      <input class="bg-surface-container-low border-none rounded-lg pl-10 pr-4 py-1.5 text-sm focus:ring-1 focus:ring-primary/40 w-64" th:placeholder="${searchPlaceholder}" placeholder="Tìm kiếm voucher..." type="text"/>
+    </div>
+  </div>
+  <div class="flex items-center gap-4">
+    <button class="p-2 text-stone-600 hover:bg-stone-100 rounded-full transition-colors">
+      <span class="material-symbols-outlined">notifications</span>
+    </button>
+    <button class="p-2 text-stone-600 hover:bg-stone-100 rounded-full transition-colors">
+      <span class="material-symbols-outlined">settings</span>
+    </button>
+    <div class="h-8 w-8 rounded-full bg-stone-200 overflow-hidden">
+      <img class="h-full w-full object-cover" data-alt="Ảnh chân dung quản trị viên" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcbsvU_upBCfc0Q6B98M6rdkO-O1hXTCDAUaXCrybeSSdbMi653NSmb41Q_RF7wR_BG-GkbqV_vnak016-V3JlYlNmc3ZXht2qxdgLiTOn4byEr5wfrTOC3xk9jMV5xYR5kBS-_Y3eNUDFdLcvhQ_CA9YSVZpAwz-rCKAoUJYHLjwxvRVZ7Ez2XO3fyo_KNGf78gQ9cavK3WfbPQ3hCLM1CnW2ArO0mpYvbJW-um3ZUM7C3gY0NsbOwhdt41Ag-gdPFu_61gEN8UGo"/>
+    </div>
+  </div>
+</header>

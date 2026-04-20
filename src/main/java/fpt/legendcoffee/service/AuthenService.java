@@ -9,4 +9,9 @@ public interface AuthenService {
     void login(LoginRequestDTO request);
 
     boolean register(RegisterRequestDTO request);
+
+    void forgotPassword(String email);
+
+    void resetPassword(String email, String oldPassword, String newPassword);
+
 }

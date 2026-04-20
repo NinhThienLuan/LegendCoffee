@@ -6,11 +6,23 @@ public class SecurityConstants {
             "/home",
             "/login",
             "/register",
+            "/cart",
+            "/catalogs/**",
             "/css/**",
             "/js/**",
             "/images/**",
+<<<<<<< HEAD
+            "/payment/vnpay/callback",
+            "/payment/vnpay/ipn",
+            "/assets/**",
+            "/favicon.ico"
+=======
+ 
             "/favicon.ico",
             "/payment/vnpay/callback",
-            "/payment/vnpay/ipn"
+            "/payment/vnpay/ipn",
+            "/assets/**",
+         
+>>>>>>> feature/product-service
     };
 }

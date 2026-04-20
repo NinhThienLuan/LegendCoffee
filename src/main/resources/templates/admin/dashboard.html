@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: sharedHead('Bảng Điều Khiển | LegendCoffee Admin')}"></head>
+
+<body class="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container">
+
+  <main class="flex min-h-screen">
+    <aside th:replace="~{fragments/admin-sidebar :: adminSidebar}"></aside>
+
+    <!-- Main Content Canvas -->
+    <section class="flex-1 ml-64 min-h-screen bg-surface">
+      <!-- TopAppBar -->
+      <header
+        th:replace="~{fragments/admin-topbar :: adminTopbar('Bảng Điều Khiển', 'Tìm kiếm đơn hàng, khách hàng...')}">
+      </header>
+
+      <div class="p-8 space-y-8">
+
+        <!-- ── Asymmetric Hero + KPI Stats ───────────────────────────────────── -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+          <div class="lg:col-span-8 flex flex-col justify-between">
+            <div>
+              <p class="text-on-surface-variant font-medium tracking-tight mb-2 uppercase text-xs">Tổng quan hoạt động
+              </p>
+              <h3 class="text-4xl font-extrabold text-primary font-manrope tracking-tighter leading-tight mb-6">Trung
+                tâm điều hành<br />kinh doanh cà phê.</h3>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-1">
+              <div class="bg-surface-container-low p-6">
+                <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Doanh thu tháng
+                </p>
+                <p class="text-3xl font-bold text-primary">842 tr</p>
+                <p class="text-xs text-green-600 mt-2 flex items-center gap-1 font-semibold">
+                  <span class="material-symbols-outlined text-xs">trending_up</span> +18% tháng này
+                </p>
+              </div>
+              <div class="bg-surface-container-low p-6">
+                <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Đơn hàng hôm nay
+                </p>
+                <p class="text-3xl font-bold text-primary">127</p>
+                <p class="text-xs text-on-surface-variant mt-2">Cần xử lý: 14 đơn</p>
+              </div>
+              <div class="bg-surface-container-low p-6">
+                <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Sản phẩm đang
+                  bán</p>
+                <p class="text-3xl font-bold text-primary">64</p>
+                <p class="text-xs text-on-surface-variant mt-2">3 sắp hết hàng</p>
+              </div>
+              <div class="bg-surface-container-low p-6">
+                <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Người dùng mới
+                </p>
+                <p class="text-3xl font-bold text-primary">38</p>
+                <p class="text-xs text-green-600 mt-2 flex items-center gap-1 font-semibold">
+                  <span class="material-symbols-outlined text-xs">trending_up</span> +9% tuần này
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="lg:col-span-4">
+            <div class="relative h-full min-h-[220px] bg-primary overflow-hidden rounded-lg group">
+              <img
+                class="absolute inset-0 w-full h-full object-cover opacity-60 grayscale hover:grayscale-0 transition-all duration-700"
+                src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=600&q=80" alt="Kho cà phê Legend" />
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-primary/90 to-transparent p-6 flex flex-col justify-end">
+                <p class="text-white text-sm font-bold tracking-tight">Mùa vụ Quý 2 — 2026</p>
+                <p class="text-white/70 text-xs mt-1">Đang thu mua lô Robusta miền Tây trọng lượng lớn.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── Charts Section ─────────────────────────────────────────────────── -->
+        <!-- Row 1: Full-width Revenue Line Chart -->
+        <div class="w-full">
+          <div
+            class="bg-surface-container-lowest border border-surface-container-low rounded-lg shadow-sm overflow-hidden">
+            <div
+              class="p-6 border-b border-surface-container-low flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div>
+                <h4 class="font-bold text-primary uppercase tracking-widest text-xs">Doanh thu theo tháng</h4>
+                <p class="text-[10px] text-on-surface-variant mt-1 uppercase tracking-widest">6 tháng gần nhất — đơn vị:
+                  triệu ₫</p>
+              </div>
+              <a href="/orders"
+                class="flex items-center gap-2 px-5 py-2 text-xs font-bold bg-primary text-on-primary rounded shadow-lg shadow-primary/10 hover:bg-primary-container hover:text-primary transition-all uppercase tracking-wider">
+                <span class="material-symbols-outlined text-sm">open_in_full</span>
+                Xem đơn hàng
+              </a>
+            </div>
+            <div class="p-6">
+              <canvas id="revenueChart" height="100"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 2: Two charts side by side -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+          <!-- Bar Chart: Top 5 Products -->
+          <div
+            class="bg-surface-container-lowest border border-surface-container-low rounded-lg shadow-sm overflow-hidden">
+            <div class="p-6 border-b border-surface-container-low">
+              <h4 class="font-bold text-primary uppercase tracking-widest text-xs">Top 5 sản phẩm bán chạy</h4>
+              <p class="text-[10px] text-on-surface-variant mt-1 uppercase tracking-widest">Theo lượt bán tháng này</p>
+            </div>
+            <div class="p-6">
+              <canvas id="topProductsChart" height="200"></canvas>
+            </div>
+          </div>
+
+          <!-- Donut Chart: Order Status -->
+          <div
+            class="bg-surface-container-lowest border border-surface-container-low rounded-lg shadow-sm overflow-hidden">
+            <div class="p-6 border-b border-surface-container-low">
+              <h4 class="font-bold text-primary uppercase tracking-widest text-xs">Phân bổ trạng thái đơn hàng</h4>
+              <p class="text-[10px] text-on-surface-variant mt-1 uppercase tracking-widest">Toàn bộ đơn hàng trong tháng
+              </p>
+            </div>
+            <div class="p-6 flex flex-col items-center justify-center">
+              <div class="w-64 h-64">
+                <canvas id="orderStatusChart"></canvas>
+              </div>
+              <!-- Legend -->
+              <div class="mt-6 grid grid-cols-2 gap-x-8 gap-y-2 w-full">
+                <div class="flex items-center gap-2">
+                  <span class="h-2.5 w-2.5 rounded-full bg-green-500 flex-shrink-0"></span>
+                  <span class="text-xs text-on-surface-variant">Đã giao <strong
+                      class="text-on-surface">58%</strong></span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="h-2.5 w-2.5 rounded-full bg-blue-500 flex-shrink-0"></span>
+                  <span class="text-xs text-on-surface-variant">Đang giao <strong
+                      class="text-on-surface">21%</strong></span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="h-2.5 w-2.5 rounded-full bg-amber-500 flex-shrink-0"></span>
+                  <span class="text-xs text-on-surface-variant">Chờ xử lý <strong
+                      class="text-on-surface">14%</strong></span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="h-2.5 w-2.5 rounded-full bg-red-400 flex-shrink-0"></span>
+                  <span class="text-xs text-on-surface-variant">Đã huỷ <strong
+                      class="text-on-surface">7%</strong></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ── Bottom Insight Grid ────────────────────────────────────────────── -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
+          <div class="bg-surface-container-low p-6 rounded-lg border-l-4 border-primary flex flex-col justify-between">
+            <h5 class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-4">Khu vực bán chạy
+              nhất</h5>
+            <div class="flex justify-between items-end">
+              <div>
+                <p class="text-xl font-bold text-primary">TP. Hồ Chí Minh</p>
+                <p class="text-xs text-on-surface-variant">54% tổng doanh thu</p>
+              </div>
+              <span class="material-symbols-outlined text-primary/20 text-4xl">location_on</span>
+            </div>
+          </div>
+          <div
+            class="bg-surface-container-low p-6 rounded-lg border-l-4 border-secondary flex flex-col justify-between">
+            <h5 class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-4">Giờ đặt hàng cao
+              điểm</h5>
+            <div class="flex justify-between items-end">
+              <div>
+                <p class="text-xl font-bold text-primary">08:00 – 10:00 SA</p>
+                <p class="text-xs text-on-surface-variant">Khung giờ thu mua B2B</p>
+              </div>
+              <span class="material-symbols-outlined text-primary/20 text-4xl">schedule</span>
+            </div>
+          </div>
+          <div
+            class="bg-surface-container-low p-6 rounded-lg border-l-4 border-stone-400 flex flex-col justify-between">
+            <h5 class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-4">Sản phẩm bán chạy
+            </h5>
+            <div class="flex justify-between items-end">
+              <div>
+                <p class="text-xl font-bold text-primary">Robusta Sỉ 60kg</p>
+                <p class="text-xs text-on-surface-variant">Phân khúc đại lý lớn</p>
+              </div>
+              <span class="material-symbols-outlined text-primary/20 text-4xl">inventory_2</span>
+            </div>
+          </div>
+          <div class="bg-primary p-6 rounded-lg flex flex-col justify-between">
+            <h5 class="text-[10px] uppercase tracking-widest font-bold text-white/60 mb-4">Sức khỏe hệ thống</h5>
+            <div class="flex justify-between items-end">
+              <div>
+                <p class="text-xl font-bold text-white">Hoạt động 99.8%</p>
+                <p class="text-xs text-white/60">Tất cả dịch vụ ổn định</p>
+              </div>
+              <span class="material-symbols-outlined text-white/20 text-4xl">check_circle</span>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </section>
+  </main>
+
+  <script src="assets/effects.js" th:src="@{/assets/effects.js}"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script>
+    // ── Shared palette (Industrial Architect) ─────────────────────────────────
+    const PRIMARY = '#351f1b';
+    const PRIMARY_30 = 'rgba(53,31,27,0.15)';
+    const PRIMARY_10 = 'rgba(53,31,27,0.06)';
+    const SURFACE_LOW = '#f4f4f0';
+    const ON_SURFACE_V = '#504442';
+
+    Chart.defaults.font.family = "'Work Sans', sans-serif";
+    Chart.defaults.color = ON_SURFACE_V;
+
+    // ── 1. Revenue Line Chart ─────────────────────────────────────────────────
+    new Chart(document.getElementById('revenueChart'), {
+      type: 'line',
+      data: {
+        labels: ['Tháng 11', 'Tháng 12', 'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4'],
+        datasets: [{
+          label: 'Doanh thu (triệu ₫)',
+          data: [612, 785, 530, 698, 760, 842],
+          borderColor: PRIMARY,
+          backgroundColor: PRIMARY_30,
+          borderWidth: 2,
+          pointBackgroundColor: PRIMARY,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          fill: true,
+          tension: 0.4,
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#fff',
+            titleColor: PRIMARY,
+            bodyColor: ON_SURFACE_V,
+            borderColor: SURFACE_LOW,
+            borderWidth: 1,
+            padding: 12,
+            callbacks: {
+              label: ctx => ` ${ctx.parsed.y.toLocaleString('vi-VN')} tr ₫`
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { color: PRIMARY_10 },
+            ticks: { font: { size: 11, weight: '600' } }
+          },
+          y: {
+            grid: { color: PRIMARY_10 },
+            ticks: {
+              font: { size: 11 },
+              callback: v => v + ' tr'
+            },
+            beginAtZero: false
+          }
+        }
+      }
+    });
+
+    // ── 2. Top Products Bar Chart ─────────────────────────────────────────────
+    new Chart(document.getElementById('topProductsChart'), {
+      type: 'bar',
+      data: {
+        labels: ['Robusta 60kg', 'Cold Brew', 'Arabica Cầu Đất', 'Blend Espresso', 'Cà phê Chồn'],
+        datasets: [{
+          label: 'Lượt bán',
+          data: [1284, 877, 642, 389, 214],
+          backgroundColor: [
+            PRIMARY,
+            'rgba(53,31,27,0.75)',
+            'rgba(53,31,27,0.55)',
+            'rgba(53,31,27,0.35)',
+            'rgba(53,31,27,0.18)',
+          ],
+          borderRadius: 4,
+          borderSkipped: false,
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#fff',
+            titleColor: PRIMARY,
+            bodyColor: ON_SURFACE_V,
+            borderColor: SURFACE_LOW,
+            borderWidth: 1,
+            padding: 12,
+            callbacks: {
+              label: ctx => ` ${ctx.parsed.x.toLocaleString('vi-VN')} lượt`
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { color: PRIMARY_10 },
+            ticks: { font: { size: 11 } }
+          },
+          y: {
+            grid: { display: false },
+            ticks: { font: { size: 11, weight: '600' } }
+          }
+        }
+      }
+    });
+
+    // ── 3. Order Status Donut Chart ───────────────────────────────────────────
+    new Chart(document.getElementById('orderStatusChart'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Đã giao', 'Đang giao', 'Chờ xử lý', 'Đã huỷ'],
+        datasets: [{
+          data: [58, 21, 14, 7],
+          backgroundColor: [
+            '#22c55e',   // green-500
+            '#3b82f6',   // blue-500
+            '#f59e0b',   // amber-500
+            '#f87171',   // red-400
+          ],
+          borderWidth: 0,
+          hoverOffset: 8,
+        }]
+      },
+      options: {
+        cutout: '72%',
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#fff',
+            titleColor: PRIMARY,
+            bodyColor: ON_SURFACE_V,
+            borderColor: SURFACE_LOW,
+            borderWidth: 1,
+            padding: 12,
+            callbacks: {
+              label: ctx => ` ${ctx.label}: ${ctx.parsed}%`
+            }
+          }
+        }
+      }
+    });
+  </script>
+
+  <!-- FAB -->
+  <button
+    class="fixed bottom-8 right-8 bg-primary text-white h-14 w-14 rounded-full shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-50 group">
+    <span class="material-symbols-outlined text-2xl group-hover:rotate-90 transition-transform">add</span>
+  </button>
+
+</body>
+
+</html>
