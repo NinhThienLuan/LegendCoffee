@@ -69,4 +69,9 @@ public class ArticleController {
                 model.addAttribute("article", article);
         return "articles/articles";
     }
+
+    @GetMapping("/article/detail")
+    public String articleDetail(Model model) {
+        return "articles/article-detail";
+    }
 }

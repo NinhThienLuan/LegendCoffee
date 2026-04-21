@@ -1,7 +1,9 @@
 package fpt.legendcoffee.controller;
 
-import fpt.legendcoffee.dto.LoginRequestDTO;
-import fpt.legendcoffee.dto.RegisterRequestDTO;
+import fpt.legendcoffee.dto.request.ForgotPasswordRequestDTO;
+import fpt.legendcoffee.dto.request.LoginRequestDTO;
+import fpt.legendcoffee.dto.request.RegisterRequestDTO;
+import fpt.legendcoffee.dto.request.ResetPasswordRequestDTO;
 import fpt.legendcoffee.service.AuthenService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,8 +20,11 @@ import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import ch.qos.logback.core.model.Model;
 
 @Controller
 @RequiredArgsConstructor
@@ -81,5 +86,50 @@ public class AuthController {
             redirectAttributes.addAttribute("error", e.getMessage());
             return "redirect:/register";
         }
+    }
+
+    @GetMapping("/forgot-password")
+    public String showForgotPasswordForm() {
+        return "authen/forgot-password";
+    }
+
+    @PostMapping("/forgot-password")
+    public String forgotPassword(@Valid @ModelAttribute("forgotPasswordDto") ForgotPasswordRequestDTO request,
+                                 RedirectAttributes redirectAttributes) {
+        try {
+            authenService.forgotPassword(request.email());
+            redirectAttributes.addAttribute("success", "Mật khẩu mới đã được gửi vào email của bạn.");
+            return "redirect:/login";
+        } catch (Exception e) {
+            redirectAttributes.addAttribute("error", e.getMessage());
+            return "redirect:/forgot-password";
+        }
+    }
+
+    @GetMapping("/reset-password")
+    public String showResetPasswordForm() {
+        return "authen/reset-password";
+    }
+
+    @PostMapping("/reset-password")
+    public String resetPassword(@Valid @ModelAttribute("resetPasswordDto") ResetPasswordRequestDTO request,
+                                RedirectAttributes redirectAttributes) {
+        try {
+            if (!request.newPassword().equals(request.confirmPassword())) {
+                throw new Exception("Mật khẩu xác nhận không khớp.");
+            }
+            authenService.resetPassword(request.email(), request.oldPassword(), request.newPassword());
+            redirectAttributes.addAttribute("success", "Đổi mật khẩu thành công! Vui lòng đăng nhập lại.");
+            return "redirect:/login";
+        } catch (Exception e) {
+            redirectAttributes.addAttribute("error", e.getMessage());
+            return "redirect:/reset-password";
+        }
+    }
+
+    @GetMapping("/profile/{id}")
+    public String showProfileForm(RedirectAttributes redirectAttributes, @PathVariable("id") long id) {
+        redirectAttributes.addAttribute("profileDto", authenService.getProfile(id));
+        return "authen/profile";
     }
 }

@@ -16,13 +16,15 @@ public class SecurityConstants {
             "/products/**",
             "/combos",
             "/combos/**",
+            "/forgot-password",
+            "/reset-password",
             "/css/**",
             "/js/**",
             "/images/**",
+            "/favicon.ico",
             "/payment/vnpay/callback",
             "/payment/vnpay/ipn",
             "/error",
-            "/assets/**",
-            "/favicon.ico"
+            "/assets/**"
     };
 }
