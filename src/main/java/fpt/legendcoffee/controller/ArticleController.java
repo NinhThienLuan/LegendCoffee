@@ -1,19 +1,28 @@
 package fpt.legendcoffee.controller;
 
+import fpt.legendcoffee.common.mapper.ArticleMapper;
+import fpt.legendcoffee.dto.request.ArticleRequestDTO;
+import fpt.legendcoffee.dto.response.ArticleResponseDTO;
 import fpt.legendcoffee.entity.Article;
 import fpt.legendcoffee.entity.enumeration.ArticleStatus;
 import fpt.legendcoffee.repository.UserRepository;
 import fpt.legendcoffee.service.ArticleService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
+import fpt.legendcoffee.dto.request.ArticleRequestDTO;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -97,16 +106,19 @@ public class ArticleController {
         return "articles/articles"; // This points to your existing template
     }
 
-
     @GetMapping("/admin/posts")
     public String adminPosts(Model model) {
-        model.addAttribute("articles", articleService.getAllArticles());
+        List<ArticleResponseDTO> articles = articleService.getAllArticles()
+                .stream()
+                .map(ArticleMapper::toResponseDTO)
+                .toList();
+        model.addAttribute("articles", articles);
         return "admin/posts";
     }
 
     @GetMapping("/admin/articles/new")
     public String adminPostForm(Model model) {
-        model.addAttribute("article", new Article());
+        model.addAttribute("article", new ArticleRequestDTO());
         return "admin/article-form";
     }
 
@@ -116,13 +128,33 @@ public class ArticleController {
         if (article == null) {
             return "redirect:/admin/posts";
         }
-        model.addAttribute("article", article);
+        // Sử dụng Mapper để chuyển sang DTO
+        ArticleRequestDTO dto = ArticleMapper.toRequestDTO(article);
+
+        model.addAttribute("article", dto);
         return "admin/article-form";
     }
 
     @PostMapping("/admin/articles/save")
-    public String saveArticle(@ModelAttribute("article") Article article, Principal principal) {
+    public String saveArticle(@Valid @ModelAttribute("article") ArticleRequestDTO req, BindingResult bindingResult,
+            Principal principal, Model model) {
+        if (bindingResult.hasErrors()) {
+            return "admin/article-form";
+        }
+
         try {
+            Article article;
+            if (req.getId() != null) {
+                // Trường hợp Cập nhật: Lấy entity cũ từ DB lên
+                article = articleService.getArticleById(req.getId());
+                if (article == null)
+                    article = new Article();
+            } else {
+                // Trường hợp Tạo mới
+                article = new Article();
+            }
+            // 2. Dùng Mapper để gán dữ liệu từ DTO sang Entity
+            ArticleMapper.updateEntity(article, req);
             if (principal != null) {
                 userRepository.findByEmail(principal.getName()).ifPresent(article::setUser);
             }
@@ -138,6 +170,7 @@ public class ArticleController {
             }
             return "redirect:/admin/posts";
         } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
             return "admin/article-form";
         }
     }

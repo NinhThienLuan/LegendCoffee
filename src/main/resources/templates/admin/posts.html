@@ -104,20 +104,18 @@
                       <p class="text-[10px] text-on-surface-variant mt-0.5" th:text="${art.summary}">Tóm tắt bài viết
                       </p>
                     </td>
-                    <td class="px-6 py-5 text-sm font-medium truncate"
-                      th:text="${art.user != null ? art.user.username : 'Ẩn danh'}">Tác giả</td>
+                    <td class="px-6 py-5 text-sm font-medium truncate" th:text="${art.authorName}">Tác giả</td>
                     <td class="px-6 py-5">
                       <span
                         class="inline-block px-2 py-1 bg-stone-100 text-stone-600 text-[10px] font-bold uppercase rounded">Kiến
                         thức</span>
                     </td>
-                    <td class="px-6 py-5 text-sm whitespace-nowrap"
-                      th:text="${art.publishedAt != null ? #temporals.format(art.publishedAt, 'dd/MM/yyyy') : '--'}">
+                    <td class="px-6 py-5 text-sm whitespace-nowrap" th:text="${art.publishedDate}">
                       Ngày đăng</td>
                     <td class="px-6 py-5 text-sm font-medium">0</td>
                     <td class="px-6 py-5">
                       <span class="inline-block px-2 py-1 text-[10px] font-bold uppercase rounded"
-                        th:classappend="${art.status.name() == 'PUBLISHED' ? 'bg-green-100 text-green-700' : (art.status.name() == 'DRAFT' ? 'bg-stone-100 text-stone-500' : 'bg-amber-100 text-amber-700')}"
+                        th:classappend="${art.status == 'PUBLISHED' ? 'bg-green-100 text-green-700' : (art.status == 'DRAFT' ? 'bg-stone-100 text-stone-500' : 'bg-amber-100 text-amber-700')}"
                         th:text="${art.status}">Trạng thái</span>
                     </td>
                     <td class="px-6 py-5 text-right">
