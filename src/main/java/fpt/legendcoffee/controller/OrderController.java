@@ -1,7 +1,10 @@
 package fpt.legendcoffee.controller;
 
 import fpt.legendcoffee.dto.app.CheckoutRequestDTO;
+import fpt.legendcoffee.dto.app.OrderListDTO;
 import fpt.legendcoffee.entity.Order;
+import fpt.legendcoffee.entity.OrderItem;
+import fpt.legendcoffee.entity.ProductVariant;
 import fpt.legendcoffee.entity.ShippingInfo;
 import fpt.legendcoffee.service.OrderService;
 import fpt.legendcoffee.service.ShippingService;
@@ -13,6 +16,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -28,8 +33,21 @@ public class OrderController {
 
     @GetMapping("/orders")
     public String orderPage(Model model) {
+        model.addAttribute("orders", orderService.getAllOrdersForList());
         return "order/order";
     }
+
+    @PostMapping("/admin/orders/{orderId}/start-delivering")
+    public String startDelivering(@PathVariable Long orderId, RedirectAttributes redirectAttributes) {
+        try {
+            orderService.startDelivering(orderId);
+            redirectAttributes.addFlashAttribute("successMessage", "Đã chuyển sang trạng thái Đang giao hàng");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/orders";
+    }
+
 
     @GetMapping("/order-detail")
     public String orderDetailPage(Model model) {
