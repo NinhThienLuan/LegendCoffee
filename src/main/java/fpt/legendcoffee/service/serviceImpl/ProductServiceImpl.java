@@ -204,6 +204,21 @@ public class ProductServiceImpl implements ProductService {
         return categoryRepository.findAll();
     }
 
+    @Override
+    public Long countProducts() {
+        return productRepository.count();
+    }
+
+    @Override
+    public Long countActiveProducts() {
+        return productRepository.countByIsActiveTrue();
+    }
+
+    @Override
+    public Long countLowStockProducts() {
+        return productVariantRepository.countByStockQuantityLessThanEqual(10);
+    }
+
     private ProductVariant buildVariant(ProductVariantRequestDTO dto, Product product) {
         return ProductVariant.builder()
                 .product(product)

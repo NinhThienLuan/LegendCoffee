@@ -21,4 +21,6 @@ public interface ProductVariantRepository extends JpaRepository<ProductVariant, 
     @SuppressWarnings("unused")
     @EntityGraph(attributePaths = { "product" })
     List<ProductVariant> findAllBy();
+
+    Long countByStockQuantityLessThanEqual(int i);
 }
