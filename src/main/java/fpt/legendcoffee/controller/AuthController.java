@@ -7,9 +7,9 @@ import fpt.legendcoffee.dto.request.ResetPasswordRequestDTO;
 import fpt.legendcoffee.service.AuthenService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,14 +18,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import ch.qos.logback.core.model.Model;
-
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class AuthController {
@@ -41,17 +42,27 @@ public class AuthController {
     }
 
     @GetMapping("/login")
-    public String showLoginForm(HttpSession session) {
-        // Clear session messages after they are accessed by the view
-        // In a real app, you might use RedirectAttributes for this
+    public String showLoginForm(Model model) {
+        if (!model.containsAttribute("loginDto")) {
+            model.addAttribute("loginDto", new LoginRequestDTO("", ""));
+        }
         return "authen/login";
     }
 
     @PostMapping("/login")
     public String login(@Valid @ModelAttribute("loginDto") LoginRequestDTO request,
+                        BindingResult bindingResult,
                         HttpServletRequest httpRequest,
                         HttpServletResponse httpResponse,
-                        RedirectAttributes redirectAttributes) {
+                        Model model) {
+        if (bindingResult.hasErrors()) {
+            String message = bindingResult.getFieldError() != null
+                    ? bindingResult.getFieldError().getDefaultMessage()
+                    : "Thông tin đăng nhập không hợp lệ.";
+            model.addAttribute("errorMessage", message);
+            return "authen/login";
+        }
+
         try {
             Authentication authenticationRequest =
                     UsernamePasswordAuthenticationToken.unauthenticated(request.email(), request.password());
@@ -65,26 +76,40 @@ public class AuthController {
 
             return "redirect:/home";
         } catch (Exception e) {
-            redirectAttributes.addAttribute("error", e.getMessage());
-            return "redirect:/login";
+            log.warn("Login failed for email={}", request.email());
+            model.addAttribute("errorMessage", "Email hoặc mật khẩu không chính xác.");
+            return "authen/login";
         }
     }
 
     @GetMapping("/register")
-    public String showRegisterForm(HttpSession session) {
+    public String showRegisterForm(Model model) {
+        if (!model.containsAttribute("registerDto")) {
+            model.addAttribute("registerDto", new RegisterRequestDTO("", "", "", "", ""));
+        }
         return "authen/register";
     }
 
     @PostMapping("/register")
-    public String register(@Valid @ModelAttribute("registerDto") RegisterRequestDTO request, 
+    public String register(@Valid @ModelAttribute("registerDto") RegisterRequestDTO request,
+                           BindingResult bindingResult,
+                           Model model,
                            RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            String message = bindingResult.getFieldError() != null
+                    ? bindingResult.getFieldError().getDefaultMessage()
+                    : "Dữ liệu đăng ký không hợp lệ.";
+            model.addAttribute("errorMessage", message);
+            return "authen/register";
+        }
+
         try {
             authenService.register(request);
-            redirectAttributes.addAttribute("success", "Đăng ký thành công! Vui lòng đăng nhập.");
+            redirectAttributes.addFlashAttribute("successMessage", "Đăng ký thành công! Vui lòng đăng nhập.");
             return "redirect:/login";
         } catch (Exception e) {
-            redirectAttributes.addAttribute("error", e.getMessage());
-            return "redirect:/register";
+            model.addAttribute("errorMessage", e.getMessage());
+            return "authen/register";
         }
     }
 
