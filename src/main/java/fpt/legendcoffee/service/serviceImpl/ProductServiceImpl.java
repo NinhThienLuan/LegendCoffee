@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fpt.legendcoffee.dto.request.ProductRequestDTO;
 import fpt.legendcoffee.dto.request.ProductVariantRequestDTO;
+import fpt.legendcoffee.dto.response.ProductDetailDTO;
 import fpt.legendcoffee.dto.response.ProductResponseDTO;
 import fpt.legendcoffee.entity.Category;
 import fpt.legendcoffee.entity.Product;
@@ -117,6 +118,23 @@ public class ProductServiceImpl implements ProductService {
     public Product getProductById(Long id) {
         return productRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy sản phẩm với ID: " + id));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ProductDetailDTO getProductDetail(Long id) {
+        Product product = getProductById(id);
+        
+        return ProductDetailDTO.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .description(product.getDescription())
+                .origin(product.getOrigin())
+                .imageUrl(product.getImageUrl())
+                .categoryName(product.getCategory() != null 
+                    ? product.getCategory().getCategoryName()  // lazy load ở đây, session còn sống → fine
+                    : null)
+                .build();
     }
 
     @Override
