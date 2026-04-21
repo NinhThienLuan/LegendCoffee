@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theo Dõi Đơn Hàng - Legend Coffee</title>
+    <!-- Mượn Bootstrap css cho nhanh vì tui hứa sẽ code một bản giao diện đẹp -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Inter', sans-serif; }
+        .tracking-card { border: none; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .timeline { position: relative; padding: 20px 0; list-style: none; }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 16px; height: 100%; width: 2px;
+            background: #e9ecef;
+        }
+        .timeline-item { position: relative; margin-bottom: 24px; padding-left: 48px; }
+        .timeline-item::before {
+            content: '';
+            position: absolute; left: 10px; top: 4px;
+            width: 14px; height: 14px;
+            border-radius: 50%;
+            background: #fff;
+            border: 3px solid #ff6b6b;
+            z-index: 1;
+        }
+        .timeline-item:first-child::before {
+            background: #ff6b6b; box-shadow: 0 0 0 4px rgba(255,107,107,0.2);
+        }
+        .time { font-size: 0.85rem; color: #6c757d; font-weight: 500; }
+        .status-badge { font-weight: 600; padding: 6px 12px; border-radius: 6px; }
+        .status-badge.ready_to_pick { background: #fff3cd; color: #856404; }
+        .status-badge.picking { background: #cce5ff; color: #004085; }
+        .status-badge.transporting { background: #d4edda; color: #155724; }
+        .status-badge.delivering { background: #ffeeba; color: #856404; }
+        .status-badge.delivered { background: #28a745; color: #fff; }
+        .status-badge.cancel { background: #dc3545; color: #fff; }
+        .btn-home { background: #333; color: white; border-radius: 8px; padding: 10px 24px; transition: 0.3s; }
+        .btn-home:hover { background: #555; color: white; }
+    </style>
+</head>
+<body>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <h3 class="fw-bold mb-4">Chi Tiết Vận Chuyển</h3>
+
+            <!-- Hiển thị báo lỗi nếu không tìm thấy -->
+            <div th:if="${errorMessage}" class="alert alert-danger shadow-sm rounded-3">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <span th:text="${errorMessage}"></span>
+            </div>
+
+            <!-- Nếu có thông báo thành công (vd: huỷ đơn xong) -->
+            <div th:if="${successMessage}" class="alert alert-success shadow-sm rounded-3">
+                <span th:text="${successMessage}"></span>
+            </div>
+
+            <!-- Khung thông tin đơn hàng -->
+            <div th:if="${orderStatus != null}" class="card tracking-card mb-4">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
+                        <div>
+                            <h5 class="text-muted mb-1">Mã Vận Đơn GHN</h5>
+                            <h4 class="fw-bold text-dark mb-0" th:text="${orderStatus.ghnOrderCode}"></h4>
+                        </div>
+                        <div>
+                            <span class="status-badge" th:classappend="${orderStatus.status}" th:text="${orderStatus.statusLabel}">Trạng Thái</span>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-md-6 mb-3">
+                            <small class="text-muted d-block text-uppercase fw-bold mb-1">Người nhận</small>
+                            <div class="fw-semibold" th:text="${orderStatus.toName}"></div>
+                            <div th:text="${orderStatus.toPhone}"></div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <small class="text-muted d-block text-uppercase fw-bold mb-1">Địa chỉ giao hàng</small>
+                            <div th:text="${orderStatus.toAddress}"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Khung Lịch sử hành trình -->
+            <div th:if="${orderStatus != null and orderStatus.logs != null and !orderStatus.logs.isEmpty()}" class="card tracking-card mb-4">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4">Lịch trình vận chuyển</h5>
+                    <ul class="timeline m-0">
+                        <!-- Lặp qua danh sách lịch sử vận chuyển (đã sort từ GHN) -->
+                        <li class="timeline-item" th:each="log : ${orderStatus.logs}">
+                            <div class="time mb-1" th:text="${#strings.replace(log.time, 'T', ' ')}"></div>
+                            <div class="fw-bold" th:text="${log.statusLabel}"></div>
+                            <div class="text-muted small" th:text="'Trạng thái hệ thống: ' + ${log.status}"></div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div th:if="${orderStatus != null and (orderStatus.logs == null or orderStatus.logs.isEmpty())}" class="card tracking-card mb-4">
+                 <div class="card-body p-5 text-center text-muted">
+                     Đơn hàng vừa được tạo. Vui lòng chờ phía Giao Hàng Nhanh tiếp nhận và cập nhật lịch trình!
+                 </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="/" class="btn btn-home text-decoration-none">Quay Về Trang Chủ</a>
+                
+                <!-- Nút huỷ đơn (chỉ hiển thị nếu trạng thái là ready_to_pick) -->
+                <form th:if="${orderStatus != null and orderStatus.status == 'ready_to_pick'}" 
+                      th:action="@{/orders/{id}/cancel(id=${orderId})}" 
+                      method="post" class="d-inline">
+                    <button type="submit" class="btn btn-outline-danger ms-2" style="border-radius: 8px; padding: 10px 24px;"
+                            onclick="return confirm('Bạn có chắc chắn muốn huỷ đơn hàng này không?');">
+                        Huỷ Đơn Hàng
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
