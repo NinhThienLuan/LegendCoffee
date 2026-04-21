@@ -28,15 +28,4 @@ public class TestController {
         return "admin/products";
     }
 
-    @GetMapping("/a/posts")
-    public String adminPosts() {
-        return "admin/posts";
-    }
-
-    @GetMapping("/a/post-form")
-    public String adminPostForm(Model model) {
-        model.addAttribute("article", new Article());
-        return "admin/article-form";
-    }
-
 }
