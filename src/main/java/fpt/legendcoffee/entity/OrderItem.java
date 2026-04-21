@@ -46,4 +46,15 @@ public class OrderItem extends BaseEntity {
 
     @Column(name = "status")
     private String status;
+
+    @PrePersist
+    @PreUpdate
+    private void validateTarget() {
+        boolean hasVariant = variant != null;
+        boolean hasCombo = combo != null;
+
+        if (hasVariant == hasCombo) {
+            throw new IllegalStateException("OrderItem phải tham chiếu đúng một trong hai: variant hoặc combo");
+        }
+    }
 }

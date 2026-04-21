@@ -1,12 +1,6 @@
 <header th:fragment="adminTopbar(pageTitle, searchPlaceholder)" class="sticky top-0 w-full flex justify-between items-center px-8 h-16 bg-surface/80 dark:bg-stone-900/80 backdrop-blur-md border-b border-stone-200/30 dark:border-stone-800/30 z-40">
   <div class="flex items-center gap-8">
     <h2 class="text-xl font-bold tracking-tighter text-stone-900 font-manrope" th:text="${pageTitle}">Quản lý Mã giảm giá</h2>
-    <div class="relative">
-      <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-stone-400">
-        <span class="material-symbols-outlined text-sm">search</span>
-      </span>
-      <input class="bg-surface-container-low border-none rounded-lg pl-10 pr-4 py-1.5 text-sm focus:ring-1 focus:ring-primary/40 w-64" th:placeholder="${searchPlaceholder}" placeholder="Tìm kiếm voucher..." type="text"/>
-    </div>
   </div>
   <div class="flex items-center gap-4">
     <button class="p-2 text-stone-600 hover:bg-stone-100 rounded-full transition-colors">

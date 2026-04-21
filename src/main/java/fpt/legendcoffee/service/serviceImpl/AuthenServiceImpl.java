@@ -6,8 +6,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import fpt.legendcoffee.common.exception.AuthenException;
-import fpt.legendcoffee.dto.LoginRequestDTO;
-import fpt.legendcoffee.dto.RegisterRequestDTO;
+import fpt.legendcoffee.dto.request.LoginRequestDTO;
+import fpt.legendcoffee.dto.request.RegisterRequestDTO;
+import fpt.legendcoffee.dto.response.ProfileDTO;
 import fpt.legendcoffee.entity.User;
 import fpt.legendcoffee.entity.enumeration.UserRole;
 import fpt.legendcoffee.repository.UserRepository;
@@ -89,6 +90,33 @@ public class AuthenServiceImpl implements AuthenService {
         }
     }
 
+    @Override
+    public ProfileDTO getProfile(long id) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            throw new AuthenException("User not found");
+        }
+        return ProfileDTO.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .address(user.getAddress())
+                .build();
+    }
+
+    @Override
+    public void updateProfile(long id, ProfileDTO profile) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            throw new AuthenException("User not found");
+        }
+        user.setUsername(profile.getUsername());
+        user.setEmail(profile.getEmail());
+        user.setPhone(profile.getPhone());
+        user.setAddress(profile.getAddress());
+        userRepository.save(user);
+    }
 
     //Helper method
     private String generateRandomPassword() {
@@ -99,4 +127,5 @@ public class AuthenServiceImpl implements AuthenService {
             sb.append(chars.charAt(rnd.nextInt(chars.length())));
         return sb.toString();
     }
+
 }

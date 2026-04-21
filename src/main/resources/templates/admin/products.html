@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: sharedHead('Quản lý Sản Phẩm | LegendCoffee Admin')}"></head>
+
+<body class="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container">
+
+  <main class="flex min-h-screen">
+    <aside th:replace="~{fragments/admin-sidebar :: adminSidebar}"></aside>
+
+    <!-- Main Content Canvas -->
+    <section class="flex-1 ml-64 min-h-screen bg-surface">
+      <!-- TopAppBar -->
+      <header th:replace="~{fragments/admin-topbar :: adminTopbar('Quản lý Sản Phẩm', 'Tìm kiếm sản phẩm, SKU...')}">
+      </header>
+
+      <div class="p-8 space-y-8">
+
+        <!-- ── Asymmetric Hero + Stats ───────────────────────────────────────── -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+          <div class="lg:col-span-8 flex flex-col justify-between">
+            <div>
+              <p class="text-on-surface-variant font-medium tracking-tight mb-2 uppercase text-xs">Danh mục sản phẩm</p>
+              <h3 class="text-4xl font-extrabold text-primary font-manrope tracking-tighter leading-tight mb-6">Quản lý
+                toàn diện<br />danh mục cà phê thương mại.</h3>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-1">
+              <div class="bg-surface-container-low p-6">
+                <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Tổng sản phẩm
+                </p>
+                <p class="text-3xl font-bold text-primary">148</p>
+                <p class="text-xs text-green-600 mt-2 flex items-center gap-1 font-semibold">
+                  <span class="material-symbols-outlined text-xs">trending_up</span> +6 sản phẩm mới
+                </p>
+              </div>
+              <div class="bg-surface-container-low p-6">
+                <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Đang kinh doanh
+                </p>
+                <p class="text-3xl font-bold text-primary">134</p>
+                <p class="text-xs text-on-surface-variant mt-2">Trên 8 danh mục</p>
+              </div>
+              <div class="bg-surface-container-low p-6">
+                <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Sắp hết hàng</p>
+                <p class="text-3xl font-bold text-primary">7</p>
+                <p class="text-xs text-red-500 mt-2">Cần nhập thêm kho</p>
+              </div>
+            </div>
+          </div>
+          <div class="lg:col-span-4">
+            <div class="relative h-full min-h-[220px] bg-primary overflow-hidden rounded-lg group">
+              <img
+                class="absolute inset-0 w-full h-full object-cover opacity-60 grayscale hover:grayscale-0 transition-all duration-700"
+                src="https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=600&q=80"
+                alt="Hạt cà phê thương phẩm" />
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-primary/90 to-transparent p-6 flex flex-col justify-end">
+                <p class="text-white text-sm font-bold tracking-tight">Vụ Thu hoạch Tây Nguyên 2026</p>
+                <p class="text-white/70 text-xs mt-1">Nhập lô Robusta cao nguyên chất lượng cao.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── Products Table ─────────────────────────────────────────────────── -->
+        <div class="w-full">
+          <div
+            class="bg-surface-container-lowest border border-surface-container-low rounded-lg shadow-sm overflow-hidden">
+            <div
+              class="p-6 border-b border-surface-container-low flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <h4 class="font-bold text-primary uppercase tracking-widest text-xs">Danh mục sản phẩm</h4>
+              <div class="flex gap-2 w-full sm:w-auto items-center">
+                <a th:href="@{/products/form-add}"
+                  class="flex items-center gap-2 px-6 py-2.5 text-xs font-bold bg-primary text-on-primary rounded shadow-lg shadow-primary/10 hover:bg-primary-container hover:text-primary transition-all uppercase tracking-wider">
+                  <span class="material-symbols-outlined text-sm">add_circle</span>
+                  Thêm sản phẩm mới
+                </a>
+                <div class="h-6 w-px bg-stone-200 mx-2 hidden sm:block"></div>
+              </div>
+            </div>
+            <div class="w-full">
+              <table class="w-full text-left border-collapse table-fixed">
+                <thead>
+                  <tr
+                    class="bg-surface-container-low text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">
+                    <th class="px-6 py-4 w-[30%]">Sản phẩm</th>
+                    <th class="px-6 py-4 w-[18%]">Danh mục</th>
+                    <th class="px-6 py-4 w-[12%]">Xuất xứ</th>
+                    <th class="px-6 py-4 w-[12%]">NSX</th>
+                    <th class="px-6 py-4 w-[12%]">HSD</th>
+                    <th class="px-6 py-4 w-[8%]">Trạng thái</th>
+                    <th class="px-6 py-4 w-[8%] text-right">Hành động</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-surface-container-low">
+                  <tr th:if="${#lists.isEmpty(products)}">
+                    <td colspan="7" class="px-6 py-10 text-center text-sm text-on-surface-variant">Chưa có sản phẩm nào.</td>
+                  </tr>
+                  <tr th:each="product : ${products}" class="hover:bg-surface-container-low/50 transition-colors group">
+                    <td class="px-6 py-5">
+                      <div class="flex items-center gap-3">
+                        <div class="h-10 w-10 rounded bg-surface-container-low flex-shrink-0 overflow-hidden">
+                          <img th:if="${product.imageUrl != null and !#strings.isEmpty(product.imageUrl)}"
+                            th:src="${product.imageUrl}"
+                            th:alt="${product.name}"
+                            class="h-full w-full object-cover" />
+                          <div th:if="${product.imageUrl == null or #strings.isEmpty(product.imageUrl)}"
+                            class="h-full w-full bg-surface-container text-on-surface-variant text-[9px] flex items-center justify-center font-bold">NO IMG</div>
+                        </div>
+                        <div>
+                          <p class="font-manrope font-bold text-primary text-sm truncate" th:text="${product.name}">Tên sản phẩm</p>
+                          <p class="text-[10px] text-on-surface-variant" th:text="'ID: ' + ${product.id}">ID</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="px-6 py-5">
+                      <span class="inline-block px-2 py-1 bg-stone-100 text-stone-600 text-[10px] font-bold uppercase rounded"
+                        th:text="${product.category != null ? product.category.categoryName : 'Chưa phân loại'}">Danh mục</span>
+                    </td>
+                    <td class="px-6 py-5 text-sm font-medium" th:text="${product.origin != null ? product.origin : '-'}">Xuất xứ</td>
+                    <td class="px-6 py-5 text-xs font-medium"
+                      th:text="${product.manufacturerDate != null ? #temporals.format(product.manufacturerDate, 'dd/MM/yyyy') : '-'}">NSX</td>
+                    <td class="px-6 py-5 text-xs font-medium"
+                      th:text="${product.expiryDate != null ? #temporals.format(product.expiryDate, 'dd/MM/yyyy') : '-'}">HSD</td>
+                    <td class="px-6 py-5">
+                      <span th:if="${product.isActive}"
+                        class="inline-block px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold uppercase rounded">Hoạt động</span>
+                      <span th:if="${!product.isActive}"
+                        class="inline-block px-2 py-1 bg-red-100 text-red-600 text-[10px] font-bold uppercase rounded">Ngừng bán</span>
+                    </td>
+                    <td class="px-6 py-5 text-right">
+                      <div class="flex items-center justify-end gap-1">
+                        <a th:href="@{/products/{id}/form-edit(id=${product.id})}"
+                          class="p-1.5 text-stone-400 hover:text-primary hover:bg-surface-container-low rounded transition-colors"
+                          title="Sửa sản phẩm">
+                          <span class="material-symbols-outlined text-base">edit</span>
+                        </a>
+                        <form th:action="@{/products/{id}/delete(id=${product.id})}" method="post"
+                          onsubmit="return confirm('Bạn có chắc muốn xóa sản phẩm này?')">
+                          <button type="submit"
+                            class="p-1.5 text-stone-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors"
+                            title="Xóa sản phẩm">
+                            <span class="material-symbols-outlined text-base">delete</span>
+                          </button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <!-- Pagination -->
+            <div class="p-6 bg-surface-container-low/30 flex flex-col sm:flex-row justify-between items-center gap-4">
+              <p class="text-xs text-on-surface-variant" th:text="'Tổng sản phẩm: ' + ${#lists.size(products)}">Tổng sản phẩm: 0</p>
+              <div class="flex gap-1">
+                <button
+                  class="h-8 w-8 flex items-center justify-center rounded border border-stone-200 bg-white text-stone-600 hover:bg-stone-50 transition-colors">
+                  <span class="material-symbols-outlined text-sm">chevron_left</span>
+                </button>
+                <button
+                  class="h-8 w-8 flex items-center justify-center rounded border border-stone-200 bg-primary text-white font-bold">1</button>
+                <button
+                  class="h-8 w-8 flex items-center justify-center rounded border border-stone-200 bg-white text-stone-600 hover:bg-stone-50 transition-colors">2</button>
+                <button
+                  class="h-8 w-8 flex items-center justify-center rounded border border-stone-200 bg-white text-stone-600 hover:bg-stone-50 transition-colors">3</button>
+                <button
+                  class="h-8 w-8 flex items-center justify-center rounded border border-stone-200 bg-white text-stone-600 hover:bg-stone-50 transition-colors">
+                  <span class="material-symbols-outlined text-sm">chevron_right</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Bottom Insight Grid ────────────────────────────────────────────── -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
+          <div class="bg-surface-container-low p-6 rounded-lg border-l-4 border-primary flex flex-col justify-between">
+            <h5 class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-4">Danh mục bán chạy
+              nhất</h5>
+            <div class="flex justify-between items-end">
+              <div>
+                <p class="text-xl font-bold text-primary">Robusta Sỉ</p>
+                <p class="text-xs text-on-surface-variant">48% tổng lượt bán</p>
+              </div>
+              <span class="material-symbols-outlined text-primary/20 text-4xl">inventory_2</span>
+            </div>
+          </div>
+          <div
+            class="bg-surface-container-low p-6 rounded-lg border-l-4 border-secondary flex flex-col justify-between">
+            <h5 class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-4">Giá trung bình</h5>
+            <div class="flex justify-between items-end">
+              <div>
+                <p class="text-xl font-bold text-primary">384.000 ₫</p>
+                <p class="text-xs text-on-surface-variant">Trên toàn danh mục</p>
+              </div>
+              <span class="material-symbols-outlined text-primary/20 text-4xl">sell</span>
+            </div>
+          </div>
+          <div
+            class="bg-surface-container-low p-6 rounded-lg border-l-4 border-stone-400 flex flex-col justify-between">
+            <h5 class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-4">Tổng tồn kho</h5>
+            <div class="flex justify-between items-end">
+              <div>
+                <p class="text-xl font-bold text-primary">12.840 đơn vị</p>
+                <p class="text-xs text-on-surface-variant">Giá trị ~4.9 tỷ ₫</p>
+              </div>
+              <span class="material-symbols-outlined text-primary/20 text-4xl">warehouse</span>
+            </div>
+          </div>
+          <div class="bg-primary p-6 rounded-lg flex flex-col justify-between">
+            <h5 class="text-[10px] uppercase tracking-widest font-bold text-white/60 mb-4">Tỷ lệ hàng tồn</h5>
+            <div class="flex justify-between items-end">
+              <div>
+                <p class="text-xl font-bold text-white">Sức khỏe 94%</p>
+                <p class="text-xs text-white/60">Chỉ 7 SKU cần nhập</p>
+              </div>
+              <span class="material-symbols-outlined text-white/20 text-4xl">check_circle</span>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </section>
+  </main>
+
+  <script src="assets/effects.js" th:src="@{/assets/effects.js}"></script>
+
+  <!-- FAB -->
+  <button
+    class="fixed bottom-8 right-8 bg-primary text-white h-14 w-14 rounded-full shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-50 group">
+    <span class="material-symbols-outlined text-2xl group-hover:rotate-90 transition-transform">add</span>
+  </button>
+
+</body>
+
+</html>

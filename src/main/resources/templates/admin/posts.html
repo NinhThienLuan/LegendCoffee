@@ -30,7 +30,7 @@
               <div class="bg-surface-container-low p-6">
                 <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Tổng bài viết
                 </p>
-                <p class="text-3xl font-bold text-primary">184</p>
+                <p class="text-3xl font-bold text-primary" th:text="${#lists.size(articles)}">184</p>
                 <p class="text-xs text-green-600 mt-2 flex items-center gap-1 font-semibold">
                   <span class="material-symbols-outlined text-xs">trending_up</span> +12 bài tháng này
                 </p>
@@ -96,140 +96,41 @@
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-surface-container-low">
-                  <!-- Row 1 -->
-                  <tr class="hover:bg-surface-container-low/50 transition-colors group">
+                  <!-- Dynamic Rows -->
+                  <tr th:each="art : ${articles}" class="hover:bg-surface-container-low/50 transition-colors group">
                     <td class="px-6 py-5">
-                      <p class="font-manrope font-bold text-primary text-sm truncate">Cà phê Robusta Tây Nguyên: Tiêu
-                        chuẩn xuất khẩu 2026</p>
-                      <p class="text-[10px] text-on-surface-variant mt-0.5">Cập nhật tiêu chuẩn thu mua quốc tế mới nhất
+                      <p class="font-manrope font-bold text-primary text-sm truncate" th:text="${art.title}">Tiêu đề bài
+                        viết</p>
+                      <p class="text-[10px] text-on-surface-variant mt-0.5" th:text="${art.summary}">Tóm tắt bài viết
                       </p>
                     </td>
-                    <td class="px-6 py-5 text-sm font-medium truncate">Nguyễn Anh Khoa</td>
-                    <td class="px-6 py-5"><span
+                    <td class="px-6 py-5 text-sm font-medium truncate" th:text="${art.authorName}">Tác giả</td>
+                    <td class="px-6 py-5">
+                      <span
                         class="inline-block px-2 py-1 bg-stone-100 text-stone-600 text-[10px] font-bold uppercase rounded">Kiến
-                        thức</span></td>
-                    <td class="px-6 py-5 text-sm whitespace-nowrap">12/04/2026</td>
-                    <td class="px-6 py-5 text-sm font-medium">8.420</td>
-                    <td class="px-6 py-5"><span
-                        class="inline-block px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold uppercase rounded">Đã
-                        đăng</span></td>
+                        thức</span>
+                    </td>
+                    <td class="px-6 py-5 text-sm whitespace-nowrap" th:text="${art.publishedDate}">
+                      Ngày đăng</td>
+                    <td class="px-6 py-5 text-sm font-medium">0</td>
+                    <td class="px-6 py-5">
+                      <span class="inline-block px-2 py-1 text-[10px] font-bold uppercase rounded"
+                        th:classappend="${art.status == 'PUBLISHED' ? 'bg-green-100 text-green-700' : (art.status == 'DRAFT' ? 'bg-stone-100 text-stone-500' : 'bg-amber-100 text-amber-700')}"
+                        th:text="${art.status}">Trạng thái</span>
+                    </td>
                     <td class="px-6 py-5 text-right">
                       <div class="flex items-center justify-end gap-1">
-                        <a th:href="@{/admin/articles/edit/{id}(id=1)}" class="p-1.5 text-stone-400 hover:text-primary hover:bg-surface-container-low rounded transition-colors">
+                        <a th:href="@{/admin/articles/edit/{id}(id=${art.id})}"
+                          class="p-1.5 text-stone-400 hover:text-primary hover:bg-surface-container-low rounded transition-colors">
                           <span class="material-symbols-outlined text-base">edit</span>
                         </a>
-                        <button class="p-1.5 text-stone-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors">
-                          <span class="material-symbols-outlined text-base">delete</span>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                  <!-- Row 2 -->
-                  <tr class="hover:bg-surface-container-low/50 transition-colors group">
-                    <td class="px-6 py-5">
-                      <p class="font-manrope font-bold text-primary text-sm truncate">Hướng dẫn bảo quản cà phê nhân
-                        xanh đúng chuẩn</p>
-                      <p class="text-[10px] text-on-surface-variant mt-0.5">Tối ưu điều kiện kho bãi cho cà phê thô</p>
-                    </td>
-                    <td class="px-6 py-5 text-sm font-medium truncate">Lê Thị Phương</td>
-                    <td class="px-6 py-5"><span
-                        class="inline-block px-2 py-1 bg-blue-100 text-blue-700 text-[10px] font-bold uppercase rounded">Hướng
-                        dẫn</span></td>
-                    <td class="px-6 py-5 text-sm whitespace-nowrap">08/04/2026</td>
-                    <td class="px-6 py-5 text-sm font-medium">5.187</td>
-                    <td class="px-6 py-5"><span
-                        class="inline-block px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold uppercase rounded">Đã
-                        đăng</span></td>
-                    <td class="px-6 py-5 text-right">
-                      <div class="flex items-center justify-end gap-1">
-                        <button
-                          class="p-1.5 text-stone-400 hover:text-primary hover:bg-surface-container-low rounded transition-colors"><span
-                            class="material-symbols-outlined text-base">edit</span></button>
-                        <button
-                          class="p-1.5 text-stone-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors"><span
-                            class="material-symbols-outlined text-base">delete</span></button>
-                      </div>
-                    </td>
-                  </tr>
-                  <!-- Row 3 - pending -->
-                  <tr class="hover:bg-surface-container-low/50 transition-colors group">
-                    <td class="px-6 py-5">
-                      <p class="font-manrope font-bold text-primary text-sm truncate">Xu hướng thị trường cà phê toàn
-                        cầu Q2/2026</p>
-                      <p class="text-[10px] text-on-surface-variant mt-0.5">Phân tích biến động giá ICE Future</p>
-                    </td>
-                    <td class="px-6 py-5 text-sm font-medium truncate">Trần Quốc Bảo</td>
-                    <td class="px-6 py-5"><span
-                        class="inline-block px-2 py-1 bg-amber-100 text-amber-700 text-[10px] font-bold uppercase rounded">Tin
-                        tức ngành</span></td>
-                    <td class="px-6 py-5 text-sm whitespace-nowrap">—</td>
-                    <td class="px-6 py-5 text-sm font-medium text-stone-400">—</td>
-                    <td class="px-6 py-5"><span
-                        class="inline-block px-2 py-1 bg-amber-100 text-amber-700 text-[10px] font-bold uppercase rounded">Chờ
-                        duyệt</span></td>
-                    <td class="px-6 py-5 text-right">
-                      <div class="flex items-center justify-end gap-1">
-                        <button
-                          class="p-1.5 text-stone-400 hover:text-primary hover:bg-surface-container-low rounded transition-colors"><span
-                            class="material-symbols-outlined text-base">edit</span></button>
-                        <button
-                          class="p-1.5 text-stone-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors"><span
-                            class="material-symbols-outlined text-base">delete</span></button>
-                      </div>
-                    </td>
-                  </tr>
-                  <!-- Row 4 - draft -->
-                  <tr class="hover:bg-surface-container-low/50 transition-colors group">
-                    <td class="px-6 py-5 opacity-60">
-                      <p class="font-manrope font-bold text-primary text-sm truncate">Arabica vs Robusta: Khác biệt cơ
-                        bản trong sản xuất công nghiệp</p>
-                      <p class="text-[10px] text-on-surface-variant mt-0.5">So sánh chất lượng cho nhà thu mua</p>
-                    </td>
-                    <td class="px-6 py-5 text-sm font-medium truncate opacity-60">Nguyễn Anh Khoa</td>
-                    <td class="px-6 py-5 opacity-60"><span
-                        class="inline-block px-2 py-1 bg-stone-100 text-stone-600 text-[10px] font-bold uppercase rounded">Kiến
-                        thức</span></td>
-                    <td class="px-6 py-5 text-sm whitespace-nowrap opacity-60">—</td>
-                    <td class="px-6 py-5 text-sm font-medium text-stone-400">—</td>
-                    <td class="px-6 py-5"><span
-                        class="inline-block px-2 py-1 bg-stone-100 text-stone-500 text-[10px] font-bold uppercase rounded">Bản
-                        nháp</span></td>
-                    <td class="px-6 py-5 text-right">
-                      <div class="flex items-center justify-end gap-1">
-                        <button
-                          class="p-1.5 text-stone-400 hover:text-primary hover:bg-surface-container-low rounded transition-colors"><span
-                            class="material-symbols-outlined text-base">edit</span></button>
-                        <button
-                          class="p-1.5 text-stone-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors"><span
-                            class="material-symbols-outlined text-base">delete</span></button>
-                      </div>
-                    </td>
-                  </tr>
-                  <!-- Row 5 -->
-                  <tr class="hover:bg-surface-container-low/50 transition-colors group">
-                    <td class="px-6 py-5">
-                      <p class="font-manrope font-bold text-primary text-sm truncate">Chứng chỉ UTZ & Rainforest
-                        Alliance: Tăng giá trị xuất khẩu</p>
-                      <p class="text-[10px] text-on-surface-variant mt-0.5">Quy trình xin chứng nhận cho trang trại vừa
-                        và nhỏ</p>
-                    </td>
-                    <td class="px-6 py-5 text-sm font-medium truncate">Hoàng Minh Tuấn</td>
-                    <td class="px-6 py-5"><span
-                        class="inline-block px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold uppercase rounded">Chứng
-                        nhận</span></td>
-                    <td class="px-6 py-5 text-sm whitespace-nowrap">01/04/2026</td>
-                    <td class="px-6 py-5 text-sm font-medium">12.840</td>
-                    <td class="px-6 py-5"><span
-                        class="inline-block px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold uppercase rounded">Đã
-                        đăng</span></td>
-                    <td class="px-6 py-5 text-right">
-                      <div class="flex items-center justify-end gap-1">
-                        <button
-                          class="p-1.5 text-stone-400 hover:text-primary hover:bg-surface-container-low rounded transition-colors"><span
-                            class="material-symbols-outlined text-base">edit</span></button>
-                        <button
-                          class="p-1.5 text-stone-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors"><span
-                            class="material-symbols-outlined text-base">delete</span></button>
+                        <form th:action="@{/admin/articles/delete/{id}(id=${art.id})}" method="post" class="inline"
+                          onsubmit="return confirm('Bạn có chắc chắn muốn xóa bài viết này?')">
+                          <button type="submit"
+                            class="p-1.5 text-stone-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors">
+                            <span class="material-symbols-outlined text-base">delete</span>
+                          </button>
+                        </form>
                       </div>
                     </td>
                   </tr>
@@ -238,7 +139,9 @@
             </div>
             <!-- Pagination -->
             <div class="p-6 bg-surface-container-low/30 flex flex-col sm:flex-row justify-between items-center gap-4">
-              <p class="text-xs text-on-surface-variant">Đang hiển thị 5 trên 184 bài viết</p>
+              <p class="text-xs text-on-surface-variant"
+                th:text="'Đang hiển thị ' + ${#lists.size(articles)} + ' bài viết'">Đang hiển thị 5 trên 184 bài viết
+              </p>
               <div class="flex gap-1">
                 <button
                   class="h-8 w-8 flex items-center justify-center rounded border border-stone-200 bg-white text-stone-600 hover:bg-stone-50 transition-colors">
@@ -315,10 +218,10 @@
   <script src="assets/effects.js" th:src="@{/assets/effects.js}"></script>
 
   <!-- FAB -->
-  <button
+  <a th:href="@{/admin/articles/new}"
     class="fixed bottom-8 right-8 bg-primary text-white h-14 w-14 rounded-full shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-50 group">
     <span class="material-symbols-outlined text-2xl group-hover:rotate-90 transition-transform">add</span>
-  </button>
+  </a>
 
 </body>
 

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html class="light" lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: sharedHead('Quản lý Combo | LegendCoffee Admin')}"></head>
+<body class="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container">
+<main class="flex min-h-screen">
+  <aside th:replace="~{fragments/admin-sidebar :: adminSidebar}"></aside>
+  <section class="flex-1 ml-64 min-h-screen bg-surface">
+    <header th:replace="~{fragments/admin-topbar :: adminTopbar('Quản lý Combo', 'Tìm kiếm combo, biến thể...')}"></header>
+
+    <div class="p-8 space-y-8">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Combo ưu đãi</p>
+          <h3 class="text-3xl font-extrabold text-primary font-manrope tracking-tighter">Quản lý bộ sản phẩm gộp</h3>
+        </div>
+        <a th:href="@{/admin/combos/new}"
+           class="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold bg-primary text-on-primary rounded-lg hover:bg-primary-container hover:text-primary transition-colors uppercase tracking-wider">
+          <span class="material-symbols-outlined text-sm">add_circle</span>
+          Thêm combo mới
+        </a>
+      </div>
+
+      <div th:if="${success}" class="flex items-center gap-3 rounded-lg bg-green-50 border border-green-200 px-5 py-4 text-sm text-green-800">
+        <span class="material-symbols-outlined text-green-600 text-base">check_circle</span>
+        <span th:text="${success}"></span>
+      </div>
+      <div th:if="${error}" class="flex items-center gap-3 rounded-lg bg-red-50 border border-red-200 px-5 py-4 text-sm text-red-800">
+        <span class="material-symbols-outlined text-red-500 text-base">error</span>
+        <span th:text="${error}"></span>
+      </div>
+
+      <div class="bg-surface-container-lowest border border-surface-container-low rounded-lg shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-surface-container-low flex items-center justify-between">
+          <h4 class="font-bold text-primary uppercase tracking-widest text-xs">Danh sách combo</h4>
+          <p class="text-xs text-on-surface-variant" th:text="${#lists.size(combos) + ' combo'}">0 combo</p>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse table-fixed">
+            <thead>
+            <tr class="bg-surface-container-low text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">
+              <th class="px-6 py-4 w-[22%]">Tên combo</th>
+              <th class="px-6 py-4 w-[20%]">Giá ưu đãi</th>
+              <th class="px-6 py-4 w-[20%]">Giá gốc</th>
+              <th class="px-6 py-4 w-[18%]">Hiệu lực</th>
+              <th class="px-6 py-4 w-[10%]">Trạng thái</th>
+              <th class="px-6 py-4 w-[10%] text-right">Hành động</th>
+            </tr>
+            </thead>
+            <tbody class="divide-y divide-surface-container-low">
+            <tr th:each="combo : ${combos}" class="hover:bg-surface-container-low/50 transition-colors group">
+              <td class="px-6 py-5">
+                <p class="font-manrope font-bold text-primary text-sm truncate" th:text="${combo.name}">Combo</p>
+                <p class="text-[10px] text-on-surface-variant mt-0.5 truncate" th:text="${combo.description} ?: '—'">—</p>
+                <p class="text-[10px] text-on-surface-variant mt-1" th:text="${#lists.size(combo.items) + ' biến thể'}">0 biến thể</p>
+              </td>
+              <td class="px-6 py-5 text-sm font-bold text-primary whitespace-nowrap"
+                  th:text="${#numbers.formatDecimal(combo.price, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0 ₫</td>
+              <td class="px-6 py-5 text-sm whitespace-nowrap"
+                  th:text="${#numbers.formatDecimal(combo.originalPrice, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0 ₫</td>
+              <td class="px-6 py-5 text-sm whitespace-nowrap">
+                <div th:text="${#temporals.format(combo.startDate, 'dd/MM/yyyy HH:mm')}">start</div>
+                <div class="text-[10px] text-on-surface-variant">→ <span th:text="${#temporals.format(combo.endDate, 'dd/MM/yyyy HH:mm')}">end</span></div>
+              </td>
+              <td class="px-6 py-5">
+                <span th:if="${combo.availableNow}" class="inline-block px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold uppercase rounded">Đang bán</span>
+                <span th:unless="${combo.availableNow}" class="inline-block px-2 py-1 bg-stone-100 text-stone-500 text-[10px] font-bold uppercase rounded">Ngoài lịch</span>
+              </td>
+              <td class="px-6 py-5 text-right">
+                <div class="flex items-center justify-end gap-1">
+                  <a th:href="@{/admin/combos/{id}/edit(id=${combo.id})}" class="p-1.5 text-stone-400 hover:text-primary hover:bg-surface-container-low rounded transition-colors">
+                    <span class="material-symbols-outlined text-base">edit</span>
+                  </a>
+                  <form th:action="@{/admin/combos/{id}/delete(id=${combo.id})}" method="post" class="inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa combo này không?')">
+                    <button type="submit" class="p-1.5 text-stone-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors">
+                      <span class="material-symbols-outlined text-base">delete</span>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(combos)}">
+              <td colspan="6" class="px-6 py-16 text-center text-on-surface-variant">
+                <span class="material-symbols-outlined text-4xl mb-3 block opacity-30">featured_play_list</span>
+                <p class="text-sm font-semibold">Chưa có combo nào.</p>
+                <p class="text-xs mt-1">Nhấn <strong>Thêm combo mới</strong> để bắt đầu.</p>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<script src="/assets/effects.js" th:src="@{/assets/effects.js}"></script>
+</body>
+</html>
+

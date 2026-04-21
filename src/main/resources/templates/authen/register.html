@@ -86,11 +86,9 @@
                         KÝ MỚI</button>
                 </div>
                 <!-- Auth Form -->
-                <form class="space-y-6" method="POST" th:action="@{/register}">
-                    <div th:if="${param.error}" class="bg-error/10 border-l-4 border-error p-3 mb-4">
-                        <p class="text-xs text-error font-bold"
-                            th:text="${param.error[0] == 'reg_failed' ? 'Thông tin không hợp lệ hoặc đã tồn tại.' : 'Có lỗi xảy ra, vui lòng thử lại.'}">
-                        </p>
+                <form class="space-y-6" method="POST" th:action="@{/register}" th:object="${registerDto}">
+                    <div th:if="${errorMessage}" class="bg-error/10 border-l-4 border-error p-3 mb-4">
+                        <p class="text-xs text-error font-bold" th:text="${errorMessage}"></p>
                     </div>
                     <!-- Username -->
                     <div class="space-y-1">
@@ -102,8 +100,9 @@
                                 data-icon="person">person</span>
                             <input
                                 class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium"
-                                id="username" name="username" placeholder="nguyen.van.a" type="text" required />
+                                id="username" th:field="*{username}" placeholder="nguyen.van.a" type="text" required />
                         </div>
+                        <p class="text-xs text-error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></p>
                     </div>
                     <!-- Email -->
                     <div class="space-y-1">
@@ -114,8 +113,9 @@
                             <span class="material-symbols-outlined text-outline text-xl" data-icon="mail">mail</span>
                             <input
                                 class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium"
-                                id="email" name="email" placeholder="purchasing@company.vn" type="email" required />
+                                id="email" th:field="*{email}" placeholder="purchasing@company.vn" type="email" required />
                         </div>
+                        <p class="text-xs text-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
                     </div>
                     <!-- Password -->
                     <div class="space-y-1">
@@ -126,8 +126,10 @@
                             <span class="material-symbols-outlined text-outline text-xl" data-icon="lock">lock</span>
                             <input
                                 class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium"
-                                id="password" name="password" placeholder="••••••••" type="password" required />
+                                id="password" th:field="*{password}" placeholder="••••••••" type="password" minlength="6"
+                                required />
                         </div>
+                        <p class="text-xs text-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
                     </div>
                     <!-- Phone -->
                     <div class="space-y-1">
@@ -138,8 +140,9 @@
                             <span class="material-symbols-outlined text-outline text-xl" data-icon="phone">phone</span>
                             <input
                                 class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium"
-                                id="phone" name="phone" placeholder="0901234567" type="tel" required />
+                                id="phone" th:field="*{phone}" placeholder="0901234567" type="tel" required />
                         </div>
+                        <p class="text-xs text-error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></p>
                     </div>
                     <!-- Address -->
                     <div class="space-y-1">
@@ -151,9 +154,10 @@
                                 data-icon="location_on">location_on</span>
                             <input
                                 class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium"
-                                id="address" name="address" placeholder="123 Đường Công Nghiệp, TP. HCM" type="text"
-                                required />
+                                id="address" th:field="*{address}" placeholder="123 Đường Công Nghiệp, TP. HCM"
+                                type="text" required />
                         </div>
+                        <p class="text-xs text-error" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></p>
                     </div>
                     <div class="flex items-center gap-3 py-2">
                         <input class="w-4 h-4 rounded-sm border-outline-variant text-primary focus:ring-primary/20"
