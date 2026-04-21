@@ -3,6 +3,8 @@ package fpt.legendcoffee.entity;
 import fpt.legendcoffee.common.infrastructure.BaseEntity;
 import fpt.legendcoffee.entity.enumeration.ArticleStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -22,15 +24,20 @@ public class Article extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @NotBlank(message = "Tiêu đề bài viết không được để trống")
+    @Size(min = 10, max = 200, message = "Tiêu đề phải từ 10 đến 200 ký tự")
     @Column(name = "title", columnDefinition = "NVARCHAR(255)")
     private String title;
 
+    @NotBlank(message = "Nội dung bài viết không được để trống")
     @Column(name = "content_json", columnDefinition = "NVARCHAR(MAX)")
     private String contentJson;
 
     @Column(name = "cover_image_url")
     private String coverImageUrl;
 
+    @NotBlank(message = "Tóm tắt không được để trống")
+    @Size(max = 255, message = "Tóm tắt không được vượt quá 255 ký tự")
     @Column(name = "summary", columnDefinition = "NVARCHAR(255)")
     private String summary;
 
