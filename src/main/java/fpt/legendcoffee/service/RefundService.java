@@ -1,5 +1,15 @@
-package fpt.legendcoffee.service.serviceImpl;
+package fpt.legendcoffee.service;
 
-public class RefundService {
+import fpt.legendcoffee.entity.RefundRequest;
 
+import java.math.BigDecimal;
+
+public interface RefundService {
+    
+    RefundRequest createRefundRequest(Long userId, Long orderId, BigDecimal amount, String reason);
+
+    void approveRefund(Long refundRequestId);
+
+    void rejectRefund(Long refundRequestId);
+    
 }
