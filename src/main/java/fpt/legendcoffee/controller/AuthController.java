@@ -13,7 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContext;
+import fpt.legendcoffee.common.security.CustomUserDetails;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.security.web.context.SecurityContextRepository;
@@ -33,9 +35,10 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final SecurityContextRepository securityContextRepository;
-    private final SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy();
+    private final SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder
+            .getContextHolderStrategy();
     private final AuthenService authenService;
-    
+
     @GetMapping("/home")
     public String home() {
         return "index";
@@ -54,10 +57,10 @@ public class AuthController {
 
     @PostMapping("/login")
     public String login(@Valid @ModelAttribute("loginDto") LoginRequestDTO request,
-                        BindingResult bindingResult,
-                        HttpServletRequest httpRequest,
-                        HttpServletResponse httpResponse,
-                        Model model) {
+            BindingResult bindingResult,
+            HttpServletRequest httpRequest,
+            HttpServletResponse httpResponse,
+            Model model) {
         if (bindingResult.hasErrors()) {
             String message = bindingResult.getFieldError() != null
                     ? bindingResult.getFieldError().getDefaultMessage()
@@ -67,10 +70,9 @@ public class AuthController {
         }
 
         try {
-            Authentication authenticationRequest =
-                    UsernamePasswordAuthenticationToken.unauthenticated(request.email(), request.password());
-            Authentication authenticationResponse =
-                    this.authenticationManager.authenticate(authenticationRequest);
+            Authentication authenticationRequest = UsernamePasswordAuthenticationToken.unauthenticated(request.email(),
+                    request.password());
+            Authentication authenticationResponse = this.authenticationManager.authenticate(authenticationRequest);
 
             SecurityContext context = this.securityContextHolderStrategy.createEmptyContext();
             context.setAuthentication(authenticationResponse);
@@ -98,9 +100,9 @@ public class AuthController {
 
     @PostMapping("/register")
     public String register(@Valid @ModelAttribute("registerDto") RegisterRequestDTO request,
-                           BindingResult bindingResult,
-                           Model model,
-                           RedirectAttributes redirectAttributes) {
+            BindingResult bindingResult,
+            Model model,
+            RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             String message = bindingResult.getFieldError() != null
                     ? bindingResult.getFieldError().getDefaultMessage()
@@ -129,19 +131,19 @@ public class AuthController {
 
     @PostMapping("/forgot-password")
     public String forgotPassword(@Valid @ModelAttribute("forgotPasswordDto") ForgotPasswordRequestDTO request,
-                                 RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes) {
         try {
             authenService.forgotPassword(request.email());
             redirectAttributes.addAttribute("success", "Mật khẩu mới đã được gửi vào email của bạn.");
             return "redirect:/login";
         } catch (Exception e) {
             redirectAttributes.addAttribute("error", e.getMessage());
-            return "redirect:/forgot-password";
+            return "redirect:/login";
         }
     }
 
-    @GetMapping("/change-password")
-    public String showChangePasswordForm() {
+    @GetMapping("/reset-password")
+    public String showResetPasswordForm() {
         if (isAuthenticated()) {
             return "redirect:/home";
         }
@@ -150,7 +152,7 @@ public class AuthController {
 
     @PostMapping("/reset-password")
     public String resetPassword(@Valid @ModelAttribute("resetPasswordDto") ResetPasswordRequestDTO request,
-                                RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes) {
         try {
             if (!request.newPassword().equals(request.confirmPassword())) {
                 throw new Exception("Mật khẩu xác nhận không khớp.");
@@ -160,13 +162,18 @@ public class AuthController {
             return "redirect:/login";
         } catch (Exception e) {
             redirectAttributes.addAttribute("error", e.getMessage());
-            return "redirect:/reset-password";
+            return "redirect:/change-password";
         }
     }
 
-    @GetMapping("/profile/{id}")
-    public String showProfileForm(RedirectAttributes redirectAttributes, @PathVariable("id") long id) {
-        redirectAttributes.addAttribute("profileDto", authenService.getProfile(id));
+    @GetMapping("/profile")
+    public String showProfileForm(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            return "redirect:/login";
+        }
+
+        long userId = userDetails.getUser().getId();
+        model.addAttribute("profileDto", authenService.getProfile(userId));
         return "authen/profile";
     }
     private boolean isAuthenticated() {

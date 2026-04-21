@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 
-<html class="light" lang="vi">
+<html class="light" lang="vi" xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head th:replace="~{fragments/head :: sharedHead('RoastLogistics - Danh sách đơn hàng')}"></head>
 
@@ -75,32 +76,72 @@
                                     <th class="px-6 py-4 text-xs font-bold uppercase tracking-widest text-center">Trạng
                                         thái
                                     </th>
+                                    <!-- Cột nút Admin: chỉ hiển thị cho ADMIN -->
+                                    <th sec:authorize="hasRole('ADMIN')"
+                                        class="px-6 py-4 text-xs font-bold uppercase tracking-widest text-center">Thao
+                                        tác</th>
                                     <th class="px-6 py-4 text-xs font-bold uppercase tracking-widest"></th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-outline-variant/5">
+                                <!-- Dynamic Rows -->
                                 <tr th:if="${orders == null or #lists.isEmpty(orders)}">
-                                    <td colspan="6" class="px-6 py-10 text-center text-sm text-on-surface-variant">
+                                    <td colspan="7" class="px-6 py-10 text-center text-sm text-on-surface-variant">
                                         Bạn chưa có đơn hàng nào.
                                     </td>
                                 </tr>
-                                <tr th:each="order : ${orders}" class="hover:bg-surface-container-low transition-colors group">
-                                    <td class="px-6 py-5 font-bold text-primary" th:text="${'#ORD-' + order.id}">#ORD-1</td>
+                                <tr th:each="ord : ${orders}"
+                                    class="hover:bg-surface-container-low transition-colors group">
+                                    <td class="px-6 py-5 font-bold text-primary" th:text="'#ORD-' + ${ord.id}">Mã đơn
+                                    </td>
                                     <td class="px-6 py-5 text-sm text-on-surface-variant"
-                                        th:text="${order.orderDate != null ? #temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm') : '-'}">14/05/2024</td>
-                                    <td class="px-6 py-5 text-sm text-on-surface"
-                                        th:text="${(itemCountByOrder != null and itemCountByOrder[order.id] != null ? itemCountByOrder[order.id] : 0) + ' sản phẩm'}">1 sản phẩm</td>
+                                        th:text="${ord.orderDate != null ? #temporals.format(ord.orderDate, 'dd/MM/yyyy HH:mm') : '--'}">
+                                        Ngày đặt</td>
+                                    <td class="px-6 py-5">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-10 h-10 rounded bg-surface-container-high overflow-hidden flex-shrink-0">
+                                                <img class="w-full h-full object-cover"
+                                                    th:src="${ord.firstItemImage != null ? ord.firstItemImage : 'https://placehold.co/40x40?text=☕'}"
+                                                    alt="Product" />
+                                            </div>
+                                            <div>
+                                                <p class="text-sm font-bold text-on-surface"
+                                                    th:text="${ord.firstItemName != null ? ord.firstItemName : 'Sản phẩm'}">
+                                                    Tên sản phẩm</p>
+                                                <p class="text-xs text-on-surface-variant"
+                                                    th:text="${ord.firstItemDetail != null ? ord.firstItemDetail : ''}">
+                                                    Chi tiết</p>
+                                            </div>
+                                        </div>
+                                    </td>
                                     <td class="px-6 py-5 text-right font-bold text-primary"
-                                        th:text="${#numbers.formatDecimal(order.totalAmount != null ? order.totalAmount : 0, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0 ₫</td>
+                                        th:text="${#numbers.formatDecimal(ord.totalAmount != null ? ord.totalAmount : 0, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0 ₫</td>
                                     <td class="px-6 py-5">
                                         <div class="flex justify-center">
-                                            <span class="bg-surface-container-high text-on-surface-variant px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-widest"
-                                                  th:text="${order.status != null ? order.status.name() : 'PENDING'}">PENDING</span>
+                                            <span
+                                                class="px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-widest"
+                                                th:classappend="${ord.shippingStatus == 'ready_to_pick' ? 'bg-amber-100 text-amber-700' : (ord.shippingStatus == 'delivering' ? 'bg-primary text-on-primary' : (ord.shippingStatus == 'delivered' ? 'bg-[#e2e3df] text-[#504442]' : (ord.shippingStatus == 'cancel' ? 'bg-red-100 text-red-700' : 'bg-surface-container-high text-on-surface-variant')))}"
+                                                th:text="${ord.shippingStatusLabel}">Trạng thái</span>
                                         </div>
+                                    </td>
+                                    <!-- Cột nút Giao hàng: chỉ hiển thị cho ADMIN -->
+                                    <td sec:authorize="hasRole('ADMIN')" class="px-6 py-5 text-center">
+                                        <form th:if="${ord.shippingStatus == 'ready_to_pick'}"
+                                            th:action="@{/admin/orders/{id}/start-delivering(id=${ord.id})}"
+                                            method="post" class="inline"
+                                            onsubmit="return confirm('Xác nhận chuyển trạng thái sang Đang giao hàng?')">
+                                            <button type="submit"
+                                                class="bg-primary text-on-primary px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-widest hover:bg-primary-container hover:text-primary transition-colors shadow-sm">
+                                                <span
+                                                    class="material-symbols-outlined text-sm align-middle mr-1">local_shipping</span>
+                                                Giao hàng
+                                            </button>
+                                        </form>
                                     </td>
                                     <td class="px-6 py-5 text-right">
                                         <a class="text-primary text-xs font-bold uppercase hover:underline"
-                                           th:href="@{/orders/{id}(id=${order.id})}">Chi tiết</a>
+                                           th:href="@{/orders/{id}(id=${ord.id})}">Chi tiết</a>
                                     </td>
                                 </tr>
                             </tbody>

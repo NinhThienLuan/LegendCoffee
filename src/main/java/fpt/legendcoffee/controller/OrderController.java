@@ -1,8 +1,10 @@
 package fpt.legendcoffee.controller;
 
 import fpt.legendcoffee.dto.app.CheckoutRequestDTO;
+import fpt.legendcoffee.dto.app.OrderListDTO;
 import fpt.legendcoffee.entity.Order;
 import fpt.legendcoffee.entity.OrderItem;
+import fpt.legendcoffee.entity.ProductVariant;
 import fpt.legendcoffee.entity.ShippingInfo;
 import fpt.legendcoffee.entity.User;
 import fpt.legendcoffee.repository.OrderItemRepository;
@@ -51,15 +53,31 @@ public class OrderController {
             return "redirect:/login";
         }
 
-        List<Order> orders = orderRepository.findByUserOrderByOrderDateDesc(currentUser.get());
-        Map<Long, Long> itemCountByOrder = new HashMap<>();
-        for (Order order : orders) {
-            itemCountByOrder.put(order.getId(), orderItemRepository.countByOrderId(order.getId()));
+        boolean isAdmin = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        List<fpt.legendcoffee.dto.app.OrderListDTO> allOrders = orderService.getAllOrdersForList();
+        if (!isAdmin) {
+            allOrders = allOrders.stream().filter(dto -> 
+                orderRepository.findById(dto.getId())
+                    .map(Order::getUser)
+                    .map(User::getId).orElse(-1L).equals(currentUser.get().getId())
+            ).toList();
         }
 
-        model.addAttribute("orders", orders);
-        model.addAttribute("itemCountByOrder", itemCountByOrder);
+        model.addAttribute("orders", allOrders);
         return "order/order";
+    }
+
+    @PostMapping("/admin/orders/{orderId}/start-delivering")
+    public String startDelivering(@PathVariable Long orderId, RedirectAttributes redirectAttributes) {
+        try {
+            orderService.startDelivering(orderId);
+            redirectAttributes.addFlashAttribute("successMessage", "Đã chuyển sang trạng thái Đang giao hàng");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/orders";
     }
 
     @GetMapping("/orders/{orderId}")

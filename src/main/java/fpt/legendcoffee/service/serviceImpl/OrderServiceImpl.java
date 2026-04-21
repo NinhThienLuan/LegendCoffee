@@ -7,12 +7,16 @@ import fpt.legendcoffee.entity.Order;
 import fpt.legendcoffee.entity.OrderItem;
 import fpt.legendcoffee.entity.ProductVariant;
 import fpt.legendcoffee.entity.User;
+import fpt.legendcoffee.entity.ShippingInfo;
+import fpt.legendcoffee.dto.app.OrderListDTO;
+import fpt.legendcoffee.dto.app.OrderStatusDTO;
 import fpt.legendcoffee.entity.enumeration.OrderStatus;
 import fpt.legendcoffee.repository.ComboRepository;
 import fpt.legendcoffee.repository.OrderItemRepository;
 import fpt.legendcoffee.repository.OrderRepository;
 import fpt.legendcoffee.repository.ProductVariantRepository;
 import fpt.legendcoffee.repository.UserRepository;
+import fpt.legendcoffee.repository.ShippingInfoRepository;
 import fpt.legendcoffee.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +41,7 @@ public class OrderServiceImpl implements OrderService {
     private final ProductVariantRepository productVariantRepository;
     private final ComboRepository comboRepository;
     private final UserRepository userRepository;
+    private final ShippingInfoRepository shippingInfoRepository;
 
     @Override
     @Transactional
@@ -74,6 +79,44 @@ public class OrderServiceImpl implements OrderService {
 
         return savedOrder;
     }
+
+    @Override
+    public List<OrderListDTO> getAllOrdersForList() {
+        List<Order> orders = orderRepository.findAll();
+        return orders.stream().map(order -> {
+            // Lấy sản phẩm đầu tiên
+            String itemName = null, itemDetail = null, itemImage = null;
+            // Lấy trạng thái shipping
+            ShippingInfo shipping = order.getShippingInfo();
+            String shippingStatus = shipping != null ? shipping.getStatus() : "pending";
+
+            return OrderListDTO.builder()
+                    .id(order.getId())
+                    .orderDate(order.getOrderDate())
+                    .totalAmount(order.getTotalAmount())
+                    .firstItemName(itemName)
+                    .firstItemDetail(itemDetail)
+                    .firstItemImage(itemImage)
+                    .shippingStatus(shippingStatus)
+                    .shippingStatusLabel(OrderStatusDTO.mapStatusLabel(shippingStatus))
+                    .build();
+        }).toList();
+    }
+
+    @Override
+    @Transactional
+    public void startDelivering(Long orderId) {
+        ShippingInfo info = shippingInfoRepository.findByOrderId(orderId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy thông tin vận chuyển cho đơn #" + orderId));
+
+        if (!"ready_to_pick".equalsIgnoreCase(info.getStatus())) {
+            throw new RuntimeException("Chỉ có thể giao khi trạng thái đang là Chờ lấy hàng");
+        }
+
+        info.setStatus("delivering");
+        shippingInfoRepository.save(info);
+    }
+
 
     private List<OrderItem> buildOrderItems(List<CheckoutItemRequestDTO> itemRequests) {
         if (itemRequests == null || itemRequests.isEmpty()) {
