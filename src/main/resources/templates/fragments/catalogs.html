@@ -3,18 +3,25 @@
 
 <body>
   <section th:fragment="catalogList" class="pt-20">
-    <section class="bg-primary py-12 text-on-primary relative overflow-hidden border-b border-outline-variant/10">
-      <div class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20 relative z-10">
-        <div class="max-w-2xl">
-          <h1 class="text-4xl md:text-5xl font-black tracking-tighter mb-4 font-headline uppercase leading-none">
-            INDUSTRIAL<br />CATALOG
+    <!-- Hero / Header Section -->
+    <section class="bg-primary py-20 text-on-primary relative overflow-hidden">
+      <div class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20 grid md:grid-cols-2 items-center gap-12 relative z-10">
+        <div>
+          <h1 class="text-5xl md:text-7xl font-extrabold tracking-tighter mb-6 leading-none">
+            DANH MỤC<br/>CÀ PHÊ
           </h1>
-          <p class="text-on-primary-container/80 text-sm max-w-md font-medium uppercase tracking-widest">
-            Giải pháp cung ứng quy mô lớn • Chuẩn HACCP & ISO
+          <p class="text-on-primary-container text-lg max-w-md mb-8 font-light">
+            Giải pháp cung ứng cà phê công nghiệp quy mô lớn. Đảm bảo chất lượng đồng nhất, chứng nhận HACCP &amp; ISO cho chuỗi cung ứng toàn cầu.
           </p>
+          <div class="flex gap-4">
+            <button class="bg-surface text-primary px-8 py-4 rounded-md font-bold tracking-tight hover:bg-surface-container-highest transition-colors">Tải Bảng Giá Toàn Quốc</button>
+            <button class="border border-on-primary/30 px-8 py-4 rounded-md font-bold tracking-tight hover:bg-on-primary/10 transition-colors">Yêu Cầu Mẫu Thử</button>
+          </div>
+        </div>
+        <div class="hidden md:block">
+          <img class="rounded-xl shadow-2xl grayscale contrast-125 object-cover h-[400px] w-full" data-alt="industrial coffee roasting machine with stainless steel components and high-capacity drum in a modern production facility" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAp3MuX3p1EpHoydnutmImfIHb2URt_eYn54OEHRsZGQHPf3-a3si7iIM7eVEM57AjyuWh0LhAwb4TfrJr0L3cj72ea-cU-K-6pv_qeodRplr0rD-6io3-pjvnK93KjFj12tsS0E57YUtc3jtio0FkEGoYG2MDB5MRen_iJ8LCyqzuHqbfdcZ4tbFIQQ2aWzmmX3LfXsEWiMg7XTG5ujCOegsmvM-ifKEuV6Xu-VC5Q1jlBLA2JD9TT8aS0FULjTdgRsZvgHNawP8PD"/>
         </div>
       </div>
-      <div class="absolute inset-0 bg-gradient-to-r from-primary via-primary to-transparent opacity-90 z-0"></div>
     </section>
 
     <div class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20 flex flex-col md:flex-row">

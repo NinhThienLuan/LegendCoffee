@@ -106,9 +106,23 @@ window.addEventListener('scroll', () => {
 // Cart Badge Update Logic
 function updateNavbarCartBadge() {
   const badge = document.getElementById('cart-badge');
-  if (!badge || !window.CartSystem) return;
-  
-  const count = window.CartSystem.getCartCount();
+  if (!badge) return;
+
+  let count = 0;
+  if (window.CartSystem && typeof window.CartSystem.getCartCount === 'function') {
+    count = window.CartSystem.getCartCount();
+  } else {
+    // Fallback: read cart from localStorage
+    try {
+      const cartRaw = localStorage.getItem('cart');
+      if (cartRaw) {
+        const cart = JSON.parse(cartRaw);
+        if (Array.isArray(cart)) {
+          count = cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
+        }
+      }
+    } catch (e) { /* ignore */ }
+  }
   if (count > 0) {
     badge.innerText = count;
     badge.classList.remove('opacity-0');
@@ -119,7 +133,81 @@ function updateNavbarCartBadge() {
 
 window.addEventListener('load', updateNavbarCartBadge);
 window.addEventListener('cartUpdated', updateNavbarCartBadge);
+// Also update on storage event (multi-tab)
+window.addEventListener('storage', function(e) {
+  if (e.key === 'cart') updateNavbarCartBadge();
+});
 </script>
-</body>
+  <script>
+    // Navbar scroll behavior
+    let lastScrollY = window.scrollY;
+    const navbar = document.getElementById('mainNavbar');
+    window.addEventListener('scroll', () => {
+      if (!navbar) return;
+      if (window.scrollY > lastScrollY && window.scrollY > 40) {
+        navbar.style.transform = 'translateY(-100%)';
+      } else {
+        navbar.style.transform = 'translateY(0)';
+      }
+      lastScrollY = window.scrollY;
+    });
 
+    // Cart Badge Update Logic
+    function updateNavbarCartBadge() {
+      const badge = document.getElementById('cart-badge');
+      if (!badge) {
+        console.log('[CartBadge] Badge element not found');
+        return;
+      }
+
+      let count = 0;
+      if (window.CartSystem && typeof window.CartSystem.getCartCount === 'function') {
+        count = window.CartSystem.getCartCount();
+        console.log('[CartBadge] Got cart count from CartSystem:', count);
+      } else {
+        // Fallback: read cart from localStorage
+        try {
+          const cartRaw = localStorage.getItem('cart');
+          console.log('[CartBadge] Fallback to localStorage. Raw cart:', cartRaw);
+          if (cartRaw) {
+            const cart = JSON.parse(cartRaw);
+            if (Array.isArray(cart)) {
+              count = cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
+              console.log('[CartBadge] Parsed cart array. Total quantity:', count, cart);
+            } else {
+              console.log('[CartBadge] Cart in localStorage is not an array:', cart);
+            }
+          } else {
+            console.log('[CartBadge] No cart found in localStorage');
+          }
+        } catch (e) {
+          console.log('[CartBadge] Error parsing cart from localStorage:', e);
+        }
+      }
+      if (count > 0) {
+        badge.innerText = count;
+        badge.classList.remove('opacity-0');
+      } else {
+        badge.classList.add('opacity-0');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('[CartBadge] Script loaded, DOMContentLoaded');
+      updateNavbarCartBadge();
+      console.log('[CartBadge] DOMContentLoaded, badge updated');
+    });
+    window.addEventListener('cartUpdated', function() {
+      updateNavbarCartBadge();
+      console.log('[CartBadge] cartUpdated event, badge updated');
+    });
+    // Also update on storage event (multi-tab)
+    window.addEventListener('storage', function(e) {
+      if (e.key === 'cart') {
+        updateNavbarCartBadge();
+        console.log('[CartBadge] storage event, badge updated');
+      }
+    });
+  </script>
+</body>
 </html>
