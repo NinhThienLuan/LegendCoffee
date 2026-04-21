@@ -1,7 +1,6 @@
 package fpt.legendcoffee.entity;
 
 import fpt.legendcoffee.common.infrastructure.BaseEntity;
-import fpt.legendcoffee.entity.enumeration.PromotionType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;

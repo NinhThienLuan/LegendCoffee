@@ -46,6 +46,9 @@ public class AuthController {
         if (!model.containsAttribute("loginDto")) {
             model.addAttribute("loginDto", new LoginRequestDTO("", ""));
         }
+        if (!model.containsAttribute("forgotPasswordDto")) {
+            model.addAttribute("forgotPasswordDto", new ForgotPasswordRequestDTO(""));
+        }
         return "authen/login";
     }
 
@@ -73,6 +76,12 @@ public class AuthController {
             context.setAuthentication(authenticationResponse);
             this.securityContextHolderStrategy.setContext(context);
             this.securityContextRepository.saveContext(context, httpRequest, httpResponse);
+
+            // Force change password detection
+            String forceChangeEmail = (String) httpRequest.getSession().getAttribute("forceChangeEmail");
+            if (request.email().equalsIgnoreCase(forceChangeEmail)) {
+                return "redirect:/login?forceChange=true&email=" + request.email();
+            }
 
             return "redirect:/home";
         } catch (Exception e) {
@@ -114,40 +123,76 @@ public class AuthController {
     }
 
     @GetMapping("/forgot-password")
-    public String showForgotPasswordForm() {
-        return "authen/forgot-password";
+    public String showForgotPasswordForm(Model model) {
+        if (!model.containsAttribute("forgotPasswordDto")) {
+            model.addAttribute("forgotPasswordDto", new ForgotPasswordRequestDTO(""));
+        }
+        return "authen/login";
     }
 
     @PostMapping("/forgot-password")
     public String forgotPassword(@Valid @ModelAttribute("forgotPasswordDto") ForgotPasswordRequestDTO request,
+                                 BindingResult bindingResult,
                                  RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Email không hợp lệ.");
+            return "redirect:/login";
+        }
         try {
+            log.info("Processing forgot password request for email: {}", request.email());
             authenService.forgotPassword(request.email());
-            redirectAttributes.addAttribute("success", "Mật khẩu mới đã được gửi vào email của bạn.");
+            log.info("Forgot password email sent successfully to: {}", request.email());
+            redirectAttributes.addFlashAttribute("successMessage", "Mật khẩu mới đã được gửi vào email của bạn.");
             return "redirect:/login";
         } catch (Exception e) {
-            redirectAttributes.addAttribute("error", e.getMessage());
-            return "redirect:/forgot-password";
+            log.error("Error processing forgot password for {}: {}", request.email(), e.getMessage(), e);
+            // If it's a mail auth error, provide a clearer message than just 'Authentication failed'
+            String errorMsg = e.getMessage();
+            if (errorMsg != null && errorMsg.toLowerCase().contains("authentication failed")) {
+                errorMsg = "Lỗi hệ thống: Không thể gửi email (Sai cấu hình Gmail).";
+            }
+            redirectAttributes.addFlashAttribute("errorMessage", errorMsg);
+            return "redirect:/login";
         }
     }
 
     @GetMapping("/reset-password")
-    public String showResetPasswordForm() {
-        return "authen/reset-password";
+    public String showResetPasswordForm(Model model) {
+        if (!model.containsAttribute("resetPasswordDto")) {
+            model.addAttribute("resetPasswordDto", new ResetPasswordRequestDTO("", "", "", ""));
+        }
+        if (!model.containsAttribute("forgotPasswordDto")) {
+            model.addAttribute("forgotPasswordDto", new ForgotPasswordRequestDTO(""));
+        }
+        return "authen/change-password";
     }
 
     @PostMapping("/reset-password")
     public String resetPassword(@Valid @ModelAttribute("resetPasswordDto") ResetPasswordRequestDTO request,
+                                BindingResult bindingResult,
                                 RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Thông tin không hợp lệ. Mật khẩu phải từ 6 ký tự.");
+            return "redirect:/reset-password";
+        }
         try {
+            log.info("Processing reset password request for email: {}", request.email());
             if (!request.newPassword().equals(request.confirmPassword())) {
                 throw new Exception("Mật khẩu xác nhận không khớp.");
             }
             authenService.resetPassword(request.email(), request.oldPassword(), request.newPassword());
-            redirectAttributes.addAttribute("success", "Đổi mật khẩu thành công! Vui lòng đăng nhập lại.");
+            log.info("Password reset successful for email: {}", request.email());
+            
+            // Clear force change state
+            org.springframework.web.context.request.RequestContextHolder.getRequestAttributes()
+                .removeAttribute("forceChangeEmail", 
+                                org.springframework.web.context.request.RequestAttributes.SCOPE_SESSION);
+                                
+            redirectAttributes.addFlashAttribute("successMessage", "Đổi mật khẩu thành công! Vui lòng đăng nhập lại.");
             return "redirect:/login";
         } catch (Exception e) {
-            redirectAttributes.addAttribute("error", e.getMessage());
+            log.error("Error resetting password for {}: {}", request.email(), e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/reset-password";
         }
     }

@@ -5,9 +5,6 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import fpt.legendcoffee.common.infrastructure.BaseEntity;
-import fpt.legendcoffee.entity.enumeration.ShippingStatus;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
