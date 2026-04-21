@@ -7,7 +7,7 @@ public class SecurityConstants {
             "/login",
             "/register",
             "/cart",
-            "/checkout",                   // Trang checkout (yêu cầu đăng nhập thì xoá dòng này)
+            "/checkout",                   // Page checkout
             "/checkout/place-order",       // Submit đặt hàng
             "/orders/*/track",             // Trang tracking đơn hàng
             "/api/shipping/**",            // REST API tính phí & địa chỉ (gọi AJAX từ checkout)

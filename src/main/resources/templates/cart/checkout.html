@@ -5,13 +5,13 @@
 <head th:replace="~{fragments/head :: sharedHead('Industrial Excellence')}"></head>
 
 <body
-    class="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container min-h-screen flex flex-col">
+    class="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container min-h-screen flex flex-col font-body">
     <!-- TopNavBar (Fixed Header) -->
     <div th:replace="~{fragments/navbar :: navbar(${navItems})}"></div>
     <!-- Main Canvas -->
-    <main class="flex-grow pt-24 pb-20 px-4 md:px-8 max-w-[1440px] mx-auto w-full">
+    <main class="flex-grow pt-32 pb-20 max-w-7xl mx-auto px-8 sm:px-12 lg:px-20 w-full transition-all duration-500">
         <!-- Multi-step Stepper -->
-        <div class="mb-16 max-w-4xl mx-auto px-4">
+        <div class="mb-20 max-w-4xl mx-auto px-4">
             <div class="relative flex items-center justify-between">
                 <!-- Background Progress Line -->
                 <div class="absolute top-1/2 left-0 w-full h-0.5 bg-outline-variant/30 -translate-y-1/2 z-0"></div>
@@ -42,239 +42,452 @@
                 <!-- Step 3: THANH TOÁN (Pending) -->
                 <div class="relative z-10 flex flex-col items-center group">
                     <div
-                        class="w-10 h-10 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center transition-all duration-300 ring-4 ring-surface">
+                        class="w-10 h-10 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center transition-all duration-300 ring-4 ring-surface">
                         <span class="text-sm font-black">3</span>
                     </div>
                     <div class="absolute -bottom-8 whitespace-nowrap text-center">
                         <span
-                            class="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant font-label opacity-60">Thanh
+                            class="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40 font-label">Thanh
                             toán</span>
                     </div>
                 </div>
             </div>
         </div>
+        <!-- Section Header -->
+        <div class="pb-12 border-b border-outline-variant/10">
+            <h1 class="text-4xl font-black tracking-tight text-primary uppercase font-headline">Thông tin vận chuyển
+            </h1>
+            <div class="h-1 w-12 bg-primary mt-4 mb-4"></div>
+            <p class="text-on-surface-variant text-sm font-medium max-w-xl leading-relaxed">Cung cấp chính xác thông tin
+                để đảm bảo quy trình logistics vận tải công nghiệp diễn ra đúng tiến độ.</p>
+        </div>
+
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
             <!-- Left Column: Form Content -->
-            <div class="lg:col-span-8 space-y-8">
-                <!-- Section Header -->
-                <div class="border-b border-outline-variant/20 pb-4">
-                    <h1 class="text-3xl font-extrabold tracking-tight text-primary uppercase">Thông tin vận chuyển</h1>
-                    <p class="text-on-surface-variant mt-2 font-body">Vui lòng cung cấp chính xác thông tin để đảm bảo
-                        quy
-                        trình logistics diễn ra thuận lợi.</p>
-                </div>
+            <div class="lg:col-span-8 space-y-12">
                 <!-- Checkout Form -->
-                <div class="space-y-10">
+                <form id="checkout-form" th:action="@{/checkout/place-order}" th:object="${checkoutRequest}"
+                    method="post" class="space-y-10">
                     <!-- Contact Info -->
-                    <section class="space-y-6">
-                        <h3 class="text-lg font-bold text-primary flex items-center gap-2">
-                            <span class="material-symbols-outlined text-xl">contact_mail</span>
-                            THÔNG TIN LIÊN HỆ B2B
+                    <section class="p-8 bg-surface-container-low rounded-2xl space-y-8 transition-all hover:shadow-sm">
+                        <h3
+                            class="text-xs font-black text-primary flex items-center gap-3 uppercase tracking-[0.25em] font-label">
+                            <span class="material-symbols-outlined text-lg">contact_mail</span>
+                            THÔNG TIN LIÊN HỆ
                         </h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="flex flex-col gap-2">
-                                <label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Tên
-                                    Doanh
-                                    Nghiệp / Cá Nhân</label>
-                                <input
-                                    class="bg-surface-container-low border-none focus:ring-0 focus:border-b-2 focus:border-primary transition-all p-4 rounded-md"
-                                    placeholder="Industrial Excellence Co., Ltd" type="text" />
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="flex flex-col gap-3">
+                                <label
+                                    class="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/60 font-label">Họ
+                                    và tên người nhận</label>
+                                <input th:field="*{recipientName}"
+                                    class="bg-surface-container-lowest border border-outline-variant/20 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all p-4 rounded-xl text-sm font-medium"
+                                    placeholder="Nguyễn Văn A" type="text" required />
+                                <p th:if="${#fields.hasErrors('recipientName')}" th:errors="*{recipientName}"
+                                    class="text-error text-[10px] uppercase font-bold mt-1"></p>
                             </div>
-                            <div class="flex flex-col gap-2">
-                                <label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Mã Số
-                                    Thuế (Nếu có)</label>
-                                <input
-                                    class="bg-surface-container-low border-none focus:ring-0 focus:border-b-2 focus:border-primary transition-all p-4 rounded-md"
-                                    placeholder="0123456789" type="text" />
+                            <div class="flex flex-col gap-3">
+                                <label
+                                    class="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/60 font-label">Số
+                                    điện thoại</label>
+                                <input th:field="*{recipientPhone}"
+                                    class="bg-surface-container-lowest border border-outline-variant/20 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all p-4 rounded-xl text-sm font-medium"
+                                    placeholder="+84 987 654 321" type="tel" required />
+                                <p th:if="${#fields.hasErrors('recipientPhone')}" th:errors="*{recipientPhone}"
+                                    class="text-error text-[10px] uppercase font-bold mt-1"></p>
                             </div>
                         </div>
                     </section>
                     <!-- Shipping Address -->
-                    <section class="space-y-6">
-                        <h3 class="text-lg font-bold text-primary flex items-center gap-2">
-                            <span class="material-symbols-outlined text-xl">local_shipping</span>
+                    <section class="p-8 bg-surface-container-low rounded-2xl space-y-8 transition-all hover:shadow-sm">
+                        <h3
+                            class="text-xs font-black text-primary flex items-center gap-3 uppercase tracking-[0.25em] font-label">
+                            <span class="material-symbols-outlined text-lg">local_shipping</span>
                             ĐỊA CHỈ NHẬN HÀNG
                         </h3>
-                        <div class="grid grid-cols-1 gap-6">
-                            <div class="flex flex-col gap-2">
-                                <label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Địa
-                                    chỉ
-                                    chi tiết (Kho/Cửa hàng)</label>
-                                <input
-                                    class="bg-surface-container-low border-none focus:ring-0 focus:border-b-2 focus:border-primary transition-all p-4 rounded-md"
-                                    placeholder="Số 123 Đường Công Nghiệp, Khu Công Nghệ Cao" type="text" />
+                        <div class="grid grid-cols-1 gap-8">
+                            <div class="flex flex-col gap-3">
+                                <label
+                                    class="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/60 font-label">Số
+                                    nhà, tên đường</label>
+                                <input th:field="*{recipientAddress}"
+                                    class="bg-surface-container-lowest border border-outline-variant/20 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all p-4 rounded-xl text-sm font-medium"
+                                    placeholder="Số 123 Đường Công Nghiệp, Khu Công Nghệ Cao" type="text" required />
+                                <p th:if="${#fields.hasErrors('recipientAddress')}" th:errors="*{recipientAddress}"
+                                    class="text-error text-[10px] uppercase font-bold mt-1"></p>
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <div class="flex flex-col gap-2">
+                                <div class="flex flex-col gap-3">
                                     <label
-                                        class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Tỉnh
+                                        class="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/60 font-label">Tỉnh
                                         / Thành phố</label>
-                                    <select
-                                        class="bg-surface-container-low border-none focus:ring-0 p-4 rounded-md appearance-none">
-                                        <option>Hồ Chí Minh</option>
-                                        <option>Hà Nội</option>
-                                        <option>Đà Nẵng</option>
+                                    <select id="provinceId" th:field="*{provinceId}"
+                                        class="bg-surface-container-lowest border border-outline-variant/20 focus:ring-2 focus:ring-primary/20 focus:border-primary p-4 rounded-xl appearance-none text-sm font-medium">
+                                        <option value="">Chọn Tỉnh/Thành</option>
+                                        <option th:each="p : ${provinces}" th:value="${p.provinceId}"
+                                            th:text="${p.provinceName}"></option>
                                     </select>
+                                    <input type="hidden" th:field="*{provinceName}" id="provinceName" />
+                                    <p th:if="${#fields.hasErrors('provinceId')}" th:errors="*{provinceId}"
+                                        class="text-error text-[10px] uppercase font-bold mt-1"></p>
                                 </div>
-                                <div class="flex flex-col gap-2">
+                                <div class="flex flex-col gap-3">
                                     <label
-                                        class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Quận
+                                        class="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/60 font-label">Quận
                                         / Huyện</label>
-                                    <select
-                                        class="bg-surface-container-low border-none focus:ring-0 p-4 rounded-md appearance-none">
-                                        <option>Quận 1</option>
-                                        <option>Quận 7</option>
-                                        <option>Thủ Đức</option>
+                                    <select id="districtId" th:field="*{districtId}"
+                                        class="bg-surface-container-lowest border border-outline-variant/20 focus:ring-2 focus:ring-primary/20 focus:border-primary p-4 rounded-xl appearance-none text-sm font-medium">
+                                        <option value="">Chọn Quận/Huyện</option>
                                     </select>
+                                    <input type="hidden" th:field="*{districtName}" id="districtName" />
+                                    <p th:if="${#fields.hasErrors('districtId')}" th:errors="*{districtId}"
+                                        class="text-error text-[10px] uppercase font-bold mt-1"></p>
                                 </div>
-                                <div class="flex flex-col gap-2">
+                                <div class="flex flex-col gap-3">
                                     <label
-                                        class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Phường
+                                        class="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/60 font-label">Phường
                                         / Xã</label>
-                                    <select
-                                        class="bg-surface-container-low border-none focus:ring-0 p-4 rounded-md appearance-none">
-                                        <option>Bến Nghé</option>
-                                        <option>Đa Kao</option>
+                                    <select id="wardCode" th:field="*{wardCode}"
+                                        class="bg-surface-container-lowest border border-outline-variant/20 focus:ring-2 focus:ring-primary/20 focus:border-primary p-4 rounded-xl appearance-none text-sm font-medium">
+                                        <option value="">Chọn Phường/Xã</option>
                                     </select>
+                                    <input type="hidden" th:field="*{wardName}" id="wardName" />
+                                    <p th:if="${#fields.hasErrors('wardCode')}" th:errors="*{wardCode}"
+                                        class="text-error text-[10px] uppercase font-bold mt-1"></p>
                                 </div>
                             </div>
                         </div>
                     </section>
-                    <!-- Shipping Method -->
-                    <section class="space-y-6">
-                        <h3 class="text-lg font-bold text-primary flex items-center gap-2">
-                            <span class="material-symbols-outlined text-xl">conveyor_belt</span>
-                            PHƯƠNG THỨC VẬN CHUYỂN
+                    <!-- Shipping Method & Payment -->
+                    <section class="p-8 bg-surface-container-low rounded-2xl space-y-8 transition-all hover:shadow-sm">
+                        <h3
+                            class="text-xs font-black text-primary flex items-center gap-3 uppercase tracking-[0.25em] font-label">
+                            <span class="material-symbols-outlined text-lg">conveyor_belt</span>
+                            DỊCH VỤ VẬN CHUYỂN
+                        </h3>
+                        <div id="shipping-options-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Options will be loaded via AJAX from GHN -->
+                            <div
+                                class="col-span-full py-12 text-center bg-surface-container-lowest/50 rounded-xl border border-dashed border-outline-variant/30">
+                                <p class="text-on-surface-variant text-xs italic font-medium uppercase tracking-widest">
+                                    Vui lòng chọn địa chỉ để xem các dịch vụ.</p>
+                            </div>
+                        </div>
+                        <input type="hidden" th:field="*{serviceId}" id="selectedServiceId" />
+                        <input type="hidden" th:field="*{serviceName}" id="selectedServiceName" />
+                        <input type="hidden" th:field="*{shippingFee}" id="selectedShippingFee" />
+
+                        <h3
+                            class="text-xs font-black text-primary flex items-center gap-3 uppercase tracking-[0.25em] font-label mt-12">
+                            <span class="material-symbols-outlined text-lg">payments</span>
+                            THANH TOÁN
                         </h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <label
-                                class="relative flex items-center p-6 bg-surface-container-lowest border border-outline-variant/30 rounded-md cursor-pointer hover:bg-surface-container-low transition-colors group">
-                                <input checked="" class="w-5 h-5 text-primary border-outline-variant focus:ring-0"
-                                    name="shipping" type="radio" />
+                                class="relative flex items-center p-6 bg-surface-container-lowest border border-outline-variant/10 rounded-xl cursor-pointer hover:bg-white hover:shadow-md transition-all group">
+                                <input type="radio" th:field="*{paymentTypeId}" value="1"
+                                    class="w-5 h-5 text-primary border-outline-variant focus:ring-0" />
                                 <div class="ml-4">
-                                    <span class="block font-bold text-primary">Vận tải đường bộ tiêu chuẩn</span>
-                                    <span class="block text-xs text-on-surface-variant uppercase mt-1">Dự kiến 2-4 ngày
-                                        làm việc</span>
+                                    <span class="block font-black text-primary uppercase text-xs tracking-tight">Đối tác
+                                        thanh toán</span>
+                                    <span
+                                        class="block text-[9px] text-on-surface-variant font-bold uppercase mt-1 tracking-widest">Hợp
+                                        đồng B2B</span>
                                 </div>
-                                <span class="ml-auto font-bold text-primary">FREE</span>
                             </label>
                             <label
-                                class="relative flex items-center p-6 bg-surface-container-lowest border border-outline-variant/30 rounded-md cursor-pointer hover:bg-surface-container-low transition-colors group">
-                                <input class="w-5 h-5 text-primary border-outline-variant focus:ring-0" name="shipping"
-                                    type="radio" />
+                                class="relative flex items-center p-6 bg-surface-container-lowest border border-outline-variant/10 rounded-xl cursor-pointer hover:bg-white hover:shadow-md transition-all group">
+                                <input type="radio" th:field="*{paymentTypeId}" value="2"
+                                    class="w-5 h-5 text-primary border-outline-variant focus:ring-0" />
                                 <div class="ml-4">
-                                    <span class="block font-bold text-primary">Giao hàng hỏa tốc (Xpress)</span>
-                                    <span class="block text-xs text-on-surface-variant uppercase mt-1">Trong vòng 24
-                                        giờ</span>
+                                    <span class="block font-black text-primary uppercase text-xs tracking-tight">Tiền
+                                        mặt (COD)</span>
+                                    <span
+                                        class="block text-[9px] text-on-surface-variant font-bold uppercase mt-1 tracking-widest">Trả
+                                        sau khi nhận</span>
                                 </div>
-                                <span class="ml-auto font-bold text-primary">150.000 ₫</span>
                             </label>
                         </div>
                     </section>
-                </div>
-                <!-- Navigation Buttons -->
-                <div class="flex items-center justify-between pt-12">
-                    <button
-                        class="flex items-center gap-2 text-on-surface-variant font-bold uppercase text-xs tracking-widest hover:text-primary transition-colors">
-                        <span class="material-symbols-outlined">arrow_back</span>
-                        Quay lại giỏ hàng
-                    </button>
-                    <button
-                        class="bg-primary text-on-primary px-10 py-4 rounded-md font-bold uppercase tracking-widest text-sm hover:bg-primary-container active:scale-95 transition-all shadow-lg shadow-primary/10">
-                        Tiếp tục: Thanh toán
-                    </button>
-                </div>
-            </div>
-            <!-- Right Column: Order Summary -->
-            <aside class="lg:col-span-4 sticky top-28">
-                <div class="bg-surface-container-low p-8 rounded-md space-y-8">
-                    <h2 class="text-xl font-extrabold text-primary border-b border-outline-variant/30 pb-4">TỔNG ĐƠN
-                        HÀNG</h2>
-                    <!-- Item List (Compact) -->
-                    <div class="space-y-4">
-                        <div class="flex gap-4">
-                            <div class="w-16 h-16 bg-surface-container-highest rounded overflow-hidden flex-shrink-0">
-                                <img class="w-full h-full object-cover"
-                                    data-alt="Close-up of premium roasted dark coffee beans with oily sheen on dark industrial background"
-                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDabzU_yzpaXdIiGoVxPEB-TvyX3vW0sKMfV9959c5kTXGImGj1D0V118XG04oFYJIhYrd4bUniT88-qyYkuUVF5gl1NHxX6oGR1V3k8tVMENCpTrNjybjTrO01mA9LmKE1S50EI_-M6YIRC2e7WHjxcacWqMtE9YwUWDcDlz4MRLg4z03K7DUvTOZVhMsJfSsb4A25e5GovIhvCC80-eerkaIyE3C3hCtg1nn3XuzGcqrFO7Vvcp-W8LqnjlqIQ4RE7forWBn93HgF" />
+
+                    <!-- Discount Code Section -->
+                    <section class="p-8 bg-surface-container-low rounded-2xl space-y-6 transition-all hover:shadow-sm">
+                        <h3
+                            class="text-xs font-black text-primary flex items-center gap-3 uppercase tracking-[0.25em] font-label">
+                            <span class="material-symbols-outlined text-lg">sell</span>
+                            MÃ ƯU ĐÃI & ĐỐI TÁC
+                        </h3>
+                        <div class="flex flex-col md:flex-row gap-4">
+                            <div
+                                class="flex-grow p-1 bg-surface-container-lowest rounded-xl border border-outline-variant/10 focus-within:border-primary/30 transition-all shadow-inner">
+                                <input
+                                    class="w-full bg-transparent border-none text-xs font-bold p-4 focus:ring-0 placeholder:text-on-surface-variant/30 uppercase tracking-widest"
+                                    placeholder="IE-PARTNER-2024" type="text" />
                             </div>
-                            <div class="flex-grow">
-                                <h4 class="text-sm font-bold text-primary uppercase leading-tight">Arabica Specialty -
-                                    Bulk
-                                    60kg</h4>
-                                <div class="flex justify-between items-center mt-1">
-                                    <span class="text-xs text-on-surface-variant">Số lượng: 05</span>
-                                    <span class="text-sm font-bold text-primary">24.500.000 ₫</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex gap-4">
-                            <div class="w-16 h-16 bg-surface-container-highest rounded overflow-hidden flex-shrink-0">
-                                <img class="w-full h-full object-cover"
-                                    data-alt="Professional barista pouring water into a large industrial drip coffee machine in a clean modern facility"
-                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjVPAZEoQVMGV-ifKWrm0ZdtJtxz9GGkOOqho28JGNT5qmsnb6m_vLNZy-yu4qJCZPe8jLG0gwaHy3Cu8rDsaQOwLEYd9yW0YM214Z35g7jnWu3shweXkHySEStJFosTr2voyTXZnDWThgjkpuGI8Uqr5YiPNSCGyiy8Tv59I_mk7R4F4NY2-AWBCfgFEZEPpf-mkt4tsARGi0OXfSOg6SZxigBSb_N_tSA8Vdql1lkjxsLCBxCtvE9aoGGuMWT7AmfKwmm4Vgikxz" />
-                            </div>
-                            <div class="flex-grow">
-                                <h4 class="text-sm font-bold text-primary uppercase leading-tight">Robusta Honey Process
-                                    -
-                                    10kg</h4>
-                                <div class="flex justify-between items-center mt-1">
-                                    <span class="text-xs text-on-surface-variant">Số lượng: 02</span>
-                                    <span class="text-sm font-bold text-primary">3.200.000 ₫</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Calculation -->
-                    <div class="space-y-4 pt-6 border-t border-outline-variant/30">
-                        <div class="flex justify-between text-sm">
-                            <span class="text-on-surface-variant uppercase tracking-wider">Tạm tính</span>
-                            <span class="font-medium">27.700.000 ₫</span>
-                        </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-on-surface-variant uppercase tracking-wider">Phí vận chuyển</span>
-                            <span class="font-medium text-primary">Miễn phí</span>
-                        </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-on-surface-variant uppercase tracking-wider">Thuế VAT (10%)</span>
-                            <span class="font-medium">2.770.000 ₫</span>
-                        </div>
-                        <div class="flex justify-between items-end pt-4 border-t-2 border-primary/10">
-                            <span class="text-primary font-bold uppercase tracking-widest text-sm">Tổng cộng</span>
-                            <span class="text-2xl font-extrabold text-primary">30.470.000 ₫</span>
-                        </div>
-                    </div>
-                    <!-- Discount Code -->
-                    <div class="space-y-3">
-                        <label class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Mã giảm
-                            giá
-                            đối tác</label>
-                        <div class="flex gap-2">
-                            <input
-                                class="flex-grow bg-surface-container-lowest border-outline-variant/30 text-xs p-3 rounded"
-                                placeholder="IE-PARTNER-2024" type="text" />
-                            <button
-                                class="bg-on-surface text-on-primary px-4 py-2 text-xs font-bold uppercase rounded">Áp
-                                dụng
+                            <button type="button"
+                                class="bg-primary text-on-primary px-10 py-4 text-[10px] font-black uppercase tracking-[0.25em] rounded-xl hover:bg-primary-container active:scale-95 transition-all shadow-xl shadow-primary/10 font-label">
+                                Áp dụng mã
                             </button>
                         </div>
+                        <p
+                            class="text-[9px] text-on-surface-variant/60 font-bold uppercase tracking-widest mt-2 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-xs">info</span>
+                            Nhập mã ưu đãi của đối tác hoặc thẻ thành viên để nhận chiết khấu.
+                        </p>
+                    </section>
+                    <!-- Navigation Buttons -->
+                    <div class="flex items-center pt-12 border-t border-outline-variant/10">
+                        <button type="button"
+                            class="flex items-center gap-3 text-on-surface-variant font-black uppercase text-[10px] tracking-[0.25em] hover:text-primary transition-all group font-label"
+                            onclick="window.location.href='/cart'">
+                            <span
+                                class="material-symbols-outlined text-lg group-hover:-translate-x-1 transition-transform">arrow_back</span>
+                            Quay lại giỏ hàng
+                        </button>
                     </div>
-                    <!-- Trust Badge -->
-                    <div class="bg-[#351f1b]/5 p-4 rounded border border-primary/5 flex items-start gap-3">
-                        <span class="material-symbols-outlined text-primary">verified_user</span>
-                        <div>
-                            <p class="text-[10px] font-bold text-primary uppercase">Thanh toán bảo mật</p>
-                            <p class="text-[10px] text-on-surface-variant leading-relaxed">Hệ thống bảo mật tiêu chuẩn
-                                ngành
-                                cho giao dịch B2B khối lượng lớn.</p>
+                    <!-- Hidden Inputs -->
+                    <input type="hidden" th:field="*{cartJson}" id="cartJson" />
+                </form>
+            </div> <!-- End lg:col-span-8 -->
+
+            <!-- Right Column: Order Summary -->
+            <aside class="lg:col-span-4 sticky top-32">
+                <div
+                    class="bg-surface-container-low p-8 rounded-2xl space-y-10 border border-outline-variant/10 shadow-sm">
+                    <h2 class="text-xs font-black text-primary uppercase tracking-[0.3em] font-headline">Tóm tắt đơn
+                        hàng</h2>
+                    <!-- Item List (Compact) -->
+                    <div id="checkout-items-summary" class="space-y-6">
+                        <!-- Dynamic items from cart will be injected here -->
+                    </div>
+                    <!-- Calculation -->
+                    <div class="space-y-4 pt-10 border-t border-outline-variant/20">
+                        <div class="flex justify-between text-[11px]">
+                            <span class="text-on-surface-variant uppercase tracking-[0.15em] font-medium">Giá tạm
+                                tính</span>
+                            <span id="summary-subtotal" class="font-black text-primary">0 ₫</span>
+                        </div>
+                        <div class="flex justify-between text-[11px]">
+                            <span class="text-on-surface-variant uppercase tracking-[0.15em] font-medium">Vận chuyển
+                                quốc nội</span>
+                            <span id="summary-shipping" class="font-black text-primary uppercase tracking-tighter">Tự
+                                động tính</span>
+                        </div>
+                        <div class="flex justify-between text-[11px]">
+                            <span class="text-on-surface-variant uppercase tracking-[0.15em] font-medium">Thuế VAT
+                                (8%)</span>
+                            <span id="summary-vat" class="font-black text-primary">0 ₫</span>
+                        </div>
+                        <div class="flex justify-between items-end pt-8 border-t-2 border-primary/30">
+                            <div class="flex flex-col gap-1">
+                                <span class="text-primary font-black uppercase tracking-[0.3em] text-[10px] font-headline">Tổng cộng</span>
+                                <span class="text-[9px] text-on-surface-variant/50 uppercase font-black tracking-[0.15em] font-label">
+                                    (Đã bao gồm VAT)
+                                </span>
+                            </div>
+                            <div class="text-right">
+                                <span id="summary-total" class="text-4xl font-black text-primary font-headline tracking-tighter leading-none">0 ₫</span>
+                            </div>
                         </div>
                     </div>
+                    <!-- Submit Button -->
+                    <button type="submit" form="checkout-form"
+                        class="w-full bg-primary text-on-primary py-5 rounded-xl font-black uppercase tracking-[0.2em] text-xs hover:bg-primary-container active:scale-95 transition-all shadow-xl shadow-primary/10 font-label">
+                        Tiếp tục Thanh toán
+                    </button>
+
                 </div>
             </aside>
-        </div>
-    </main>
-    <!-- Footer -->
-    <div th:replace="~{fragments/footer :: footer}"></div>
+        </div> <!-- End Grid -->
+    </main> <!-- End Main -->
+
+    <script th:inline="javascript">
+        function formatCurrency(num) {
+            return new Intl.NumberFormat('vi-VN').format(num) + ' ₫';
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const cart = window.CartSystem ? window.CartSystem.getCart() : [];
+            
+            // Guard: Redirect if cart is empty
+            if (cart.length === 0) {
+                alert('Giỏ hàng của bạn đang trống. Vui lòng thêm sản phẩm trước khi thanh toán.');
+                window.location.href = '/cart';
+                return;
+            }
+            
+            renderSummary(cart);
+
+            // Initial form data
+            const cartJsonInput = document.getElementById('cartJson');
+            if (cartJsonInput) {
+                cartJsonInput.value = JSON.stringify(cart);
+            }
+
+            // Elements
+            const provinceSelect = document.getElementById('provinceId');
+            const districtSelect = document.getElementById('districtId');
+            const wardSelect = document.getElementById('wardCode');
+            const shippingContainer = document.getElementById('shipping-options-container');
+
+            // Event Listeners for Location
+            provinceSelect.addEventListener('change', async function () {
+                const provinceId = this.value;
+                const provinceName = this.options[this.selectedIndex].text;
+                document.getElementById('provinceName').value = provinceName;
+
+                // Reset sub-levels
+                districtSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
+                wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+                shippingContainer.innerHTML = '<div class="col-span-full py-8 text-center bg-surface-container-low rounded-md border border-dashed border-outline-variant/30"><p class="text-on-surface-variant text-sm italic">Đang tải danh sách quận huyện...</p></div>';
+
+                if (!provinceId) return;
+
+                try {
+                    const response = await fetch(`/api/shipping/districts?provinceId=${provinceId}`);
+                    const districts = await response.json();
+                    districts.forEach(d => {
+                        const opt = document.createElement('option');
+                        opt.value = d.DistrictID;
+                        opt.textContent = d.DistrictName;
+                        districtSelect.appendChild(opt);
+                    });
+                    shippingContainer.innerHTML = '<div class="col-span-full py-8 text-center bg-surface-container-low rounded-md border border-dashed border-outline-variant/30"><p class="text-on-surface-variant text-sm italic">Vui lòng chọn quận/huyện và phường/xã.</p></div>';
+                } catch (e) {
+                    console.error('Error loading districts:', e);
+                }
+            });
+
+            districtSelect.addEventListener('change', async function () {
+                const districtId = this.value;
+                const districtName = this.options[this.selectedIndex].text;
+                document.getElementById('districtName').value = districtName;
+
+                wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+                if (!districtId) return;
+
+                try {
+                    const response = await fetch(`/api/shipping/wards?districtId=${districtId}`);
+                    const wards = await response.json();
+                    wards.forEach(w => {
+                        const opt = document.createElement('option');
+                        opt.value = w.WardCode;
+                        opt.textContent = w.WardName;
+                        wardSelect.appendChild(opt);
+                    });
+                } catch (e) {
+                    console.error('Error loading wards:', e);
+                }
+            });
+
+            wardSelect.addEventListener('change', function () {
+                const wardName = this.options[this.selectedIndex].text;
+                document.getElementById('wardName').value = wardName;
+                loadShippingOptions();
+            });
+
+            async function loadShippingOptions() {
+                const districtId = districtSelect.value;
+                const wardCode = wardSelect.value;
+
+                if (!districtId || !wardCode) return;
+
+                shippingContainer.innerHTML = '<div class="col-span-full py-8 text-center"><div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-primary border-t-transparent"></div></div>';
+
+                try {
+                    const response = await fetch('/api/shipping/options', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            districtId: parseInt(districtId),
+                            wardCode: wardCode,
+                            weight: 500 // TODO: Calculate actual weight
+                        })
+                    });
+                    const options = await response.json();
+                    renderShippingOptions(options);
+                } catch (e) {
+                    console.error('Error loading shipping options:', e);
+                    shippingContainer.innerHTML = '<p class="text-error text-center p-4">Không thể kết nối với dịch vụ vận chuyển.</p>';
+                }
+            }
+
+            function renderShippingOptions(options) {
+                if (!options || options.length === 0) {
+                    shippingContainer.innerHTML = '<p class="text-error text-center col-span-full">Khu vực này hiện chưa hỗ trợ vận chuyển trực tuyến.</p>';
+                    return;
+                }
+
+                shippingContainer.innerHTML = options.map(opt => `
+                    <label class="relative flex items-center p-6 bg-surface-container-lowest border border-outline-variant/30 rounded-md cursor-pointer hover:bg-surface-container-low transition-colors group">
+                        <input type="radio" name="shipping-option" value="${opt.serviceId}" 
+                               data-name="${opt.serviceName}" data-fee="${opt.shippingFee}"
+                               class="w-5 h-5 text-primary border-outline-variant focus:ring-0" />
+                        <div class="ml-4">
+                            <span class="block font-bold text-primary uppercase">${opt.serviceName}</span>
+                            <span class="block text-[10px] text-on-surface-variant uppercase mt-1">Dự kiến: ${new Date(opt.leadtime).toLocaleDateString('vi-VN')}</span>
+                        </div>
+                        <span class="ml-auto font-bold text-primary">${formatCurrency(opt.shippingFee)}</span>
+                    </label>
+                `).join('');
+
+                // Re-bind change event for new radio buttons
+                document.querySelectorAll('input[name="shipping-option"]').forEach(radio => {
+                    radio.addEventListener('change', function () {
+                        document.getElementById('selectedServiceId').value = this.value;
+                        document.getElementById('selectedServiceName').value = this.dataset.name;
+                        document.getElementById('selectedShippingFee').value = this.dataset.fee;
+                        updateFinalSummary(parseInt(this.dataset.fee));
+                    });
+                });
+            }
+
+            function renderSummary(cart) {
+                const container = document.getElementById('checkout-items-summary');
+                if (!container) return;
+
+                if (cart.length === 0) {
+                    container.innerHTML = '<p class="text-center text-on-surface-variant italic py-4">Giỏ hàng trống</p>';
+                    return;
+                }
+
+                container.innerHTML = cart.map(item => `
+                    <div class="flex gap-4 items-center">
+                        <div class="relative w-12 h-12 bg-surface-container-highest rounded-lg flex-shrink-0 transition-transform hover:scale-105 duration-300">
+                            <img src="${item.image}" class="w-full h-full object-cover rounded-lg shadow-sm" />
+                            <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-primary text-on-primary text-[9px] font-black rounded-full flex items-center justify-center shadow-lg ring-2 ring-surface z-10 font-label">
+                                ${item.quantity}
+                            </span>
+                        </div>
+                        <div class="flex-grow min-w-0">
+                            <h4 class="text-[13px] font-black text-primary uppercase leading-tight tracking-tight truncate font-headline">${item.name}</h4>
+                            <div class="flex justify-between items-center mt-1">
+                                <p class="text-[10px] text-on-surface-variant font-black uppercase tracking-[0.15em] font-label leading-none">
+                                    ${item.variant || 'Standard'} — <span class="text-primary font-black">${formatCurrency(item.price * item.quantity)}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                const totals = window.CartSystem.calculateTotals();
+                updateFinalSummary(0);
+            }
+
+            function updateFinalSummary(shippingFee) {
+                const baseTotals = window.CartSystem.calculateTotals();
+                const subtotal = baseTotals.subtotal;
+                const vat = subtotal * 0.08;
+                const total = subtotal + vat + shippingFee;
+
+                document.getElementById('summary-subtotal').textContent = formatCurrency(subtotal);
+                document.getElementById('summary-shipping').textContent = shippingFee > 0 ? formatCurrency(shippingFee) : 'Chưa tính';
+                document.getElementById('summary-vat').textContent = formatCurrency(vat);
+                document.getElementById('summary-total').textContent = formatCurrency(total);
+            }
+        });
+    </script>
 </body>
+
 
 </html>

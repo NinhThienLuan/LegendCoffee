@@ -3,16 +3,21 @@ package fpt.legendcoffee.controller;
 import fpt.legendcoffee.dto.app.CheckoutRequestDTO;
 import fpt.legendcoffee.entity.Order;
 import fpt.legendcoffee.entity.ShippingInfo;
+import fpt.legendcoffee.repository.UserRepository;
 import fpt.legendcoffee.service.OrderService;
 import fpt.legendcoffee.service.ShippingService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.Optional;
 
 @Slf4j
 @Controller
@@ -21,6 +26,7 @@ public class OrderController {
 
     private final ShippingService shippingService;
     private final OrderService orderService;
+    private final UserRepository userRepository;
 
     // =========================================================================
     // Trang danh sách đơn hàng & chi tiết
@@ -55,9 +61,40 @@ public class OrderController {
      * Quận/huyện và phường/xã được tải động qua AJAX (/api/shipping/districts & /api/shipping/wards).
      */
     @GetMapping("/checkout")
-    public String checkoutPage(Model model) {
-        model.addAttribute("provinces", shippingService.getProvinces());
-        model.addAttribute("checkoutRequest", new CheckoutRequestDTO());
+    public String checkoutPage(@RequestHeader(value = "Referer", required = false) String referer,
+                               Model model) {
+        
+        // Kiểm tra luồng: Phải đi từ /cart (trừ khi đang ở chính trang /checkout - refresh)
+        if (referer == null || (!referer.contains("/cart") && !referer.contains("/checkout"))) {
+            log.warn("[Access Control] Ngăn chặn truy cập trực tiếp trang checkout. Referer: {}", referer);
+            return "redirect:/cart";
+        }
+
+        CheckoutRequestDTO checkoutRequest = new CheckoutRequestDTO();
+
+        try {
+            // Lấy thông tin user đang đăng nhập (nếu có) để pre-fill form
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
+                String email = auth.getName(); // Spring Security mặc định dùng email/username làm Name
+                Optional<fpt.legendcoffee.entity.User> userOpt = userRepository.findByEmail(email);
+
+                userOpt.ifPresent(u -> {
+                    checkoutRequest.setRecipientName(u.getUsername()); // fullname
+                    checkoutRequest.setRecipientPhone(u.getPhone());
+                    checkoutRequest.setRecipientAddress(u.getAddress());
+                    log.info("[Checkout] Pre-filled user data for: {}", email);
+                });
+            }
+
+            model.addAttribute("provinces", shippingService.getProvinces());
+        } catch (Exception e) {
+            log.warn("[Checkout] Không thể tải dữ liệu khởi tạo: {}", e.getMessage());
+            model.addAttribute("provinces", java.util.Collections.emptyList());
+            model.addAttribute("warningMessage", "Dịch vụ vận chuyển đang gặp sự cố. Bạn vẫn có thể nhập địa chỉ thủ công.");
+        }
+
+        model.addAttribute("checkoutRequest", checkoutRequest);
         return "cart/checkout";
     }
 
@@ -80,6 +117,11 @@ public class OrderController {
         }
 
         try {
+
+            // Debug: Log cart data
+            log.info("[Checkout] Cart JSON: {}", checkout.getCartJson());
+
+            // TODO: Parse cartJson and use for order creation
             // Bước 1 — Lưu Order vào DB, gán orderId vào checkout
             Order order = orderService.createOrder(checkout);
             checkout.setOrderId(order.getId());

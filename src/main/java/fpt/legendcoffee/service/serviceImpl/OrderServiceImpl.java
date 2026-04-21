@@ -25,23 +25,46 @@ public class OrderServiceImpl implements OrderService {
     public Order createOrder(CheckoutRequestDTO checkout) {
         log.info("[OrderService] Creating new order for recipient: {}", checkout.getRecipientName());
 
-        // TODO: Tích hợp logic lấy dữ liệu giỏ hàng thực tế ở đây (như tổng tiền món hàng, user đang login).
-        // Tạm thời tạo một Order cơ bản với các giá trị mặc định để hoàn thiện flow
-        
+        // 1. Khởi tạo thực thể Order
         Order order = Order.builder()
                 .orderDate(LocalDateTime.now())
-                .subTotal(BigDecimal.ZERO)          // Thay bằng subTotal từ giỏ hàng
-                .discount(BigDecimal.ZERO)          // Thay bằng mã giảm giá nếu có
-                // Tổng đơn hàng (ví dụ tạm thời = Giá trị đơn hàng + Phí ship)
-                // Trường hợp người nhận trả phí (COD) thì có thể tuỳ chỉnh tổng tiền.
-                .totalAmount(BigDecimal.valueOf(checkout.getShippingFee() != null ? checkout.getShippingFee() : 0))  
-                .status(OrderStatus.PENDING)        // Trạng thái đơn khởi tạo
+                .subTotal(BigDecimal.ZERO)          // TODO: Thay bằng subTotal từ giỏ hàng thực tế
+                .discount(BigDecimal.ZERO)          // TODO: Thay bằng mã giảm giá nếu có
+                // Tổng đơn hàng (Tạm thời là phí ship, sẽ cộng thêm subTotal sau khi tích hợp giỏ hàng)
+                .totalAmount(BigDecimal.valueOf(checkout.getShippingFee() != null ? checkout.getShippingFee() : 0))
+                .status(OrderStatus.PENDING)
                 .build();
 
-        // Lưu xuống DB - Hibernate sẽ tạo ra ID cho order
+        // 2. Khởi tạo thực thể ShippingInfo dựa trên thông tin địa chỉ từ DTO
+        ShippingInfo shippingInfo = ShippingInfo.builder()
+                .order(order)
+                .recipientName(checkout.getRecipientName())
+                .recipientPhone(checkout.getRecipientPhone())
+                .recipientAddress(checkout.getRecipientAddress())
+                .provinceId(checkout.getProvinceId())
+                .provinceName(checkout.getProvinceName())
+                .districtId(checkout.getDistrictId())
+                .districtName(checkout.getDistrictName())
+                .wardCode(checkout.getWardCode())
+                .wardName(checkout.getWardName())
+                .serviceId(checkout.getServiceId())
+                .serviceName(checkout.getServiceName())
+                .shippingFee(checkout.getShippingFee())
+                .paymentTypeId(checkout.getPaymentTypeId())
+                .status("ready_to_pick") // Trạng thái khởi tạo phía vận chuyển
+                .note(checkout.getNote())
+                .build();
+
+        // Gán ngược lại cho order (Quan hệ One-to-One bidirectional)
+        order.setShippingInfo(shippingInfo);
+
+        // 3. Lưu xuống DB - Hibernate sẽ cascade lưu luôn shippingInfo
         Order savedOrder = orderRepository.save(order);
-        
+
+        log.info("[OrderService] Đã tạo đơn hàng thành công tại: {}, {}, {}",
+                checkout.getWardName(), checkout.getDistrictName(), checkout.getProvinceName());
         log.info("[OrderService] Created order successfully with ID: {}", savedOrder.getId());
+
         return savedOrder;
     }
 }
