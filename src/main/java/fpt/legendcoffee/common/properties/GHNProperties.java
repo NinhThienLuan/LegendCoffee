@@ -12,6 +12,12 @@ public class GHNProperties {
     private String devUrl;
     private String token;
     private Integer shopId;
+    private String fromName;
+    private String fromPhone;
+    private String fromAddress;
+    private String fromWardName;
+    private String fromDistrictName;
+    private String fromProvinceName;
     private Integer fromDistrictId;
     private String fromWardCode;
     private int connectTimeout = 5000;

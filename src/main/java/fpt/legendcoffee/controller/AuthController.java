@@ -13,7 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContext;
+import fpt.legendcoffee.common.security.CustomUserDetails;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.security.web.context.SecurityContextRepository;
@@ -33,9 +35,10 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final SecurityContextRepository securityContextRepository;
-    private final SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy();
+    private final SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder
+            .getContextHolderStrategy();
     private final AuthenService authenService;
-    
+
     @GetMapping("/home")
     public String home() {
         return "index";
@@ -43,6 +46,9 @@ public class AuthController {
 
     @GetMapping("/login")
     public String showLoginForm(Model model) {
+        if (isAuthenticated()) {
+            return "redirect:/home";
+        }
         if (!model.containsAttribute("loginDto")) {
             model.addAttribute("loginDto", new LoginRequestDTO("", ""));
         }
@@ -54,10 +60,10 @@ public class AuthController {
 
     @PostMapping("/login")
     public String login(@Valid @ModelAttribute("loginDto") LoginRequestDTO request,
-                        BindingResult bindingResult,
-                        HttpServletRequest httpRequest,
-                        HttpServletResponse httpResponse,
-                        Model model) {
+            BindingResult bindingResult,
+            HttpServletRequest httpRequest,
+            HttpServletResponse httpResponse,
+            Model model) {
         if (bindingResult.hasErrors()) {
             String message = bindingResult.getFieldError() != null
                     ? bindingResult.getFieldError().getDefaultMessage()
@@ -67,10 +73,9 @@ public class AuthController {
         }
 
         try {
-            Authentication authenticationRequest =
-                    UsernamePasswordAuthenticationToken.unauthenticated(request.email(), request.password());
-            Authentication authenticationResponse =
-                    this.authenticationManager.authenticate(authenticationRequest);
+            Authentication authenticationRequest = UsernamePasswordAuthenticationToken.unauthenticated(request.email(),
+                    request.password());
+            Authentication authenticationResponse = this.authenticationManager.authenticate(authenticationRequest);
 
             SecurityContext context = this.securityContextHolderStrategy.createEmptyContext();
             context.setAuthentication(authenticationResponse);
@@ -93,6 +98,9 @@ public class AuthController {
 
     @GetMapping("/register")
     public String showRegisterForm(Model model) {
+        if (isAuthenticated()) {
+            return "redirect:/home";
+        }
         if (!model.containsAttribute("registerDto")) {
             model.addAttribute("registerDto", new RegisterRequestDTO("", "", "", "", ""));
         }
@@ -101,9 +109,9 @@ public class AuthController {
 
     @PostMapping("/register")
     public String register(@Valid @ModelAttribute("registerDto") RegisterRequestDTO request,
-                           BindingResult bindingResult,
-                           Model model,
-                           RedirectAttributes redirectAttributes) {
+            BindingResult bindingResult,
+            Model model,
+            RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             String message = bindingResult.getFieldError() != null
                     ? bindingResult.getFieldError().getDefaultMessage()
@@ -197,9 +205,21 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/profile/{id}")
-    public String showProfileForm(RedirectAttributes redirectAttributes, @PathVariable("id") long id) {
-        redirectAttributes.addAttribute("profileDto", authenService.getProfile(id));
+    @GetMapping("/profile")
+    public String showProfileForm(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            return "redirect:/login";
+        }
+
+        long userId = userDetails.getUser().getId();
+        model.addAttribute("profileDto", authenService.getProfile(userId));
         return "authen/profile";
+    }
+    private boolean isAuthenticated() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getPrincipal().equals("anonymousUser")) {
+            return false;
+        }
+        return authentication.isAuthenticated();
     }
 }
