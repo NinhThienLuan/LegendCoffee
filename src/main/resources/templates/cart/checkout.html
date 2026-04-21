@@ -246,7 +246,7 @@
                         </button>
                     </div>
                     <!-- Hidden Inputs -->
-                    <input type="hidden" th:field="*{cartJson}" id="cartJson" />
+                    <div id="checkout-items-hidden-fields"></div>
                 </form>
             </div> <!-- End lg:col-span-8 -->
 
@@ -317,18 +317,21 @@
             }
             
             renderSummary(cart);
-
-            // Initial form data
-            const cartJsonInput = document.getElementById('cartJson');
-            if (cartJsonInput) {
-                cartJsonInput.value = JSON.stringify(cart);
-            }
+            bindCheckoutItems(cart);
 
             // Elements
             const provinceSelect = document.getElementById('provinceId');
             const districtSelect = document.getElementById('districtId');
             const wardSelect = document.getElementById('wardCode');
             const shippingContainer = document.getElementById('shipping-options-container');
+            const checkoutForm = document.getElementById('checkout-form');
+
+            if (checkoutForm) {
+                checkoutForm.addEventListener('submit', function () {
+                    const latestCart = window.CartSystem ? window.CartSystem.getCart() : [];
+                    bindCheckoutItems(latestCart);
+                });
+            }
 
             // Event Listeners for Location
             provinceSelect.addEventListener('change', async function () {
@@ -404,17 +407,26 @@
                             weight: 500 // TODO: Calculate actual weight
                         })
                     });
-                    const options = await response.json();
-                    renderShippingOptions(options);
+                    if (!response.ok) {
+                        throw new Error(`Shipping API responded with ${response.status}`);
+                    }
+
+                    const payload = await response.json();
+                    const options = Array.isArray(payload) ? payload : [];
+                    const shippingError = response.headers.get('X-Shipping-Error');
+                    renderShippingOptions(options, shippingError);
                 } catch (e) {
                     console.error('Error loading shipping options:', e);
-                    shippingContainer.innerHTML = '<p class="text-error text-center p-4">Không thể kết nối với dịch vụ vận chuyển.</p>';
+                    shippingContainer.innerHTML = '<p class="text-error text-center p-4">Không thể tải dịch vụ vận chuyển lúc này. Vui lòng thử lại.</p>';
                 }
             }
 
-            function renderShippingOptions(options) {
-                if (!options || options.length === 0) {
-                    shippingContainer.innerHTML = '<p class="text-error text-center col-span-full">Khu vực này hiện chưa hỗ trợ vận chuyển trực tuyến.</p>';
+            function renderShippingOptions(options, errorMessage) {
+                if (!Array.isArray(options) || options.length === 0) {
+                    const text = errorMessage && errorMessage.trim().length > 0
+                        ? errorMessage
+                        : 'Khu vực này hiện chưa hỗ trợ vận chuyển trực tuyến.';
+                    shippingContainer.innerHTML = `<p class="text-error text-center col-span-full">${text}</p>`;
                     return;
                 }
 
@@ -484,6 +496,39 @@
                 document.getElementById('summary-shipping').textContent = shippingFee > 0 ? formatCurrency(shippingFee) : 'Chưa tính';
                 document.getElementById('summary-vat').textContent = formatCurrency(vat);
                 document.getElementById('summary-total').textContent = formatCurrency(total);
+            }
+
+            function bindCheckoutItems(cart) {
+                const hiddenContainer = document.getElementById('checkout-items-hidden-fields');
+                if (!hiddenContainer) return;
+
+                hiddenContainer.innerHTML = '';
+
+                cart.forEach((item, index) => {
+                    const quantity = Number(item.quantity) || 0;
+                    if (quantity <= 0) return;
+
+                    const variantId = item.variantId || item.id;
+                    const comboId = item.comboId;
+
+                    if (variantId) {
+                        hiddenContainer.appendChild(createHiddenField(`items[${index}].variantId`, variantId));
+                    }
+
+                    if (comboId) {
+                        hiddenContainer.appendChild(createHiddenField(`items[${index}].comboId`, comboId));
+                    }
+
+                    hiddenContainer.appendChild(createHiddenField(`items[${index}].quantity`, quantity));
+                });
+            }
+
+            function createHiddenField(name, value) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = name;
+                input.value = String(value);
+                return input;
             }
         });
     </script>

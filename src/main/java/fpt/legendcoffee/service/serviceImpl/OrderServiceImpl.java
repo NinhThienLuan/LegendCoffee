@@ -6,14 +6,18 @@ import fpt.legendcoffee.entity.Combo;
 import fpt.legendcoffee.entity.Order;
 import fpt.legendcoffee.entity.OrderItem;
 import fpt.legendcoffee.entity.ProductVariant;
+import fpt.legendcoffee.entity.User;
 import fpt.legendcoffee.entity.enumeration.OrderStatus;
 import fpt.legendcoffee.repository.ComboRepository;
 import fpt.legendcoffee.repository.OrderItemRepository;
 import fpt.legendcoffee.repository.OrderRepository;
 import fpt.legendcoffee.repository.ProductVariantRepository;
+import fpt.legendcoffee.repository.UserRepository;
 import fpt.legendcoffee.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +25,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -31,6 +36,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemRepository orderItemRepository;
     private final ProductVariantRepository productVariantRepository;
     private final ComboRepository comboRepository;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional
@@ -43,8 +49,10 @@ public class OrderServiceImpl implements OrderService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal shippingFee = BigDecimal.valueOf(checkout.getShippingFee() != null ? checkout.getShippingFee() : 0);
+        Optional<User> currentUser = getCurrentUser();
 
         Order order = Order.builder()
+            .user(currentUser.orElse(null))
                 .orderDate(LocalDateTime.now())
                 .subTotal(subTotal)
                 .discount(BigDecimal.ZERO)
@@ -129,5 +137,13 @@ public class OrderServiceImpl implements OrderService {
         }
 
         return items;
+    }
+
+    private Optional<User> getCurrentUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+            return Optional.empty();
+        }
+        return userRepository.findByEmail(auth.getName());
     }
 }

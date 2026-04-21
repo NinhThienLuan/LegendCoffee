@@ -8,6 +8,25 @@ import java.util.List;
 @Data
 @Builder
 public class CreateOrderRequestDTO {
+    // Thông tin người gửi
+    @JsonProperty("from_name")
+    private String fromName;
+
+    @JsonProperty("from_phone")
+    private String fromPhone;
+
+    @JsonProperty("from_address")
+    private String fromAddress;
+
+    @JsonProperty("from_ward_name")
+    private String fromWardName;
+
+    @JsonProperty("from_district_name")
+    private String fromDistrictName;
+
+    @JsonProperty("from_province_name")
+    private String fromProvinceName;
+
     // Thông tin người nhận
     @JsonProperty("to_name")
     private String toName;

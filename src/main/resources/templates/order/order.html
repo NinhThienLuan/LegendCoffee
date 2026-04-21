@@ -79,137 +79,28 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-outline-variant/5">
-                                <!-- Row 1 -->
-                                <tr class="hover:bg-surface-container-low transition-colors group">
-                                    <td class="px-6 py-5 font-bold text-primary">#RL-90241</td>
-                                    <td class="px-6 py-5 text-sm text-on-surface-variant">14/05/2024</td>
-                                    <td class="px-6 py-5">
-                                        <div class="flex items-center gap-3">
-                                            <div
-                                                class="w-10 h-10 rounded bg-surface-container-high overflow-hidden flex-shrink-0">
-                                                <img class="w-full h-full object-cover"
-                                                    data-alt="close-up of raw high quality green arabica coffee beans ready for industrial roasting process in a warehouse"
-                                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgbl51T99b2sxsCER-PtKpwWUibSYHzcxjPaHif1LtbC1b9JVGfM-kqb2sfP37b3IVhzpum6cBtpUZ_OH6wo_uFSWA5NFLyvnvwlevY8lzCeI28zi-9aDG07AB0hK_wPzGGQmunnAsFNpPCi_KWsNfj0ZPdDnAC9BJM7vtdw2mZkpOgdGS7iNQqf1o4apIODBCNDB0uL0-7U6ix-mkAs4HWV-YeE-PvsWH7JdMWeMyzjiXF-V04BQ3cuNDJiIZaAvd6sWkfUWVKAQI" />
-                                            </div>
-                                            <div>
-                                                <p class="text-sm font-bold text-on-surface">Arabica Cầu Đất G1</p>
-                                                <p class="text-xs text-on-surface-variant">500kg • Rang đậm</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-5 text-right font-bold text-primary">125.000.000 ₫</td>
-                                    <td class="px-6 py-5">
-                                        <div class="flex justify-center">
-                                            <span
-                                                class="bg-[#fed3c7] text-[#795950] px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-widest">Đang
-                                                rang</span>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-5 text-right">
-                                        <button class="text-on-surface-variant hover:text-primary transition-colors">
-                                            <span class="material-symbols-outlined"
-                                                data-icon="more_vert">more_vert</span>
-                                        </button>
+                                <tr th:if="${orders == null or #lists.isEmpty(orders)}">
+                                    <td colspan="6" class="px-6 py-10 text-center text-sm text-on-surface-variant">
+                                        Bạn chưa có đơn hàng nào.
                                     </td>
                                 </tr>
-                                <!-- Row 2 -->
-                                <tr class="hover:bg-surface-container-low transition-colors group">
-                                    <td class="px-6 py-5 font-bold text-primary">#RL-90238</td>
-                                    <td class="px-6 py-5 text-sm text-on-surface-variant">12/05/2024</td>
-                                    <td class="px-6 py-5">
-                                        <div class="flex items-center gap-3">
-                                            <div
-                                                class="w-10 h-10 rounded bg-surface-container-high overflow-hidden flex-shrink-0">
-                                                <img class="w-full h-full object-cover"
-                                                    data-alt="large burlap sack filled with roasted coffee beans in a professional industrial factory setting"
-                                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCod4HM6VekqoBqHiD2aP17M3hFWtuzzDb-S4pLgldsX7DP8ai67fgsPq5t1PjXacxqL92XXjelUU2lcOuD7GFahb5_3lSVzD3D12zZhNg6DlUkg1zDdY37Ol1KPfPrm3Z2P08X6MZose2J7Zm7NLp_hkZ5xqH0iYP-X9lOq8IcbdxL5bkOyY-TV5es2lu7VYMzXM-a4N9TzF4ZqP_GM5P7e_XUYvBcA-pgv2FjT7EdExB9dR3DgGqxQm1iATeZ8V8tK1fCa-23eqmk" />
-                                            </div>
-                                            <div>
-                                                <p class="text-sm font-bold text-on-surface">Robusta Buôn Ma Thuột</p>
-                                                <p class="text-xs text-on-surface-variant">1.2 Tấn • Rang vừa</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-5 text-right font-bold text-primary">240.000.000 ₫</td>
+                                <tr th:each="order : ${orders}" class="hover:bg-surface-container-low transition-colors group">
+                                    <td class="px-6 py-5 font-bold text-primary" th:text="${'#ORD-' + order.id}">#ORD-1</td>
+                                    <td class="px-6 py-5 text-sm text-on-surface-variant"
+                                        th:text="${order.orderDate != null ? #temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm') : '-'}">14/05/2024</td>
+                                    <td class="px-6 py-5 text-sm text-on-surface"
+                                        th:text="${(itemCountByOrder != null and itemCountByOrder[order.id] != null ? itemCountByOrder[order.id] : 0) + ' sản phẩm'}">1 sản phẩm</td>
+                                    <td class="px-6 py-5 text-right font-bold text-primary"
+                                        th:text="${#numbers.formatDecimal(order.totalAmount != null ? order.totalAmount : 0, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0 ₫</td>
                                     <td class="px-6 py-5">
                                         <div class="flex justify-center">
-                                            <span
-                                                class="bg-surface-container-high text-on-surface-variant px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-widest">Đang
-                                                xử lý</span>
+                                            <span class="bg-surface-container-high text-on-surface-variant px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-widest"
+                                                  th:text="${order.status != null ? order.status.name() : 'PENDING'}">PENDING</span>
                                         </div>
                                     </td>
                                     <td class="px-6 py-5 text-right">
-                                        <button class="text-on-surface-variant hover:text-primary transition-colors">
-                                            <span class="material-symbols-outlined"
-                                                data-icon="more_vert">more_vert</span>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <!-- Row 3 -->
-                                <tr class="hover:bg-surface-container-low transition-colors group">
-                                    <td class="px-6 py-5 font-bold text-primary">#RL-90235</td>
-                                    <td class="px-6 py-5 text-sm text-on-surface-variant">10/05/2024</td>
-                                    <td class="px-6 py-5">
-                                        <div class="flex items-center gap-3">
-                                            <div
-                                                class="w-10 h-10 rounded bg-surface-container-high overflow-hidden flex-shrink-0">
-                                                <img class="w-full h-full object-cover"
-                                                    data-alt="industrial coffee packaging line with bags of coffee moving on a conveyor belt in a clean factory"
-                                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuALA_6f1554SGcTg18egV31Tpo22RguEf9U7z-8FAljlmaMZkfZL1COD7q7eBvxjdpnc3ju3BjIhQ5Yp7d6zqFdfAS3ZYRl89fz9AKfjqmnwPv-v5MgHVq3fFBnSebpm_nhZjLhekU9KBEGQU1YyJANMHq5klYXgkvCaZXm9dY6Kp06CEMwRejA91_G5Cqn0W2yx-UEgCDsHlEmGsKAsk6uWRlNSvx1Y711lRSvKwSjaGExZSlmtLd6DjmQsbCpZbMT0ubszt_3WHZE" />
-                                            </div>
-                                            <div>
-                                                <p class="text-sm font-bold text-on-surface">Cold Brew Blend Special</p>
-                                                <p class="text-xs text-on-surface-variant">200kg • Mix Arabica/Robusta
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-5 text-right font-bold text-primary">58.000.000 ₫</td>
-                                    <td class="px-6 py-5">
-                                        <div class="flex justify-center">
-                                            <span
-                                                class="bg-primary text-on-primary px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-widest">Đang
-                                                giao</span>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-5 text-right">
-                                        <button class="text-on-surface-variant hover:text-primary transition-colors">
-                                            <span class="material-symbols-outlined"
-                                                data-icon="more_vert">more_vert</span>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <!-- Row 4 -->
-                                <tr class="hover:bg-surface-container-low transition-colors group">
-                                    <td class="px-6 py-5 font-bold text-primary">#RL-90230</td>
-                                    <td class="px-6 py-5 text-sm text-on-surface-variant">08/05/2024</td>
-                                    <td class="px-6 py-5">
-                                        <div class="flex items-center gap-3">
-                                            <div
-                                                class="w-10 h-10 rounded bg-surface-container-high overflow-hidden flex-shrink-0">
-                                                <img class="w-full h-full object-cover"
-                                                    data-alt="steaming hot black coffee in a professional cupping bowl on a wooden table with industrial roast equipment background"
-                                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCvqkQd0-Zsk17Xd-Uo5PpTkGfsfmH99YVyDBgZcqLrjU0UvVtmIYqvlHaroE7Q8tcZIa8gM-tVTro_bU5tezHvEE8a7ulwmvg3QOztkcxBrO9ea9wZgEW_9Tpr3XvtZLIA5MwBUN39LsOmbxilaEjAPi1LvSH4iiz1dBhKKUYJCcgHMTcBJtEvtsYecpQ0EnsA1TsTy2DPSFgHgPfuYPKn3WZrSo1L4FVU0r_hJGOwHu3WkTzWlhkMc3FJ-cjNRhJtWPOu4QNgx4e" />
-                                            </div>
-                                            <div>
-                                                <p class="text-sm font-bold text-on-surface">Espresso Premium Mix</p>
-                                                <p class="text-xs text-on-surface-variant">800kg • Đóng gói 5kg</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-5 text-right font-bold text-primary">192.000.000 ₫</td>
-                                    <td class="px-6 py-5">
-                                        <div class="flex justify-center">
-                                            <span
-                                                class="bg-[#e2e3df] text-[#504442] px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-widest">Hoàn
-                                                tất</span>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-5 text-right">
-                                        <button class="text-on-surface-variant hover:text-primary transition-colors">
-                                            <span class="material-symbols-outlined"
-                                                data-icon="more_vert">more_vert</span>
-                                        </button>
+                                        <a class="text-primary text-xs font-bold uppercase hover:underline"
+                                           th:href="@{/orders/{id}(id=${order.id})}">Chi tiết</a>
                                     </td>
                                 </tr>
                             </tbody>

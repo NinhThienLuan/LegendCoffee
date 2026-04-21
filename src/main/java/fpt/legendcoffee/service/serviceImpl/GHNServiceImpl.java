@@ -16,6 +16,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 
 @Service
@@ -164,9 +165,39 @@ public class GHNServiceImpl implements GHNService {
 
     @Override
     public FeeResponseDTO calculateFee(FeeRequestDTO request) {
-        log.info("[GHN] Calculating fee for service_id={}", request.getServiceId());
-        return post("/v2/shipping-order/fee", request,
+        log.info("[GHN] Calculating fee: serviceId={}, serviceTypeId={}, weight={}, fromDistrict={}, fromWard={}, toDistrict={}, toWard={}",
+            request.getServiceId(), request.getServiceTypeId(), request.getWeight(),
+            request.getFromDistrictId(), request.getFromWardCode(),
+            request.getToDistrictId(), request.getToWardCode());
+
+        try {
+            return post("/v2/shipping-order/fee", request,
                 new ParameterizedTypeReference<GHNApiResponse<FeeResponseDTO>>() {}, true);
+        } catch (GHNException ex) {
+            if (request.getServiceId() != null && request.getServiceTypeId() != null) {
+            log.warn("[GHN] Fee failed with service_id={}, retrying with service_type_id={} only. Error={}",
+                request.getServiceId(), request.getServiceTypeId(), ex.getMessage());
+
+            FeeRequestDTO retryReq = FeeRequestDTO.builder()
+                .serviceTypeId(request.getServiceTypeId())
+                .fromDistrictId(request.getFromDistrictId())
+                .fromWardCode(request.getFromWardCode())
+                .toDistrictId(request.getToDistrictId())
+                .toWardCode(request.getToWardCode())
+                .weight(request.getWeight())
+                .length(request.getLength())
+                .width(request.getWidth())
+                .height(request.getHeight())
+                .insuranceValue(request.getInsuranceValue())
+                .coupon(request.getCoupon())
+                .build();
+
+            return post("/v2/shipping-order/fee", retryReq,
+                new ParameterizedTypeReference<GHNApiResponse<FeeResponseDTO>>() {}, true);
+            }
+
+            throw ex;
+        }
     }
 
     @Override
@@ -174,6 +205,22 @@ public class GHNServiceImpl implements GHNService {
         log.info("[GHN] Getting leadtime for service_id={}", request.getServiceId());
         return post("/v2/shipping-order/leadtime", request,
                 new ParameterizedTypeReference<GHNApiResponse<LeadtimeResponseDTO>>() {}, true);
+    }
+
+    @Override
+    public GHNShopDTO getCurrentShopProfile() {
+        GHNShopAllDataDTO data = get("/v2/shop/all", Map.of("offset", 0, "limit", 100),
+                new ParameterizedTypeReference<GHNApiResponse<GHNShopAllDataDTO>>() {}, true);
+
+        if (data == null || data.getShops() == null || data.getShops().isEmpty()) {
+            throw new GHNException("Không lấy được thông tin shop GHN.");
+        }
+
+        Optional<GHNShopDTO> match = data.getShops().stream()
+                .filter(s -> s.getId() != null && s.getId().equals(props.getShopId()))
+                .findFirst();
+
+        return match.orElseGet(() -> data.getShops().get(0));
     }
 
     // ================================================================

@@ -2,7 +2,12 @@ package fpt.legendcoffee.controller;
 
 import fpt.legendcoffee.dto.app.CheckoutRequestDTO;
 import fpt.legendcoffee.entity.Order;
+import fpt.legendcoffee.entity.OrderItem;
 import fpt.legendcoffee.entity.ShippingInfo;
+import fpt.legendcoffee.entity.User;
+import fpt.legendcoffee.repository.OrderItemRepository;
+import fpt.legendcoffee.repository.OrderRepository;
+import fpt.legendcoffee.repository.ShippingInfoRepository;
 import fpt.legendcoffee.repository.UserRepository;
 import fpt.legendcoffee.service.OrderService;
 import fpt.legendcoffee.service.ShippingService;
@@ -17,6 +22,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -27,6 +36,9 @@ public class OrderController {
     private final ShippingService shippingService;
     private final OrderService orderService;
     private final UserRepository userRepository;
+    private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
+    private final ShippingInfoRepository shippingInfoRepository;
 
     // =========================================================================
     // Trang danh sách đơn hàng & chi tiết
@@ -34,12 +46,68 @@ public class OrderController {
 
     @GetMapping("/orders")
     public String orderPage(Model model) {
+        Optional<User> currentUser = getCurrentUser();
+        if (currentUser.isEmpty()) {
+            return "redirect:/login";
+        }
+
+        List<Order> orders = orderRepository.findByUserOrderByOrderDateDesc(currentUser.get());
+        Map<Long, Long> itemCountByOrder = new HashMap<>();
+        for (Order order : orders) {
+            itemCountByOrder.put(order.getId(), orderItemRepository.countByOrderId(order.getId()));
+        }
+
+        model.addAttribute("orders", orders);
+        model.addAttribute("itemCountByOrder", itemCountByOrder);
         return "order/order";
     }
 
-    @GetMapping("/order-detail")
-    public String orderDetailPage(Model model) {
-        return "order/orderDetail";
+    @GetMapping("/orders/{orderId}")
+    public String orderDetailPage(@PathVariable("orderId") Long orderId, Model model,
+                                  RedirectAttributes redirectAttributes) {
+        Optional<User> currentUser = getCurrentUser();
+        if (currentUser.isEmpty()) {
+            return "redirect:/login";
+        }
+
+        Optional<Order> orderOpt = orderRepository.findByIdWithUser(orderId);
+        if (orderOpt.isEmpty() || !orderOpt.get().getUser().getId().equals(currentUser.get().getId())) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy đơn hàng của bạn.");
+            return "redirect:/orders";
+        }
+
+        Order order = orderOpt.get();
+        List<OrderItem> orderItems = orderItemRepository.findByOrderIdWithDetails(orderId);
+        ShippingInfo shippingInfo = shippingInfoRepository.findByOrderId(orderId).orElse(null);
+
+        BigDecimal shippingFee = shippingInfo != null && shippingInfo.getShippingFee() != null
+                ? BigDecimal.valueOf(shippingInfo.getShippingFee())
+                : BigDecimal.ZERO;
+        BigDecimal subTotal = order.getSubTotal() != null ? order.getSubTotal() : BigDecimal.ZERO;
+        BigDecimal totalAmount = order.getTotalAmount() != null ? order.getTotalAmount() : subTotal.add(shippingFee);
+        BigDecimal vat = totalAmount.subtract(subTotal).subtract(shippingFee).max(BigDecimal.ZERO);
+
+        try {
+            model.addAttribute("order", order);
+            model.addAttribute("orderItems", orderItems);
+            model.addAttribute("shippingInfo", shippingInfo);
+            model.addAttribute("shippingFee", shippingFee);
+            model.addAttribute("vat", vat);
+            model.addAttribute("totalAmount", totalAmount);
+            model.addAttribute("orderId", orderId);
+
+            // Tích hợp dữ liệu tracking trực tiếp vào trang detail
+            try {
+                model.addAttribute("orderStatus", shippingService.getOrderStatus(orderId));
+            } catch (Exception e) {
+                log.warn("[Tracking] Không tìm thấy thông tin vận chuyển cho orderId={}", orderId);
+            }
+
+            return "order/order-detail";
+        } catch (Exception e) {
+            log.error("Error rendering order-detail for ID {}: {}", orderId, e.getMessage());
+            return "redirect:/orders";
+        }
     }
 
     // =========================================================================
@@ -102,8 +170,8 @@ public class OrderController {
      * POST /checkout/place-order
      * Xử lý đặt hàng:
      *  1. Lưu Order vào DB, lấy orderId
-     *  2. Tạo đơn GHN
-     *  3. Redirect sang trang xác nhận
+        *  2. Tạo đơn GHN
+        *  3. Redirect sang danh sách đơn hàng
      */
     @PostMapping("/checkout/place-order")
     public String placeOrder(@Valid @ModelAttribute("checkoutRequest") CheckoutRequestDTO checkout,
@@ -117,24 +185,22 @@ public class OrderController {
         }
 
         try {
+            log.info("[Checkout] Số lượng dòng sản phẩm gửi lên: {}",
+                    checkout.getItems() != null ? checkout.getItems().size() : 0);
 
-            // Debug: Log cart data
-            log.info("[Checkout] Cart JSON: {}", checkout.getCartJson());
-
-            // TODO: Parse cartJson and use for order creation
             // Bước 1 — Lưu Order vào DB, gán orderId vào checkout
             Order order = orderService.createOrder(checkout);
             checkout.setOrderId(order.getId());
 
-            // Bước 2 — Tạo đơn GHN (yêu cầu checkout.orderId đã được gán)
-            ShippingInfo shippingInfo = shippingService.createGHNOrder(checkout);
+                // Bước 2 — Tạo đơn GHN (yêu cầu checkout.orderId đã được gán)
+                ShippingInfo shippingInfo = shippingService.createGHNOrder(checkout);
 
-            log.info("[Checkout] Đặt hàng thành công. GHN code: {}", shippingInfo.getGhnOrderCode());
-            redirectAttributes.addFlashAttribute("successMessage",
-                    "Đặt hàng thành công! Mã vận chuyển: " + shippingInfo.getGhnOrderCode());
+                log.info("[Checkout] Đặt hàng thành công. GHN code: {}", shippingInfo.getGhnOrderCode());
+                redirectAttributes.addFlashAttribute("successMessage",
+                    "Đặt hàng thành công! Mã đơn: #" + checkout.getOrderId() +
+                        " - Mã vận chuyển: " + shippingInfo.getGhnOrderCode());
 
-            // Mặc định route "/orders/{id}" không tồn tại và bị chặn bởi Security -> Redirect sang trang tracking
-            return "redirect:/orders/" + checkout.getOrderId() + "/track";
+                return "redirect:/orders";
 
         } catch (Exception e) {
             log.error("[Checkout] Đặt hàng thất bại: {}", e.getMessage(), e);
@@ -186,7 +252,15 @@ public class OrderController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Lỗi: " + e.getMessage());
         }
-        return "redirect:/orders/" + orderId + "/track";
+        return "redirect:/orders/" + orderId;
+    }
+
+    private Optional<User> getCurrentUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+            return Optional.empty();
+        }
+        return userRepository.findByEmail(auth.getName());
     }
 }
 

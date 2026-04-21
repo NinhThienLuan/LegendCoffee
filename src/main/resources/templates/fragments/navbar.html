@@ -94,56 +94,6 @@
       </div>
     </div>
   </nav>
-</div>
-<script>
-// Navbar scroll behavior
-let lastScrollY = window.scrollY;
-const navbar = document.getElementById('mainNavbar');
-window.addEventListener('scroll', () => {
-  if (!navbar) return;
-  if (window.scrollY > lastScrollY && window.scrollY > 40) {
-    navbar.style.transform = 'translateY(-100%)';
-  } else {
-    navbar.style.transform = 'translateY(0)';
-  }
-  lastScrollY = window.scrollY;
-});
-
-// Cart Badge Update Logic
-function updateNavbarCartBadge() {
-  const badge = document.getElementById('cart-badge');
-  if (!badge) return;
-
-  let count = 0;
-  if (window.CartSystem && typeof window.CartSystem.getCartCount === 'function') {
-    count = window.CartSystem.getCartCount();
-  } else {
-    // Fallback: read cart from localStorage
-    try {
-      const cartRaw = localStorage.getItem('cart');
-      if (cartRaw) {
-        const cart = JSON.parse(cartRaw);
-        if (Array.isArray(cart)) {
-          count = cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
-        }
-      }
-    } catch (e) { /* ignore */ }
-  }
-  if (count > 0) {
-    badge.innerText = count;
-    badge.classList.remove('opacity-0');
-  } else {
-    badge.classList.add('opacity-0');
-  }
-}
-
-window.addEventListener('load', updateNavbarCartBadge);
-window.addEventListener('cartUpdated', updateNavbarCartBadge);
-// Also update on storage event (multi-tab)
-window.addEventListener('storage', function(e) {
-  if (e.key === 'cart') updateNavbarCartBadge();
-});
-</script>
   <script>
     // Navbar scroll behavior
     let lastScrollY = window.scrollY;

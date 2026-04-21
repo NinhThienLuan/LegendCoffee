@@ -9,6 +9,7 @@ import fpt.legendcoffee.dto.ghn.WardDTO;
 import fpt.legendcoffee.service.ShippingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -70,7 +71,17 @@ public class ShippingController {
     @PostMapping("/options")
     public ResponseEntity<List<ShippingOptionDTO>> getShippingOptions(
             @RequestBody AddressQueryDTO query) {
-        return ResponseEntity.ok(shippingService.getShippingOptions(query));
+        try {
+            return ResponseEntity.ok(shippingService.getShippingOptions(query));
+        } catch (Exception e) {
+            String message = e.getMessage() != null ? e.getMessage() : "Không thể tính phí vận chuyển";
+            log.error("[API] Shipping options failed for districtId={}, wardCode={}: {}",
+                    query.getDistrictId(), query.getWardCode(), message, e);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("X-Shipping-Error", message);
+            return ResponseEntity.ok().headers(headers).body(List.of());
+        }
     }
 
     /**
