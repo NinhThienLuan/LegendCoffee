@@ -46,6 +46,9 @@ public class AuthController {
 
     @GetMapping("/login")
     public String showLoginForm(Model model) {
+        if (isAuthenticated()) {
+            return "redirect:/home";
+        }
         if (!model.containsAttribute("loginDto")) {
             model.addAttribute("loginDto", new LoginRequestDTO("", ""));
         }
@@ -86,6 +89,9 @@ public class AuthController {
 
     @GetMapping("/register")
     public String showRegisterForm(Model model) {
+        if (isAuthenticated()) {
+            return "redirect:/home";
+        }
         if (!model.containsAttribute("registerDto")) {
             model.addAttribute("registerDto", new RegisterRequestDTO("", "", "", "", ""));
         }
@@ -115,10 +121,13 @@ public class AuthController {
         }
     }
 
-//    @GetMapping("/forgot-password")
-//    public String showForgotPasswordForm() {
-//        return "authen/forgot-password";
-//    }
+    @GetMapping("/forgot-password")
+    public String showForgotPasswordForm() {
+        if (isAuthenticated()) {
+            return "redirect:/home";
+        }
+        return "authen/change-password"; // Using change-password as recovery template
+    }
 
     @PostMapping("/forgot-password")
     public String forgotPassword(@Valid @ModelAttribute("forgotPasswordDto") ForgotPasswordRequestDTO request,
@@ -135,6 +144,9 @@ public class AuthController {
 
     @GetMapping("/reset-password")
     public String showResetPasswordForm() {
+        if (isAuthenticated()) {
+            return "redirect:/home";
+        }
         return "authen/change-password";
     }
 
@@ -163,5 +175,12 @@ public class AuthController {
         long userId = userDetails.getUser().getId();
         model.addAttribute("profileDto", authenService.getProfile(userId));
         return "authen/profile";
+    }
+    private boolean isAuthenticated() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getPrincipal().equals("anonymousUser")) {
+            return false;
+        }
+        return authentication.isAuthenticated();
     }
 }

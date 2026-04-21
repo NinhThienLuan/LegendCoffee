@@ -17,6 +17,7 @@ public interface GHNService {
     List<GHNServiceDTO> getAvailableServices(Integer fromDistrict, Integer toDistrict);
     FeeResponseDTO calculateFee(FeeRequestDTO request);
     LeadtimeResponseDTO getLeadtime(LeadtimeRequestDTO request);
+    GHNShopDTO getCurrentShopProfile();
 
     // --- Order management ---
     CreateOrderResponseDTO createOrder(CreateOrderRequestDTO request);

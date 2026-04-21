@@ -34,7 +34,7 @@ public class RefundServiceImpl implements RefundService {
     // ==========================================
     @Override
     @Transactional
-    public RefundRequest createRefundRequest(Long userId, Long orderId, BigDecimal amount) {
+    public RefundRequest createRefundRequest(Long userId, Long orderId, BigDecimal amount, String reason) {
         log.info("[Refund] User {} yêu cầu hoàn tiền cho Order {}", userId, orderId);
 
         Order order = orderRepository.findById(orderId)

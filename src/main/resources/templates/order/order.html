@@ -85,12 +85,17 @@
                             </thead>
                             <tbody class="divide-y divide-outline-variant/5">
                                 <!-- Dynamic Rows -->
+                                <tr th:if="${orders == null or #lists.isEmpty(orders)}">
+                                    <td colspan="7" class="px-6 py-10 text-center text-sm text-on-surface-variant">
+                                        Bạn chưa có đơn hàng nào.
+                                    </td>
+                                </tr>
                                 <tr th:each="ord : ${orders}"
                                     class="hover:bg-surface-container-low transition-colors group">
-                                    <td class="px-6 py-5 font-bold text-primary" th:text="'#RL-' + ${ord.id}">Mã đơn
+                                    <td class="px-6 py-5 font-bold text-primary" th:text="'#ORD-' + ${ord.id}">Mã đơn
                                     </td>
                                     <td class="px-6 py-5 text-sm text-on-surface-variant"
-                                        th:text="${ord.orderDate != null ? #temporals.format(ord.orderDate, 'dd/MM/yyyy') : '--'}">
+                                        th:text="${ord.orderDate != null ? #temporals.format(ord.orderDate, 'dd/MM/yyyy HH:mm') : '--'}">
                                         Ngày đặt</td>
                                     <td class="px-6 py-5">
                                         <div class="flex items-center gap-3">
@@ -111,7 +116,7 @@
                                         </div>
                                     </td>
                                     <td class="px-6 py-5 text-right font-bold text-primary"
-                                        th:text="${#numbers.formatInteger(ord.totalAmount, 3, 'POINT') + ' ₫'}">0 ₫</td>
+                                        th:text="${#numbers.formatDecimal(ord.totalAmount != null ? ord.totalAmount : 0, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0 ₫</td>
                                     <td class="px-6 py-5">
                                         <div class="flex justify-center">
                                             <span
@@ -135,10 +140,8 @@
                                         </form>
                                     </td>
                                     <td class="px-6 py-5 text-right">
-                                        <button class="text-on-surface-variant hover:text-primary transition-colors">
-                                            <span class="material-symbols-outlined"
-                                                data-icon="more_vert">more_vert</span>
-                                        </button>
+                                        <a class="text-primary text-xs font-bold uppercase hover:underline"
+                                           th:href="@{/orders/{id}(id=${ord.id})}">Chi tiết</a>
                                     </td>
                                 </tr>
                             </tbody>
@@ -234,6 +237,7 @@
             <span class="text-[10px] font-bold uppercase">Settings</span>
         </a>
     </nav>
+    <script src="assets/cart-badge.js" th:src="@{/assets/cart-badge.js}"></script>
 </body>
 
 </html>
