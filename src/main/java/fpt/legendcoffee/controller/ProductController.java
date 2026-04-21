@@ -69,6 +69,9 @@ public class ProductController {
     public String listProducts(Model model, Authentication authentication) {
         List<ProductResponseDTO> products = productService.getAllProductResponses();
         model.addAttribute("products", products);
+        model.addAttribute("totalProducts", productService.countProducts());
+        model.addAttribute("activeProducts", productService.countActiveProducts());
+        model.addAttribute("lowStockProducts", productService.countLowStockProducts());
         if (authentication != null && authentication.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN") || a.getAuthority().equals("ROLE_STAFF"))) {
             return "product/products";

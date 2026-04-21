@@ -11,4 +11,6 @@ public interface ProductVariantService {
     List<ProductVariant> getVariantsByProductId(Long productId);
 
     List<ProductVariant> findByProduct(Product product);
+
+    List<ProductVariant> getAllVariants();
 }

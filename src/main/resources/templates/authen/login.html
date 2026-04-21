@@ -88,13 +88,11 @@
                             KÝ MỚI</a>
                     </div>
                     <!-- Auth Form -->
-                    <form class="space-y-6" method="POST" th:action="@{/login}">
-                        <div id="login-error-message" th:if="${param.error}" class="hidden"
-                            th:text="${param.error[0] == 'auth_failed' ? 'Email hoặc mật khẩu không chính xác.' : param.error[0]}">
+                    <form class="space-y-6" method="POST" th:action="@{/login}" th:object="${loginDto}">
+                        <div id="login-error-message" th:if="${errorMessage}" class="hidden" th:text="${errorMessage}">
                         </div>
-                        <div th:if="${param.success}" class="bg-primary/10 border-l-4 border-primary p-3 mb-4">
-                            <p class="text-xs text-primary font-bold"
-                                th:text="${param.success[0] == 'register_success' ? 'Đăng ký thành công! Vui lòng đăng nhập.' : ''}">
+                        <div th:if="${successMessage}" class="bg-primary/10 border-l-4 border-primary p-3 mb-4">
+                            <p class="text-xs text-primary font-bold" th:text="${successMessage}">
                             </p>
                         </div>
                         <div class="space-y-1">
@@ -106,8 +104,10 @@
                                     data-icon="mail">mail</span>
                                 <input
                                     class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium"
-                                    id="email" name="email" placeholder="email@company.vn" required="" type="email" />
+                                    id="email" th:field="*{email}" placeholder="email@company.vn" required=""
+                                    type="email" />
                             </div>
+                            <p class="text-xs text-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
                         </div>
                         <div class="space-y-1">
                             <div class="flex justify-between items-center mb-1">
@@ -119,8 +119,10 @@
                                     data-icon="lock">lock</span>
                                 <input
                                     class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium"
-                                    id="password" name="password" placeholder="••••••••" required="" type="password" />
+                                    id="password" th:field="*{password}" placeholder="••••••••" required=""
+                                    type="password" minlength="6" />
                             </div>
+                            <p class="text-xs text-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
                             <div class="flex justify-between items-center mb-1 mt-1">
                                 <button type="button" onclick="showResetFlow()"
                                     class="text-[10px] font-bold text-secondary hover:text-primary transition-colors cursor-pointer">

@@ -254,26 +254,59 @@ public class ShippingServiceImpl implements ShippingService {
 
     @Override
     public OrderStatusDTO getOrderStatusByGHNCode(String ghnOrderCode) {
+        // 1. Lấy thông tin từ GHN
         OrderDetailResponseDTO detail = ghnService.getOrderDetail(ghnOrderCode);
 
-        List<OrderStatusDTO.LogItemDTO> logs = new ArrayList<>();
-        if (detail.getLog() != null) {
-            detail.getLog().forEach(l -> logs.add(OrderStatusDTO.LogItemDTO.builder()
-                    .status(l.getStatus())
-                    .statusLabel(OrderStatusDTO.mapStatusLabel(l.getStatus()))
-                    .time(l.getUpdatedDate())
-                    .build()));
+        // 2. Lấy status "Sự thật" từ Database
+        ShippingInfo info = shippingInfoRepository.findByGhnOrderCode(ghnOrderCode).orElse(null);
+        String rawStatus = (info != null) ? info.getStatus() : detail.getStatus();
+        String finalStatus = rawStatus.toLowerCase();
+
+        // 3. Tự dựng "Cây lịch trình" linh hoạt
+        List<OrderStatusDTO.LogItemDTO> timeline = new ArrayList<>();
+        String updatedAt = (info != null) ? info.getUpdatedAt().toString() : "Vừa xong";
+        String createdAt = (info != null) ? info.getCreatedAt().toString() : updatedAt;
+
+        // BƯỚC 1: Mặc định luôn có
+        timeline.add(OrderStatusDTO.LogItemDTO.builder()
+                .status("ready_to_pick")
+                .statusLabel("Đơn hàng đã được khởi tạo thành công")
+                .time(createdAt)
+                .build());
+
+        // BƯỚC 2: Đang vận chuyển (Nếu status thuộc nhóm đang giao hoặc đã xong)
+        boolean isDelivering = finalStatus.contains("deliv") || finalStatus.contains("transport") || finalStatus.contains("picking");
+        boolean isFinished = finalStatus.contains("delivered") || finalStatus.contains("received") || finalStatus.contains("finish");
+
+        if (isDelivering || isFinished) {
+            timeline.add(OrderStatusDTO.LogItemDTO.builder()
+                    .status("delivering")
+                    .statusLabel("Đơn hàng đang trên đường vận chuyển")
+                    .time(updatedAt)
+                    .build());
         }
+
+        // BƯỚC 3: Hoàn tất
+        if (isFinished) {
+            timeline.add(OrderStatusDTO.LogItemDTO.builder()
+                    .status("delivered")
+                    .statusLabel("Đã giao hàng thành công")
+                    .time(updatedAt)
+                    .build());
+        }
+
+        // Đảo ngược để mốc MỚI NHẤT lên ĐẦU trang (Standard UI)
+        java.util.Collections.reverse(timeline);
 
         return OrderStatusDTO.builder()
                 .ghnOrderCode(ghnOrderCode)
-                .status(detail.getStatus())
-                .statusLabel(OrderStatusDTO.mapStatusLabel(detail.getStatus()))
+                .status(rawStatus)
+                .statusLabel(OrderStatusDTO.mapStatusLabel(rawStatus))
                 .toName(detail.getToName())
                 .toPhone(detail.getToPhone())
                 .toAddress(detail.getToAddress())
                 .finishDate(detail.getFinishDate())
-                .logs(logs)
+                .logs(timeline)
                 .build();
     }
 
@@ -301,6 +334,14 @@ public class ShippingServiceImpl implements ShippingService {
     public boolean cancelShipping(Long orderId) {
         ShippingInfo info = shippingInfoRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new GHNException("Không tìm thấy thông tin vận chuyển"));
+
+        // Kiểm tra trạng thái trong DB: chỉ cho phép huỷ khi còn ở trạng thái 'ready_to_pick'
+        // Tránh phụ thuộc hoàn toàn vào API GHN nếu trạng thái trên hệ thống đối tác chưa cập nhật kịp
+        if (!"ready_to_pick".equalsIgnoreCase(info.getStatus())) {
+            log.warn("[Shipping] Không thể huỷ đơn {} vì trạng thái DB hiện tại là: {}",
+                    info.getGhnOrderCode(), info.getStatus());
+            return false;
+        }
 
         boolean success = ghnService.cancelOrder(List.of(info.getGhnOrderCode()));
         if (success) {

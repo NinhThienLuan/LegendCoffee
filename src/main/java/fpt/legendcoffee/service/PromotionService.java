@@ -14,5 +14,4 @@ public interface PromotionService {
     PromotionResponseDTO getById(Long id);
     List<PromotionResponseDTO> getAll();
 
-
 }

@@ -186,7 +186,7 @@ public class OrderController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Lỗi: " + e.getMessage());
         }
-        return "redirect:/orders/" + orderId;
+        return "redirect:/orders/" + orderId + "/track";
     }
 }
 

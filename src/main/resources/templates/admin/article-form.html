@@ -1,31 +1,51 @@
 <!DOCTYPE html>
 <html class="light" lang="vi" xmlns:th="http://www.thymeleaf.org">
+
 <head th:replace="~{fragments/head :: sharedHead('Quản lý Bài Viết | LegendCoffee Admin')}"></head>
+
 <body class="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container">
   <main class="flex min-h-screen">
     <aside th:replace="~{fragments/admin-sidebar :: adminSidebar}"></aside>
     <section class="flex-1 ml-64 min-h-screen bg-surface">
-      <header th:replace="~{fragments/admin-topbar :: adminTopbar('Thêm/Sửa Bài Viết', 'Nhập thông tin bài viết')}"></header>
+      <header th:replace="~{fragments/admin-topbar :: adminTopbar('Thêm/Sửa Bài Viết', 'Nhập thông tin bài viết')}">
+      </header>
       <div class="py-8 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
         <form method="post" th:action="@{/admin/articles/save}" th:object="${article}">
           <div class="space-y-6 bg-surface-container-lowest p-8 rounded-lg shadow">
             <h2 class="text-2xl font-bold text-primary mb-4">Thông tin bài viết</h2>
+            <input type="hidden" th:field="*{id}" />
             <div class="grid md:grid-cols-2 gap-4">
               <div>
                 <label class="block text-xs font-semibold uppercase tracking-widest mb-1">Tiêu đề</label>
-                <input th:field="*{title}" type="text" class="w-full rounded-lg border border-outline-variant px-3 py-2 text-sm" placeholder="Nhập tiêu đề bài viết" />
+                <input th:field="*{title}" type="text"
+                  class="w-full rounded-lg border px-3 py-2 text-sm"
+                  th:classappend="${#fields.hasErrors('title')} ? 'border-red-500 bg-red-50' : 'border-outline-variant'"
+                  placeholder="Nhập tiêu đề bài viết" />
+                
+                <!-- Hiển thị thông báo lỗi -->
+                <p class="text-red-500 text-[10px] mt-1 font-bold" 
+                   th:if="${#fields.hasErrors('title')}" 
+                   th:errors="*{title}"></p>
               </div>
               <div>
                 <label class="block text-xs font-semibold uppercase tracking-widest mb-1">Slug</label>
-                <input type="text" class="w-full rounded-lg border border-outline-variant px-3 py-2 text-sm" placeholder="slug-bai-viet" />
+                <input type="text" class="w-full rounded-lg border border-outline-variant px-3 py-2 text-sm"
+                  placeholder="slug-bai-viet" />
               </div>
               <div class="md:col-span-2">
                 <label class="block text-xs font-semibold uppercase tracking-widest mb-1">Tóm tắt</label>
-                <textarea th:field="*{summary}" rows="2" class="w-full rounded-lg border border-outline-variant px-3 py-2 text-sm" placeholder="Tóm tắt ngắn gọn"></textarea>
+                <textarea th:field="*{summary}" rows="2"
+                  class="w-full rounded-lg border px-3 py-2 text-sm"
+                  th:classappend="${#fields.hasErrors('summary')} ? 'border-red-500 bg-red-50' : 'border-outline-variant'"
+                  placeholder="Tóm tắt ngắn gọn"></textarea>
+                <p class="text-red-500 text-[10px] mt-1 font-bold" 
+                   th:if="${#fields.hasErrors('summary')}" 
+                   th:errors="*{summary}"></p>
               </div>
               <div>
                 <label class="block text-xs font-semibold uppercase tracking-widest mb-1">Ảnh bìa (URL)</label>
-                <input th:field="*{coverImageUrl}" type="url" class="w-full rounded-lg border border-outline-variant px-3 py-2 text-sm" placeholder="https://..." />
+                <input th:field="*{coverImageUrl}" type="url"
+                  class="w-full rounded-lg border border-outline-variant px-3 py-2 text-sm" placeholder="https://..." />
               </div>
               <div>
                 <label class="block text-xs font-semibold uppercase tracking-widest mb-1">Trạng thái</label>
@@ -38,13 +58,25 @@
             </div>
             <div>
               <label class="block text-xs font-semibold uppercase tracking-widest mb-1">Nội dung (content_json)</label>
-              <textarea th:field="*{contentJson}" rows="12" class="w-full rounded-lg border border-outline-variant px-3 py-2 text-sm font-mono" placeholder="Dán JSON nội dung bài viết hoặc nhập trực tiếp"></textarea>
+              <textarea th:field="*{contentJson}" rows="12"
+                class="w-full rounded-lg border px-3 py-2 text-sm font-mono"
+                th:classappend="${#fields.hasErrors('contentJson')} ? 'border-red-500 bg-red-50' : 'border-outline-variant'"
+                placeholder="Dán JSON nội dung bài viết hoặc nhập trực tiếp"></textarea>
+              <p class="text-red-500 text-[10px] mt-1 font-bold" 
+                 th:if="${#fields.hasErrors('contentJson')}" 
+                 th:errors="*{contentJson}"></p>
             </div>
             <div class="flex gap-4 mt-6">
-              <button type="submit" class="bg-primary text-white px-6 py-2 rounded font-bold uppercase tracking-widest hover:bg-primary-container">Lưu</button>
-              <a th:href="@{/admin/posts}" class="bg-surface-container-low text-primary px-6 py-2 rounded font-bold uppercase tracking-widest border border-outline-variant hover:bg-surface-container">Hủy</a>
-              <button type="button" class="bg-red-100 text-red-700 px-6 py-2 rounded font-bold uppercase tracking-widest border border-red-200 hover:bg-red-200" th:if="${article.id != null}">Xóa</button>
-              <a th:href="@{/admin/articles/view/{id}(id=${article.id})}" class="bg-blue-100 text-blue-700 px-6 py-2 rounded font-bold uppercase tracking-widest border border-blue-200 hover:bg-blue-200" th:if="${article.id != null}">Xem</a>
+              <button type="submit"
+                class="bg-primary text-white px-6 py-2 rounded font-bold uppercase tracking-widest hover:bg-primary-container">Lưu</button>
+              <a th:href="@{/admin/posts}"
+                class="bg-surface-container-low text-primary px-6 py-2 rounded font-bold uppercase tracking-widest border border-outline-variant hover:bg-surface-container">Hủy</a>
+              <button type="button"
+                class="bg-red-100 text-red-700 px-6 py-2 rounded font-bold uppercase tracking-widest border border-red-200 hover:bg-red-200"
+                th:if="${article.id != null}">Xóa</button>
+              <a th:href="@{/admin/articles/view/{id}(id=${article.id})}"
+                class="bg-blue-100 text-blue-700 px-6 py-2 rounded font-bold uppercase tracking-widest border border-blue-200 hover:bg-blue-200"
+                th:if="${article.id != null}">Xem</a>
             </div>
           </div>
         </form>
@@ -52,4 +84,5 @@
     </section>
   </main>
 </body>
+
 </html>

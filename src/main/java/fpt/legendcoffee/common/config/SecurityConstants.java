@@ -9,18 +9,23 @@ public class SecurityConstants {
             "/cart",
             "/checkout",                   // Page checkout
             "/checkout/place-order",       // Submit đặt hàng
-            "/orders/*/track",             // Trang tracking đơn hàng
+            "/orders/*/track",
+            "/orders/{orderId}/cancel",// Trang tracking đơn hàng
             "/api/shipping/**",            // REST API tính phí & địa chỉ (gọi AJAX từ checkout)
             "/webhook/ghn",               // Webhook GHN — phải public để GHN gọi được
             "/articles/**",
             "/products/**",
+            "/combos",
+            "/combos/**",
+            "/forgot-password",
+            "/reset-password",
             "/css/**",
             "/js/**",
             "/images/**",
+            "/favicon.ico",
             "/payment/vnpay/callback",
             "/payment/vnpay/ipn",
             "/error",
-            "/assets/**",
-            "/favicon.ico"
+            "/assets/**"
     };
 }

@@ -2,7 +2,11 @@ package fpt.legendcoffee.entity;
 
 import fpt.legendcoffee.common.infrastructure.BaseEntity;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.util.LinkedHashSet;
@@ -13,7 +17,6 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "categories")
 public class Category extends BaseEntity {

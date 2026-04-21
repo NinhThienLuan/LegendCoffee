@@ -4,5 +4,6 @@ public enum ShippingStatus {
     READY_TO_PICK,
     DELIVERING,
     DELIVERED,
+    RECEIVED,
     CANCEL
 }
