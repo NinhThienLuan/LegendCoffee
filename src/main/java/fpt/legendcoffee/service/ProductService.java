@@ -15,6 +15,8 @@ public interface ProductService {
 
     List<ProductResponseDTO> getAllProductResponses();
 
+    List<ProductResponseDTO> searchProducts(String keyword, Boolean active);
+
     Product getProductById(Long id);
 
     ProductDetailDTO getProductDetail(Long id);
