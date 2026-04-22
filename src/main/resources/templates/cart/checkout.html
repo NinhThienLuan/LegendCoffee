@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi">
+
+<head th:replace="~{fragments/head :: sharedHead('Industrial Excellence')}"></head>
+
+<body
+    class="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container min-h-screen flex flex-col font-body">
+    <!-- TopNavBar (Fixed Header) -->
+    <div th:replace="~{fragments/navbar :: navbar(${navItems})}"></div>
+    <!-- Main Canvas -->
+    <main class="flex-grow pt-32 pb-20 max-w-7xl mx-auto px-8 sm:px-12 lg:px-20 w-full transition-all duration-500">
+        <!-- Multi-step Stepper -->
+        <div class="mb-20 max-w-4xl mx-auto px-4">
+            <div class="relative flex items-center justify-between">
+                <!-- Background Progress Line -->
+                <div class="absolute top-1/2 left-0 w-full h-0.5 bg-outline-variant/30 -translate-y-1/2 z-0"></div>
+                <!-- Active Progress Line (50% to step 2) -->
+                <div class="absolute top-1/2 left-0 w-1/2 h-0.5 bg-primary -translate-y-1/2 z-0"></div>
+                <!-- Step 1: GIỎ HÀNG (Completed) -->
+                <div class="relative z-10 flex flex-col items-center group">
+                    <div
+                        class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center transition-all duration-300 shadow-lg ring-4 ring-surface">
+                        <span class="material-symbols-outlined text-xl">check</span>
+                    </div>
+                    <div class="absolute -bottom-8 whitespace-nowrap text-center">
+                        <span class="text-[10px] font-black uppercase tracking-[0.2em] text-primary font-label">Giỏ
+                            hàng</span>
+                    </div>
+                </div>
+                <!-- Step 2: THÔNG TIN GIAO HÀNG (Active) -->
+                <div class="relative z-10 flex flex-col items-center group">
+                    <div
+                        class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center transition-all duration-300 shadow-lg ring-4 ring-surface">
+                        <span class="text-sm font-black">2</span>
+                    </div>
+                    <div class="absolute -bottom-8 whitespace-nowrap text-center">
+                        <span class="text-[10px] font-black uppercase tracking-[0.2em] text-primary font-label">Thông
+                            tin giao hàng</span>
+                    </div>
+                </div>
+                <!-- Step 3: THANH TOÁN (Pending) -->
+                <div class="relative z-10 flex flex-col items-center group">
+                    <div
+                        class="w-10 h-10 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center transition-all duration-300 ring-4 ring-surface">
+                        <span class="text-sm font-black">3</span>
+                    </div>
+                    <div class="absolute -bottom-8 whitespace-nowrap text-center">
+                        <span
+                            class="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40 font-label">Thanh
+                            toán</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Section Header -->
+        <div class="pb-12 border-b border-outline-variant/10">
+            <h1 class="text-4xl font-black tracking-tight text-primary uppercase font-headline">Thông tin vận chuyển
+            </h1>
+            <div class="h-1 w-12 bg-primary mt-4 mb-4"></div>
+            <p class="text-on-surface-variant text-sm font-medium max-w-xl leading-relaxed">Cung cấp chính xác thông tin
+                để đảm bảo quy trình logistics vận tải công nghiệp diễn ra đúng tiến độ.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            <!-- Left Column: Form Content -->
+            <div class="lg:col-span-8 space-y-12">
+                <!-- Checkout Form -->
+                <form id="checkout-form" th:action="@{/checkout/place-order}" th:object="${checkoutRequest}"
+                    method="post" class="space-y-10">
+                    <!-- Contact Info -->
+                    <section class="p-8 bg-surface-container-low rounded-2xl space-y-8 transition-all hover:shadow-sm">
+                        <h3
+                            class="text-xs font-black text-primary flex items-center gap-3 uppercase tracking-[0.25em] font-label">
+                            <span class="material-symbols-outlined text-lg">contact_mail</span>
+                            THÔNG TIN LIÊN HỆ
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="flex flex-col gap-3">
+                                <label
+                                    class="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/60 font-label">Họ
+                                    và tên người nhận</label>
+                                <input th:field="*{recipientName}"
+                                    class="bg-surface-container-lowest border border-outline-variant/20 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all p-4 rounded-xl text-sm font-medium"
+                                    placeholder="Nguyễn Văn A" type="text" required />
+                                <p th:if="${#fields.hasErrors('recipientName')}" th:errors="*{recipientName}"
+                                    class="text-error text-[10px] uppercase font-bold mt-1"></p>
+                            </div>
+                            <div class="flex flex-col gap-3">
+                                <label
+                                    class="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/60 font-label">Số
+                                    điện thoại</label>
+                                <input th:field="*{recipientPhone}"
+                                    class="bg-surface-container-lowest border border-outline-variant/20 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all p-4 rounded-xl text-sm font-medium"
+                                    placeholder="+84 987 654 321" type="tel" required />
+                                <p th:if="${#fields.hasErrors('recipientPhone')}" th:errors="*{recipientPhone}"
+                                    class="text-error text-[10px] uppercase font-bold mt-1"></p>
+                            </div>
+                        </div>
+                    </section>
+                    <!-- Shipping Address -->
+                    <section class="p-8 bg-surface-container-low rounded-2xl space-y-8 transition-all hover:shadow-sm">
+                        <h3
+                            class="text-xs font-black text-primary flex items-center gap-3 uppercase tracking-[0.25em] font-label">
+                            <span class="material-symbols-outlined text-lg">local_shipping</span>
+                            ĐỊA CHỈ NHẬN HÀNG
+                        </h3>
+                        <div class="grid grid-cols-1 gap-8">
+                            <div class="flex flex-col gap-3">
+                                <label
+                                    class="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/60 font-label">Số
+                                    nhà, tên đường</label>
+                                <input th:field="*{recipientAddress}"
+                                    class="bg-surface-container-lowest border border-outline-variant/20 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all p-4 rounded-xl text-sm font-medium"
+                                    placeholder="Số 123 Đường Công Nghiệp, Khu Công Nghệ Cao" type="text" required />
+                                <p th:if="${#fields.hasErrors('recipientAddress')}" th:errors="*{recipientAddress}"
+                                    class="text-error text-[10px] uppercase font-bold mt-1"></p>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div class="flex flex-col gap-3">
+                                    <label
+                                        class="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/60 font-label">Tỉnh
+                                        / Thành phố</label>
+                                    <select id="provinceId" th:field="*{provinceId}"
+                                        class="bg-surface-container-lowest border border-outline-variant/20 focus:ring-2 focus:ring-primary/20 focus:border-primary p-4 rounded-xl appearance-none text-sm font-medium">
+                                        <option value="">Chọn Tỉnh/Thành</option>
+                                        <option th:each="p : ${provinces}" th:value="${p.provinceId}"
+                                            th:text="${p.provinceName}"></option>
+                                    </select>
+                                    <input type="hidden" th:field="*{provinceName}" id="provinceName" />
+                                    <p th:if="${#fields.hasErrors('provinceId')}" th:errors="*{provinceId}"
+                                        class="text-error text-[10px] uppercase font-bold mt-1"></p>
+                                </div>
+                                <div class="flex flex-col gap-3">
+                                    <label
+                                        class="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/60 font-label">Quận
+                                        / Huyện</label>
+                                    <select id="districtId" th:field="*{districtId}"
+                                        class="bg-surface-container-lowest border border-outline-variant/20 focus:ring-2 focus:ring-primary/20 focus:border-primary p-4 rounded-xl appearance-none text-sm font-medium">
+                                        <option value="">Chọn Quận/Huyện</option>
+                                    </select>
+                                    <input type="hidden" th:field="*{districtName}" id="districtName" />
+                                    <p th:if="${#fields.hasErrors('districtId')}" th:errors="*{districtId}"
+                                        class="text-error text-[10px] uppercase font-bold mt-1"></p>
+                                </div>
+                                <div class="flex flex-col gap-3">
+                                    <label
+                                        class="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/60 font-label">Phường
+                                        / Xã</label>
+                                    <select id="wardCode" th:field="*{wardCode}"
+                                        class="bg-surface-container-lowest border border-outline-variant/20 focus:ring-2 focus:ring-primary/20 focus:border-primary p-4 rounded-xl appearance-none text-sm font-medium">
+                                        <option value="">Chọn Phường/Xã</option>
+                                    </select>
+                                    <input type="hidden" th:field="*{wardName}" id="wardName" />
+                                    <p th:if="${#fields.hasErrors('wardCode')}" th:errors="*{wardCode}"
+                                        class="text-error text-[10px] uppercase font-bold mt-1"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <!-- Shipping Method & Payment -->
+                    <section class="p-8 bg-surface-container-low rounded-2xl space-y-8 transition-all hover:shadow-sm">
+                        <h3
+                            class="text-xs font-black text-primary flex items-center gap-3 uppercase tracking-[0.25em] font-label">
+                            <span class="material-symbols-outlined text-lg">conveyor_belt</span>
+                            DỊCH VỤ VẬN CHUYỂN
+                        </h3>
+                        <div id="shipping-options-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Options will be loaded via AJAX from GHN -->
+                            <div
+                                class="col-span-full py-12 text-center bg-surface-container-lowest/50 rounded-xl border border-dashed border-outline-variant/30">
+                                <p class="text-on-surface-variant text-xs italic font-medium uppercase tracking-widest">
+                                    Vui lòng chọn địa chỉ để xem các dịch vụ.</p>
+                            </div>
+                        </div>
+                        <input type="hidden" th:field="*{serviceId}" id="selectedServiceId" />
+                        <input type="hidden" th:field="*{serviceName}" id="selectedServiceName" />
+                        <input type="hidden" th:field="*{shippingFee}" id="selectedShippingFee" />
+
+                        <h3
+                            class="text-xs font-black text-primary flex items-center gap-3 uppercase tracking-[0.25em] font-label mt-12">
+                            <span class="material-symbols-outlined text-lg">payments</span>
+                            THANH TOÁN
+                        </h3>
+                        <div class="grid grid-cols-1">
+                            <label
+                                class="relative flex items-center p-6 bg-surface-container-lowest border-2 border-primary rounded-xl cursor-pointer hover:bg-white hover:shadow-md transition-all group">
+                                <input type="radio" th:field="*{paymentTypeId}" value="1" checked
+                                    class="w-5 h-5 text-primary border-outline-variant focus:ring-0" />
+                                <div class="ml-4">
+                                    <span class="block font-black text-primary uppercase text-xs tracking-tight">Cổng
+                                        thanh toán điện tử (VNPay)</span>
+                                    <span
+                                        class="block text-[9px] text-on-surface-variant font-bold uppercase mt-1 tracking-widest">Thanh
+                                        toán an toàn qua ATM / QR Code / Visa / Master Card</span>
+                                </div>
+                                <div class="ml-auto flex items-center gap-2">
+                                    <img src="https://vnpay.vn/wp-content/uploads/2020/07/Logo-VNPAYQR.png" alt="VNPay"
+                                        class="h-4 grayscale group-hover:grayscale-0 transition-all" />
+                                </div>
+                            </label>
+                        </div>
+                    </section>
+
+                    <!-- Discount Code Section -->
+                    <section class="p-8 bg-surface-container-low rounded-2xl space-y-6 transition-all hover:shadow-sm">
+                        <h3
+                            class="text-xs font-black text-primary flex items-center gap-3 uppercase tracking-[0.25em] font-label">
+                            <span class="material-symbols-outlined text-lg">sell</span>
+                            MÃ ƯU ĐÃI & ĐỐI TÁC
+                        </h3>
+                        <div class="flex flex-col md:flex-row gap-4">
+                            <div
+                                class="flex-grow p-1 bg-surface-container-lowest rounded-xl border border-outline-variant/10 focus-within:border-primary/30 transition-all shadow-inner">
+                                <input
+                                    class="w-full bg-transparent border-none text-xs font-bold p-4 focus:ring-0 placeholder:text-on-surface-variant/30 uppercase tracking-widest"
+                                    placeholder="IE-PARTNER-2024" type="text" />
+                            </div>
+                            <button type="button"
+                                class="bg-primary text-on-primary px-10 py-4 text-[10px] font-black uppercase tracking-[0.25em] rounded-xl hover:bg-primary-container active:scale-95 transition-all shadow-xl shadow-primary/10 font-label">
+                                Áp dụng mã
+                            </button>
+                        </div>
+                        <p
+                            class="text-[9px] text-on-surface-variant/60 font-bold uppercase tracking-widest mt-2 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-xs">info</span>
+                            Nhập mã ưu đãi của đối tác hoặc thẻ thành viên để nhận chiết khấu.
+                        </p>
+                    </section>
+                    <!-- Navigation Buttons -->
+                    <div class="flex items-center pt-12 border-t border-outline-variant/10">
+                        <button type="button"
+                            class="flex items-center gap-3 text-on-surface-variant font-black uppercase text-[10px] tracking-[0.25em] hover:text-primary transition-all group font-label"
+                            onclick="window.location.href='/cart'">
+                            <span
+                                class="material-symbols-outlined text-lg group-hover:-translate-x-1 transition-transform">arrow_back</span>
+                            Quay lại giỏ hàng
+                        </button>
+                    </div>
+                    <!-- Hidden Inputs -->
+                    <div id="checkout-items-hidden-fields"></div>
+                </form>
+            </div> <!-- End lg:col-span-8 -->
+
+            <!-- Right Column: Order Summary -->
+            <aside class="lg:col-span-4 sticky top-32">
+                <div
+                    class="bg-surface-container-low p-8 rounded-2xl space-y-10 border border-outline-variant/10 shadow-sm">
+                    <h2 class="text-xs font-black text-primary uppercase tracking-[0.3em] font-headline">Tóm tắt đơn
+                        hàng</h2>
+                    <!-- Item List (Compact) -->
+                    <div id="checkout-items-summary" class="space-y-6">
+                        <!-- Dynamic items from cart will be injected here -->
+                    </div>
+                    <!-- Calculation -->
+                    <div class="space-y-4 pt-10 border-t border-outline-variant/20">
+                        <div class="flex justify-between text-[11px]">
+                            <span class="text-on-surface-variant uppercase tracking-[0.15em] font-medium">Giá tạm
+                                tính</span>
+                            <span id="summary-subtotal" class="font-black text-primary">0 ₫</span>
+                        </div>
+                        <div class="flex justify-between text-[11px]">
+                            <span class="text-on-surface-variant uppercase tracking-[0.15em] font-medium">Vận chuyển
+                                quốc nội</span>
+                            <span id="summary-shipping" class="font-black text-primary uppercase tracking-tighter">Tự
+                                động tính</span>
+                        </div>
+                        <div class="flex justify-between text-[11px]">
+                            <span class="text-on-surface-variant uppercase tracking-[0.15em] font-medium">Thuế VAT
+                                (8%)</span>
+                            <span id="summary-vat" class="font-black text-primary">0 ₫</span>
+                        </div>
+                        <div class="flex justify-between items-end pt-8 border-t-2 border-primary/30">
+                            <div class="flex flex-col gap-1">
+                                <span
+                                    class="text-primary font-black uppercase tracking-[0.3em] text-[10px] font-headline">Tổng
+                                    cộng</span>
+                                <span
+                                    class="text-[9px] text-on-surface-variant/50 uppercase font-black tracking-[0.15em] font-label">
+                                    (Đã bao gồm VAT)
+                                </span>
+                            </div>
+                            <div class="text-right">
+                                <span id="summary-total"
+                                    class="text-4xl font-black text-primary font-headline tracking-tighter leading-none">0
+                                    ₫</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Submit Button -->
+                    <button type="submit" form="checkout-form"
+                        class="w-full bg-primary text-on-primary py-5 rounded-xl font-black uppercase tracking-[0.2em] text-xs hover:bg-primary-container active:scale-95 transition-all shadow-xl shadow-primary/10 font-label">
+                        Tiếp tục Thanh toán
+                    </button>
+
+                </div>
+            </aside>
+        </div> <!-- End Grid -->
+    </main> <!-- End Main -->
+
+    <div th:replace="~{fragments/toast :: errorToast('checkout-toast')}"></div>
+    <script th:if="${checkoutError}">
+        sessionStorage.removeItem('orderInProgress');
+    </script>
+    <script th:inline="javascript">
+        function formatCurrency(num) {
+            return new Intl.NumberFormat('vi-VN').format(num) + ' ₫';
+        }
+
+        function showToast(message, type = 'error') {
+            const toast = document.getElementById('checkout-toast');
+            if (!toast) return;
+
+            toast.textContent = message;
+
+            // Reset and set appearance
+            toast.classList.remove('opacity-0', 'translate-y-[-8px]', 'pointer-events-none');
+
+            // Hide after 4 seconds
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-[-8px]', 'pointer-events-none');
+            }, 4000);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Chống quay lại trang checkout bằng nút Back của trình duyệt (bfcache)
+            window.addEventListener('pageshow', (event) => {
+                if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+                    // Page was restored from bfcache (back navigation)
+                    window.location.reload();
+                }
+            });
+
+            const cart = window.CartSystem ? window.CartSystem.getCart() : [];
+
+            // Guard: Redirect if cart is empty
+            if (cart.length === 0) {
+                showToast('Giỏ hàng của bạn đang trống. Đang quay lại...');
+                setTimeout(() => {
+                    window.location.href = '/cart';
+                }, 2000);
+                return;
+            }
+
+            renderSummary(cart);
+            bindCheckoutItems(cart);
+
+            // Elements
+            const provinceSelect = document.getElementById('provinceId');
+            const districtSelect = document.getElementById('districtId');
+            const wardSelect = document.getElementById('wardCode');
+            const shippingContainer = document.getElementById('shipping-options-container');
+            const checkoutForm = document.getElementById('checkout-form');
+
+            // Force reset all selects and hidden fields on load
+            if (provinceSelect) provinceSelect.value = '';
+            if (districtSelect) {
+                districtSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
+                districtSelect.value = '';
+            }
+            if (wardSelect) {
+                wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+                wardSelect.value = '';
+            }
+            const hiddenToReset = [
+                'provinceName', 'districtName', 'wardName',
+                'selectedServiceId', 'selectedServiceName', 'selectedShippingFee'
+            ];
+            hiddenToReset.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            updateFinalSummary(0);
+
+            if (checkoutForm) {
+                checkoutForm.addEventListener('submit', function (e) {
+                    const shippingFee = document.getElementById('selectedShippingFee').value;
+                    if (!shippingFee || shippingFee === '') {
+                        e.preventDefault();
+                        showToast('Vui lòng chọn dịch vụ vận chuyển để tiếp tục.');
+                        return;
+                    }
+                    const latestCart = window.CartSystem ? window.CartSystem.getCart() : [];
+                    bindCheckoutItems(latestCart);
+                    
+                    // Đánh dấu đơn hàng đang được xử lý để xoá giỏ hàng ở trang tiếp theo
+                    sessionStorage.setItem('orderInProgress', 'true');
+                });
+            }
+
+            // Event Listeners for Location
+            provinceSelect.addEventListener('change', async function () {
+                const provinceId = this.value;
+                const provinceName = this.options[this.selectedIndex].text;
+                document.getElementById('provinceName').value = provinceName;
+
+                // Reset EVERYTHING dependent on province
+                districtSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
+                districtSelect.value = '';
+                wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+                wardSelect.value = '';
+
+                document.getElementById('districtName').value = '';
+                document.getElementById('wardName').value = '';
+                document.getElementById('selectedServiceId').value = '';
+                document.getElementById('selectedServiceName').value = '';
+                document.getElementById('selectedShippingFee').value = '';
+
+                updateFinalSummary(0);
+
+                shippingContainer.innerHTML = '<div class="col-span-full py-12 text-center bg-surface-container-lowest/50 rounded-xl border border-dashed border-outline-variant/30"><p class="text-on-surface-variant text-xs italic font-medium uppercase tracking-widest">Đang tải danh sách quận huyện...</p></div>';
+
+                if (!provinceId) {
+                    shippingContainer.innerHTML = '<div class="col-span-full py-12 text-center bg-surface-container-lowest/50 rounded-xl border border-dashed border-outline-variant/30"><p class="text-on-surface-variant text-xs italic font-medium uppercase tracking-widest">Vui lòng chọn địa chỉ để xem các dịch vụ.</p></div>';
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/api/shipping/districts?provinceId=${provinceId}`);
+                    const districts = await response.json();
+                    districts.forEach(d => {
+                        const opt = document.createElement('option');
+                        opt.value = d.DistrictID;
+                        opt.textContent = d.DistrictName;
+                        districtSelect.appendChild(opt);
+                    });
+                    shippingContainer.innerHTML = '<div class="col-span-full py-8 text-center bg-surface-container-low rounded-md border border-dashed border-outline-variant/30"><p class="text-on-surface-variant text-sm italic">Vui lòng chọn quận/huyện và phường/xã.</p></div>';
+                } catch (e) {
+                    console.error('Error loading districts:', e);
+                    showToast('Lỗi khi tải danh sách quận huyện. Vui lòng thử lại.');
+                    this.value = ''; // Reset province select
+                    districtSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
+                    wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+                    shippingContainer.innerHTML = '<div class="col-span-full py-8 text-center bg-surface-container-low rounded-md border border-dashed border-outline-variant/30"><p class="text-on-surface-variant text-sm italic">Vui lòng chọn lại tỉnh thành.</p></div>';
+                }
+            });
+
+            districtSelect.addEventListener('change', async function () {
+                const districtId = this.value;
+                const districtName = this.options[this.selectedIndex].text;
+                document.getElementById('districtName').value = districtName;
+
+                // Reset EVERYTHING dependent on district
+                wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+                wardSelect.value = '';
+                document.getElementById('wardName').value = '';
+                document.getElementById('selectedServiceId').value = '';
+                document.getElementById('selectedServiceName').value = '';
+                document.getElementById('selectedShippingFee').value = '';
+
+                updateFinalSummary(0);
+
+                if (!districtId) {
+                    shippingContainer.innerHTML = '<div class="col-span-full py-12 text-center bg-surface-container-lowest/50 rounded-xl border border-dashed border-outline-variant/30"><p class="text-on-surface-variant text-xs italic font-medium uppercase tracking-widest">Vui lòng chọn quận/huyện và phường/xã.</p></div>';
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/api/shipping/wards?districtId=${districtId}`);
+                    const wards = await response.json();
+                    wards.forEach(w => {
+                        const opt = document.createElement('option');
+                        opt.value = w.WardCode;
+                        opt.textContent = w.WardName;
+                        wardSelect.appendChild(opt);
+                    });
+                } catch (e) {
+                    console.error('Error loading wards:', e);
+                    showToast('Lỗi khi tải danh sách phường xã. Vui lòng thử lại.');
+                    this.value = ''; // Reset district select
+                    wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+                }
+            });
+
+            wardSelect.addEventListener('change', function () {
+                const wardName = this.options[this.selectedIndex].text;
+                document.getElementById('wardName').value = wardName;
+                loadShippingOptions();
+            });
+
+            async function loadShippingOptions() {
+                const districtId = districtSelect.value;
+                const wardCode = wardSelect.value;
+
+                if (!districtId || !wardCode) return;
+
+                shippingContainer.innerHTML = '<div class="col-span-full py-8 text-center"><div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-primary border-t-transparent"></div></div>';
+
+                try {
+                    const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+                    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+                    const response = await fetch('/api/shipping/options', {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            [csrfHeader]: csrfToken
+                        },
+                        body: JSON.stringify({
+                            districtId: parseInt(districtId),
+                            wardCode: wardCode,
+                            weight: 500 // TODO: Calculate actual weight
+                        })
+                    });
+                    if (!response.ok) {
+                        throw new Error(`Shipping API responded with ${response.status}`);
+                    }
+
+                    const payload = await response.json();
+                    const options = Array.isArray(payload) ? payload : [];
+                    const shippingError = response.headers.get('X-Shipping-Error');
+                    renderShippingOptions(options, shippingError);
+                } catch (e) {
+                    console.error('Error loading shipping options:', e);
+                    showToast('Không thể tải dịch vụ vận chuyển. Vui lòng kiểm tra lại địa chỉ.');
+                    wardSelect.value = ''; // Reset ward select if shipping fails
+                    shippingContainer.innerHTML = '<p class="text-error text-center p-4 uppercase text-[10px] font-bold tracking-widest">Lỗi kết nối logistics</p>';
+                }
+            }
+
+            function renderShippingOptions(options, errorMessage) {
+                if (!Array.isArray(options) || options.length === 0) {
+                    const text = errorMessage && errorMessage.trim().length > 0
+                        ? errorMessage
+                        : 'Khu vực này hiện chưa hỗ trợ vận chuyển trực tuyến.';
+                    shippingContainer.innerHTML = `<p class="text-error text-center col-span-full">${text}</p>`;
+                    return;
+                }
+
+                shippingContainer.innerHTML = options.map(opt => `
+                    <label class="relative flex items-center p-6 bg-surface-container-lowest border border-outline-variant/30 rounded-md cursor-pointer hover:bg-surface-container-low transition-colors group">
+                        <input type="radio" name="shipping-option" value="${opt.serviceId}" 
+                               data-name="${opt.serviceName}" data-fee="${opt.shippingFee}"
+                               class="w-5 h-5 text-primary border-outline-variant focus:ring-0" />
+                        <div class="ml-4">
+                            <span class="block font-bold text-primary uppercase">${opt.serviceName}</span>
+                            <span class="block text-[10px] text-on-surface-variant uppercase mt-1">Dự kiến: ${new Date(opt.leadtime).toLocaleDateString('vi-VN')}</span>
+                        </div>
+                        <span class="ml-auto font-bold text-primary">${formatCurrency(opt.shippingFee)}</span>
+                    </label>
+                `).join('');
+
+                // Re-bind change event for new radio buttons
+                const radios = document.querySelectorAll('input[name="shipping-option"]');
+                radios.forEach(radio => {
+                    radio.addEventListener('change', function () {
+                        document.getElementById('selectedServiceId').value = this.value;
+                        document.getElementById('selectedServiceName').value = this.dataset.name;
+                        document.getElementById('selectedShippingFee').value = this.dataset.fee;
+                        updateFinalSummary(parseInt(this.dataset.fee));
+                    });
+                });
+
+                // Auto-select the first option if available
+                if (radios.length > 0) {
+                    const firstRadio = radios[0];
+                    firstRadio.checked = true;
+                    // Manually trigger the update logic for the first selection
+                    document.getElementById('selectedServiceId').value = firstRadio.value;
+                    document.getElementById('selectedServiceName').value = firstRadio.dataset.name;
+                    document.getElementById('selectedShippingFee').value = firstRadio.dataset.fee;
+                    updateFinalSummary(parseInt(firstRadio.dataset.fee));
+                }
+            }
+
+            function renderSummary(cart) {
+                const container = document.getElementById('checkout-items-summary');
+                if (!container) return;
+
+                if (cart.length === 0) {
+                    container.innerHTML = '<p class="text-center text-on-surface-variant italic py-4">Giỏ hàng trống</p>';
+                    return;
+                }
+
+                container.innerHTML = cart.map(item => `
+                    <div class="flex gap-4 items-center">
+                        <div class="relative w-12 h-12 bg-surface-container-highest rounded-lg flex-shrink-0 transition-transform hover:scale-105 duration-300">
+                            <img src="${item.image}" class="w-full h-full object-cover rounded-lg shadow-sm" />
+                            <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-primary text-on-primary text-[9px] font-black rounded-full flex items-center justify-center shadow-lg ring-2 ring-surface z-10 font-label">
+                                ${item.quantity}
+                            </span>
+                        </div>
+                        <div class="flex-grow min-w-0">
+                            <h4 class="text-[13px] font-black text-primary uppercase leading-tight tracking-tight truncate font-headline">${item.name}</h4>
+                            <div class="flex justify-between items-center mt-1">
+                                <p class="text-[10px] text-on-surface-variant font-black uppercase tracking-[0.15em] font-label leading-none">
+                                    ${item.variant || 'Standard'} — <span class="text-primary font-black">${formatCurrency(item.price * item.quantity)}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                const totals = window.CartSystem.calculateTotals();
+                updateFinalSummary(0);
+            }
+
+            function updateFinalSummary(shippingFee) {
+                const baseTotals = window.CartSystem.calculateTotals();
+                const subtotal = baseTotals.subtotal;
+                const vat = subtotal * 0.08;
+                const total = subtotal + vat + shippingFee;
+
+                document.getElementById('summary-subtotal').textContent = formatCurrency(subtotal);
+                document.getElementById('summary-shipping').textContent = shippingFee > 0 ? formatCurrency(shippingFee) : 'Chưa tính';
+                document.getElementById('summary-vat').textContent = formatCurrency(vat);
+                document.getElementById('summary-total').textContent = formatCurrency(total);
+            }
+
+            function bindCheckoutItems(cart) {
+                const hiddenContainer = document.getElementById('checkout-items-hidden-fields');
+                if (!hiddenContainer) return;
+
+                hiddenContainer.innerHTML = '';
+
+                cart.forEach((item, index) => {
+                    const quantity = Number(item.quantity) || 0;
+                    if (quantity <= 0) return;
+
+                    // Strictly enforce: variantId OR comboId, never both.
+                    if (item.comboId) {
+                        hiddenContainer.appendChild(createHiddenField(`items[${index}].comboId`, item.comboId));
+                    } else {
+                        const variantId = item.variantId || item.id;
+                        hiddenContainer.appendChild(createHiddenField(`items[${index}].variantId`, variantId));
+                    }
+
+                    hiddenContainer.appendChild(createHiddenField(`items[${index}].quantity`, quantity));
+                });
+            }
+
+            function createHiddenField(name, value) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = name;
+                input.value = String(value);
+                return input;
+            }
+        });
+    </script>
+</body>
+
+
+</html>

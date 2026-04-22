@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi">
+
+<head th:replace="~{fragments/head :: sharedHead('RoastLogistics - Kiến thức cà phê &amp; Xu hướng B2B')}"></head>
+
+<body class="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container font-body">
+    <style>
+        .article-content p {
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .article-content h2 {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            color: #351f1b;
+        }
+    </style>
+    <!-- Top Navigation -->
+    <!-- Top Navigation -->
+    <div th:replace="~{fragments/navbar :: navbar(${navItems})}"></div>
+    <main class="pt-24">
+        <!-- Hero Header Section -->
+        <header class="relative w-full h-[600px] flex items-end pb-16 bg-primary-container overflow-hidden">
+            <img alt="Industrial Roasting Facility"
+                class="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-multiply"
+                data-alt="dramatic wide shot of a modern industrial coffee roasting facility with large steel machinery and warm amber lighting on coffee beans"
+                th:src="${article != null and article.coverImageUrl != null and !#strings.isEmpty(article.coverImageUrl) ? article.coverImageUrl : 'https://lh3.googleusercontent.com/aida-public/AB6AXuBVmpam8rBEQaGz7n9lgu_Ah767F2ji_gFYQMLLXJdcTnXLlJZWyHjUc9yrT0KA-X5jG-z_KMs2cVFwz8ft1yIBPATU6XuKpH96ckMRUxn57EEfzu3ZxaZH_9fP8tJW8ET4r7udnxkPMKErF1RELS4dkppibxWYpHnDF0mVWPVeir1bMdg1mGSJK5wZJi_5ciTQaalpQmXyU5Bxq4qELyT9-2rS126-vIswxx87vmsDJuSsU2jkreBoA4XFHP4nO6-QkgVxbtgzRqMk'}"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVmpam8rBEQaGz7n9lgu_Ah767F2ji_gFYQMLLXJdcTnXLlJZWyHjUc9yrT0KA-X5jG-z_KMs2cVFwz8ft1yIBPATU6XuKpH96ckMRUxn57EEfzu3ZxaZH_9fP8tJW8ET4r7udnxkPMKErF1RELS4dkppibxWYpHnDF0mVWPVeir1bMdg1mGSJK5wZJi_5ciTQaalpQmXyU5Bxq4qELyT9-2rS126-vIswxx87vmsDJuSsU2jkreBoA4XFHP4nO6-QkgVxbtgzRqMk" />
+            <div class="relative w-full max-w-7xl mx-auto px-8 sm:px-12 lg:px-20 z-10">
+                <h1 class="text-5xl md:text-7xl font-headline font-extrabold text-white leading-tight tracking-tighter max-w-4xl scroll-reveal-text"
+                    th:text="${article != null and article.title != null ? article.title : 'TỐI ƯU HÓA CHUỖI CUNG ỨNG CÀ PHÊ TRONG KỶ NGUYÊN SỐ'}">
+                    TỐI ƯU HÓA CHUẨN BỊ...
+                </h1>
+                <div class="mt-8 flex items-center gap-6 text-on-primary-container font-medium">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+                        <span class="text-sm"
+                            th:text="${article != null and article.createdAt != null ? #temporals.format(article.createdAt, 'dd/MM/yyyy') : '24 Tháng 5, 2024'}">24
+                            Tháng 5, 2024</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined" data-icon="schedule">schedule</span>
+                        <span class="text-sm">12 phút đọc</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Article Layout -->
+        <section class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20 py-20 grid grid-cols-1 lg:grid-cols-12 gap-16">
+            <!-- Main Content Canvas -->
+            <article class="lg:col-span-7 article-content">
+                <p th:if="${article != null and article.summary != null and !#strings.isEmpty(article.summary)}"
+                    class="text-xl font-medium text-on-surface-variant mb-12 border-l-4 border-primary pl-6"
+                    th:text="${article.summary}"></p>
+
+                <div id="article-content-render" class="space-y-4"
+                    th:if="${article != null and article.contentJson != null and !#strings.isEmpty(article.contentJson)}">
+                </div>
+                <script th:inline="javascript"
+                    th:if="${article != null and article.contentJson != null and !#strings.isEmpty(article.contentJson)}">
+                        window.__ARTICLE_CONTENT_JSON = /*[[${article.contentJson}]]*/ '';
+                    </script>
+
+                <div th:if="${article == null or article.contentJson == null or #strings.isEmpty(article.contentJson)}">
+                    <p
+                        class="text-xl font-medium text-on-surface-variant mb-12 border-l-4 border-primary pl-6">
+                        Trong bối cảnh thị trường cà phê toàn cầu đang đối mặt với những biến động về khí hậu và
+                        logistics,
+                        việc
+                        áp dụng công nghệ vào quy trình rang xay và vận chuyển không còn là lựa chọn, mà là yêu cầu sống
+                        còn
+                        cho
+                        các doanh nghiệp B2B.
+                        </p>
+                        <p>Ngành công nghiệp cà phê đang trải qua một sự chuyển mình mạnh mẽ. Từ những xưởng rang thủ
+                            công
+                            nhỏ
+                            lẻ,
+                            chúng ta đang chứng kiến sự trỗi dậy của các trung tâm điều hành thông minh, nơi mà dữ liệu
+                            đóng
+                            vai
+                            trò
+                            quan trọng không kém gì kỹ thuật của thợ rang.</p>
+                        <h2>Sự Trỗi Dậy Của Công Nghệ Rang Thông Minh</h2>
+                        <p>Công nghệ rang hiện đại cho phép kiểm soát nhiệt độ và lưu lượng khí một cách chính xác đến
+                            từng
+                            mili
+                            giây. Các hệ thống phần mềm quản lý như RoastLogistics cung cấp biểu đồ thời gian thực, giúp
+                            đảm
+                            bảo
+                            tính nhất quán của từng lô hàng, bất kể quy mô sản xuất lên đến hàng chục tấn mỗi ngày.</p>
+                        <div class="my-12 bg-surface-container-low p-2">
+                            <img alt="Data Visualization in Roasting"
+                                class="w-full h-auto grayscale hover:grayscale-0 transition-all duration-700"
+                                data-alt="close-up of a digital screen showing complex roasting curves and technical data points in a professional industrial laboratory environment"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbPkwXWBDLo-P6UWlzKZhnuKEp-VJiKLGLhDNwQk7wGg8_OjLehm_WR3SqOhCPTdwyfTOZSmBp5bBy_BgGcyQhwfLYKk1Eh1didlOC1yvVi6hADXDdDTCkNzNmRpSUHHpbdb-MbWCk7uYiYCpySlwXzVqBSNB7FqmHmnl673sPwaQ_G3KP35aPuslrY-5JayMgccnVhQ0uFNuP2PjwyhiuQtGBJDqhA8gGsGlyVR3tKMt_XvhM0oat94ER57JoHGQngoKgZrEnx-my" />
+                            <p class="text-xs text-on-surface-variant mt-4 px-4 italic">Biểu đồ phân tích độ ẩm và phản
+                                ứng
+                                Maillard
+                                trong quy trình rang công nghiệp.</p>
+                        </div>
+                        <h2>Logistics: Mắt Xích Quyết Định Giá Thành</h2>
+                        <p>Chi phí vận chuyển chiếm tới 15-20% giá thành của một kilogram cà phê xanh. Việc tối ưu hóa
+                            lộ
+                            trình
+                            và
+                            quản lý kho vận thông minh giúp giảm thiểu lãng phí và đảm bảo độ tươi mới của hạt khi đến
+                            tay
+                            khách
+                            hàng B2B.</p>
+                        <p>Chúng tôi nhận thấy rằng, các doanh nghiệp sử dụng hệ thống tracking thời gian thực có khả
+                            năng
+                            phản
+                            ứng
+                            nhanh hơn 40% trước các sự cố trong chuỗi cung ứng so với các mô hình truyền thống.</p>
+                </div>
+                </div>
+
+            </article>
+            <!-- Right Sidebar: Related News -->
+            <aside class="lg:col-span-4 space-y-12">
+                <div class="bg-surface-container-low p-8 rounded-lg">
+                    <h3 class="font-headline font-extrabold text-xl mb-6 tracking-tight">Bài viết liên quan</h3>
+                    <div class="space-y-8">
+                        <a th:each="related : ${relatedArticles}" class="group block"
+                            th:href="@{/articles/{id}(id=${related.id})}">
+                            <span class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-2 block"
+                                th:text="${#temporals.format(related.publishedAt, 'dd/MM/yyyy')}">
+                                Thị trường
+                            </span>
+                            <h4 class="font-bold text-on-surface group-hover:text-primary transition-colors leading-snug line-clamp-2"
+                                th:text="${related.title}">
+                                Dự báo giá cà phê Robusta thế giới trong quý III/2024
+                            </h4>
+                        </a>
+
+                        <!-- Fallback if no related articles -->
+                        <p th:if="${relatedArticles == null or #lists.isEmpty(relatedArticles)}"
+                            class="text-sm text-on-surface-variant italic">
+                            Chưa có bài viết liên quan nào.
+                        </p>
+                    </div>
+                </div>
+            </aside>
+        </section>
+    </main>
+    <!-- Footer -->
+    <!-- Footer -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+    <script src="assets/effects.js" th:src="@{/assets/effects.js}"></script>
+    <script src="assets/cart-badge.js" th:src="@{/assets/cart-badge.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+    <script>
+        (function renderArticleContentFromJson() {
+            var contentRoot = document.getElementById('article-content-render');
+            if (!contentRoot) {
+                return;
+            }
+
+            function escapeHtml(value) {
+                return String(value)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/\"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            }
+
+            function sanitizeImageUrl(rawUrl) {
+                if (!rawUrl) {
+                    return '';
+                }
+
+                var value = String(rawUrl).trim();
+                if (!value) {
+                    return '';
+                }
+
+                var lower = value.toLowerCase();
+                if (lower.indexOf('javascript:') === 0 || lower.indexOf('data:') === 0 || lower.indexOf('vbscript:') === 0) {
+                    return '';
+                }
+
+                try {
+                    var parsed = new URL(value, window.location.href);
+                    if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+                        return parsed.href;
+                    }
+
+                    if (parsed.protocol === 'file:') {
+                        return parsed.href;
+                    }
+                } catch (error) {
+                    return '';
+                }
+
+                return '';
+            }
+
+            function sanitizePlainText(raw) {
+                if (raw === null || raw === undefined) {
+                    return '';
+                }
+
+                var value = String(raw);
+                var decoder = document.createElement('textarea');
+                decoder.innerHTML = value;
+                value = decoder.value;
+
+                value = value.replace(/<[^>]*>/g, '');
+                value = value.replace(/javascript\s*:/gi, '');
+                value = value.replace(/vbscript\s*:/gi, '');
+                value = value.replace(/on[a-z]+\s*=/gi, '');
+                value = value.replace(/script/gi, '');
+                value = value.replace(/[^\p{L}\p{N}\s.,!?;:()\-]/gu, '');
+                value = value.replace(/\s+/g, ' ');
+                return value.trim();
+            }
+
+            function sanitizeIncomingData(data) {
+                var blocks = Array.isArray(data.blocks) ? data.blocks : [];
+                var sanitizedBlocks = [];
+
+                blocks.forEach(function (block) {
+                    if (!block || !block.type || !block.data) {
+                        return;
+                    }
+
+                    var nextBlock = {
+                        type: block.type,
+                        data: {}
+                    };
+
+                    if (block.type === 'header') {
+                        nextBlock.data.text = sanitizePlainText(block.data.text);
+                        nextBlock.data.level = Number(block.data.level || 2);
+                    } else if (block.type === 'paragraph') {
+                        nextBlock.data.text = sanitizePlainText(block.data.text);
+                    } else if (block.type === 'list') {
+                        var items = Array.isArray(block.data.items) ? block.data.items : [];
+                        nextBlock.data.style = block.data.style === 'ordered' ? 'ordered' : 'unordered';
+                        nextBlock.data.items = items.map(function (item) {
+                            return sanitizePlainText(item);
+                        });
+                    } else if (block.type === 'quote') {
+                        nextBlock.data.text = sanitizePlainText(block.data.text);
+                        nextBlock.data.caption = sanitizePlainText(block.data.caption);
+                    } else if (block.type === 'image') {
+                        var imageUrl = '';
+                        if (block.data.file && block.data.file.url) {
+                            imageUrl = String(block.data.file.url);
+                        } else if (block.data.url) {
+                            imageUrl = String(block.data.url);
+                        }
+
+                        imageUrl = sanitizeImageUrl(imageUrl);
+                        if (!imageUrl) {
+                            return;
+                        }
+
+                        nextBlock.data.url = imageUrl;
+                        nextBlock.data.caption = sanitizePlainText(block.data.caption);
+                    } else {
+                        return;
+                    }
+
+                    sanitizedBlocks.push(nextBlock);
+                });
+
+                return {
+                    time: data.time || Date.now(),
+                    version: data.version || '2.29.1',
+                    blocks: sanitizedBlocks
+                };
+            }
+
+            function renderBlocksToHtml(data) {
+                var blocks = Array.isArray(data.blocks) ? data.blocks : [];
+
+                return blocks
+                    .map(function (block) {
+                        if (!block || !block.type || !block.data) {
+                            return '';
+                        }
+
+                        if (block.type === 'header') {
+                            var level = Number(block.data.level || 2);
+                            if (level < 1 || level > 6) {
+                                level = 2;
+                            }
+                            return '<h' + level + '>' + escapeHtml(block.data.text || '') + '</h' + level + '>';
+                        }
+
+                        if (block.type === 'paragraph') {
+                            return '<p>' + escapeHtml(block.data.text || '') + '</p>';
+                        }
+
+                        if (block.type === 'list') {
+                            var tag = block.data.style === 'ordered' ? 'ol' : 'ul';
+                            var items = Array.isArray(block.data.items) ? block.data.items : [];
+                            var htmlItems = items.map(function (item) {
+                                return '<li>' + escapeHtml(item) + '</li>';
+                            }).join('');
+                            return '<' + tag + '>' + htmlItems + '</' + tag + '>';
+                        }
+
+                        if (block.type === 'quote') {
+                            var quote = escapeHtml(block.data.text || '');
+                            var caption = escapeHtml(block.data.caption || '');
+                            return '<blockquote><p>' + quote + '</p><cite>' + caption + '</cite></blockquote>';
+                        }
+
+                        if (block.type === 'image') {
+                            var imageUrl = block.data.url ? String(block.data.url) : '';
+                            imageUrl = sanitizeImageUrl(imageUrl);
+                            if (!imageUrl) {
+                                return '';
+                            }
+
+                            var imageCaption = escapeHtml(block.data.caption || '');
+                            var altText = imageCaption || 'Article image';
+                            var figure = '<figure><img src="' + escapeHtml(imageUrl) + '" alt="' + altText + '" loading="lazy" />';
+                            if (imageCaption) {
+                                figure += '<figcaption>' + imageCaption + '</figcaption>';
+                            }
+                            figure += '</figure>';
+                            return figure;
+                        }
+
+                        return '';
+                    })
+                    .join('\n');
+            }
+
+            try {
+                var raw = typeof window.__ARTICLE_CONTENT_JSON === 'string'
+                    ? window.__ARTICLE_CONTENT_JSON.trim()
+                    : '';
+                if (!raw) {
+                    return;
+                }
+
+                var parsed = JSON.parse(raw);
+                if (!parsed || !Array.isArray(parsed.blocks)) {
+                    return;
+                }
+
+                var sanitized = sanitizeIncomingData(parsed);
+                var articleHtml = renderBlocksToHtml(sanitized);
+                var safeHtml = articleHtml;
+
+                if (typeof DOMPurify !== 'undefined') {
+                    safeHtml = DOMPurify.sanitize(articleHtml, {
+                        ALLOWED_TAGS: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'ul', 'ol', 'li', 'blockquote', 'cite', 'figure', 'img', 'figcaption'],
+                        ALLOWED_ATTR: ['src', 'alt', 'loading'],
+                        ALLOW_DATA_ATTR: false
+                    });
+                }
+
+                contentRoot.innerHTML = safeHtml || '<p class="text-on-surface-variant">Khong co block hop le de hien thi.</p>';
+            } catch (e) {
+                console.error('Cannot parse article.contentJson:', e);
+            }
+        })();
+    </script>
+</body>
+
+</html>

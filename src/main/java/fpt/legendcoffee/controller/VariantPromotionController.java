@@ -1,13 +1,13 @@
 package fpt.legendcoffee.controller;
 
+<<<<<<< HEAD
 import fpt.legendcoffee.dto.response.ProductVariantDTO;
 import fpt.legendcoffee.dto.response.PromotionDTO;
+=======
+>>>>>>> origin/dev
 import fpt.legendcoffee.service.VariantPromotionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Controller
 public class VariantPromotionController {

@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:fragment="sharedHead(pageTitle)">
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
   <title th:text="${pageTitle}">Industrial Excellence</title>
 
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -85,6 +87,6 @@
   <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
   <script src="assets/cart.js" th:src="@{/assets/cart.js}"></script>
 </head>
-
+ 
 <head th:fragment="head(pageTitle)" th:replace="~{fragments/head :: sharedHead(${pageTitle})}"></head>
 </html>

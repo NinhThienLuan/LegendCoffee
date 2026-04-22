@@ -7,10 +7,12 @@ import fpt.legendcoffee.entity.enumeration.PaymentMethod;
 import fpt.legendcoffee.entity.enumeration.PaymentStatus;
 import fpt.legendcoffee.dto.request.PaymentReturnDTO;
 import fpt.legendcoffee.dto.response.VNPayIpnResponseDTO;
+import fpt.legendcoffee.service.ShippingService;
 import fpt.legendcoffee.service.VNPayApplicationService;
 import fpt.legendcoffee.service.VNPayService;
 import fpt.legendcoffee.repository.OrderRepository;
 import fpt.legendcoffee.repository.PaymentRepository;
+import fpt.legendcoffee.service.WalletService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -35,13 +37,19 @@ public class VNPayApplicationServiceImpl implements VNPayApplicationService {
     private final VNPayService vnPayService;
     private final OrderRepository orderRepository;
     private final PaymentRepository paymentRepository;
+    private final ShippingService shippingService;
+    private final WalletService walletService;
 
     public VNPayApplicationServiceImpl(VNPayService vnPayService,
             OrderRepository orderRepository,
-            PaymentRepository paymentRepository) {
+            PaymentRepository paymentRepository,
+            ShippingService shippingService,
+            WalletService walletService) {
         this.vnPayService = vnPayService;
         this.orderRepository = orderRepository;
         this.paymentRepository = paymentRepository;
+        this.shippingService = shippingService;
+        this.walletService = walletService;
     }
 
     // createPayment — Tạo Payment PENDING + URL VNPay
@@ -79,6 +87,10 @@ public class VNPayApplicationServiceImpl implements VNPayApplicationService {
         // 5. Tạo URL VNPay và trả về
         String paymentUrl = vnPayService.createPaymentUrl(
                 totalAmount.longValue(), txnRef, orderInfo, ipAddress);
+
+        // 6. Lưu URL thanh toán để user có thể quay lại sau
+        payment.setPaymentUrl(paymentUrl);
+        paymentRepository.save(payment);
 
         log.info("[VNPay] Tạo payment thành công - OrderId={}, TxnRef={}", orderId, txnRef);
         return paymentUrl;
@@ -168,13 +180,29 @@ public class VNPayApplicationServiceImpl implements VNPayApplicationService {
         }
         paymentRepository.save(payment);
 
-        // Nếu thành công → cập nhật Order status
+        // Nếu thành công → cập nhật Order status và đẩy sang GHN
         if (isSuccess) {
             Order order = payment.getOrder();
             order.setStatus(OrderStatus.CONFIRMED);
             orderRepository.save(order);
-            log.info("[VNPay IPN] Thanh toán thành công - TxnRef={}, OrderId={}",
-                    txnRef, order.getId());
+
+            // Đẩy đơn sang GHN
+            try {
+                shippingService.pushOrderToGHN(order.getId());
+                log.info("[VNPay IPN] Thanh toán thành công & Đã đẩy đơn sang GHN - TxnRef={}, OrderId={}",
+                        txnRef, order.getId());
+            } catch (Exception e) {
+                log.error("[VNPay IPN] Thanh toán thành công nhưng lỗi khi đẩy sang GHN: {}", e.getMessage());
+                // Tuỳ business: có thể cho phép admin push tay sau nếu lỗi ở đây
+            }
+
+            // Cộng tiền vào ví admin
+            try {
+                String description = "Nhận tiền từ đơn hàng #" + order.getId();
+                walletService.creditAdminWallet(receivedAmount, description);
+            } catch (Exception e) {
+                log.error("[VNPay IPN] Lỗi khi cộng tiền vào ví admin: {}", e.getMessage());
+            }
         } else {
             log.warn("[VNPay IPN] Thanh toán thất bại - TxnRef={}, ResponseCode={}",
                     txnRef, responseCode);
@@ -214,7 +242,6 @@ public class VNPayApplicationServiceImpl implements VNPayApplicationService {
 
     /**
      * Chuyển VNPay response code sang thông báo lỗi tiếng Việt.
-     * Xem đầy đủ tại: https://sandbox.vnpayment.vn/apis/docs/thanh-toan-pay/pay.md
      */
     private String resolveErrorMessage(String responseCode) {
         if (responseCode == null)

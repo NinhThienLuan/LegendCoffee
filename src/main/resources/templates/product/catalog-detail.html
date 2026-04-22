@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html class="light" lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: sharedHead('Chi tiết sản phẩm | LegendCoffee')}"></head>
+<body class="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container">
+  <div th:replace="~{fragments/navbar :: navbar(${navItems})}"></div>
+
+  <main>
+    <div th:replace="~{fragments/catalogs :: catalogDetail}"></div>
+  </main>
+
+  <div th:replace="~{fragments/footer :: footer}"></div>
+
+  <script src="assets/cart-badge.js" th:src="@{/assets/cart-badge.js}"></script>
+  <script src="assets/effects.js" th:src="@{/assets/effects.js}"></script>
+</body>
+</html>

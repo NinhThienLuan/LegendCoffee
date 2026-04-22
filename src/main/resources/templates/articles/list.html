@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html class="light" lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: sharedHead('RoastLogistics - Danh sách Bài viết')}"></head>
+
+<body class="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container font-body">
+    <!-- Top Navigation -->
+    <div th:replace="~{fragments/navbar :: navbar(${navItems})}"></div>
+
+    <main class="pt-24 pb-16 min-h-screen">
+        <div class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20">
+            <!-- Header -->
+            <div class="mb-12">
+                <h1
+                    class="text-4xl md:text-5xl font-headline font-extrabold text-primary mb-4 tracking-tighter scroll-reveal-text">
+                    KIẾN THỨC CÀ PHÊ &amp; XU HƯỚNG B2B
+                </h1>
+                <p class="text-on-surface-variant max-w-2xl text-lg">
+                    Cập nhật những thông tin mới nhất về thị trường cà phê, công nghệ rang xay công nghiệp và quản trị
+                    logistics.
+                </p>
+            </div>
+
+            <!-- Blog Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Vòng lặp lấy danh sách bài viết -->
+                <a th:each="article : ${articles}" th:href="@{/articles/{id}(id=${article.id})}"
+                    class="group flex flex-col bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm border border-outline-variant/10 hover:shadow-md hover:border-primary/30 transition-all duration-300 transform hover:-translate-y-1">
+
+                    <!-- Cover Image Section -->
+                    <div class="relative w-full h-56 overflow-hidden bg-surface-container-high">
+                        <img th:if="${article.coverImageUrl != null and !#strings.isEmpty(article.coverImageUrl)}"
+                            th:src="${article.coverImageUrl}" alt="Cover image"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                        <div th:if="${article.coverImageUrl == null or #strings.isEmpty(article.coverImageUrl)}"
+                            class="w-full h-full flex items-center justify-center text-on-surface-variant">
+                            <span class="material-symbols-outlined text-5xl">inventory_2</span>
+                        </div>
+                    </div>
+
+                    <!-- Article Information Section -->
+                    <div class="p-6 flex flex-col flex-grow">
+                        <!-- Title -->
+
+                        <!-- Title -->
+                        <h3 class="text-xl font-headline font-bold text-on-surface mb-4 group-hover:text-primary transition-colors line-clamp-2"
+                            th:text="${article.title}">
+                            Tiêu đề bài viết
+                        </h3>
+
+                        <!-- Spacer to push author to bottom if text is short -->
+                        <div class="flex-grow"></div>
+
+                        <!-- Author & Date -->
+                        <div class="mt-6 pt-4 border-t border-outline-variant/10 flex items-center gap-3">
+                            <!-- Avatar placeholder (hoặc lấy từ DB nếu có avatar) -->
+                            <div class="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center flex-shrink-0 text-on-surface-variant font-bold text-xs uppercase"
+                                th:text="${article.authorName != null ? #strings.substring(article.authorName, 0, 1) : 'U'}">
+                                U
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-on-surface"
+                                    th:text="${article.authorName != null ? article.authorName : 'Admin'}">
+                                    Author Name
+                                </p>
+                                <p class="text-xs text-on-surface-variant"
+                                    th:text="${article.publishedDate != null ? article.publishedDate : 'N/A'}">
+                                    Date
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Placeholder nếu không có bài viết nào -->
+                <div th:if="${articles == null or #lists.isEmpty(articles)}"
+                    class="col-span-full py-20 text-center flex flex-col items-center">
+                    <span class="material-symbols-outlined text-6xl text-outline-variant mb-4">article</span>
+                    <p class="text-on-surface-variant text-lg">Hệ thống chưa có bài viết nào được đăng tải.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <script src="assets/effects.js" th:src="@{/assets/effects.js}"></script>
+    <script src="assets/cart-badge.js" th:src="@{/assets/cart-badge.js}"></script>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+
+</html>

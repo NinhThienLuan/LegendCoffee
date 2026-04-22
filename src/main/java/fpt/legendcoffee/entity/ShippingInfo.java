@@ -5,7 +5,6 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import fpt.legendcoffee.common.infrastructure.BaseEntity;
-import fpt.legendcoffee.entity.enumeration.ShippingStatus;
 
 import java.time.LocalDateTime;
 
@@ -50,38 +49,44 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ShippingInfo extends BaseEntity {
 
+
+
+
     @OneToOne
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
+
+    // Mã đơn GHN trả về sau khi tạo đơn thành công
     @Column(name = "ghn_order_code", length = 50)
     private String ghnOrderCode;
 
-    @Column(name = "recipient_name", nullable = false, columnDefinition = "NVARCHAR(255)")
+    // Thông tin người nhận
+    @Column(name = "recipient_name", nullable = false)
     private String recipientName;
 
     @Column(name = "recipient_phone", nullable = false, length = 20)
     private String recipientPhone;
 
-    @Column(name = "recipient_address", nullable = false, columnDefinition = "NVARCHAR(500)")
+    @Column(name = "recipient_address", nullable = false, length = 500)
     private String recipientAddress;
 
     @Column(name = "province_id")
     private Integer provinceId;
 
-    @Column(name = "province_name", columnDefinition = "NVARCHAR(100)")
+    @Column(name = "province_name", length = 100)
     private String provinceName;
 
     @Column(name = "district_id", nullable = false)
     private Integer districtId;
 
-    @Column(name = "district_name", columnDefinition = "NVARCHAR(100)")
+    @Column(name = "district_name", length = 100)
     private String districtName;
 
     @Column(name = "ward_code", nullable = false, length = 20)
     private String wardCode;
 
-    @Column(name = "ward_name", columnDefinition = "NVARCHAR(100)")
+    @Column(name = "ward_name", length = 100)
     private String wardName;
 
     // Thông tin dịch vụ vận chuyển
@@ -104,11 +109,13 @@ public class ShippingInfo extends BaseEntity {
 
     // Trạng thái GHN: ready_to_pick, delivering, delivered, cancel, ...
     @Column(name = "status", length = 50)
-    private ShippingStatus status;
+    private String status;
 
     @Column(name = "expected_delivery_time")
     private LocalDateTime expectedDeliveryTime;
 
-    @Column(name = "note", columnDefinition = "NVARCHAR(500)")
+    @Column(name = "note", length = 500)
     private String note;
+
+
 }

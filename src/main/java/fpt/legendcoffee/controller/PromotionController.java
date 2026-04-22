@@ -6,6 +6,7 @@ import fpt.legendcoffee.service.PromotionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 
@@ -16,12 +17,14 @@ public class PromotionController {
 
     // CREATE
     @PostMapping("/promotion/create")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public PromotionResponseDTO create(@RequestBody PromotionRequestDTO request) {
         return promotionService.create(request);
     }
 
     // UPDATE
     @PutMapping("/promotion/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public PromotionResponseDTO update(@PathVariable Long id,
                                        @RequestBody PromotionRequestDTO request) {
         return promotionService.update(id, request);

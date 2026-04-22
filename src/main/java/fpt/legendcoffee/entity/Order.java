@@ -8,6 +8,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -45,4 +46,10 @@ public class Order extends BaseEntity {
 
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private ShippingInfo shippingInfo;
+
+    @OneToMany(mappedBy = "order")
+    private List<OrderItem> orderItems;
+
+    @OneToMany(mappedBy = "order")
+    private List<Payment> payments;
 }

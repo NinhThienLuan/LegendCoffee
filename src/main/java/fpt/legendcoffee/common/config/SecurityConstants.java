@@ -7,22 +7,22 @@ public class SecurityConstants {
             "/login",
             "/register",
             "/cart",
-            "/catalogs/**",
+            "/api/shipping/**", // REST API tính phí & địa chỉ (gọi AJAX từ checkout)
+            "/webhook/ghn", // Webhook GHN — phải public để GHN gọi được
+            "/articles/**",
+            "/products/**",
+            "/combos",
+            "/combos/**",
+            "/forgot-password",
+            "/reset-password",
             "/css/**",
             "/js/**",
             "/images/**",
-<<<<<<< HEAD
-            "/payment/vnpay/callback",
-            "/payment/vnpay/ipn",
-            "/assets/**",
-            "/favicon.ico"
-=======
- 
             "/favicon.ico",
             "/payment/vnpay/callback",
             "/payment/vnpay/ipn",
+            "/error",
             "/assets/**",
-         
->>>>>>> feature/product-service
+            "/images/**"
     };
 }
