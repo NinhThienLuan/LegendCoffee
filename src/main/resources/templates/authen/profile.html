@@ -81,9 +81,13 @@
 
                             <!-- Name & Quick Info -->
                             <div class="flex flex-col text-center lg:text-left gap-2 flex-grow">
-                                <input type="text" th:field="*{username}" readonly
+                                <input type="text" th:field="*{username}" id="username" readonly maxlength="50"
                                     class="profile-input text-headline-md font-headline font-bold text-on-surface bg-transparent border-none focus:outline-none focus:ring-0 p-0 hover:bg-surface-container-highest/30 rounded px-2 -mx-2 transition-colors readonly:cursor-default"
                                     placeholder="Tên người dùng">
+                                <p id="error-username" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"
+                                    class="text-error text-[10px] font-bold mt-1 uppercase"></p>
+                                <p id="js-error-username"
+                                    class="text-error text-[10px] font-bold mt-1 uppercase hidden"></p>
                                 <div
                                     class="flex flex-wrap items-center justify-center lg:justify-start gap-4 text-sm text-on-surface-variant mt-2 font-headline uppercase tracking-widest font-semibold">
                                     <span class="flex items-center gap-1"><span
@@ -107,11 +111,16 @@
                                     điện thoại</label>
                                 <div
                                     class="bg-surface-container-lowest px-4 py-3 rounded-lg border border-outline-variant/20 shadow-sm text-on-surface font-medium flex items-center justify-between group-focus-within:border-primary transition-colors">
-                                    <input type="text" th:field="*{phone}" id="phone" readonly
+                                    <input type="text" th:field="*{phone}" id="phone" readonly pattern="\d{10}"
+                                        maxlength="10" title="Số điện thoại phải đủ 10 số"
                                         class="profile-input w-full bg-transparent border-none focus:outline-none p-0 text-on-surface font-medium readonly:cursor-default"
                                         placeholder="Số điện thoại">
                                     <span class="material-symbols-outlined text-outline text-[18px]">verified</span>
                                 </div>
+                                <p id="error-phone" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"
+                                    class="text-error text-[10px] font-bold mt-1 uppercase"></p>
+                                <p id="js-error-phone" class="text-error text-[10px] font-bold mt-1 uppercase hidden">
+                                </p>
                             </div>
 
                             <!-- Info Module -->
@@ -121,10 +130,14 @@
                                     chỉ giao dịch</label>
                                 <div
                                     class="bg-surface-container-lowest px-4 py-3 rounded-lg border border-outline-variant/20 shadow-sm text-on-surface font-medium min-h-[48px] flex items-center group-focus-within:border-primary transition-colors">
-                                    <input type="text" th:field="*{address}" id="address" readonly
+                                    <input type="text" th:field="*{address}" id="address" readonly maxlength="200"
                                         class="profile-input w-full bg-transparent border-none focus:outline-none p-0 text-on-surface font-medium readonly:cursor-default"
                                         placeholder="Chưa cập nhật địa chỉ">
                                 </div>
+                                <p id="error-address" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"
+                                    class="text-error text-[10px] font-bold mt-1 uppercase"></p>
+                                <p id="js-error-address" class="text-error text-[10px] font-bold mt-1 uppercase hidden">
+                                </p>
                             </div>
                         </div>
 
@@ -203,6 +216,49 @@
                 saveBtn.classList.add('hidden');
                 cancelBtn.classList.add('hidden');
             });
+
+            // Real-time validation
+            const validate = (input, errorId, condition, message) => {
+                const errorElement = document.getElementById(errorId);
+                const serverError = input.closest('.flex-col').querySelector('[id^="error-"]');
+
+                if (condition) {
+                    errorElement.textContent = message;
+                    errorElement.classList.remove('hidden');
+                    if (serverError) serverError.classList.add('hidden');
+                } else {
+                    errorElement.classList.add('hidden');
+                }
+            };
+
+            const phoneInput = document.getElementById('phone');
+            phoneInput.addEventListener('input', function () {
+                const val = this.value;
+                if (/[^\d]/.test(val)) {
+                    validate(this, 'js-error-phone', true, 'Số điện thoại chỉ được chứa chữ số');
+                    this.value = val.replace(/[^\d]/g, '');
+                } else if (val.length > 0 && val.length < 10) {
+                    validate(this, 'js-error-phone', true, 'Số điện thoại phải đủ 10 số');
+                } else {
+                    validate(this, 'js-error-phone', false);
+                }
+            });
+
+            const usernameInput = document.getElementById('username');
+            usernameInput.addEventListener('input', function () {
+                validate(this, 'js-error-username', this.value.length > 50, 'Tên tối đa 50 ký tự');
+            });
+
+            const addressInput = document.getElementById('address');
+            addressInput.addEventListener('input', function () {
+                validate(this, 'js-error-address', this.value.length > 200, 'Địa chỉ tối đa 200 ký tự');
+            });
+
+            // Auto-trigger edit mode if there are backend errors within the form
+            const hasErrors = document.querySelector('#profileForm .text-error:not(.hidden)') !== null;
+            if (hasErrors) {
+                editBtn.click();
+            }
         });
     </script>
     <!-- Footer Fragment -->

@@ -5,20 +5,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record ResetPasswordRequestDTO(
-        @NotBlank(message = "Email is required")
-        @Email(message = "Invalid email format")
+        @NotBlank(message = "Email không được để trống") @Email(message = "Email không hợp lệ")
         String email,
-
-        @NotBlank(message = "Old password is required")
-        @Size(min = 6, message = "Password must be at least 6 characters")
+        @NotBlank(message = "Mật khẩu cũ không được để trống") @Size(min = 6, message = "Mật khẩu phải từ 6 ký tự")
         String oldPassword,
-
-        @NotBlank(message = "New password is required")
-        @Size(min = 6, message = "Password must be at least 6 characters")
+        @NotBlank(message = "Mật khẩu mới không được để trống") @Size(min = 6, message = "Mật khẩu phải từ 6 ký tự")
         String newPassword,
-
-        @NotBlank(message = "Confirm password is required")
-        @Size(min = 6, message = "Password must be at least 6 characters")
-        String confirmPassword
-) {
+        @NotBlank(message = "Xác nhận mật khẩu không được để trống") @Size(min = 6, message = "Mật khẩu phải từ 6 ký tự")
+        String confirmPassword) {
 }
