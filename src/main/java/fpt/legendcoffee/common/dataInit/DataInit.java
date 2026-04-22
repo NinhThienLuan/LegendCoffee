@@ -4,6 +4,7 @@ import fpt.legendcoffee.entity.*;
 import fpt.legendcoffee.entity.enumeration.ArticleStatus;
 import fpt.legendcoffee.entity.enumeration.OrderStatus;
 import fpt.legendcoffee.entity.enumeration.UserRole;
+import fpt.legendcoffee.entity.enumeration.VoucherType;
 import fpt.legendcoffee.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,9 @@ public class DataInit implements CommandLineRunner {
         private final ArticleRepository articleRepository;
         private final CategoryRepository categoryRepository;
         private final ShippingInfoRepository shippingInfoRepository;
+        private final VoucherRepository voucherRepository;
+        private final PromotionRepository promotionRepository;
+        private final VariantPromotionRepository variantPromotionRepository;
         private final PasswordEncoder passwordEncoder;
 
         @Override
@@ -42,6 +46,7 @@ public class DataInit implements CommandLineRunner {
                 seedUsers();
                 seedData();
                 seedCombos();
+                seedVouchersAndPromotions();
 
                 log.info("Data initialization completed.");
         }
@@ -620,5 +625,201 @@ public class DataInit implements CommandLineRunner {
 
                 comboRepository.save(discoveryCombo);
                 log.info("Seeded combo data successfully.");
+        }
+
+        private void seedVouchersAndPromotions() {
+                if (voucherRepository.count() > 0 || promotionRepository.count() > 0) {
+                        return;
+                }
+
+                log.info("Seeding vouchers and promotions...");
+
+                // ===== VOUCHERS =====
+                // Voucher 1: Fixed discount 50,000 VND
+                Voucher voucher1 = Voucher.builder()
+                                .code("WELCOME2024")
+                                .type(VoucherType.FIXED)
+                                .value(new BigDecimal("50000"))
+                                .startDate(LocalDateTime.now().minusDays(30))
+                                .endDate(LocalDateTime.now().plusMonths(3))
+                                .conditionMin(new BigDecimal("200000"))
+                                .usageLimit(100)
+                                .usedCount(5)
+                                .active(true)
+                                .build();
+
+                // Voucher 2: Percent discount 10%
+                Voucher voucher2 = Voucher.builder()
+                                .code("SUMMER10")
+                                .type(VoucherType.PERCENT)
+                                .value(new BigDecimal("10"))
+                                .startDate(LocalDateTime.now().minusDays(7))
+                                .endDate(LocalDateTime.now().plusMonths(2))
+                                .conditionMin(new BigDecimal("500000"))
+                                .usageLimit(50)
+                                .usedCount(2)
+                                .active(true)
+                                .build();
+
+                // Voucher 3: High-value percent discount 20%
+                Voucher voucher3 = Voucher.builder()
+                                .code("VIP20")
+                                .type(VoucherType.PERCENT)
+                                .value(new BigDecimal("20"))
+                                .startDate(LocalDateTime.now().minusDays(1))
+                                .endDate(LocalDateTime.now().plusDays(30))
+                                .conditionMin(new BigDecimal("1000000"))
+                                .usageLimit(20)
+                                .usedCount(0)
+                                .active(true)
+                                .build();
+
+                // Voucher 4: Already expired
+                Voucher voucher4 = Voucher.builder()
+                                .code("OLDCODE")
+                                .type(VoucherType.FIXED)
+                                .value(new BigDecimal("100000"))
+                                .startDate(LocalDateTime.now().minusDays(90))
+                                .endDate(LocalDateTime.now().minusDays(7))
+                                .conditionMin(new BigDecimal("100000"))
+                                .usageLimit(100)
+                                .usedCount(100)
+                                .active(false)
+                                .build();
+
+                // Voucher 5: Fixed discount 30,000 VND
+                Voucher voucher5 = Voucher.builder()
+                                .code("NEWUSER30")
+                                .type(VoucherType.FIXED)
+                                .value(new BigDecimal("30000"))
+                                .startDate(LocalDateTime.now())
+                                .endDate(LocalDateTime.now().plusDays(60))
+                                .conditionMin(new BigDecimal("150000"))
+                                .usageLimit(200)
+                                .usedCount(0)
+                                .active(true)
+                                .build();
+
+                voucherRepository.saveAll(List.of(voucher1, voucher2, voucher3, voucher4, voucher5));
+                log.info("Seeded 5 vouchers successfully.");
+
+                // ===== PROMOTIONS =====
+                // Promotion 1: Arabica - 15% discount
+                Promotion promo1 = Promotion.builder()
+                                .type("PERCENT")
+                                .value(new BigDecimal("15"))
+                                .startDate(LocalDateTime.now().minusDays(7))
+                                .endDate(LocalDateTime.now().plusMonths(1))
+                                .build();
+
+                // Promotion 2: Robusta - 50,000 fixed discount
+                Promotion promo2 = Promotion.builder()
+                                .type("FIXED")
+                                .value(new BigDecimal("50000"))
+                                .startDate(LocalDateTime.now().minusDays(1))
+                                .endDate(LocalDateTime.now().plusMonths(2))
+                                .build();
+
+                // Promotion 3: Espresso Ground - 12% discount
+                Promotion promo3 = Promotion.builder()
+                                .type("PERCENT")
+                                .value(new BigDecimal("12"))
+                                .startDate(LocalDateTime.now())
+                                .endDate(LocalDateTime.now().plusDays(45))
+                                .build();
+
+                // Promotion 4: Accessories - 25,000 fixed discount
+                Promotion promo4 = Promotion.builder()
+                                .type("FIXED")
+                                .value(new BigDecimal("25000"))
+                                .startDate(LocalDateTime.now().minusDays(2))
+                                .endDate(LocalDateTime.now().plusMonths(1))
+                                .build();
+
+                // Promotion 5: Flash sale - 30% discount
+                Promotion promo5 = Promotion.builder()
+                                .type("PERCENT")
+                                .value(new BigDecimal("30"))
+                                .startDate(LocalDateTime.now().minusDays(1))
+                                .endDate(LocalDateTime.now().plusDays(7))
+                                .build();
+
+                promotionRepository.saveAll(List.of(promo1, promo2, promo3, promo4, promo5));
+                log.info("Seeded 5 promotions successfully.");
+
+                // ===== VARIANT PROMOTIONS =====
+                List<ProductVariant> allVariants = productVariantRepository.findAll();
+
+                // Link promotions to variants
+                // Promo 1 (15% Arabica): Link to Arabica variants
+                List<ProductVariant> arabicaVariants = allVariants.stream()
+                                .filter(v -> v.getProduct() != null && "Legend Arabica Special".equals(v.getProduct().getName()))
+                                .toList();
+                arabicaVariants.forEach(variant -> {
+                        VariantPromotion vp = VariantPromotion.builder()
+                                        .promotion(promo1)
+                                        .variant(variant)
+                                        .build();
+                        variantPromotionRepository.save(vp);
+                });
+                log.info("Linked promotion 1 to {} Arabica variants", arabicaVariants.size());
+
+                // Promo 2 (50k Robusta): Link to Robusta variants
+                List<ProductVariant> robustaVariants = allVariants.stream()
+                                .filter(v -> v.getProduct() != null && "Legend Robusta Bold".equals(v.getProduct().getName()))
+                                .toList();
+                robustaVariants.forEach(variant -> {
+                        VariantPromotion vp = VariantPromotion.builder()
+                                        .promotion(promo2)
+                                        .variant(variant)
+                                        .build();
+                        variantPromotionRepository.save(vp);
+                });
+                log.info("Linked promotion 2 to {} Robusta variants", robustaVariants.size());
+
+                // Promo 3 (12% Espresso): Link to ground coffee variants
+                List<ProductVariant> espressoVariants = allVariants.stream()
+                                .filter(v -> v.getProduct() != null && "Espresso Premium Blend (Xay)".equals(v.getProduct().getName()))
+                                .toList();
+                espressoVariants.forEach(variant -> {
+                        VariantPromotion vp = VariantPromotion.builder()
+                                        .promotion(promo3)
+                                        .variant(variant)
+                                        .build();
+                        variantPromotionRepository.save(vp);
+                });
+                log.info("Linked promotion 3 to {} Espresso variants", espressoVariants.size());
+
+                // Promo 4 (25k Accessories): Link to accessory variants
+                List<ProductVariant> accessoryVariants = allVariants.stream()
+                                .filter(v -> v.getProduct() != null && 
+                                        (v.getProduct().getName().contains("Phin") || 
+                                         v.getProduct().getName().contains("V60") ||
+                                         v.getProduct().getName().contains("Cân") ||
+                                         v.getProduct().getName().contains("xay") ||
+                                         v.getProduct().getName().contains("Giấy")))
+                                .toList();
+                accessoryVariants.forEach(variant -> {
+                        VariantPromotion vp = VariantPromotion.builder()
+                                        .promotion(promo4)
+                                        .variant(variant)
+                                        .build();
+                        variantPromotionRepository.save(vp);
+                });
+                log.info("Linked promotion 4 to {} accessory variants", accessoryVariants.size());
+
+                // Promo 5 (30% Flash): Link to first 3 variants for flash sale
+                if (allVariants.size() >= 3) {
+                        for (int i = 0; i < Math.min(3, allVariants.size()); i++) {
+                                VariantPromotion vp = VariantPromotion.builder()
+                                                .promotion(promo5)
+                                                .variant(allVariants.get(i))
+                                                .build();
+                                variantPromotionRepository.save(vp);
+                        }
+                        log.info("Linked promotion 5 (flash sale) to top 3 variants");
+                }
+
+                log.info("Seeded vouchers and promotions successfully.");
         }
 }

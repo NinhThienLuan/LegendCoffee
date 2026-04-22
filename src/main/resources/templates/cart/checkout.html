@@ -207,25 +207,53 @@
                         <h3
                             class="text-xs font-black text-primary flex items-center gap-3 uppercase tracking-[0.25em] font-label">
                             <span class="material-symbols-outlined text-lg">sell</span>
-                            MÃ ƯU ĐÃI & ĐỐI TÁC
+                            MÃ VOUCHER & PROMOTION
                         </h3>
-                        <div class="flex flex-col md:flex-row gap-4">
-                            <div
-                                class="flex-grow p-1 bg-surface-container-lowest rounded-xl border border-outline-variant/10 focus-within:border-primary/30 transition-all shadow-inner">
-                                <input
-                                    class="w-full bg-transparent border-none text-xs font-bold p-4 focus:ring-0 placeholder:text-on-surface-variant/30 uppercase tracking-widest"
-                                    placeholder="IE-PARTNER-2024" type="text" />
+
+                        <!-- Voucher Input -->
+                        <div class="flex flex-col gap-4">
+                            <label class="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/60 font-label">
+                                Nhập mã voucher (nếu có)
+                            </label>
+                            <div class="flex flex-col md:flex-row gap-4">
+                                <div
+                                    class="flex-grow p-1 bg-surface-container-lowest rounded-xl border border-outline-variant/10 focus-within:border-primary/30 transition-all shadow-inner">
+                                    <input id="voucherCode" name="voucherCode" th:field="*{voucherCode}"
+                                        class="w-full bg-transparent border-none text-xs font-bold p-4 focus:ring-0 placeholder:text-on-surface-variant/30 uppercase tracking-widest"
+                                        placeholder="VD: WELCOME2024" type="text" />
+                                </div>
+                                <button type="button" id="apply-voucher-btn"
+                                    class="bg-primary text-on-primary px-8 py-4 text-[10px] font-black uppercase tracking-[0.25em] rounded-xl hover:bg-primary-container active:scale-95 transition-all shadow-xl shadow-primary/10 font-label">
+                                    Áp dụng
+                                </button>
                             </div>
-                            <button type="button"
-                                class="bg-primary text-on-primary px-10 py-4 text-[10px] font-black uppercase tracking-[0.25em] rounded-xl hover:bg-primary-container active:scale-95 transition-all shadow-xl shadow-primary/10 font-label">
-                                Áp dụng mã
+                            <div id="voucher-status" class="text-[9px] text-on-surface-variant/60 font-bold uppercase tracking-widest flex items-center gap-2">
+                                <span class="material-symbols-outlined text-xs">info</span>
+                                Nhập mã code để được giảm giá cho đơn hàng.
+                            </div>
+                        </div>
+
+                        <!-- Applied Voucher Display -->
+                        <div id="applied-voucher" class="hidden p-4 bg-primary/10 rounded-xl border border-primary/30 flex items-start gap-3">
+                            <span class="material-symbols-outlined text-primary">verified</span>
+                            <div class="flex-grow">
+                                <p class="text-[10px] font-black uppercase tracking-[0.15em] text-primary">Voucher áp dụng</p>
+                                <p id="applied-voucher-code" class="text-xs font-bold text-primary mt-1"></p>
+                                <p id="applied-voucher-discount" class="text-[11px] text-primary/80 mt-2"></p>
+                            </div>
+                            <button type="button" id="remove-voucher-btn"
+                                class="text-primary hover:text-primary-container transition-colors">
+                                <span class="material-symbols-outlined">close</span>
                             </button>
                         </div>
-                        <p
-                            class="text-[9px] text-on-surface-variant/60 font-bold uppercase tracking-widest mt-2 flex items-center gap-2">
-                            <span class="material-symbols-outlined text-xs">info</span>
-                            Nhập mã ưu đãi của đối tác hoặc thẻ thành viên để nhận chiết khấu.
-                        </p>
+
+                        <!-- Promotion Display (Auto-detected) -->
+                        <div id="promotions-info" class="hidden space-y-3 pt-6 border-t border-outline-variant/20">
+                            <p class="text-[10px] font-black uppercase tracking-[0.15em] text-on-surface-variant">
+                                Promotion tự động
+                            </p>
+                            <div id="promotion-list" class="space-y-2"></div>
+                        </div>
                     </section>
                     <!-- Navigation Buttons -->
                     <div class="flex items-center pt-12 border-t border-outline-variant/10">
@@ -258,6 +286,14 @@
                             <span class="text-on-surface-variant uppercase tracking-[0.15em] font-medium">Giá tạm
                                 tính</span>
                             <span id="summary-subtotal" class="font-black text-primary">0 ₫</span>
+                        </div>
+                        <div id="promotion-discount-row" class="hidden flex justify-between text-[11px]">
+                            <span class="text-on-surface-variant uppercase tracking-[0.15em] font-medium">Giảm promotion</span>
+                            <span id="summary-promotion-discount" class="font-black text-success">-0 ₫</span>
+                        </div>
+                        <div id="voucher-discount-row" class="hidden flex justify-between text-[11px]">
+                            <span class="text-on-surface-variant uppercase tracking-[0.15em] font-medium">Giảm voucher</span>
+                            <span id="summary-voucher-discount" class="font-black text-success">-0 ₫</span>
                         </div>
                         <div class="flex justify-between text-[11px]">
                             <span class="text-on-surface-variant uppercase tracking-[0.15em] font-medium">Vận chuyển
@@ -592,16 +628,37 @@
                 `).join('');
 
                 const totals = window.CartSystem.calculateTotals();
+                loadPromotionsForItems(cart);
                 updateFinalSummary(0);
             }
 
             function updateFinalSummary(shippingFee) {
                 const baseTotals = window.CartSystem.calculateTotals();
                 const subtotal = baseTotals.subtotal;
-                const vat = subtotal * 0.08;
-                const total = subtotal + vat + shippingFee;
+                const promotionDiscount = window.currentPromotionDiscount || 0;
+                const voucherDiscount = window.currentVoucherDiscount || 0;
+
+                const vat = (subtotal - promotionDiscount - voucherDiscount) * 0.08;
+                const total = subtotal - promotionDiscount - voucherDiscount + vat + shippingFee;
 
                 document.getElementById('summary-subtotal').textContent = formatCurrency(subtotal);
+
+                // Show/hide promotion discount row
+                if (promotionDiscount > 0) {
+                    document.getElementById('promotion-discount-row').classList.remove('hidden');
+                    document.getElementById('summary-promotion-discount').textContent = '-' + formatCurrency(promotionDiscount);
+                } else {
+                    document.getElementById('promotion-discount-row').classList.add('hidden');
+                }
+
+                // Show/hide voucher discount row
+                if (voucherDiscount > 0) {
+                    document.getElementById('voucher-discount-row').classList.remove('hidden');
+                    document.getElementById('summary-voucher-discount').textContent = '-' + formatCurrency(voucherDiscount);
+                } else {
+                    document.getElementById('voucher-discount-row').classList.add('hidden');
+                }
+
                 document.getElementById('summary-shipping').textContent = shippingFee > 0 ? formatCurrency(shippingFee) : 'Chưa tính';
                 document.getElementById('summary-vat').textContent = formatCurrency(vat);
                 document.getElementById('summary-total').textContent = formatCurrency(total);
@@ -635,6 +692,126 @@
                 input.name = name;
                 input.value = String(value);
                 return input;
+            }
+
+            // Voucher & Promotion handlers
+            window.currentVoucherDiscount = 0;
+            window.currentPromotionDiscount = 0;
+
+            const applyVoucherBtn = document.getElementById('apply-voucher-btn');
+            const voucherCodeInput = document.getElementById('voucherCode');
+            const removeVoucherBtn = document.getElementById('remove-voucher-btn');
+
+            if (applyVoucherBtn) {
+                applyVoucherBtn.addEventListener('click', async function () {
+                    const code = voucherCodeInput.value.trim().toUpperCase();
+                    if (!code) {
+                        showToast('Vui lòng nhập mã voucher');
+                        return;
+                    }
+
+                    applyVoucherBtn.disabled = true;
+                    applyVoucherBtn.textContent = 'Đang xử lý...';
+
+                    try {
+                        // Call backend API to validate voucher
+                        const baseTotals = window.CartSystem.calculateTotals();
+                        const response = await fetch(`/api/vouchers/validate?code=${code}&amount=${baseTotals.subtotal}`);
+                        const result = await response.json();
+
+                        if (result.valid) {
+                            window.currentVoucherDiscount = parseFloat(result.discount);
+
+                            const appliedVoucherDiv = document.getElementById('applied-voucher');
+                            document.getElementById('applied-voucher-code').textContent = code;
+                            document.getElementById('applied-voucher-discount').textContent = 'Giảm: ' + formatCurrency(window.currentVoucherDiscount);
+                            appliedVoucherDiv.classList.remove('hidden');
+
+                            showToast('Áp dụng voucher thành công!');
+                            updateFinalSummary(parseInt(document.getElementById('selectedShippingFee').value || 0));
+                        } else {
+                            showToast(result.message || 'Mã voucher không hợp lệ');
+                            window.currentVoucherDiscount = 0;
+                        }
+                    } catch (e) {
+                        console.error('Error applying voucher:', e);
+                        showToast('Lỗi khi xử lý voucher');
+                        window.currentVoucherDiscount = 0;
+                    } finally {
+                        applyVoucherBtn.disabled = false;
+                        applyVoucherBtn.textContent = 'Áp dụng';
+                    }
+                });
+            }
+
+            if (removeVoucherBtn) {
+                removeVoucherBtn.addEventListener('click', function () {
+                    voucherCodeInput.value = '';
+                    window.currentVoucherDiscount = 0;
+                    document.getElementById('applied-voucher').classList.add('hidden');
+                    updateFinalSummary(parseInt(document.getElementById('selectedShippingFee').value || 0));
+                    showToast('Mã voucher đã hủy');
+                });
+            }
+
+            // Load promotions for cart items
+            function loadPromotionsForItems(cart) {
+                if (!cart || cart.length === 0) return;
+
+                let totalPromoDiscount = 0;
+                const promotionItems = [];
+
+                // Build items array for API call
+                const itemsForPromoCalc = cart.map(item => ({
+                    variantId: item.variantId || item.id,
+                    quantity: item.quantity,
+                    price: item.price
+                })).filter(item => item.variantId);
+
+                if (itemsForPromoCalc.length === 0) {
+                    window.currentPromotionDiscount = 0;
+                    return;
+                }
+
+                // Call backend API to calculate promotions
+                fetch('/api/promotions/calculate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        items: itemsForPromoCalc
+                    })
+                })
+                .then(resp => resp.json())
+                .then(data => {
+                    totalPromoDiscount = parseFloat(data.totalDiscount || 0);
+                    window.currentPromotionDiscount = totalPromoDiscount;
+
+                    if (totalPromoDiscount > 0) {
+                        const promotionsDiv = document.getElementById('promotions-info');
+                        const promotionList = document.getElementById('promotion-list');
+
+                        // Display promotion info
+                        let promoHTML = `
+                            <div class="p-3 bg-success/10 rounded-lg border border-success/30 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-success text-sm">local_offer</span>
+                                <span class="text-[10px] font-bold text-success">Tự động giảm: ${formatCurrency(totalPromoDiscount)}</span>
+                            </div>
+                        `;
+                        promotionList.innerHTML = promoHTML;
+                        promotionsDiv.classList.remove('hidden');
+                    } else {
+                        document.getElementById('promotions-info').classList.add('hidden');
+                    }
+
+                    // Update summary with new discount
+                    updateFinalSummary(parseInt(document.getElementById('selectedShippingFee').value || 0));
+                })
+                .catch(err => {
+                    console.error('Error calculating promotions:', err);
+                    window.currentPromotionDiscount = 0;
+                });
             }
         });
     </script>
