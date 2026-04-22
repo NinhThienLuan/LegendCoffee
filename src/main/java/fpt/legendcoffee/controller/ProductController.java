@@ -88,6 +88,7 @@ public class ProductController {
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN") || a.getAuthority().equals("ROLE_STAFF"))) {
             return "product/products";
         }
+        model.addAttribute("pageType", "products");
         return "product/catalogs";
     }
 
