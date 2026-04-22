@@ -22,23 +22,24 @@ public class HomeController {
 
     private final ProductService productService;
 
-    @GetMapping({ "/"})
-    public String index(Model model,
-            HttpServletRequest httpRequest,
-            HttpServletResponse httpResponse) {
+    @GetMapping({ "/", "/home", "/index"})
+    public String index(Model model) {
         List<ProductResponseDTO> products = productService.getAllProductResponses();
 
         if (products.size() > 3) {
             products = products.subList(0, 3);
         }
         model.addAttribute("products", products);
+        
         Authentication authenticationResponse = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authenticationResponse.getPrincipal() instanceof CustomUserDetails userDetails) {
+        if (authenticationResponse != null && authenticationResponse.getPrincipal() instanceof CustomUserDetails userDetails) {
             boolean isAdmin = userDetails.getAuthorities().stream()
                     .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
-            return isAdmin ? "redirect:/admin" : "redirect:/index";
+            if (isAdmin) {
+                return "redirect:/admin";
+            }
         }
-        return "redirect:/home";
+        return "index";
     }
 }

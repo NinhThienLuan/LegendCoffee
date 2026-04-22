@@ -38,11 +38,6 @@ public class AuthController {
             .getContextHolderStrategy();
     private final AuthenService authenService;
 
-    @GetMapping("/home")
-    public String home() {
-        return "index";
-    }
-
     @GetMapping("/login")
     public String showLoginForm(Model model) {
         if (isAuthenticated()) {
