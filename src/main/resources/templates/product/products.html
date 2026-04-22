@@ -2,7 +2,7 @@
 
 <html class="light" lang="vi" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="~{fragments/head :: sharedHead('Quáº£n lÃ½ Sáº£n Pháº©m | LegendCoffee Admin')}"></head>
+<head th:replace="~{fragments/head :: sharedHead('Quản lý Sản Phẩm | LegendCoffee Admin')}"></head>
 
 <body class="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container">
 
@@ -12,7 +12,8 @@
     <!-- Main Content Canvas -->
     <section class="flex-1 ml-64 min-h-screen bg-surface">
       <!-- TopAppBar -->
-      <header th:replace="~{fragments/admin-topbar :: adminTopbar('Quáº£n lÃ½ Sáº£n Pháº©m', 'TÃ¬m kiáº¿m sáº£n pháº©m, SKU...')}">
+      <header
+        th:replace="~{fragments/admin-topbar :: adminTopbar('Quản lý đơn hàng', 'Tìm kiếm đơn hàng, mã vận đơn...')}">
       </header>
 
       <div class="p-8 space-y-8">
