@@ -130,8 +130,7 @@
                                         <span class="text-xs font-bold tracking-widest text-on-surface-variant uppercase">${item.comboId ? 'Gói Combo' : item.variant}</span>
                                     </div>
                                     <div class="text-right">
-                                        <p class="text-xl font-extrabold text-primary">${formatCurrency(item.price)} <span
-                                                class="text-xs font-normal text-on-surface-variant italic">/${item.comboId ? 'gói' : 'kg'}</span></p>
+                                        <p class="text-xl font-extrabold text-primary">${formatCurrency(item.price)}</p>
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-3 gap-4 mb-6">
@@ -176,7 +175,7 @@
                 const cart = window.CartSystem.getCart();
                 const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-                document.getElementById('subtotal-label').innerText = `Tạm tính (${totalItems} kg)`;
+                document.getElementById('subtotal-label').innerText = `Tạm tính (${totalItems})`;
                 document.getElementById('cart-count-header').innerText = totalItems;
                 document.getElementById('subtotal-price').innerText = formatCurrency(totals.subtotal);
                 // Shipping is displayed as text "Tính toán ở bước sau" in HTML by default or updated here

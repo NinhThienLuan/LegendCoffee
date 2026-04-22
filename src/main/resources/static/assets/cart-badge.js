@@ -1,5 +1,5 @@
 // Cart Badge Update Logic for Navbar
-(function() {
+(function () {
   // Navbar scroll behavior
   let lastScrollY = window.scrollY;
   const navbar = document.getElementById('mainNavbar');
@@ -24,23 +24,23 @@
       count = window.CartSystem.getCartCount();
       console.log('[CartBadge] Got cart count from CartSystem:', count);
     } else {
-      // Fallback: read cart from sessionStorage
+      // Fallback: read cart from localStorage
       try {
-        const cartRaw = sessionStorage.getItem('industrial_legend_cart');
-        console.log('[CartBadge] Fallback to sessionStorage. Raw cart:', cartRaw);
+        const cartRaw = localStorage.getItem('cart');
+        console.log('[CartBadge] Fallback to localStorage. Raw cart:', cartRaw);
         if (cartRaw) {
           const cart = JSON.parse(cartRaw);
           if (Array.isArray(cart)) {
-            count = cart.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0);
+            count = cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
             console.log('[CartBadge] Parsed cart array. Total quantity:', count, cart);
           } else {
-            console.log('[CartBadge] Cart in sessionStorage is not an array:', cart);
+            console.log('[CartBadge] Cart in localStorage is not an array:', cart);
           }
         } else {
-          console.log('[CartBadge] No cart found in sessionStorage');
+          console.log('[CartBadge] No cart found in localStorage');
         }
       } catch (e) {
-        console.log('[CartBadge] Error parsing cart from sessionStorage:', e);
+        console.log('[CartBadge] Error parsing cart from localStorage:', e);
       }
     }
     const cartIconLink = badge.closest('a[aria-label="Cart"]');
@@ -59,16 +59,16 @@
       }
     }
   }
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function () {
     console.log('[CartBadge] Script loaded, DOMContentLoaded');
     updateNavbarCartBadge();
     console.log('[CartBadge] DOMContentLoaded, badge updated');
   });
-  window.addEventListener('cartUpdated', function() {
+  window.addEventListener('cartUpdated', function () {
     updateNavbarCartBadge();
     console.log('[CartBadge] cartUpdated event, badge updated');
   });
-  window.addEventListener('storage', function(e) {
+  window.addEventListener('storage', function (e) {
     if (e.key === 'cart') {
       updateNavbarCartBadge();
       console.log('[CartBadge] storage event, badge updated');

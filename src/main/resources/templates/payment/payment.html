@@ -73,24 +73,21 @@
                                 Coffee</span>.
                             Đơn hàng đang được chuyển sang bộ phận vận hành để chuẩn bị đóng gói và vận chuyển.
                         </p>
-                        <p class="text-primary font-bold text-xs mt-4 uppercase tracking-widest flex items-center justify-center gap-2">
-                            <span class="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></span>
+                        <p
+                            class="text-primary font-bold text-xs mt-4 uppercase tracking-widest flex items-center justify-center gap-2">
+                            <span
+                                class="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></span>
                             Tự động chuyển hướng sau <span id="countdown">5</span> giây...
                         </p>
                     </div>
                 </div>
 
                 <script th:if="${payment.success}">
-                    document.addEventListener('DOMContentLoaded', function() {
-                        // Clear the cart storage after successful checkout
-                        if (window.CartSystem) {
-                            window.CartSystem.clearCart();
-                        }
-
+                    document.addEventListener('DOMContentLoaded', function () {
                         let seconds = 5;
                         const countdownEl = document.getElementById('countdown');
-                        const orderId = [[${payment.orderId}]];
-                        
+                        const orderId = [[${ payment.orderId }]];
+
                         const timer = setInterval(() => {
                             seconds--;
                             if (countdownEl) countdownEl.textContent = seconds;

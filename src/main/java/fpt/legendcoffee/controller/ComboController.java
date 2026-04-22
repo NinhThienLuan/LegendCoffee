@@ -39,9 +39,7 @@ public class ComboController {
         try {
             ComboResponseDTO combo = comboService.getById(id);
             model.addAttribute("combo", combo);
-            model.addAttribute("productId", id); // Reusing productId variable for consistency in templates
-            model.addAttribute("pageType", "combo-detail");
-            return "product/catalog-detail";
+            return "product/combo-detail";
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/combos";
@@ -65,9 +63,9 @@ public class ComboController {
     @PostMapping("/admin/combos")
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public String createCombo(@Valid @ModelAttribute("request") ComboRequestDTO request,
-            BindingResult bindingResult,
-            Model model,
-            RedirectAttributes redirectAttributes) {
+                              BindingResult bindingResult,
+                              Model model,
+                              RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             prepareFormModel(model, request, false, null);
             model.addAttribute("error", "Vui lòng kiểm tra lại dữ liệu combo.");
@@ -102,10 +100,10 @@ public class ComboController {
     @PostMapping("/admin/combos/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public String updateCombo(@PathVariable Long id,
-            @Valid @ModelAttribute("request") ComboRequestDTO request,
-            BindingResult bindingResult,
-            Model model,
-            RedirectAttributes redirectAttributes) {
+                              @Valid @ModelAttribute("request") ComboRequestDTO request,
+                              BindingResult bindingResult,
+                              Model model,
+                              RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             prepareFormModel(model, request, true, id);
             model.addAttribute("error", "Vui lòng kiểm tra lại dữ liệu combo.");
@@ -164,3 +162,4 @@ public class ComboController {
         return request;
     }
 }
+
