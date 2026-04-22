@@ -66,16 +66,29 @@ public class ProductController {
     }
 
     @GetMapping
-    public String listProducts(Model model, Authentication authentication) {
-        List<ProductResponseDTO> products = productService.getAllProductResponses();
+    public String listProducts(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String active,
+            Model model, Authentication authentication) {
+
+        Boolean activeFilter = "true".equalsIgnoreCase(active) ? Boolean.TRUE
+                             : "false".equalsIgnoreCase(active) ? Boolean.FALSE
+                             : null;
+
+        List<ProductResponseDTO> products = productService.searchProducts(keyword, activeFilter);
+
         model.addAttribute("products", products);
         model.addAttribute("totalProducts", productService.countProducts());
         model.addAttribute("activeProducts", productService.countActiveProducts());
         model.addAttribute("lowStockProducts", productService.countLowStockProducts());
+        model.addAttribute("selectedKeyword", keyword != null ? keyword : "");
+        model.addAttribute("selectedActive", active != null ? active : "");
+
         if (authentication != null && authentication.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN") || a.getAuthority().equals("ROLE_STAFF"))) {
             return "product/products";
         }
+        model.addAttribute("pageType", "products");
         return "product/catalogs";
     }
 

@@ -21,6 +21,7 @@ public class ComboResponseDTO {
     private BigDecimal price;
     private BigDecimal originalPrice;
     private BigDecimal savings;
+    private String imageUrl;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private Boolean active;

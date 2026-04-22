@@ -115,6 +115,27 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<ProductResponseDTO> searchProducts(String keyword, Boolean active) {
+        List<ProductResponseDTO> results = getAllProductResponses();
+
+        if (keyword != null && !keyword.isBlank()) {
+            final String kw = keyword.trim().toLowerCase();
+            results = results.stream()
+                    .filter(p -> p.getName() != null && p.getName().toLowerCase().contains(kw))
+                    .toList();
+        }
+
+        if (active != null) {
+            results = results.stream()
+                    .filter(p -> p.getIsActive() == active)
+                    .toList();
+        }
+
+        return results;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Product getProductById(Long id) {
         return productRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy sản phẩm với ID: " + id));

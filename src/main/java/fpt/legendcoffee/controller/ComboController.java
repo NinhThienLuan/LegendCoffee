@@ -30,7 +30,8 @@ public class ComboController {
     @GetMapping("/combos")
     public String publicComboPage(Model model) {
         model.addAttribute("combos", comboService.getActiveCombos());
-        return "product/combos";
+        model.addAttribute("pageType", "combos");
+        return "product/catalogs";
     }
 
     @GetMapping("/admin/combos")

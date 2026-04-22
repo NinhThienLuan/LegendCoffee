@@ -27,14 +27,11 @@
           <a href="/products"
             th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/products')} ? ' text-[#351f1b] dark:text-[#ffffff]' : ' text-[#5b4a45] dark:text-[#d4c3bf] hover:text-[#351f1b] dark:hover:text-[#ffffff]'"
             class="transition-colors duration-300">Sản Phẩm</a>
-          <a href="/combos"
-            th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/combos')} ? ' text-[#351f1b] dark:text-[#ffffff]' : ' text-[#5b4a45] dark:text-[#d4c3bf] hover:text-[#351f1b] dark:hover:text-[#ffffff]'"
-            class="transition-colors duration-300">Combo</a>
           <a href="/orders"
             th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/orders')} ? ' text-[#351f1b] dark:text-[#ffffff]' : ' text-[#5b4a45] dark:text-[#d4c3bf] hover:text-[#351f1b] dark:hover:text-[#ffffff]'"
             class="transition-colors duration-300">Đơn hàng</a>
           <a href="/articles"
-            th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/orders')} ? ' text-[#351f1b] dark:text-[#ffffff]' : ' text-[#5b4a45] dark:text-[#d4c3bf] hover:text-[#351f1b] dark:hover:text-[#ffffff]'"
+            th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/articles')} ? ' text-[#351f1b] dark:text-[#ffffff]' : ' text-[#5b4a45] dark:text-[#d4c3bf] hover:text-[#351f1b] dark:hover:text-[#ffffff]'"
             class="transition-colors duration-300">Bài viết</a>
         </div>
 

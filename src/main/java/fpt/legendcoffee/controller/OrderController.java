@@ -111,12 +111,18 @@ public class OrderController {
         }
 
         Optional<Order> orderOpt = orderRepository.findByIdWithUser(orderId);
-        if (orderOpt.isEmpty() || !orderOpt.get().getUser().getId().equals(currentUser.get().getId())) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy đơn hàng của bạn.");
+        if (orderOpt.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy đơn hàng.");
             return "redirect:/orders";
         }
 
         Order order = orderOpt.get();
+        // Ownership check
+        if (order.getUser() == null || !order.getUser().getId().equals(currentUser.get().getId())) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền xem đơn hàng này.");
+            return "redirect:/orders";
+        }
+
         List<OrderItem> orderItems = orderItemRepository.findByOrderIdWithDetails(orderId);
         ShippingInfo shippingInfo = shippingInfoRepository.findByOrderId(orderId).orElse(null);
 
@@ -262,7 +268,18 @@ public class OrderController {
      * Trang theo dõi trạng thái vận chuyển cho khách hàng.
      */
     @GetMapping("/orders/{orderId}/track")
-    public String trackOrder(@PathVariable Long orderId, Model model) {
+    public String trackOrder(@PathVariable Long orderId, Model model, RedirectAttributes redirectAttributes) {
+        Optional<User> currentUser = getCurrentUser();
+        if (currentUser.isEmpty()) {
+            return "redirect:/login";
+        }
+
+        Optional<Order> orderOpt = orderRepository.findById(orderId);
+        if (orderOpt.isEmpty() || orderOpt.get().getUser() == null || !orderOpt.get().getUser().getId().equals(currentUser.get().getId())) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền theo dõi đơn hàng này.");
+            return "redirect:/orders";
+        }
+
         try {
             model.addAttribute("orderStatus", shippingService.getOrderStatus(orderId));
             model.addAttribute("orderId", orderId);
@@ -270,7 +287,7 @@ public class OrderController {
             log.warn("[Tracking] Không tìm thấy thông tin vận chuyển cho orderId={}", orderId);
             model.addAttribute("errorMessage", "Không tìm thấy thông tin đơn hàng");
         }
-        return "order/order-tracking"; // templates/order/order-tracking.html
+        return "order/order-tracking";
     }
 
     // =========================================================================
@@ -284,6 +301,17 @@ public class OrderController {
     @PostMapping("/orders/{orderId}/cancel")
     public String cancelOrder(@PathVariable Long orderId,
             RedirectAttributes redirectAttributes) {
+        Optional<User> currentUser = getCurrentUser();
+        if (currentUser.isEmpty()) {
+            return "redirect:/login";
+        }
+
+        Optional<Order> orderOpt = orderRepository.findById(orderId);
+        if (orderOpt.isEmpty() || orderOpt.get().getUser() == null || !orderOpt.get().getUser().getId().equals(currentUser.get().getId())) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền huỷ đơn hàng này.");
+            return "redirect:/orders";
+        }
+
         try {
             boolean success = shippingService.cancelShipping(orderId);
             if (success) {
