@@ -8,6 +8,9 @@ import fpt.legendcoffee.entity.OrderItem;
 import fpt.legendcoffee.entity.ProductVariant;
 import fpt.legendcoffee.entity.User;
 import fpt.legendcoffee.entity.ShippingInfo;
+import fpt.legendcoffee.entity.Voucher;
+import fpt.legendcoffee.entity.VariantPromotion;
+import fpt.legendcoffee.entity.Promotion;
 import fpt.legendcoffee.dto.app.OrderListDTO;
 import fpt.legendcoffee.dto.app.OrderStatusDTO;
 import fpt.legendcoffee.entity.enumeration.OrderStatus;
@@ -19,6 +22,8 @@ import fpt.legendcoffee.repository.OrderRepository;
 import fpt.legendcoffee.repository.ProductVariantRepository;
 import fpt.legendcoffee.repository.UserRepository;
 import fpt.legendcoffee.repository.ShippingInfoRepository;
+import fpt.legendcoffee.repository.VoucherRepository;
+import fpt.legendcoffee.repository.VariantPromotionRepository;
 import fpt.legendcoffee.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +50,8 @@ public class OrderServiceImpl implements OrderService {
     private final ComboRepository comboRepository;
     private final UserRepository userRepository;
     private final ShippingInfoRepository shippingInfoRepository;
+    private final VoucherRepository voucherRepository;
+    private final VariantPromotionRepository variantPromotionRepository;
 
     @Override
     @Transactional
@@ -59,12 +66,33 @@ public class OrderServiceImpl implements OrderService {
         BigDecimal shippingFee = BigDecimal.valueOf(checkout.getShippingFee() != null ? checkout.getShippingFee() : 0);
         Optional<User> currentUser = getCurrentUser();
 
+        // Xử lý voucher nếu có
+        Voucher appliedVoucher = null;
+        BigDecimal voucherDiscount = BigDecimal.ZERO;
+        if (checkout.getVoucherCode() != null && !checkout.getVoucherCode().isBlank()) {
+            appliedVoucher = validateAndApplyVoucher(checkout.getVoucherCode(), subTotal);
+            if (appliedVoucher != null) {
+                voucherDiscount = calculateVoucherDiscount(appliedVoucher, subTotal);
+                log.info("[OrderService] Applied voucher: {} with discount: {}", checkout.getVoucherCode(), voucherDiscount);
+            }
+        }
+
+        // Tính tổng discount (voucher + promotion trong items)
+        BigDecimal promotionDiscount = draftItems.stream()
+                .map(OrderItem::getPromotionDiscount)
+                .filter(d -> d != null)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal totalDiscount = voucherDiscount.add(promotionDiscount);
+        BigDecimal finalAmount = subTotal.subtract(totalDiscount).add(shippingFee);
+
         Order order = Order.builder()
             .user(currentUser.orElse(null))
                 .orderDate(LocalDateTime.now())
                 .subTotal(subTotal)
-                .discount(BigDecimal.ZERO)
-                .totalAmount(subTotal.add(shippingFee))
+                .discount(totalDiscount)
+                .totalAmount(finalAmount)
+                .voucher(appliedVoucher)
                 .status(OrderStatus.PENDING)
                 .build();
 
@@ -76,6 +104,13 @@ public class OrderServiceImpl implements OrderService {
                 item.setStatus(OrderStatus.PENDING.name());
             });
             orderItemRepository.saveAll(draftItems);
+        }
+
+        // Increment voucher usage count
+        if (appliedVoucher != null) {
+            appliedVoucher.setUsedCount((appliedVoucher.getUsedCount() != null ? appliedVoucher.getUsedCount() : 0) + 1);
+            voucherRepository.save(appliedVoucher);
+            log.info("[OrderService] Incremented voucher usage count for: {}", checkout.getVoucherCode());
         }
 
         log.info("[OrderService] Created order successfully with ID: {}", savedOrder.getId());
@@ -226,6 +261,7 @@ public class OrderServiceImpl implements OrderService {
             BigDecimal unitPrice;
             ProductVariant variant = null;
             Combo combo = null;
+            BigDecimal promotionDiscount = BigDecimal.ZERO;
 
             if (hasVariant) {
                 variant = productVariantRepository.findById(request.getVariantId())
@@ -234,6 +270,9 @@ public class OrderServiceImpl implements OrderService {
                     throw new IllegalArgumentException("Biến thể với ID " + request.getVariantId() + " đang không hoạt động");
                 }
                 unitPrice = variant.getPrice();
+
+                // Tìm promotion cho variant này
+                promotionDiscount = calculateVariantPromotionDiscount(variant, unitPrice, quantity);
             } else {
                 combo = comboRepository.findById(request.getComboId())
                         .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy combo với ID: " + request.getComboId()));
@@ -262,7 +301,8 @@ public class OrderServiceImpl implements OrderService {
                     .unitPrice(unitPrice)
                     .subTotal(subTotal)
                     .discount(BigDecimal.ZERO)
-                    .totalAmount(subTotal)
+                    .promotionDiscount(promotionDiscount)
+                    .totalAmount(subTotal.subtract(promotionDiscount))
                     .build());
         }
 
@@ -275,5 +315,121 @@ public class OrderServiceImpl implements OrderService {
             return Optional.empty();
         }
         return userRepository.findByEmail(auth.getName());
+    }
+
+    /**
+     * Validate và apply voucher code
+     */
+    private Voucher validateAndApplyVoucher(String voucherCode, BigDecimal orderAmount) {
+        Voucher voucher = voucherRepository.findByCode(voucherCode)
+                .orElse(null);
+
+        if (voucher == null) {
+            log.warn("[OrderService] Voucher not found: {}", voucherCode);
+            return null;
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+
+        // Kiểm tra voucher hợp lệ
+        if (!Boolean.TRUE.equals(voucher.getActive())) {
+            log.warn("[OrderService] Voucher is not active: {}", voucherCode);
+            return null;
+        }
+
+        if (voucher.getStartDate() != null && now.isBefore(voucher.getStartDate())) {
+            log.warn("[OrderService] Voucher not yet valid: {}", voucherCode);
+            return null;
+        }
+
+        if (voucher.getEndDate() != null && now.isAfter(voucher.getEndDate())) {
+            log.warn("[OrderService] Voucher has expired: {}", voucherCode);
+            return null;
+        }
+
+        if (voucher.getUsageLimit() != null && voucher.getUsedCount() != null &&
+            voucher.getUsedCount() >= voucher.getUsageLimit()) {
+            log.warn("[OrderService] Voucher usage limit reached: {}", voucherCode);
+            return null;
+        }
+
+        if (voucher.getConditionMin() != null &&
+            orderAmount.compareTo(voucher.getConditionMin()) < 0) {
+            log.warn("[OrderService] Order amount {} is less than voucher condition: {}", orderAmount, voucher.getConditionMin());
+            return null;
+        }
+
+        log.info("[OrderService] Voucher validated successfully: {}", voucherCode);
+        return voucher;
+    }
+
+    /**
+     * Tính discount từ voucher
+     */
+    private BigDecimal calculateVoucherDiscount(Voucher voucher, BigDecimal baseAmount) {
+        if (voucher == null || voucher.getValue() == null) {
+            return BigDecimal.ZERO;
+        }
+
+        String voucherType = voucher.getType().name();
+        BigDecimal discount = BigDecimal.ZERO;
+
+        if ("PERCENT".equals(voucherType)) {
+            // Giảm theo phần trăm
+            discount = baseAmount.multiply(voucher.getValue()).divide(BigDecimal.valueOf(100), 2, java.math.RoundingMode.HALF_UP);
+        } else if ("FIXED".equals(voucherType)) {
+            // Giảm số tiền cố định
+            discount = voucher.getValue();
+        }
+
+        return discount;
+    }
+
+    /**
+     * Tính promotion discount cho một variant
+     */
+    private BigDecimal calculateVariantPromotionDiscount(ProductVariant variant, BigDecimal unitPrice, int quantity) {
+        if (variant == null || variant.getId() == null) {
+            return BigDecimal.ZERO;
+        }
+
+        List<VariantPromotion> variantPromotions = variantPromotionRepository.findByVariantId(variant.getId());
+
+        for (VariantPromotion vp : variantPromotions) {
+            Promotion promotion = vp.getPromotion();
+            if (promotion == null) {
+                continue;
+            }
+
+            LocalDateTime now = LocalDateTime.now();
+
+            // Kiểm tra promotion có hợp lệ không
+            if (promotion.getStartDate() != null && now.isBefore(promotion.getStartDate())) {
+                continue;
+            }
+            if (promotion.getEndDate() != null && now.isAfter(promotion.getEndDate())) {
+                continue;
+            }
+
+            // Tính discount
+            BigDecimal discount = BigDecimal.ZERO;
+            String promotionType = promotion.getType();
+
+            if ("PERCENT".equals(promotionType)) {
+                // Giảm theo phần trăm
+                BigDecimal itemTotal = unitPrice.multiply(BigDecimal.valueOf(quantity));
+                discount = itemTotal.multiply(promotion.getValue()).divide(BigDecimal.valueOf(100), 2, java.math.RoundingMode.HALF_UP);
+            } else if ("FIXED".equals(promotionType)) {
+                // Giảm số tiền cố định trên mỗi item
+                discount = promotion.getValue().multiply(BigDecimal.valueOf(quantity));
+            }
+
+            if (discount.compareTo(BigDecimal.ZERO) > 0) {
+                log.info("[OrderService] Applied promotion to variant {}: discount {}", variant.getId(), discount);
+                return discount;
+            }
+        }
+
+        return BigDecimal.ZERO;
     }
 }

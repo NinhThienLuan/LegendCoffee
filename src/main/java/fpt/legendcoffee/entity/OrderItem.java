@@ -41,6 +41,9 @@ public class OrderItem extends BaseEntity {
     @Column(name = "discount", precision = 18)
     private BigDecimal discount;
 
+    @Column(name = "promotion_discount", precision = 18)
+    private BigDecimal promotionDiscount;
+
     @Column(name = "total_amount", precision = 18)
     private BigDecimal totalAmount;
 

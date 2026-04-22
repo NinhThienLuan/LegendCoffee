@@ -56,6 +56,9 @@ public class CheckoutRequestDTO {
     // ID đơn hàng trong hệ thống (đã tạo trước khi gọi GHN)
     private Long orderId;
 
+    // Mã voucher (nếu có)
+    private String voucherCode;
+
     // Danh sách item checkout; mỗi item chỉ được có variantId hoặc comboId.
     @Valid
     @Builder.Default
