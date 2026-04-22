@@ -106,6 +106,17 @@ public class OrderController {
         return "redirect:/orders";
     }
 
+    @PostMapping("/admin/orders/{orderId}/complete-delivery")
+    public String completeDelivery(@PathVariable Long orderId, RedirectAttributes redirectAttributes) {
+        try {
+            orderService.completeDelivery(orderId);
+            redirectAttributes.addFlashAttribute("successMessage", "Đã xác nhận khách hàng nhận hàng thành công");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/orders";
+    }
+
     @GetMapping("/orders/{orderId}")
     public String orderDetailPage(@PathVariable("orderId") Long orderId, Model model,
             RedirectAttributes redirectAttributes) {

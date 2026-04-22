@@ -55,7 +55,7 @@ public class OrderServiceImpl implements OrderService {
         log.info("[OrderService] Creating new order for recipient: {}", checkout.getRecipientName());
 
         List<OrderItem> draftItems = buildOrderItems(checkout.getItems());
-        
+
         // 1. Validate total quantity
         int totalQuantity = draftItems.stream().mapToInt(OrderItem::getQuantity).sum();
         if (totalQuantity > MAX_TOTAL_QUANTITY) {
@@ -70,7 +70,7 @@ public class OrderServiceImpl implements OrderService {
         Optional<User> currentUser = getCurrentUser();
 
         Order order = Order.builder()
-            .user(currentUser.orElse(null))
+                .user(currentUser.orElse(null))
                 .orderDate(LocalDateTime.now())
                 .subTotal(subTotal)
                 .discount(BigDecimal.ZERO)
@@ -105,7 +105,8 @@ public class OrderServiceImpl implements OrderService {
     private void deductVariantStock(ProductVariant variant, int quantity) {
         int currentStock = variant.getStockQuantity() != null ? variant.getStockQuantity() : 0;
         if (currentStock < quantity) {
-            throw new IllegalArgumentException("Sản phẩm '" + variant.getVariantName() + "' đã hết hàng hoặc không đủ số lượng");
+            throw new IllegalArgumentException(
+                    "Sản phẩm '" + variant.getVariantName() + "' đã hết hàng hoặc không đủ số lượng");
         }
         variant.setStockQuantity(currentStock - quantity);
         productVariantRepository.save(variant);
@@ -153,7 +154,8 @@ public class OrderServiceImpl implements OrderService {
                     } else if (item.getCombo() != null) {
                         // Lấy ảnh từ sản phẩm đầu tiên trong combo
                         if (item.getCombo().getComboItems() != null && !item.getCombo().getComboItems().isEmpty()) {
-                            fpt.legendcoffee.entity.ComboItem firstItem = item.getCombo().getComboItems().iterator().next();
+                            fpt.legendcoffee.entity.ComboItem firstItem = item.getCombo().getComboItems().iterator()
+                                    .next();
                             if (firstItem.getVariant() != null) {
                                 img = firstItem.getVariant().getImageUrl();
                                 if (img == null && firstItem.getVariant().getProduct() != null) {
@@ -197,7 +199,8 @@ public class OrderServiceImpl implements OrderService {
             if (order.getPayments() != null) {
                 paymentUrl = order.getPayments().stream()
                         .filter(p -> PaymentStatus.PENDING.equals(p.getStatus()))
-                        .filter(p -> p.getCreatedAt() == null || p.getCreatedAt().plusMinutes(15).isAfter(LocalDateTime.now()))
+                        .filter(p -> p.getCreatedAt() == null
+                                || p.getCreatedAt().plusMinutes(15).isAfter(LocalDateTime.now()))
                         .map(Payment::getPaymentUrl)
                         .findFirst()
                         .orElse(null);
@@ -226,11 +229,40 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy thông tin vận chuyển cho đơn #" + orderId));
 
         if (!"ready_to_pick".equalsIgnoreCase(info.getStatus())) {
-            throw new RuntimeException("Chỉ có thể giao khi trạng thái đang là Chờ lấy hàng");
+            throw new RuntimeException("Chỉ có thể giao khi trạng thái đang là Chờ lấy hàng (ready_to_pick)");
         }
 
         info.setStatus("delivering");
         shippingInfoRepository.save(info);
+
+        // Update Order status to SHIPPING
+        Order order = info.getOrder();
+        if (order != null) {
+            order.setStatus(OrderStatus.SHIPPING);
+            orderRepository.save(order);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void completeDelivery(Long orderId) {
+        ShippingInfo info = shippingInfoRepository.findByOrderId(orderId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy thông tin vận chuyển cho đơn #" + orderId));
+
+        if (!"delivering".equalsIgnoreCase(info.getStatus())) {
+            throw new RuntimeException(
+                    "Chỉ có thể xác nhận nhận hàng khi trạng thái đang là Đang giao hàng (delivering)");
+        }
+
+        info.setStatus("delivered");
+        shippingInfoRepository.save(info);
+
+        // Update Order status to COMPLETED
+        Order order = info.getOrder();
+        if (order != null) {
+            order.setStatus(OrderStatus.COMPLETED);
+            orderRepository.save(order);
+        }
     }
 
     @Override
@@ -279,7 +311,6 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findByIdWithDetails(id).orElse(null);
     }
 
-
     @Override
     public int getMaxQuantityPerItem() {
         return MAX_QUANTITY_PER_ITEM;
@@ -289,7 +320,6 @@ public class OrderServiceImpl implements OrderService {
     public int getMaxTotalQuantity() {
         return MAX_TOTAL_QUANTITY;
     }
-
 
     private List<OrderItem> buildOrderItems(List<CheckoutItemRequestDTO> itemRequests) {
         if (itemRequests == null || itemRequests.isEmpty()) {
@@ -309,7 +339,8 @@ public class OrderServiceImpl implements OrderService {
             boolean hasVariant = request.getVariantId() != null;
             boolean hasCombo = request.getComboId() != null;
             if (hasVariant == hasCombo) {
-                throw new IllegalArgumentException("Mỗi item checkout phải có đúng một trong hai: variantId hoặc comboId");
+                throw new IllegalArgumentException(
+                        "Mỗi item checkout phải có đúng một trong hai: variantId hoặc comboId");
             }
 
             BigDecimal unitPrice;
@@ -318,23 +349,29 @@ public class OrderServiceImpl implements OrderService {
 
             if (hasVariant) {
                 variant = productVariantRepository.findById(request.getVariantId())
-                        .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy biến thể với ID: " + request.getVariantId()));
+                        .orElseThrow(() -> new IllegalArgumentException(
+                                "Không tìm thấy biến thể với ID: " + request.getVariantId()));
                 if (!Boolean.TRUE.equals(variant.getIsActive())) {
-                    throw new IllegalArgumentException("Biến thể với ID " + request.getVariantId() + " đang không hoạt động");
+                    throw new IllegalArgumentException(
+                            "Biến thể với ID " + request.getVariantId() + " đang không hoạt động");
                 }
                 unitPrice = variant.getPrice();
             } else {
                 combo = comboRepository.findById(request.getComboId())
-                        .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy combo với ID: " + request.getComboId()));
+                        .orElseThrow(() -> new IllegalArgumentException(
+                                "Không tìm thấy combo với ID: " + request.getComboId()));
                 if (!Boolean.TRUE.equals(combo.getIsActive())) {
-                    throw new IllegalArgumentException("Combo với ID " + request.getComboId() + " đang không hoạt động");
+                    throw new IllegalArgumentException(
+                            "Combo với ID " + request.getComboId() + " đang không hoạt động");
                 }
                 LocalDateTime now = LocalDateTime.now();
                 if (combo.getStartDate() != null && now.isBefore(combo.getStartDate())) {
-                    throw new IllegalArgumentException("Combo với ID " + request.getComboId() + " chưa đến thời gian áp dụng");
+                    throw new IllegalArgumentException(
+                            "Combo với ID " + request.getComboId() + " chưa đến thời gian áp dụng");
                 }
                 if (combo.getEndDate() != null && now.isAfter(combo.getEndDate())) {
-                    throw new IllegalArgumentException("Combo với ID " + request.getComboId() + " đã hết thời gian áp dụng");
+                    throw new IllegalArgumentException(
+                            "Combo với ID " + request.getComboId() + " đã hết thời gian áp dụng");
                 }
                 unitPrice = combo.getPrice();
             }

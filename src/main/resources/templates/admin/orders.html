@@ -142,6 +142,7 @@
                                     </td>
                                     <!-- Cột nút Giao hàng: chỉ hiển thị cho ADMIN -->
                                     <td class="px-6 py-5 text-center">
+                                        <!-- Nút Giao hàng: Nếu trạng thái là ready_to_pick -->
                                         <form th:if="${ord.shippingStatus == 'ready_to_pick'}"
                                             th:action="@{/admin/orders/{id}/start-delivering(id=${ord.id})}"
                                             method="post" class="inline"
@@ -151,6 +152,19 @@
                                                 <span
                                                     class="material-symbols-outlined text-sm align-middle mr-1">local_shipping</span>
                                                 Giao hàng
+                                            </button>
+                                        </form>
+
+                                        <!-- Nút Đã nhận hàng: Nếu trạng thái là delivering -->
+                                        <form th:if="${ord.shippingStatus == 'delivering'}"
+                                            th:action="@{/admin/orders/{id}/complete-delivery(id=${ord.id})}"
+                                            method="post" class="inline"
+                                            onsubmit="return confirm('Xác nhận khách hàng đã nhận được hàng?')">
+                                            <button type="submit"
+                                                class="bg-success text-on-success px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-widest hover:bg-success/80 transition-colors shadow-sm">
+                                                <span
+                                                    class="material-symbols-outlined text-sm align-middle mr-1">check_circle</span>
+                                                Đã nhận hàng
                                             </button>
                                         </form>
                                     </td>

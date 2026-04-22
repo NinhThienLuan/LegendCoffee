@@ -15,6 +15,7 @@ public interface OrderService {
     void startDelivering(Long orderId);
     Order getOrderWithDetails(Long id);
     void cancelOrder(Long orderId);
+    void completeDelivery(Long orderId);
 
     int getMaxQuantityPerItem();
     int getMaxTotalQuantity();
