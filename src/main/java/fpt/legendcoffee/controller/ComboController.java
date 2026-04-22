@@ -34,6 +34,12 @@ public class ComboController {
         return "product/catalogs";
     }
 
+    @GetMapping("/combos/{id}")
+    public String publicComboDetail(@PathVariable Long id, Model model) {
+        model.addAttribute("combo", comboService.getById(id));
+        return "product/combo-detail";
+    }
+
     @GetMapping("/admin/combos")
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public String adminComboList(Model model) {

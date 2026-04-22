@@ -20,4 +20,6 @@ public class ProductResponseDTO {
     private Integer soldCount;
     private Boolean isActive;
     private String imageUrl;
+    private Long defaultVariantId;
+    private String defaultVariantName;
 }

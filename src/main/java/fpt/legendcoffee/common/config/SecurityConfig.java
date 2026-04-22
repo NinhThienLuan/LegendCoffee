@@ -54,7 +54,7 @@ public class SecurityConfig {
                             }
                         }))
                 .logout(logout -> logout
-                        .logoutUrl("/logout")
+                        .logoutRequestMatcher(request -> "/logout".equals(request.getServletPath()))
                         .logoutSuccessUrl("/login?logout=true")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID"));
