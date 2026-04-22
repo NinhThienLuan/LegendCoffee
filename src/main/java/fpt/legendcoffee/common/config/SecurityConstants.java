@@ -26,6 +26,7 @@ public class SecurityConstants {
             "/payment/vnpay/callback",
             "/payment/vnpay/ipn",
             "/error",
-            "/assets/**"
+            "/assets/**",
+            "/images/**"
     };
 }
