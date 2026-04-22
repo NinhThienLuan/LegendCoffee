@@ -477,11 +477,43 @@ public class ShippingServiceImpl implements ShippingService {
     @Transactional
     public void handleWebhook(String ghnOrderCode, String newStatus) {
         log.info("[Webhook] GHN update: orderCode={}, status={}", ghnOrderCode, newStatus);
+
+        // 1. Cập nhật trạng thái ShippingInfo
         int updated = shippingInfoRepository.updateStatusByGhnOrderCode(ghnOrderCode, newStatus);
         if (updated == 0) {
             log.warn("[Webhook] No shipping record found for orderCode={}", ghnOrderCode);
+            return;
         }
-        // TODO: Gửi email/notification cho khách hàng tại đây
+
+        // 2. Tự động cập nhật Order thành COMPLETED nếu giao hàng thành công
+        // Hoặc CANCELLED nếu bị hủy từ phía GHN
+        String statusLower = newStatus.toLowerCase();
+        if (statusLower.contains("delivered") || statusLower.contains("received") || statusLower.contains("finish")) {
+            shippingInfoRepository.findByGhnOrderCode(ghnOrderCode).ifPresent(info -> {
+                Order order = info.getOrder();
+                if (order != null && order.getStatus() != OrderStatus.COMPLETED) {
+                    order.setStatus(OrderStatus.COMPLETED);
+                    orderRepository.save(order);
+                    log.info("[Webhook] Shipping success - Order #{} updated to COMPLETED", order.getId());
+                }
+            });
+        } else if (statusLower.contains("cancel")) {
+            shippingInfoRepository.findByGhnOrderCode(ghnOrderCode).ifPresent(info -> {
+                Order order = info.getOrder();
+                if (order != null && order.getStatus() != OrderStatus.CANCELLED) {
+                    order.setStatus(OrderStatus.CANCELLED);
+                    orderRepository.save(order);
+                    log.info("[Webhook] Shipping cancelled - Order #{} updated to CANCELLED", order.getId());
+
+                    // Tự động hoàn tiền nếu đơn bị huỷ (và đã thanh toán thành công trước đó)
+                    try {
+                        processRefund(order);
+                    } catch (Exception e) {
+                        log.error("[Webhook] Lỗi hoàn tiền cho đơn hàng #{} khi GHN huỷ đơn: {}", order.getId(), e.getMessage());
+                    }
+                }
+            });
+        }
     }
 
     // ================================================================
