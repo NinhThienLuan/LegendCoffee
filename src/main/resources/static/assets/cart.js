@@ -27,11 +27,18 @@ const CartSystem = {
     addToCart(item) {
         // item: { id, variantId, comboId, name, price, image, variant, quantity }
         const cart = this.getCart();
+        
+        // Auto-detect comboId if ID starts with combo-
+        let detectedComboId = item.comboId;
+        if (!detectedComboId && String(item.id).startsWith('combo-')) {
+            detectedComboId = String(item.id).replace('combo-', '');
+        }
+
         const incoming = {
             ...item,
             id: String(item.id),
             variantId: item.variantId ? String(item.variantId) : null,
-            comboId: item.comboId ? String(item.comboId) : null,
+            comboId: detectedComboId ? String(detectedComboId) : null,
             variant: normalizeVariant(item.variant),
             price: Number(item.price) || 0,
             quantity: Number(item.quantity) || 1
@@ -110,6 +117,28 @@ const CartSystem = {
 
 // Initialize globally
 window.CartSystem = CartSystem;
+
+// Tự động xoá giỏ hàng nếu vừa đặt hàng xong (chuyển trang từ checkout)
+(function() {
+    const orderInProgress = sessionStorage.getItem('orderInProgress');
+    if (orderInProgress === 'true') {
+        if (!window.location.pathname.includes('/checkout')) {
+            // Nếu đã sang trang khác (VNPay, Order List...), xoá giỏ ngay
+            CartSystem.clearCart();
+            sessionStorage.removeItem('orderInProgress');
+            console.log('[Cart] Đã xoá giỏ hàng sau khi đặt hàng thành công.');
+        } else {
+            // Nếu đang ở lại checkout (do nút Back), kiểm tra bfcache
+            window.addEventListener('pageshow', (event) => {
+                if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+                    CartSystem.clearCart();
+                    sessionStorage.removeItem('orderInProgress');
+                    window.location.reload();
+                }
+            });
+        }
+    }
+})();
 
 function showToast(msg) {
     let toast = document.getElementById('cart-toast');

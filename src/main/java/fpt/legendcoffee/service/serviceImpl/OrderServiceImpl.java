@@ -11,6 +11,8 @@ import fpt.legendcoffee.entity.ShippingInfo;
 import fpt.legendcoffee.dto.app.OrderListDTO;
 import fpt.legendcoffee.dto.app.OrderStatusDTO;
 import fpt.legendcoffee.entity.enumeration.OrderStatus;
+import fpt.legendcoffee.entity.enumeration.PaymentStatus;
+import fpt.legendcoffee.entity.Payment;
 import fpt.legendcoffee.repository.ComboRepository;
 import fpt.legendcoffee.repository.OrderItemRepository;
 import fpt.legendcoffee.repository.OrderRepository;
@@ -105,22 +107,35 @@ public class OrderServiceImpl implements OrderService {
             int additionalCount = 0;
 
             if (items != null && !items.isEmpty()) {
-                // Chỉ lấy ảnh từ sản phẩm (variant -> product)
+                // Lấy ảnh từ sản phẩm hoặc combo
                 for (OrderItem item : items) {
+                    String img = null;
                     if (item.getVariant() != null) {
-                        String img = item.getVariant().getImageUrl();
+                        img = item.getVariant().getImageUrl();
                         if (img == null && item.getVariant().getProduct() != null) {
                             img = item.getVariant().getProduct().getImageUrl();
                         }
-                        if (img != null && !allImages.contains(img)) {
-                            allImages.add(img);
+                    } else if (item.getCombo() != null) {
+                        // Lấy ảnh từ sản phẩm đầu tiên trong combo
+                        if (item.getCombo().getComboItems() != null && !item.getCombo().getComboItems().isEmpty()) {
+                            fpt.legendcoffee.entity.ComboItem firstItem = item.getCombo().getComboItems().iterator().next();
+                            if (firstItem.getVariant() != null) {
+                                img = firstItem.getVariant().getImageUrl();
+                                if (img == null && firstItem.getVariant().getProduct() != null) {
+                                    img = firstItem.getVariant().getProduct().getImageUrl();
+                                }
+                            }
                         }
+                    }
+
+                    if (img != null && !allImages.contains(img)) {
+                        allImages.add(img);
                     }
                 }
 
-                // Lấy thông tin từ item đầu tiên có variant
+                // Lấy thông tin từ item đầu tiên
                 OrderItem first = items.stream()
-                        .filter(i -> i.getVariant() != null)
+                        .filter(i -> i.getVariant() != null || i.getCombo() != null)
                         .findFirst()
                         .orElse(items.get(0));
 
@@ -129,11 +144,11 @@ public class OrderServiceImpl implements OrderService {
                             ? first.getVariant().getProduct().getName()
                             : first.getVariant().getVariantName();
                     itemDetail = first.getVariant().getVariantName();
-                    firstImage = allImages.isEmpty() ? null : allImages.get(0);
                 } else if (first.getCombo() != null) {
                     itemName = first.getCombo().getName();
                     itemDetail = "Combo Legend";
                 }
+                firstImage = allImages.isEmpty() ? null : allImages.get(0);
 
                 additionalCount = items.size() - 1;
             }
@@ -146,8 +161,9 @@ public class OrderServiceImpl implements OrderService {
             String paymentUrl = null;
             if (order.getPayments() != null) {
                 paymentUrl = order.getPayments().stream()
-                        .filter(p -> fpt.legendcoffee.entity.enumeration.PaymentStatus.PENDING.equals(p.getStatus()))
-                        .map(fpt.legendcoffee.entity.Payment::getPaymentUrl)
+                        .filter(p -> PaymentStatus.PENDING.equals(p.getStatus()))
+                        .filter(p -> p.getCreatedAt() == null || p.getCreatedAt().plusMinutes(15).isAfter(LocalDateTime.now()))
+                        .map(Payment::getPaymentUrl)
                         .findFirst()
                         .orElse(null);
             }
