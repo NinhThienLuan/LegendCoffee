@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý Rút tiền - Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .status-pending { color: #ffc107; font-weight: bold; }
+        .btn-approve { background-color: #198754; color: white; }
+        .btn-reject { background-color: #dc3545; color: white; }
+    </style>
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Yêu cầu Rút tiền đang chờ duyệt</h2>
+        <a href="/admin" class="btn btn-secondary">Quay lại Dashboard</a>
+    </div>
+
+    <!-- Thông báo -->
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+    <div class="card shadow">
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Khách hàng</th>
+                        <th>Số tiền</th>
+                        <th>Mô tả</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="w : ${withdrawals}">
+                        <td th:text="${w.id}"></td>
+                        <td th:text="${w.wallet.user.fullName}"></td>
+                        <td th:text="${#numbers.formatDecimal(w.amount, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
+                        <td th:text="${w.description}"></td>
+                        <td class="status-pending">PENDING</td>
+                        <td>
+                            <!-- Form Phê duyệt -->
+                            <form th:action="@{/admin/withdrawals/{id}/approve(id=${w.id})}" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-approve btn-sm" onclick="return confirm('Xác nhận duyệt lệnh rút tiền này?')">Duyệt</button>
+                            </form>
+
+                            <!-- Button trigger modal Từ chối -->
+                            <button type="button" class="btn btn-reject btn-sm" data-bs-toggle="modal" th:data-bs-target="'#rejectModal' + ${w.id}">
+                                Từ chối
+                            </button>
+
+                            <!-- Modal Từ chối -->
+                            <div class="modal fade" th:id="'rejectModal' + ${w.id}" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <form th:action="@{/admin/withdrawals/{id}/reject(id=${w.id})}" method="post">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Lý do từ chối rút tiền</h5>
+                                                <button type="button" class="btn-close" data-bs-休憩="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <textarea name="note" class="form-control" rows="3" placeholder="Nhập lý do từ chối (Tiền sẽ được hoàn lại cho khách)..." required></textarea>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                                <button type="submit" class="btn btn-danger">Xác nhận Từ chối & Hoàn tiền</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(withdrawals)}">
+                        <td colspan="6" class="text-center text-muted">Không có yêu cầu nào đang chờ xử lý.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

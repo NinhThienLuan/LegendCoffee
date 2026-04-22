@@ -18,6 +18,7 @@ import fpt.legendcoffee.repository.WalletRepository;
 import fpt.legendcoffee.service.AuthenService;
 import fpt.legendcoffee.service.MailService;
 import lombok.AllArgsConstructor;
+
 @Service
 @AllArgsConstructor
 public class AuthenServiceImpl implements AuthenService {
@@ -26,6 +27,7 @@ public class AuthenServiceImpl implements AuthenService {
     private final PasswordEncoder passwordEncoder;
     private final MailService mailService;
     private final WalletRepository walletRepository;
+
     @Override
     public void login(LoginRequestDTO request) {
         User user = userRepository.findByEmail(request.email()).orElse(null);
@@ -58,14 +60,14 @@ public class AuthenServiceImpl implements AuthenService {
                 .isActive(true)
                 .build();
 
-      User savedUser = userRepository.save(user);
-       Wallet wallet = Wallet.builder()
-        .user(savedUser)
-        .amount(BigDecimal.ZERO) 
-        .build();
-    
-    walletRepository.save(wallet);
- 
+        User savedUser = userRepository.save(user);
+        Wallet wallet = Wallet.builder()
+                .user(savedUser)
+                .balance(BigDecimal.ZERO)
+                .build();
+
+        walletRepository.save(wallet);
+
         return true;
     }
 
@@ -92,7 +94,8 @@ public class AuthenServiceImpl implements AuthenService {
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
         try {
-            mailService.sendHtml(email, "Legend Coffee - Forgot Password", "<h1>Your new password is: " + newPassword + "</h1>");
+            mailService.sendHtml(email, "Legend Coffee - Forgot Password",
+                    "<h1>Your new password is: " + newPassword + "</h1>");
         } catch (Exception e) {
             throw new AuthenException("Hệ thống gửi thư gặp sự cố. Vui lòng kiểm tra cấu hình Gmail.");
         }
@@ -131,7 +134,7 @@ public class AuthenServiceImpl implements AuthenService {
         return userRepository.findByEmail(email).isPresent();
     }
 
-    //Helper method
+    // Helper method
     private String generateRandomPassword() {
         String chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
         SecureRandom rnd = new SecureRandom();

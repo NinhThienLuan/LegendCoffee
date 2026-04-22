@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: sharedHead('Industrial Excellence - Yêu cầu Rút tiền')}"></head>
+
+<body class="bg-surface selection:bg-stone-200 min-h-screen font-sans">
+
+    <!-- Sidebar Fragment -->
+    <aside th:replace="~{fragments/admin-sidebar :: adminSidebar}"></aside>
+
+    <div class="ml-64 flex flex-col">
+        <!-- Topbar Fragment -->
+        <header
+            th:replace="~{fragments/admin-topbar :: adminTopbar('Quản lý Tài chính / Yêu cầu rút tiền', 'Tìm kiếm yêu cầu...')}">
+        </header>
+
+        <main class="p-8 flex flex-col gap-8">
+
+            <!-- Breadcrumb / Back Button -->
+            <div class="flex items-center gap-4">
+                <a href="/admin/wallet" class="flex items-center gap-2 text-stone-500 hover:text-stone-900 transition-colors">
+                    <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+                    <span class="text-xs font-bold uppercase tracking-widest">Quay lại ví</span>
+                </a>
+            </div>
+
+            <!-- Pending Withdrawal Requests -->
+            <section class="bg-white border border-stone-200 rounded-3xl overflow-hidden shadow-sm">
+                <div class="px-8 py-6 border-b border-stone-100 bg-stone-50/50">
+                    <h3 class="text-lg font-bold text-stone-900 font-manrope tracking-tight">Yêu cầu rút tiền chờ duyệt</h3>
+                    <p class="text-xs text-stone-500 font-medium">Danh sách các yêu cầu rút tiền từ khách hàng cần xử lý</p>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left font-manrope border-collapse">
+                        <thead>
+                            <tr class="bg-stone-50 text-[10px] font-bold text-stone-500 uppercase tracking-widest border-b border-stone-100">
+                                <th class="px-8 py-4">ID</th>
+                                <th class="px-8 py-4">Khách hàng</th>
+                                <th class="px-8 py-4">Số tiền</th>
+                                <th class="px-8 py-4">Thông tin rút tiền</th>
+                                <th class="px-8 py-4 text-right">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-stone-100">
+                            <tr th:each="w : ${withdrawals}" class="hover:bg-stone-50/30 transition-colors">
+                                <td class="px-8 py-5 text-sm font-bold text-stone-900" th:text="${w.id}"></td>
+                                <td class="px-8 py-5">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-6 h-6 rounded-full bg-stone-100 flex items-center justify-center">
+                                            <span class="material-symbols-outlined text-[14px] text-stone-500">person</span>
+                                        </div>
+                                        <span class="text-xs font-bold text-stone-700" th:text="${w.wallet.user.fullName}">Nguyễn Văn A</span>
+                                    </div>
+                                </td>
+                                <td class="px-8 py-5">
+                                    <span class="text-sm font-black text-error/80 tracking-tighter" 
+                                          th:text="${#numbers.formatDecimal(w.amount, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                                        500.000 đ
+                                    </span>
+                                </td>
+                                <td class="px-8 py-5 text-xs text-stone-500 font-medium" th:text="${w.description}">
+                                    Rút về VCB - STK: 123456789
+                                </td>
+                                <td class="px-8 py-5 text-right flex gap-2 justify-end">
+                                    <!-- Approve -->
+                                    <form th:action="@{/admin/wallet/{id}/approve(id=${w.id})}" method="post">
+                                        <button type="submit" class="bg-success text-white px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-success/90 transition-colors">
+                                            Duyệt
+                                        </button>
+                                    </form>
+                                    <!-- Reject -->
+                                    <button th:onclick="'openRejectModal(' + ${w.id} + ')'" 
+                                            class="bg-error text-white px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-error/90 transition-colors">
+                                        Từ chối
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(withdrawals)}">
+                                <td colspan="5" class="px-8 py-12 text-center text-stone-400 text-xs italic">
+                                    Không có yêu cầu rút tiền nào đang chờ xử lý.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Modal từ chối -->
+            <div id="rejectModal" class="fixed inset-0 bg-stone-950/40 backdrop-blur-sm z-[100] hidden items-center justify-center">
+                <div class="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl border border-stone-200">
+                    <h3 class="text-xl font-bold text-stone-900 font-manrope tracking-tight mb-2">Từ chối rút tiền</h3>
+                    <p class="text-xs text-stone-500 mb-6">Tiền sẽ được hoàn lại vào ví của khách hàng ngay lập tức.</p>
+                    
+                    <form id="rejectForm" method="post">
+                        <div class="mb-6">
+                            <label class="text-[10px] font-bold uppercase tracking-widest text-stone-400 mb-2 block">Lý do từ chối</label>
+                            <textarea name="note" required rows="4" class="w-full bg-stone-50 border border-stone-200 rounded-xl p-4 text-sm focus:outline-none focus:ring-2 focus:ring-stone-950 transition-all" placeholder="Nhập lý do cụ thể..."></textarea>
+                        </div>
+                        <div class="flex gap-3">
+                            <button type="button" onclick="closeRejectModal()" class="flex-1 px-6 py-3 border border-stone-200 rounded-xl text-xs font-bold text-stone-600 hover:bg-stone-50 transition-all">Hủy</button>
+                            <button type="submit" class="flex-1 px-6 py-3 bg-stone-950 text-white rounded-xl text-xs font-bold hover:bg-stone-800 transition-all">Xác nhận</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <script>
+                function openRejectModal(id) {
+                    const modal = document.getElementById('rejectModal');
+                    const form = document.getElementById('rejectForm');
+                    form.action = '/admin/wallet/' + id + '/reject';
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                }
+                function closeRejectModal() {
+                    const modal = document.getElementById('rejectModal');
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }
+            </script>
+
+        </main>
+    </div>
+
+</body>
+
+</html>

@@ -11,6 +11,7 @@ import fpt.legendcoffee.entity.Wallet;
 import fpt.legendcoffee.entity.WalletTransaction;
 import fpt.legendcoffee.entity.enumeration.OrderStatus;
 import fpt.legendcoffee.entity.enumeration.RefundStatus;
+import fpt.legendcoffee.entity.enumeration.TransactionStatus;
 import fpt.legendcoffee.repository.OrderRepository;
 import fpt.legendcoffee.repository.RefundRequestRepository;
 import fpt.legendcoffee.repository.WalletRepository;
@@ -87,7 +88,7 @@ public class RefundServiceImpl implements RefundService {
                 .orElseThrow(() -> new IllegalStateException("Hệ thống chưa tạo ví cho User này"));
 
         BigDecimal refundAmount = request.getAmount();
-        wallet.setAmount(wallet.getAmount().add(refundAmount));
+        wallet.setBalance(wallet.getBalance().add(refundAmount));
         walletRepository.save(wallet);
 
         // Lưu lịch sử giao dịch ví
@@ -96,6 +97,7 @@ public class RefundServiceImpl implements RefundService {
                 .amount(refundAmount)
                 .transactionType("REFUND")
                 .description("Hoàn tiền cho đơn hàng #" + request.getOrder().getId())
+                .status(TransactionStatus.SUCCESS)
                 .build();
         walletTransactionRepository.save(transaction);
 

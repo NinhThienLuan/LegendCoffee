@@ -399,7 +399,341 @@ public class DataInit implements CommandLineRunner {
         discoveryCombo.getComboItems()
                 .add(ComboItem.builder().combo(discoveryCombo).variant(ground200).quantity(1).build());
 
+<<<<<<< Updated upstream
         comboRepository.save(discoveryCombo);
         log.info("Seeded combo data successfully.");
     }
+=======
+                        Category ground = Category.builder()
+                                        .categoryName("Cà phê bột")
+                                        .description("Cà phê đã xay sẵn, tiện dụng")
+                                        .build();
+
+                        Category instant = Category.builder()
+                                        .categoryName("Cà phê hòa tan")
+                                        .description("Cà phê uống liền nhanh chóng")
+                                        .build();
+
+                        Category accessories = Category.builder()
+                                        .categoryName("Phụ kiện pha chế")
+                                        .description("Các dụng cụ hỗ trợ pha chế cà phê")
+                                        .build();
+
+                        categoryRepository.saveAll(List.of(beans, ground, instant, accessories));
+
+                        // 2. Products & Variants for Beans
+                        Product arabica = Product.builder()
+                                        .category(beans)
+                                        .name("Legend Arabica Special")
+                                        .description("Hạt Arabica từ vùng cầu đất Đà Lạt, hương thơm nhẹ nhàng, vị chua thanh.")
+                                        .origin("Đà Lạt, Việt Nam")
+                                        .expiryDate(LocalDate.now().plusMonths(12))
+                                        .manufacturerDate(LocalDate.now())
+                                        .imageUrl(
+                                                        "https://res.cloudinary.com/myimagename/image/upload/q_auto/f_auto/v1776703528/Gemini_Generated_Image_ymu9s0ymu9s0ymu9_jqlxbd.png")
+                                        .isActive(true)
+                                        .build();
+                        productRepository.save(arabica);
+
+                        ProductVariant arabica250 = ProductVariant.builder()
+                                        .product(arabica)
+                                        .variantName("Túi 250g")
+                                        .packaging("Túi giấy Kraft")
+                                        .size(250)
+                                        .price(new BigDecimal("150000"))
+                                        .stockQuantity(100)
+                                        .isActive(true)
+                                        .build();
+
+                        ProductVariant arabica500 = ProductVariant.builder()
+                                        .product(arabica)
+                                        .variantName("Túi 500g")
+                                        .packaging("Túi giấy Kraft")
+                                        .size(500)
+                                        .price(new BigDecimal("280000"))
+                                        .stockQuantity(50)
+                                        .isActive(true)
+                                        .build();
+                        productVariantRepository.saveAll(List.of(arabica250, arabica500));
+
+                        Product robusta = Product.builder()
+                                        .category(beans)
+                                        .name("Legend Robusta Bold")
+                                        .description("Hạt Robusta Buôn Ma Thuột rang đậm, vị đắng mạnh mẽ, hậu vị ngọt.")
+                                        .origin("Đắk Lắk, Việt Nam")
+                                        .expiryDate(LocalDate.now().plusMonths(12))
+                                        .manufacturerDate(LocalDate.now())
+                                        .imageUrl(
+                                                        "https://res.cloudinary.com/myimagename/image/upload/q_auto/f_auto/v1776704007/39e9e7ac-801d-4380-80c0-a6aeabd3590e_s8s2jh.jpg")
+                                        .isActive(true)
+                                        .build();
+                        productRepository.save(robusta);
+
+                        ProductVariant robusta500 = ProductVariant.builder()
+                                        .product(robusta)
+                                        .variantName("Túi 500g")
+                                        .packaging("Túi nhôm")
+                                        .size(500)
+                                        .price(new BigDecimal("220000"))
+                                        .stockQuantity(200)
+                                        .isActive(true)
+                                        .build();
+                        productVariantRepository.save(robusta500);
+
+                        // 3. Products for Ground Coffee
+                        Product espressoGround = Product.builder()
+                                        .category(ground)
+                                        .name("Espresso Premium Blend (Xay)")
+                                        .description("Sự kết hợp hoàn hảo giữa Arabica và Robusta theo tỷ lệ 7:3.")
+                                        .origin("Lâm Đồng, Việt Nam")
+                                        .expiryDate(LocalDate.now().plusMonths(12))
+                                        .manufacturerDate(LocalDate.now())
+                                        .imageUrl(
+                                                        "https://res.cloudinary.com/myimagename/image/upload/q_auto/f_auto/v1776704017/3530370d-f499-49b9-949c-f8ca3780dfa9_xmutfc.jpg")
+                                        .isActive(true)
+                                        .build();
+                        productRepository.save(espressoGround);
+
+                        ProductVariant ground200 = ProductVariant.builder()
+                                        .product(espressoGround)
+                                        .variantName("Hộp 200g")
+                                        .packaging("Hộp thiếc")
+                                        .size(200)
+                                        .price(new BigDecimal("185000"))
+                                        .stockQuantity(75)
+                                        .isActive(true)
+                                        .build();
+                        productVariantRepository.save(ground200);
+
+                        // 3.5 Accessories
+                        Product filterMaker = Product.builder()
+                                        .category(accessories)
+                                        .name("Phin pha cà phê inox")
+                                        .description("Phin inox cao cấp, giữ nhiệt tốt.")
+                                        .origin("Việt Nam")
+                                        .isActive(true)
+                                        .build();
+                        productRepository.save(filterMaker);
+
+                        ProductVariant filterMakerV = ProductVariant.builder()
+                                        .product(filterMaker).variantName("Size Tiêu Chuẩn")
+                                        .packaging("Hộp giấy").size(1)
+                                        .price(new BigDecimal("85000")).stockQuantity(3).isActive(true).build();
+                        productVariantRepository.save(filterMakerV);
+
+                        Product v60 = Product.builder()
+                                        .category(accessories)
+                                        .name("Phễu pha V60 Hario")
+                                        .description("Phễu pha cà phê pour-over bằng sứ.")
+                                        .origin("Nhật Bản")
+                                        .isActive(true)
+                                        .build();
+                        productRepository.save(v60);
+
+                        ProductVariant v60V = ProductVariant.builder()
+                                        .product(v60).variantName("Size 02")
+                                        .packaging("Hộp giấy").size(1)
+                                        .price(new BigDecimal("450000")).stockQuantity(2).isActive(true).build();
+                        productVariantRepository.save(v60V);
+
+                        Product scale = Product.builder()
+                                        .category(accessories)
+                                        .name("Cân điện tử pha chế")
+                                        .description("Cân định lượng và đếm thời gian.")
+                                        .origin("Trung Quốc")
+                                        .isActive(true)
+                                        .build();
+                        productRepository.save(scale);
+
+                        ProductVariant scaleV = ProductVariant.builder()
+                                        .product(scale).variantName("Tiêu Chuẩn")
+                                        .packaging("Hộp giấy").size(1)
+                                        .price(new BigDecimal("350000")).stockQuantity(5).isActive(true).build();
+                        productVariantRepository.save(scaleV);
+
+                        Product grinder = Product.builder()
+                                        .category(accessories)
+                                        .name("Máy xay cà phê cầm tay")
+                                        .description("Máy xay tay mini Timemore.")
+                                        .origin("Đài Loan")
+                                        .isActive(true)
+                                        .build();
+                        productRepository.save(grinder);
+
+                        ProductVariant grinderV = ProductVariant.builder()
+                                        .product(grinder).variantName("C3")
+                                        .packaging("Hộp giấy").size(1)
+                                        .price(new BigDecimal("1250000")).stockQuantity(1).isActive(true).build();
+                        productVariantRepository.save(grinderV);
+
+                        Product paperFilter = Product.builder()
+                                        .category(accessories)
+                                        .name("Giấy lọc V60")
+                                        .description("Giấy lọc cà phê tự nhiên, không tẩy trắng.")
+                                        .origin("Nhật Bản")
+                                        .isActive(true)
+                                        .build();
+                        productRepository.save(paperFilter);
+
+                        ProductVariant paperFilterV = ProductVariant.builder()
+                                        .product(paperFilter).variantName("Hộp 100 tờ")
+                                        .packaging("Hộp giấy").size(1)
+                                        .price(new BigDecimal("120000")).stockQuantity(4).isActive(true).build();
+                        productVariantRepository.save(paperFilterV);
+
+                        // 4. Articles
+                        User admin = userRepository.findByEmail("admin@legendcoffee.com").orElse(null);
+                        Article article1 = Article.builder()
+                                        .user(admin)
+                                        .title("Tối ưu hóa chuỗi cung ứng cà phê trong kỷ nguyên số")
+                                        .summary("Bài viết mô phỏng dữ liệu từ model để render nội dung động theo format Editor.js.")
+                                        .contentJson(
+                                                        """
+                                                                        {
+                                                                            "time": 1713550000000,
+                                                                            "version": "2.29.1",
+                                                                            "blocks": [
+                                                                                {
+                                                                                    "type": "header",
+                                                                                    "data": {
+                                                                                        "text": "Tư duy vận hành hiện đại cho ngành cà phê",
+                                                                                        "level": 2
+                                                                                    }
+                                                                                },
+                                                                                {
+                                                                                    "type": "paragraph",
+                                                                                    "data": {
+                                                                                        "text": "Doanh nghiệp B2B cần kết nối rang xay, kho vận và dữ liệu thời gian thực để giảm rủi ro và tăng hiệu suất."
+                                                                                    }
+                                                                                },
+                                                                                {
+                                                                                    "type": "image",
+                                                                                    "data": {
+                                                                                        "url": "https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=1200&q=80",
+                                                                                        "caption": "Theo dõi chất lượng hạt và dữ liệu vận hành theo thời gian thực"
+                                                                                    }
+                                                                                },
+                                                                                {
+                                                                                    "type": "list",
+                                                                                    "data": {
+                                                                                        "style": "unordered",
+                                                                                        "items": [
+                                                                                            "Theo dõi tồn kho theo lô hàng",
+                                                                                            "Chuẩn hóa chất lượng theo profile rang",
+                                                                                            "Tối ưu chi phí logistics liên vùng"
+                                                                                        ]
+                                                                                    }
+                                                                                },
+                                                                                {
+                                                                                    "type": "quote",
+                                                                                    "data": {
+                                                                                        "text": "Dữ liệu tốt giúp quyết định nhanh và đúng trong chuỗi cung ứng.",
+                                                                                        "caption": "RoastLogistics Insight"
+                                                                                    }
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                        """)
+                                        .coverImageUrl(
+                                                        "https://res.cloudinary.com/myimagename/image/upload/q_auto/f_auto/v1776704026/45933f08-70d1-4bbf-805f-54690cd822ef_rhtyhx.jpg")
+                                        .status(ArticleStatus.PUBLISHED)
+                                        .publishedAt(LocalDateTime.now())
+                                        .isActive(true)
+                                        .build();
+
+                        Article article2 = Article.builder()
+                                        .user(admin).title("Nghệ thuật pha chế Pour Over")
+                                        .summary("Bí quyết kiểm soát dòng chảy để có tách cà phê hoàn hảo.")
+                                        .contentJson("{\"time\":1713550000000,\"version\":\"2.29.1\",\"blocks\":[{\"type\":\"paragraph\",\"data\":{\"text\":\"Đổ nước quá nhanh sẽ làm nhạt cà phê...\"}}]}")
+                                        .coverImageUrl("https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")
+                                        .status(ArticleStatus.PUBLISHED).publishedAt(LocalDateTime.now()).isActive(true)
+                                        .build();
+
+                        Article article3 = Article.builder()
+                                        .user(admin).title("Phân biệt Arabica và Robusta")
+                                        .summary("Những điểm khác biệt cốt lõi giữa hai dòng hạt phổ biến nhất.")
+                                        .contentJson("{\"time\":1713550000001,\"version\":\"2.29.1\",\"blocks\":[{\"type\":\"paragraph\",\"data\":{\"text\":\"Arabica có vị chua thanh, Robusta đắng đậm...\"}}]}")
+                                        .coverImageUrl("https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")
+                                        .status(ArticleStatus.PUBLISHED).publishedAt(LocalDateTime.now().minusDays(1))
+                                        .isActive(true).build();
+
+                        Article article4 = Article.builder()
+                                        .user(admin).title("Bảo quản cà phê đúng cách")
+                                        .summary("Hướng dẫn bảo quản hạt tránh mất hương vị.")
+                                        .contentJson("{\"time\":1713550000002,\"version\":\"2.29.1\",\"blocks\":[{\"type\":\"paragraph\",\"data\":{\"text\":\"Tuyệt đối không để cà phê hạt vào tủ lạnh...\"}}]}")
+                                        .coverImageUrl("https://images.unsplash.com/photo-1556742526-795a8eac090e?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")
+                                        .status(ArticleStatus.PUBLISHED).publishedAt(LocalDateTime.now().minusDays(2))
+                                        .isActive(true).build();
+
+                        Article article5 = Article.builder()
+                                        .user(admin).title("Cà phê Cold Brew giải nhiệt mùa hè")
+                                        .summary("Công thức ngâm lạnh tại nhà cực kỳ dễ làm.")
+                                        .contentJson("{\"time\":1713550000003,\"version\":\"2.29.1\",\"blocks\":[{\"type\":\"paragraph\",\"data\":{\"text\":\"Tỷ lệ 1:10 và thời gian ngâm 16-24 tiếng...\"}}]}")
+                                        .coverImageUrl("https://images.unsplash.com/photo-1495774856032-8b90bbb32b32?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")
+                                        .status(ArticleStatus.PUBLISHED).publishedAt(LocalDateTime.now().minusDays(3))
+                                        .isActive(true).build();
+
+                        Article article6 = Article.builder()
+                                        .user(admin).title("Tương lai của ngành Specialty Coffee")
+                                        .summary("Xu hướng trải nghiệm cà phê đặc sản năm nay.")
+                                        .contentJson("{\"time\":1713550000004,\"version\":\"2.29.1\",\"blocks\":[{\"type\":\"paragraph\",\"data\":{\"text\":\"Người dùng đang tìm kiếm những nốt hương hoa quả...\"}}]}")
+                                        .coverImageUrl("https://images.unsplash.com/photo-1498804103079-a6351b050096?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")
+                                        .status(ArticleStatus.PUBLISHED).publishedAt(LocalDateTime.now().minusDays(4))
+                                        .isActive(true).build();
+
+                        articleRepository.saveAll(List.of(article1, article2, article3, article4, article5, article6));
+                }
+        }
+
+        private void seedCombos() {
+                if (comboRepository.count() > 0 || productVariantRepository.count() == 0) {
+                        return;
+                }
+
+                ProductVariant arabica250 = productVariantRepository.findAll().stream()
+                                .filter(variant -> variant.getProduct() != null
+                                                && "Legend Arabica Special".equals(variant.getProduct().getName())
+                                                && "Túi 250g".equals(variant.getVariantName()))
+                                .findFirst()
+                                .orElse(null);
+
+                ProductVariant robusta500 = productVariantRepository.findAll().stream()
+                                .filter(variant -> variant.getProduct() != null
+                                                && "Legend Robusta Bold".equals(variant.getProduct().getName())
+                                                && "Túi 500g".equals(variant.getVariantName()))
+                                .findFirst()
+                                .orElse(null);
+
+                ProductVariant ground200 = productVariantRepository.findAll().stream()
+                                .filter(variant -> variant.getProduct() != null
+                                                && "Espresso Premium Blend (Xay)".equals(variant.getProduct().getName())
+                                                && "Hộp 200g".equals(variant.getVariantName()))
+                                .findFirst()
+                                .orElse(null);
+
+                if (arabica250 == null || robusta500 == null || ground200 == null) {
+                        log.warn("Skipping combo seed because one or more required variants were not found.");
+                        return;
+                }
+
+                Combo discoveryCombo = Combo.builder()
+                                .name("Combo Discovery 3 vị")
+                                .description("Bộ thử vị gồm 3 dòng sản phẩm chủ lực với giá ưu đãi.")
+                                .price(new BigDecimal("540000"))
+                                .startDate(LocalDateTime.now().minusDays(7))
+                                .endDate(LocalDateTime.now().plusMonths(2))
+                                .isActive(true)
+                                .build();
+
+                discoveryCombo.getComboItems()
+                                .add(ComboItem.builder().combo(discoveryCombo).variant(arabica250).quantity(1).build());
+                discoveryCombo.getComboItems()
+                                .add(ComboItem.builder().combo(discoveryCombo).variant(robusta500).quantity(1).build());
+                discoveryCombo.getComboItems()
+                                .add(ComboItem.builder().combo(discoveryCombo).variant(ground200).quantity(1).build());
+
+                comboRepository.save(discoveryCombo);
+                log.info("Seeded combo data successfully.");
+        }
+>>>>>>> Stashed changes
 }

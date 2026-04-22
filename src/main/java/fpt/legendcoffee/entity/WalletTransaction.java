@@ -1,18 +1,12 @@
 package fpt.legendcoffee.entity;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import fpt.legendcoffee.common.infrastructure.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import fpt.legendcoffee.entity.enumeration.TransactionStatus;
+import jakarta.persistence.*;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Getter
@@ -32,8 +26,22 @@ public class WalletTransaction extends BaseEntity {
     private BigDecimal amount;
 
     @Column(name = "transaction_type", length = 50)
-    private String transactionType;
+    private String transactionType; // Ví dụ: WITHDRAW, DEPOSIT, REFUND
 
     @Column(name = "description", length = 255)
     private String description;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 20)
+    private TransactionStatus status;
+
+    @Column(name = "note", length = 500)
+    private String note; // Lý do từ chối hoặc ghi chú thêm
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "processed_by")
+    private User processedBy; // Admin xử lý
+
+    @Column(name = "processed_at")
+    private LocalDateTime processedAt;
 }

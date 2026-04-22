@@ -6,6 +6,8 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.ArrayList;
 
 @Getter
 @Setter
@@ -21,7 +23,12 @@ public class Wallet extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "amount", precision = 18)
-    private BigDecimal amount;
+    @Column(name = "balance", precision = 18)
+    private BigDecimal balance;
+
+    @OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OrderBy("createdAt DESC")
+    @Builder.Default
+    private List<WalletTransaction> transactionHistory = new ArrayList<>();
 
 }

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html class="light" lang="vi" xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{fragments/head :: sharedHead('Industrial Excellence - Ví của tôi')}"></head>
+
+<body
+    class="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container min-h-screen flex flex-col font-sans">
+
+    <!-- Navbar Fragment -->
+    <div th:replace="~{fragments/navbar :: navbar(${navItems})}"></div>
+
+    <main class="flex-grow max-w-7xl mx-auto px-8 sm:px-12 lg:px-20 pt-32 pb-24 w-full flex flex-col gap-12">
+
+        <!-- Header Section -->
+        <header class="flex flex-col gap-4">
+            <h1 class="text-display-lg font-headline font-black uppercase text-primary tracking-tight">Ví điện tử cá
+                nhân
+            </h1>
+            <p class="text-body-lg text-on-surface-variant max-w-3xl font-sans">
+                Quản lý số dư, theo dõi lịch sử nạp tiền và thanh toán đơn hàng.
+            </p>
+        </header>
+
+        <!-- Alert Messages -->
+        <div th:if="${successMessage}" class="p-4 bg-success/10 border border-success/20 rounded-2xl flex items-center gap-3 text-success">
+            <span class="material-symbols-outlined">check_circle</span>
+            <p class="text-sm font-bold" th:text="${successMessage}"></p>
+        </div>
+        <div th:if="${errorMessage}" class="p-4 bg-error/10 border border-error/20 rounded-2xl flex items-center gap-3 text-error">
+            <span class="material-symbols-outlined">error</span>
+            <p class="text-sm font-bold" th:text="${errorMessage}"></p>
+        </div>
+
+        <!-- Wallet Dashboard -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+
+            <!-- Balance Card & Quick Actions -->
+            <aside class="lg:col-span-4 flex flex-col gap-6">
+                <div
+                    class="bg-primary text-on-primary rounded-3xl p-8 shadow-xl relative overflow-hidden group border border-white/10">
+                    <div
+                        class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-white/20 transition-all duration-700">
+                    </div>
+                    <div class="relative z-10 flex flex-col gap-1">
+                        <span class="text-xs font-bold uppercase tracking-[0.2em] opacity-80 font-headline">Số dư khả
+                            dụng</span>
+                        <div class="flex items-baseline gap-2 mt-2">
+                            <span class="text-4xl font-black font-headline tracking-tighter"
+                                th:text="${#numbers.formatDecimal(wallet.balance, 0, 'COMMA', 0, 'POINT')}">5.000.000</span>
+                            <span class="text-lg font-bold opacity-80 uppercase">VNĐ</span>
+                        </div>
+                    </div>
+                    <div class="relative z-10 mt-8 flex gap-3">
+                        <a href="/wallet/withdraw"
+                            class="flex-1 bg-white text-primary rounded-xl py-3 font-bold text-xs text-center uppercase tracking-widest hover:bg-stone-100 transition-colors shadow-lg">
+                            Rút tiền trong ví
+                        </a>
+                    </div>
+                </div>
+
+                <div class="bg-surface-container-low rounded-2xl p-6 shadow-sm border border-outline-variant/10">
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-on-surface-variant mb-4 font-headline">
+                        Thông tin ví</h3>
+                    <div class="flex flex-col gap-4">
+                        <div class="flex justify-between items-center py-2">
+                            <span class="text-xs font-semibold text-on-surface-variant uppercase">Trạng thái</span>
+                            <span
+                                class="px-2 py-0.5 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase">Hoạt
+                                động</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Transaction History -->
+            <section class="lg:col-span-8 flex flex-col gap-6">
+                <div class="bg-surface-container-low rounded-3xl p-8 shadow-sm border border-outline-variant/10">
+                    <div class="flex items-center justify-between mb-8">
+                        <h2 class="text-xl font-headline font-black uppercase text-[#351f1b] tracking-tight">Lịch sử
+                            giao dịch</h2>
+                        <span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.2em]">Cập nhật vừa xong</span>
+                    </div>
+
+                    <!-- History Table -->
+                    <div class="overflow-x-auto -mx-8 lg:-mx-4 px-8 lg:px-4">
+                        <table class="w-full text-left font-sans border-collapse">
+                            <thead>
+                                <tr
+                                    class="text-[11px] font-bold text-on-surface-variant/60 uppercase tracking-[0.2em] border-b border-outline-variant/10">
+                                    <th class="pb-4 font-semibold">Loại</th>
+                                    <th class="pb-4 font-semibold">Ngày thực hiện</th>
+                                    <th class="pb-4 font-semibold text-right">Số tiền</th>
+                                    <th class="pb-4 font-semibold text-right">Trạng thái</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-outline-variant/10">
+                                <tr th:each="h : ${history}"
+                                    class="group hover:bg-surface-container-highest/20 transition-colors">
+                                    <td class="py-5">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-lg flex items-center justify-center"
+                                                th:classappend="${h.transactionType == 'INCOME' or h.transactionType == 'REFUND' ? 'bg-success/10 text-success' : 'bg-error/10 text-error'}">
+                                                <span class="material-symbols-outlined text-[18px]"
+                                                    th:text="${h.transactionType == 'INCOME' or h.transactionType == 'REFUND' ? 'add_circle' : 'remove_circle'}"></span>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm font-bold text-on-surface" th:text="${h.transactionType}">
+                                                    Nạp tiền</p>
+                                                <p class="text-[10px] text-on-surface-variant"
+                                                    th:text="${h.description}">Nạp qua VNPay</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-5 text-xs text-on-surface-variant font-medium"
+                                        th:text="${#temporals.format(h.createdAt, 'dd/MM/yyyy HH:mm')}">
+                                        22/04/2026 14:00
+                                    </td>
+                                    <td class="py-5 text-right">
+                                        <span class="text-xs font-bold font-headline"
+                                            th:classappend="${h.transactionType == 'INCOME' or h.transactionType == 'REFUND' ? 'text-success' : 'text-error'}"
+                                            th:text="${(h.transactionType == 'INCOME' or h.transactionType == 'REFUND' ? '+' : '-') + #numbers.formatDecimal(h.amount, 0, 'COMMA', 0, 'POINT')}">
+                                            +1.000.000
+                                        </span>
+                                    </td>
+                                    <td class="py-5 text-right">
+                                        <span th:if="${h.status.name() == 'SUCCESS'}"
+                                            class="px-2 py-0.5 rounded-md bg-success/10 text-success text-[9px] font-bold uppercase tracking-wider">Thành công</span>
+                                        <span th:if="${h.status.name() == 'PENDING'}"
+                                            class="px-2 py-0.5 rounded-md bg-warning/10 text-warning text-[9px] font-bold uppercase tracking-wider">Chờ duyệt</span>
+                                        <span th:if="${h.status.name() == 'FAILED'}"
+                                            class="px-2 py-0.5 rounded-md bg-error/10 text-error text-[9px] font-bold uppercase tracking-wider">Từ chối</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Empty State Placeholder -->
+                    <div th:if="${history == null or #lists.isEmpty(history)}"
+                        class="py-20 flex flex-col items-center justify-center text-center gap-3">
+                        <span class="material-symbols-outlined text-[48px] text-outline-variant/30">history_edu</span>
+                        <p class="text-on-surface-variant text-sm font-medium">Chưa có giao dịch nào được ghi lại.</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Footer Fragment -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+
+</html>

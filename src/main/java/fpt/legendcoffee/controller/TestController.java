@@ -26,4 +26,21 @@ public class TestController {
         return "admin/products";
     }
 
+<<<<<<< Updated upstream
+=======
+
+
+    private Map<String, Object> createTransaction(String type, String amountStr, String desc, double amount,
+            LocalDateTime date) {
+        Map<String, Object> t = new HashMap<>();
+        t.put("type", type);
+        t.put("amountStr", amountStr);
+        t.put("description", desc);
+        t.put("amount", amount);
+        t.put("createdAt", date);
+        t.put("username", "Khanh Nguyễn");
+        t.put("id", "TX-" + System.currentTimeMillis() % 1000000);
+        return t;
+    }
+>>>>>>> Stashed changes
 }

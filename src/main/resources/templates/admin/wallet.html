@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: sharedHead('Industrial Excellence - Quản lý Tài chính')}"></head>
+
+<body class="bg-surface selection:bg-stone-200 min-h-screen font-sans">
+
+    <!-- Sidebar Fragment -->
+    <aside th:replace="~{fragments/admin-sidebar :: adminSidebar}"></aside>
+
+    <div class="ml-64 flex flex-col">
+        <!-- Topbar Fragment -->
+        <header
+            th:replace="~{fragments/admin-topbar :: adminTopbar('Quản lý Tài chính / Ví hệ thống', 'Tìm kiếm giao dịch...')}">
+        </header>
+
+        <main class="p-8 flex flex-col gap-8">
+
+            <!-- Summary Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Platform Balance -->
+                <div class="bg-stone-950 text-white rounded-2xl p-6 shadow-sm relative overflow-hidden">
+                    <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-500 font-manrope">Số dư hệ
+                        thống</span>
+                    <div class="flex items-baseline gap-2 mt-2">
+                        <span class="text-3xl font-black font-manrope tracking-tighter"
+                            th:text="${#numbers.formatDecimal(adminWallet.balance, 0, 'COMMA', 0, 'POINT')}">150.000.000</span>
+                        <span class="text-xs font-bold text-stone-500 uppercase">VNĐ</span>
+                    </div>
+                    <div class="mt-4 flex items-center gap-2 text-[10px] font-bold text-success font-manrope">
+                        <span class="material-symbols-outlined text-[14px]">trending_up</span>
+                        <span>+12% so với tháng trước</span>
+                    </div>
+                </div>
+
+                <!-- Total Revenue -->
+                <div class="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm">
+                    <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-500 font-manrope">Tổng
+                        doanh thu (30 ngày)</span>
+                    <div class="flex items-baseline gap-2 mt-2">
+                        <span class="text-2xl font-black text-stone-900 font-manrope tracking-tighter">45.000.000</span>
+                        <span class="text-xs font-bold text-stone-400 uppercase">VNĐ</span>
+                    </div>
+                    <div class="mt-4 text-xs font-semibold text-stone-500">
+                        240 giao dịch thành công
+                    </div>
+                </div>
+
+                <!-- Payouts -->
+                <div class="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm">
+                    <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-500 font-manrope">Tổng chi
+                        phí / Hoàn tiền</span>
+                    <div class="flex items-baseline gap-2 mt-2">
+                        <span class="text-2xl font-black text-stone-900 font-manrope tracking-tighter">12.500.000</span>
+                        <span class="text-xs font-bold text-stone-400 uppercase">VNĐ</span>
+                    </div>
+                    <div class="mt-4 flex items-center justify-between">
+                        <span class="text-xs font-semibold text-error/80">8 yêu cầu đang chờ duyệt</span>
+                        <a href="/admin/wallet/requests" class="text-[10px] font-bold text-stone-900 underline underline-offset-4 hover:text-stone-600 transition-colors">
+                            Xem danh sách
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Pending Withdrawal Requests -->
+            <section class="bg-white border border-stone-200 rounded-3xl overflow-hidden shadow-sm">
+                <div class="px-8 py-6 border-b border-stone-100 flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold text-stone-900 font-manrope tracking-tight">Yêu cầu rút tiền đang chờ</h3>
+                        <p class="text-xs text-stone-500 font-medium">Các yêu cầu cần phê duyệt hoặc từ chối</p>
+                    </div>
+                    <span class="text-xs font-bold bg-amber-100 text-amber-700 px-3 py-1 rounded-full"
+                          th:text="${#lists.isEmpty(pendingWithdrawals)} ? 'Không có yêu cầu' : (${#lists.size(pendingWithdrawals)} + ' yêu cầu')">
+                        0 yêu cầu
+                    </span>
+                </div>
+
+                <!-- Empty State -->
+                <div th:if="${#lists.isEmpty(pendingWithdrawals)}"
+                     class="py-16 flex flex-col items-center justify-center text-center gap-3">
+                    <span class="material-symbols-outlined text-[40px] text-stone-200">task_alt</span>
+                    <p class="text-stone-500 font-semibold text-sm">Không có yêu cầu nào đang chờ xử lý.</p>
+                </div>
+
+                <!-- Table -->
+                <div th:if="${!#lists.isEmpty(pendingWithdrawals)}" class="overflow-x-auto">
+                    <table class="w-full text-left font-manrope border-collapse">
+                        <thead>
+                            <tr class="bg-amber-50 text-[10px] font-bold text-stone-500 uppercase tracking-widest border-b border-stone-100">
+                                <th class="px-8 py-4">Người dùng</th>
+                                <th class="px-8 py-4">Số tiền</th>
+                                <th class="px-8 py-4">Thông tin ngân hàng</th>
+                                <th class="px-8 py-4">Ngày yêu cầu</th>
+                                <th class="px-8 py-4 text-right">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-stone-100">
+                            <tr th:each="tx : ${pendingWithdrawals}" class="hover:bg-stone-50/50 transition-colors">
+                                <td class="px-8 py-5">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-7 h-7 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
+                                            <span class="material-symbols-outlined text-[16px] text-amber-600">person</span>
+                                        </div>
+                                        <span class="text-sm font-bold text-stone-800"
+                                              th:text="${tx.wallet != null and tx.wallet.user != null ? tx.wallet.user.username : 'N/A'}">
+                                            Người dùng
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="px-8 py-5">
+                                    <span class="text-sm font-black text-error tracking-tighter"
+                                          th:text="'-' + #numbers.formatDecimal(tx.amount, 0, 'COMMA', 0, 'POINT') + ' VNĐ'">
+                                        -100.000 VNĐ
+                                    </span>
+                                </td>
+                                <td class="px-8 py-5">
+                                    <span class="text-xs font-semibold text-stone-600 block" th:text="${tx.description}">
+                                        Vietcombank - 1234567890
+                                    </span>
+                                </td>
+                                <td class="px-8 py-5 text-xs text-stone-500 font-medium"
+                                    th:text="${#temporals.format(tx.createdAt, 'dd/MM/yyyy HH:mm')}">
+                                    22/04/2026
+                                </td>
+                                <td class="px-8 py-5 text-right">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <!-- Approve -->
+                                        <form th:action="@{/admin/wallet/{id}/approve(id=${tx.id})}" method="post">
+                                            <button type="submit"
+                                                    class="px-4 py-1.5 bg-success/10 text-success border border-success/20 rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-success hover:text-white transition-all">
+                                                Duyệt
+                                            </button>
+                                        </form>
+                                        <!-- Reject Modal Trigger -->
+                                        <button type="button"
+                                                th:attr="onclick=|showRejectModal(${tx.id})|"
+                                                class="px-4 py-1.5 bg-error/10 text-error border border-error/20 rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-error hover:text-white transition-all">
+                                            Từ chối
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Reject Modal -->
+            <div id="rejectModal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center">
+                <div class="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl">
+                    <h3 class="text-lg font-black font-manrope tracking-tight text-stone-900 mb-2">Từ chối yêu cầu</h3>
+                    <p class="text-sm text-stone-500 mb-6">Vui lòng nhập lý do từ chối để thông báo cho khách hàng.</p>
+                    <form id="rejectForm" method="post">
+                        <textarea name="note" rows="3"
+                                  class="w-full border border-stone-200 rounded-2xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-error/30 resize-none mb-4"
+                                  placeholder="Ví dụ: Thông tin tài khoản không chính xác..."></textarea>
+                        <div class="flex gap-3">
+                            <button type="submit"
+                                    class="flex-1 py-3 bg-error text-white rounded-2xl text-xs font-bold uppercase tracking-wider hover:bg-error/80 transition-colors">
+                                Xác nhận từ chối
+                            </button>
+                            <button type="button" onclick="closeRejectModal()"
+                                    class="flex-1 py-3 border border-stone-200 text-stone-600 rounded-2xl text-xs font-bold uppercase tracking-wider hover:bg-stone-50 transition-colors">
+                                Hủy
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Detailed Transactions -->
+            <section class="bg-white border border-stone-200 rounded-3xl overflow-hidden shadow-sm">
+                <div class="px-8 py-6 border-b border-stone-100 flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold text-stone-900 font-manrope tracking-tight">Nhật ký giao dịch hệ
+                            thống</h3>
+                        <p class="text-xs text-stone-500 font-medium">Toàn bộ dòng tiền ra vào của nền tảng</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="p-2 border border-stone-200 rounded-lg hover:bg-stone-50 transition-colors">
+                            <span class="material-symbols-outlined text-[20px] text-stone-600">filter_list</span>
+                        </button>
+                        <button class="p-2 border border-stone-200 rounded-lg hover:bg-stone-50 transition-colors">
+                            <span class="material-symbols-outlined text-[20px] text-stone-600">download</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left font-manrope border-collapse">
+                        <thead>
+                            <tr
+                                class="bg-stone-50/50 text-[10px] font-bold text-stone-500 uppercase tracking-widest border-b border-stone-100">
+                                <th class="px-8 py-4">Giao dịch / ID</th>
+                                <th class="px-8 py-4">Người thực hiện</th>
+                                <th class="px-8 py-4">Ngày</th>
+                                <th class="px-8 py-4 text-right">Số tiền</th>
+                                <th class="px-8 py-4 text-right">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-stone-100">
+                            <tr th:each="history : ${adminWallet.transactionHistory}"
+                                class="hover:bg-stone-50/30 transition-colors">
+                                <td class="px-8 py-5">
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-bold text-stone-900" th:text="${history.transactionType}">Hoàn
+                                            tiền combo</span>
+                                        <span class="text-[10px] font-medium text-stone-400"
+                                            th:text="'ID: ' + ${history.id}">#TX-123456789</span>
+                                    </div>
+                                </td>
+                                <td class="px-8 py-5">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-6 h-6 rounded-full bg-stone-100 flex items-center justify-center">
+                                            <span
+                                                class="material-symbols-outlined text-[14px] text-stone-500">person</span>
+                                        </div>
+                                        <span class="text-xs font-bold text-stone-700"
+                                            th:text="${history.wallet != null and history.wallet.user != null ? history.wallet.user.username : 'Hệ thống'}">Khanh
+                                            Nguyễn</span>
+                                    </div>
+                                </td>
+                                <td class="px-8 py-5 text-xs text-stone-500 font-medium"
+                                    th:text="${#temporals.format(history.createdAt, 'dd/MM/yyyy HH:mm')}">
+                                    22/04/2026 14:00
+                                </td>
+                                <td class="px-8 py-5 text-right">
+                                    <span class="text-sm font-black tracking-tighter"
+                                        th:classappend="${history.amount.signum() > 0 ? 'text-success' : 'text-stone-900'}"
+                                        th:text="${(history.amount.signum() > 0 ? '+' : '') + #numbers.formatDecimal(history.amount, 0, 'COMMA', 0, 'POINT')}">
+                                        -500.000
+                                    </span>
+                                </td>
+                                <td class="px-8 py-5 text-right">
+                                    <button class="text-stone-400 hover:text-stone-900 transition-colors">
+                                        <span class="material-symbols-outlined text-[20px]">more_vert</span>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div th:if="${adminWallet.transactionHistory == null or #lists.isEmpty(adminWallet.transactionHistory)}"
+                    class="py-24 flex flex-col items-center justify-center text-center gap-4">
+                    <div class="w-16 h-16 rounded-full bg-stone-50 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[32px] text-stone-200">account_balance_wallet</span>
+                    </div>
+                    <div>
+                        <p class="text-stone-900 font-bold font-manrope tracking-tight">Chưa có bản ghi giao dịch</p>
+                        <p class="text-xs text-stone-500">Mọi biến động số dư sẽ được hiển thị tại đây.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+<script>
+    function showRejectModal(txId) {
+        document.getElementById('rejectForm').action = '/admin/wallet/' + txId + '/reject';
+        document.getElementById('rejectModal').classList.remove('hidden');
+    }
+    function closeRejectModal() {
+        document.getElementById('rejectModal').classList.add('hidden');
+    }
+    document.getElementById('rejectModal').addEventListener('click', function(e) {
+        if (e.target === this) closeRejectModal();
+    });
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html class="light" lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: sharedHead('Industrial Excellence - Rút tiền')}"></head>
+
+<body class="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container min-h-screen flex flex-col font-sans">
+
+    <!-- Navbar Fragment -->
+    <div th:replace="~{fragments/navbar :: navbar(${navItems})}"></div>
+
+    <main class="flex-grow max-w-7xl mx-auto px-8 sm:px-12 lg:px-20 pt-32 pb-24 w-full flex flex-col items-center gap-12">
+        
+        <!-- Header Section -->
+        <header class="flex flex-col gap-4 text-center">
+            <h1 class="text-display-lg font-headline font-black uppercase text-primary tracking-tight">Yêu cầu rút tiền</h1>
+            <p class="text-body-lg text-on-surface-variant max-w-2xl font-sans">
+                Vui lòng nhập chính xác thông tin tài khoản ngân hàng để quá trình giải ngân diễn ra nhanh chóng.
+            </p>
+        </header>
+
+        <div class="w-full max-w-2xl bg-surface-container-low rounded-[2rem] p-10 shadow-xl border border-outline-variant/10">
+            
+            <!-- Alert Messages -->
+            <div th:if="${successMessage}" class="mb-8 p-4 bg-success/10 border border-success/20 rounded-2xl flex items-center gap-3 text-success">
+                <span class="material-symbols-outlined">check_circle</span>
+                <p class="text-sm font-bold" th:text="${successMessage}"></p>
+            </div>
+            
+            <div th:if="${errorMessage}" class="mb-8 p-4 bg-error/10 border border-error/20 rounded-2xl flex items-center gap-3 text-error">
+                <span class="material-symbols-outlined">error</span>
+                <p class="text-sm font-bold" th:text="${errorMessage}"></p>
+            </div>
+
+            <!-- Form -->
+            <form th:action="@{/wallet/withdraw}" th:object="${withdrawRequest}" method="post" class="flex flex-col gap-8">
+                
+                <!-- Số tiền -->
+                <div class="flex flex-col gap-2">
+                    <label for="amount" class="text-xs font-bold uppercase tracking-widest text-on-surface-variant px-1">Số tiền muốn rút (VNĐ)</label>
+                    <div class="relative group">
+                        <input type="number" th:field="*{amount}" id="amount" 
+                               class="w-full bg-surface-container-highest/30 border border-outline-variant/20 rounded-2xl px-6 py-4 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                               placeholder="0" th:classappend="${#fields.hasErrors('amount')} ? 'border-error/50 ring-error/20' : ''">
+                        <span class="absolute right-6 top-1/2 -translate-y-1/2 text-xs font-black text-on-surface-variant/40">VNĐ</span>
+                    </div>
+                    <p class="text-[10px] font-bold text-error mt-1 px-1" th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}"></p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Ngân hàng -->
+                    <div class="flex flex-col gap-2">
+                        <label for="bankCode" class="text-xs font-bold uppercase tracking-widest text-on-surface-variant px-1">Ngân hàng thụ hưởng</label>
+                        <select th:field="*{bankCode}" id="bankCode" 
+                                class="w-full bg-surface-container-highest/30 border border-outline-variant/20 rounded-2xl px-6 py-4 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary appearance-none transition-all"
+                                th:classappend="${#fields.hasErrors('bankCode')} ? 'border-error/50' : ''">
+                            <option value="">-- Chọn ngân hàng --</option>
+                            <option th:each="bank : ${bankCodes}" th:value="${bank}" th:text="${bank.displayName}"></option>
+                        </select>
+                        <p class="text-[10px] font-bold text-error mt-1 px-1" th:if="${#fields.hasErrors('bankCode')}" th:errors="*{bankCode}"></p>
+                    </div>
+
+                    <!-- Số tài khoản -->
+                    <div class="flex flex-col gap-2">
+                        <label for="accountNumber" class="text-xs font-bold uppercase tracking-widest text-on-surface-variant px-1">Số tài khoản</label>
+                        <input type="text" th:field="*{accountNumber}" id="accountNumber" 
+                               class="w-full bg-surface-container-highest/30 border border-outline-variant/20 rounded-2xl px-6 py-4 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                               placeholder="Nhập số tài khoản" th:classappend="${#fields.hasErrors('accountNumber')} ? 'border-error/50' : ''">
+                        <p class="text-[10px] font-bold text-error mt-1 px-1" th:if="${#fields.hasErrors('accountNumber')}" th:errors="*{accountNumber}"></p>
+                    </div>
+                </div>
+
+                <!-- Tên chủ tài khoản -->
+                <div class="flex flex-col gap-2">
+                    <label for="accountName" class="text-xs font-bold uppercase tracking-widest text-on-surface-variant px-1">Tên chủ tài khoản (In hoa không dấu)</label>
+                    <input type="text" th:field="*{accountName}" id="accountName" 
+                           class="w-full bg-surface-container-highest/30 border border-outline-variant/20 rounded-2xl px-6 py-4 text-sm font-bold uppercase focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                           placeholder="VÍ DỤ: NGUYEN VAN A" th:classappend="${#fields.hasErrors('accountName')} ? 'border-error/50' : ''">
+                    <p class="text-[10px] font-bold text-error mt-1 px-1" th:if="${#fields.hasErrors('accountName')}" th:errors="*{accountName}"></p>
+                </div>
+
+                <div class="flex flex-col gap-4 mt-4">
+                    <button type="submit" 
+                            class="w-full bg-primary text-on-primary rounded-2xl py-5 font-bold text-xs uppercase tracking-[0.2em] shadow-xl hover:bg-primary-container transition-all hover:scale-[1.01] active:scale-[0.99]">
+                        Xác nhận rút tiền
+                    </button>
+                    <a href="/wallet" class="text-center text-xs font-bold uppercase tracking-widest text-on-surface-variant/60 hover:text-primary transition-colors">
+                        Quay lại ví của tôi
+                    </a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Footer Fragment -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <script th:inline="javascript">
+        const accountNameInput = document.getElementById('accountName');
+
+        // Chuyển đổi tên tài khoản: In hoa, bỏ dấu
+        accountNameInput.addEventListener('input', function(e) {
+            let start = this.selectionStart;
+            let end = this.selectionEnd;
+            
+            let value = this.value;
+            // Loại bỏ dấu tiếng Việt
+            value = value.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            value = value.replace(/đ/g, "d").replace(/Đ/g, "D");
+            // Chuyển in hoa
+            value = value.toUpperCase();
+            // Chỉ giữ lại chữ cái và khoảng trắng
+            value = value.replace(/[^A-Z\s]/g, "");
+            
+            this.value = value;
+            this.setSelectionRange(start, end);
+        });
+    </script>
+</body>
+</html>
