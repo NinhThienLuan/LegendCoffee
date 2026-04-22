@@ -393,18 +393,33 @@
           image: selectedVariantData.img,
           variant: selectedVariantData.variant,
           quantity: parseInt(qtyInput.value || '1', 10)
-      };
+        };
 
-      if (!product.price || product.quantity < 1) {
-        showToast('Vui lòng chọn biến thể hợp lệ');
-        return;
+        if (!product.price || product.quantity < 1) {
+          showToast('Vui lòng chọn biến thể hợp lệ');
+          return;
+        }
+
+        window.CartSystem.addToCart(product);
+        showToast('Đã thêm vào giỏ hàng');
+      }
+
+      function showToast(msg) {
+        let toast = document.getElementById('cart-toast');
+        if (!toast) {
+          toast = document.createElement('div');
+          toast.id = 'cart-toast';
+          toast.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 z-[200] bg-neutral-900 text-white px-8 py-4 rounded-2xl shadow-2xl font-black text-xs uppercase tracking-[0.2em] transform transition-all duration-500 translate-y-20 opacity-0 pointer-events-none border border-white/10';
+          document.body.appendChild(toast);
+        }
+        toast.innerText = msg;
+        toast.classList.remove('translate-y-20', 'opacity-0');
+        setTimeout(() => {
+          toast.classList.add('translate-y-20', 'opacity-0');
+        }, 2500);
       }
     </script>
   </section>
-
-</body>
-
-</html>
   <section th:fragment="comboDetail(combo, comboId)" class="pt-40 pb-32 max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
     <nav class="flex items-center space-x-2 text-sm text-on-surface-variant mb-10 font-medium">
       <a th:href="@{/}" href="/" class="hover:text-primary">Trang chủ</a>
@@ -554,25 +569,47 @@
     </div>
 
     <script th:inline="javascript">
+      function changeQty(delta) {
+        const input = document.getElementById('product-qty');
+        if (!input) return;
+        let val = parseInt(input.value || '1', 10) + delta;
+        if (Number.isNaN(val) || val < 1) val = 1;
+        input.value = val;
+      }
+
       function addComboToCart() {
         if (!window.CartSystem) return;
 
+        const qtyInput = document.getElementById('product-qty');
+        if (!qtyInput) return;
 
-      //   const qtyInput = document.getElementById('product-qty');
-      //   if (!qtyInput) return;
+        const combo = {
+          id: /*[[${comboId}]]*/ null,
+          name: /*[[${combo != null ? combo.name : 'Combo'}]]*/ 'Combo',
+          price: /*[[${combo != null and combo.price != null ? combo.price : 0}]]*/ 0,
+          image: /*[[${combo != null and combo.imageUrl != null ? combo.imageUrl : ''}]]*/ '',
+          variant: '__combo__',
+          quantity: parseInt(qtyInput.value || '1', 10)
+        };
 
-      //   const combo = {
-      //     id: [[${ comboId }]],
-      //     name: [[${ combo != null ? combo.name : 'Combo'}]],
-      //     price: [[${ combo != null and combo.price != null ? combo.price : 0 }]],
-      //     image: [[${ combo != null and combo.imageUrl != null ? combo.imageUrl : '' }]],
-      //     variant: '__combo__',
-      //     quantity: parseInt(qtyInput.value || '1', 10)
-      //   };
+        window.CartSystem.addToCart(combo);
+        showToast('Đã thêm combo vào giỏ hàng');
+      }
 
-      //   window.CartSystem.addToCart(combo);
-      //   showToast('Đã thêm combo vào giỏ hàng');
-      // }
+      function showToast(msg) {
+        let toast = document.getElementById('cart-toast');
+        if (!toast) {
+          toast = document.createElement('div');
+          toast.id = 'cart-toast';
+          toast.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 z-[200] bg-neutral-900 text-white px-8 py-4 rounded-2xl shadow-2xl font-black text-xs uppercase tracking-[0.2em] transform transition-all duration-500 translate-y-20 opacity-0 pointer-events-none border border-white/10';
+          document.body.appendChild(toast);
+        }
+        toast.innerText = msg;
+        toast.classList.remove('translate-y-20', 'opacity-0');
+        setTimeout(() => {
+          toast.classList.add('translate-y-20', 'opacity-0');
+        }, 2500);
+      }
     </script>
   </section>
 </body>
