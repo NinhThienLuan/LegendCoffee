@@ -4,6 +4,7 @@ import fpt.legendcoffee.dto.request.ForgotPasswordRequestDTO;
 import fpt.legendcoffee.dto.request.LoginRequestDTO;
 import fpt.legendcoffee.dto.request.RegisterRequestDTO;
 import fpt.legendcoffee.dto.request.ResetPasswordRequestDTO;
+import fpt.legendcoffee.dto.response.ProfileDTO;
 import fpt.legendcoffee.service.AuthenService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -225,6 +226,28 @@ public class AuthController {
         model.addAttribute("profileDto", authenService.getProfile(userId));
         return "authen/profile";
     }
+
+    @PostMapping("/edit-profile")
+    public String editProfile(@Valid @ModelAttribute("profileDto") ProfileDTO profileDto,
+                              BindingResult bindingResult,
+                              RedirectAttributes redirectAttributes,
+                              @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Thông tin không hợp lệ.");
+            return "redirect:/profile";
+        }
+        try {
+            authenService.updateProfile(userDetails.getUser().getId(), profileDto);
+            redirectAttributes.addFlashAttribute("successMessage", "Cập nhật thông tin thành công!");
+            return "redirect:/profile";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/profile";
+        }
+    }
+
+
+
     private boolean isAuthenticated() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication.getPrincipal().equals("anonymousUser")) {
