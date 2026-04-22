@@ -22,9 +22,11 @@ public class AdminController {
 
     private final ProductVariantService productVariantService;
     private final ProductService productService;
+    private final fpt.legendcoffee.service.DashboardService dashboardService;
 
     @GetMapping("")
     public String adminHome(Model model) {
+        model.addAttribute("stats", dashboardService.getDashboardStats());
         return "admin/dashboard";
     }
 
