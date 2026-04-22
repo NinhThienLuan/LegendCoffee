@@ -58,7 +58,7 @@
 
                 <div class="flex justify-between items-center">
                     <span class="text-on-surface-variant font-medium text-sm">Vận chuyển</span>
-                    <span id="shipping-price" class="font-bold text-primary">120.000 ₫</span>
+                    <span id="shipping-price" class="font-bold text-primary text-xs uppercase">Tính toán ở bước sau</span>
                 </div>
 
                 <div class="pt-6 border-t border-primary/10">
@@ -166,7 +166,8 @@
                 document.getElementById('subtotal-label').innerText = `Tạm tính (${totalItems} kg)`;
                 document.getElementById('cart-count-header').innerText = totalItems;
                 document.getElementById('subtotal-price').innerText = formatCurrency(totals.subtotal);
-                document.getElementById('shipping-price').innerText = formatCurrency(totals.shipping);
+                // Shipping is displayed as text "Tính toán ở bước sau" in HTML by default or updated here
+                document.getElementById('shipping-price').innerText = totals.subtotal > 0 ? 'Tính toán ở bước sau' : '0 ₫';
                 document.getElementById('total-price').innerText = formatCurrency(totals.total);
             }
 

@@ -18,9 +18,9 @@ public class HomeController {
     @GetMapping("/")
     public String index(Model model) {
         List<ProductResponseDTO> products = productService.getAllProductResponses();
-        // Giới hạn hiển thị 3-6 sản phẩm nổi bật ở trang chủ
-        if (products.size() > 6) {
-            products = products.subList(0, 6);
+
+        if (products.size() > 3) {
+            products = products.subList(0, 3);
         }
         model.addAttribute("products", products);
         return "index";
