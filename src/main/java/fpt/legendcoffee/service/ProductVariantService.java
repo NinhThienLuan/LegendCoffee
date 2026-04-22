@@ -13,4 +13,7 @@ public interface ProductVariantService {
     List<ProductVariant> findByProduct(Product product);
 
     List<ProductVariant> getAllVariants();
+
+    List<ProductVariant> searchVariants(String keyword, Boolean active);
 }
+

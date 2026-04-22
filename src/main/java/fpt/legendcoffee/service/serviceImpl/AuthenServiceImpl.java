@@ -1,5 +1,6 @@
 package fpt.legendcoffee.service.serviceImpl;
 
+import java.math.BigDecimal;
 import java.security.SecureRandom;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -10,13 +11,13 @@ import fpt.legendcoffee.dto.request.LoginRequestDTO;
 import fpt.legendcoffee.dto.request.RegisterRequestDTO;
 import fpt.legendcoffee.dto.response.ProfileDTO;
 import fpt.legendcoffee.entity.User;
+import fpt.legendcoffee.entity.Wallet;
 import fpt.legendcoffee.entity.enumeration.UserRole;
 import fpt.legendcoffee.repository.UserRepository;
+import fpt.legendcoffee.repository.WalletRepository;
 import fpt.legendcoffee.service.AuthenService;
 import fpt.legendcoffee.service.MailService;
-import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
-
 @Service
 @AllArgsConstructor
 public class AuthenServiceImpl implements AuthenService {
@@ -24,7 +25,7 @@ public class AuthenServiceImpl implements AuthenService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final MailService mailService;
-
+    private final WalletRepository walletRepository;
     @Override
     public void login(LoginRequestDTO request) {
         User user = userRepository.findByEmail(request.email()).orElse(null);
@@ -57,7 +58,14 @@ public class AuthenServiceImpl implements AuthenService {
                 .isActive(true)
                 .build();
 
-        userRepository.save(user);
+      User savedUser = userRepository.save(user);
+       Wallet wallet = Wallet.builder()
+        .user(savedUser)
+        .amount(BigDecimal.ZERO) 
+        .build();
+    
+    walletRepository.save(wallet);
+ 
         return true;
     }
 
@@ -85,8 +93,8 @@ public class AuthenServiceImpl implements AuthenService {
         userRepository.save(user);
         try {
             mailService.sendHtml(email, "Legend Coffee - Forgot Password", "<h1>Your new password is: " + newPassword + "</h1>");
-        } catch (MessagingException e) {
-            throw new AuthenException("Failed to send email");
+        } catch (Exception e) {
+            throw new AuthenException("Hệ thống gửi thư gặp sự cố. Vui lòng kiểm tra cấu hình Gmail.");
         }
     }
 
@@ -116,6 +124,11 @@ public class AuthenServiceImpl implements AuthenService {
         user.setPhone(profile.getPhone());
         user.setAddress(profile.getAddress());
         userRepository.save(user);
+    }
+
+    @Override
+    public boolean isEmailValid(String email) {
+        return userRepository.findByEmail(email).isPresent();
     }
 
     //Helper method

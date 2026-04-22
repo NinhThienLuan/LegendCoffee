@@ -34,7 +34,7 @@
 
   <section th:fragment="features" class="py-24 bg-surface relative min-h-screen" id="features">
     <div class="max-w-7xl mx-auto w-full px-8 sm:px-12 lg:px-20">
-      <div class="mb-12 sticky top-20 z-[50] bg-surface py-6">
+      <div class="mb-12 sticky top-0 z-[50] bg-surface pt-20 pb-6">
         <h2 class="text-3xl font-black uppercase tracking-tight text-primary font-headline scroll-reveal-text">Tại sao
           chọn Industrial Excellence?</h2>
         <div class="h-1 w-24 bg-primary mt-4"></div>
@@ -118,84 +118,65 @@
           <span class="text-sm font-bold text-primary uppercase tracking-widest">Cập nhật: 2024</span>
         </div>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div
-          class="bg-surface-container-lowest overflow-hidden flex flex-col h-full border-b-4 border-primary shadow-sm hover:shadow-xl transition-shadow duration-500">
-          <div class="h-64 overflow-hidden">
-            <img alt="Robusta S18" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiKCTU6_7_1dgUF32Jq4vdb_irlsQ4MHpx3CUuICItKHhJdcNXhLIszs6RJ2nBN6TW-Fc1h5bKxs-xQV6luILUoI0aO9vp9eBR4-2rnxCQj8013EBvKbcg-hZC9o9-F8Ur7psrNiAwrYEnu_xf3M5kYRFs3WafDrFC2TyOq-D1oi8RIFLFPTYXRK0Ap3mpwNbDGZh5vX_ikKzplpyMp2Xumje8yxrjZzMTfPgtC3WtNqxEej-09luM9vVCxEzLuF5Gd6tSErRxaEEn" />
-          </div>
-          <div class="p-8 flex-grow">
-            <h3 class="text-xl font-extrabold mb-2 font-headline uppercase">Robusta Honey S18</h3>
-            <p class="text-sm text-on-surface-variant mb-6 leading-relaxed">Hạt sàng 18, chế biến Honey, hậu vị ngọt
-              đậm, body dày. Phù hợp cho pha phin và espresso gu mạnh.</p>
-            <div class="space-y-3 mb-8">
-              <div class="flex justify-between text-xs border-b border-outline-variant/20 pb-2">
-                <span class="uppercase text-on-surface-variant">Độ ẩm</span>
-                <span class="font-bold text-primary">&lt;12.5%</span>
-              </div>
-              <div class="flex justify-between text-xs border-b border-outline-variant/20 pb-2">
-                <span class="uppercase text-on-surface-variant">Tỷ lệ đen vỡ</span>
-                <span class="font-bold text-primary">0.1%</span>
-              </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Loop through dynamic products -->
+        <div th:each="product : ${products}"
+          class="bg-surface-container-lowest overflow-hidden flex flex-col h-full border-b-4 border-primary shadow-sm hover:shadow-xl transition-all duration-500 group relative">
+          
+          <!-- Product Link -->
+          <a th:href="@{/products/{id}(id=${product.id})}" class="absolute inset-0 z-20" aria-label="View Product"></a>
+
+          <div class="h-64 overflow-hidden relative">
+            <img th:if="${product.imageUrl != null}" th:src="${product.imageUrl}" 
+              th:alt="${product.name}" 
+              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+            <div th:if="${product.imageUrl == null}" 
+              class="w-full h-full bg-surface-container flex items-center justify-center">
+              <span class="material-symbols-outlined text-outline-variant text-4xl">inventory_2</span>
             </div>
-            <div class="text-2xl font-black text-primary font-headline">
-              145.000 ₫ <span class="text-sm font-normal text-on-surface-variant">/ kg</span>
+            
+            <!-- Category Badge -->
+            <div class="absolute top-4 left-4 z-10 transition-transform duration-300 group-hover:-translate-y-1">
+              <span class="px-3 py-1 bg-primary/90 backdrop-blur-sm text-on-primary text-[10px] font-bold uppercase tracking-widest rounded-sm"
+                th:text="${product.categoryName}">Sản phẩm</span>
             </div>
           </div>
-        </div>
-        <div
-          class="bg-surface-container-lowest overflow-hidden flex flex-col h-full border-b-4 border-primary shadow-sm hover:shadow-xl transition-shadow duration-500">
-          <div class="h-64 overflow-hidden">
-            <img alt="Arabica Cầu Đất"
-              class="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAiIt76Z2iimBtXearhfg4KE0UU0foD-DQNjVy7dt9HcPdDBTe1m0F54pfffm0ehMT4fX3JcONqcj_EmEAW0f0WLHz1vgPw25qaI8xMbT22cOdwxzDrlcFS7xh9E9xARFedriWOv8NucAKjh2edAfFsHEkN_1YQzjR2lhkadd_1_nvPbJems0PDPp8Q-DS1PVpxkG6mgn-wVl1NEai90JDMzIEFXm0rWxsEavgbKy9HOwxZ0LlKke_C0jSoO30a1hJYVMwVKLGSLRQE" />
-          </div>
-          <div class="p-8 flex-grow">
-            <h3 class="text-xl font-extrabold mb-2 font-headline uppercase">Arabica Cầu Đất (Full Wash)</h3>
-            <p class="text-sm text-on-surface-variant mb-6 leading-relaxed">Độ cao 1500m, hương thơm thanh khiết, vị
-              chua trái cây nhẹ nhàng. Tiêu chuẩn xuất khẩu Grade 1.</p>
-            <div class="space-y-3 mb-8">
-              <div class="flex justify-between text-xs border-b border-outline-variant/20 pb-2">
-                <span class="uppercase text-on-surface-variant">Độ cao</span>
-                <span class="font-bold text-primary">1500m</span>
+
+          <div class="p-8 flex-grow flex flex-col">
+            <h3 class="text-xl font-extrabold mb-3 font-headline uppercase text-primary line-clamp-1"
+              th:text="${product.name}">Tên sản phẩm</h3>
+            
+            <div class="space-y-3 mb-8 flex-grow">
+              <div class="flex justify-between text-[10px] border-b border-outline-variant/10 pb-2">
+                <span class="uppercase text-on-surface-variant font-bold tracking-tighter">Mã sản phẩm</span>
+                <span class="font-bold text-primary" th:text="'#PRD-' + ${product.id}">#000</span>
               </div>
-              <div class="flex justify-between text-xs border-b border-outline-variant/20 pb-2">
-                <span class="uppercase text-on-surface-variant">Quy trình</span>
-                <span class="font-bold text-primary">Washed</span>
+              <div class="flex justify-between text-[10px] border-b border-outline-variant/10 pb-2">
+                <span class="uppercase text-on-surface-variant font-bold tracking-tighter">Tình trạng</span>
+                <span class="font-bold" 
+                  th:classappend="${product.stockQuantity > 0 ? 'text-success' : 'text-error'}"
+                  th:text="${product.stockQuantity > 0 ? 'Còn hàng' : 'Hết hàng'}">Sẵn sàng</span>
               </div>
             </div>
-            <div class="text-2xl font-black text-primary font-headline">
-              320.000 ₫ <span class="text-sm font-normal text-on-surface-variant">/ kg</span>
-            </div>
-          </div>
-        </div>
-        <div
-          class="bg-surface-container-lowest overflow-hidden flex flex-col h-full border-b-4 border-primary shadow-sm hover:shadow-xl transition-shadow duration-500">
-          <div class="h-64 overflow-hidden">
-            <img alt="Signature Blend"
-              class="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_IU2m1unLuvt5J2j1UysP1xVymthNaWGvpRwW0Ct-y-CaPTYRIez1WUHzjUgNiPh7FBmkW00kI5FW87t9EPJ5ppNqoXLxNkFFrp2qH-8d8AGEzJ8_wVqfFQ_QZZMLWMRxLPvzcRMbMX4RIDGFntrSFwqKr-sJUYRg0959fYvfjInsVcI7Q2ZbBhjx7zyHVI1W5RHlgXdm1nGKFf0_GNk9D7dvBcgyXN_S8sIC8XuVy9kGL_tz6krRoQtF3CLOZkFBm" />
-          </div>
-          <div class="p-8 flex-grow">
-            <h3 class="text-xl font-extrabold mb-2 font-headline uppercase">Signature B2B Blend</h3>
-            <p class="text-sm text-on-surface-variant mb-6 leading-relaxed">Công thức phối trộn độc quyền giữa Arabica
-              và Robusta cao cấp. Cân bằng tuyệt đối cho các dòng máy Espresso.</p>
-            <div class="space-y-3 mb-8">
-              <div class="flex justify-between text-xs border-b border-outline-variant/20 pb-2">
-                <span class="uppercase text-on-surface-variant">Tỷ lệ</span>
-                <span class="font-bold text-primary">70/30</span>
+
+            <div class="flex items-end justify-between">
+              <div class="text-2xl font-black text-primary font-headline">
+                <span th:text="${#numbers.formatDecimal(product.price != null ? product.price : 0, 0, 'COMMA', 0, 'POINT')}">145.000</span>
+                <span class="text-sm font-bold text-on-surface-variant tracking-tighter">₫ <span class="text-[10px] font-medium opacity-50">/ kg</span></span>
               </div>
-              <div class="flex justify-between text-xs border-b border-outline-variant/20 pb-2">
-                <span class="uppercase text-on-surface-variant">Độ rang</span>
-                <span class="font-bold text-primary">Medium-Dark</span>
+              
+              <div class="text-primary group-hover:translate-x-2 transition-transform duration-300">
+                <span class="material-symbols-outlined font-bold">trending_flat</span>
               </div>
-            </div>
-            <div class="text-2xl font-black text-primary font-headline">
-              210.000 ₫ <span class="text-sm font-normal text-on-surface-variant">/ kg</span>
             </div>
           </div>
         </div>
+
+        <!-- Fallback if no products -->
+        <div th:if="${products == null or #lists.isEmpty(products)}" class="col-span-full py-20 text-center">
+            <p class="text-on-surface-variant italic">Đang cập nhật danh mục sản phẩm mới...</p>
+        </div>
+      </div>
       </div>
     </div>
   </section>

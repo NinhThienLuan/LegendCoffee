@@ -16,9 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import jakarta.validation.Valid;
-import org.springframework.validation.BindingResult;
-import fpt.legendcoffee.dto.request.ArticleRequestDTO;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
@@ -91,9 +88,9 @@ public class ArticleController {
         return "articles/articles";
     }
 
-    @GetMapping("/article/detail")
+    @GetMapping("/articles/detail")
     public String articleDetail(Model model) {
-        return "articles/article-detail";
+        return "articles/articles";
     }
 
     @GetMapping("/admin/articles/view/{id}")

@@ -8,45 +8,40 @@
 
   <nav class="flex-1 space-y-1">
     <a class="flex items-center gap-3 text-stone-500 dark:text-stone-400 px-4 py-3 mb-1 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 hover:text-stone-900 dark:hover:text-stone-50 transition-all rounded-lg"
-      href="/admin/dashboard"
-      th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI == '/admin/dashboard'} ? 'bg-stone-200 dark:bg-stone-800 !text-stone-900 dark:!text-stone-50' : ''">
+      href="/admin"
+      th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI == '/admin'} ? 'bg-stone-200 dark:bg-stone-800 !text-stone-900 dark:!text-stone-50' : ''">
       <span class="material-symbols-outlined">dashboard</span>
       <span class="font-manrope text-sm font-semibold uppercase tracking-widest">Bảng điều khiển</span>
     </a>
     <a class="flex items-center gap-3 text-stone-500 dark:text-stone-400 px-4 py-3 mb-1 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 hover:text-stone-900 dark:hover:text-stone-50 transition-all rounded-lg"
-      href="/admin/users"
-      th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI == '/admin/users'} ? 'bg-stone-200 dark:bg-stone-800 !text-stone-900 dark:!text-stone-50' : ''">
-      <span class="material-symbols-outlined">group</span>
-      <span class="font-manrope text-sm font-semibold uppercase tracking-widest">Người dùng</span>
+      href="/orders"
+      th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/orders')} ? 'bg-stone-200 dark:bg-stone-800 !text-stone-900 dark:!text-stone-50' : ''">
+      <span class="material-symbols-outlined">package_2</span>
+      <span class="font-manrope text-sm font-semibold uppercase tracking-widest">Đơn hàng</span>
     </a>
     <a class="flex items-center gap-3 text-stone-500 dark:text-stone-400 px-4 py-3 mb-1 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 hover:text-stone-900 dark:hover:text-stone-50 transition-all rounded-lg"
       href="/products"
-      th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI == '/products'} ? 'bg-stone-200 dark:bg-stone-800 !text-stone-900 dark:!text-stone-50' : ''">
+      th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/product')} ? 'bg-stone-200 dark:bg-stone-800 !text-stone-900 dark:!text-stone-50' : ''">
       <span class="material-symbols-outlined">coffee</span>
       <span class="font-manrope text-sm font-semibold uppercase tracking-widest">Sản phẩm</span>
     </a>
     <a class="flex items-center gap-3 text-stone-500 dark:text-stone-400 px-4 py-3 mb-1 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 hover:text-stone-900 dark:hover:text-stone-50 transition-all rounded-lg"
       href="/admin/posts"
-      th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI == '/admin/posts'} ? 'bg-stone-200 dark:bg-stone-800 !text-stone-900 dark:!text-stone-50' : ''">
+      th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/admin/post')} ? 'bg-stone-200 dark:bg-stone-800 !text-stone-900 dark:!text-stone-50' : ''">
       <span class="material-symbols-outlined">article</span>
       <span class="font-manrope text-sm font-semibold uppercase tracking-widest">Bài viết</span>
     </a>
     <a class="flex items-center gap-3 text-stone-500 dark:text-stone-400 px-4 py-3 mb-1 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 hover:text-stone-900 dark:hover:text-stone-50 transition-all rounded-lg"
       href="/admin/combos"
-      th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/admin/combos')} ? 'bg-stone-200 dark:bg-stone-800 !text-stone-900 dark:!text-stone-50' : ''">
+      th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/admin/combo')} ? 'bg-stone-200 dark:bg-stone-800 !text-stone-900 dark:!text-stone-50' : ''">
       <span class="material-symbols-outlined">featured_play_list</span>
       <span class="font-manrope text-sm font-semibold uppercase tracking-widest">Combo</span>
     </a>
     <a class="flex items-center gap-3 text-stone-500 dark:text-stone-400 px-4 py-3 mb-1 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 hover:text-stone-900 dark:hover:text-stone-50 transition-all rounded-lg"
       href="/code"
-      th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI == '/code'} ? 'bg-stone-200 dark:bg-stone-800 !text-stone-900 dark:!text-stone-50' : ''">
+      th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/code')} ? 'bg-stone-200 dark:bg-stone-800 !text-stone-900 dark:!text-stone-50' : ''">
       <span class="material-symbols-outlined">local_activity</span>
       <span class="font-manrope text-sm font-semibold uppercase tracking-widest">Mã giảm giá</span>
-    </a>
-    <a class="flex items-center gap-3 text-stone-500 dark:text-stone-400 px-4 py-3 mb-1 hover:bg-stone-200/50 dark:hover:bg-stone-800/50 hover:text-stone-900 dark:hover:text-stone-50 transition-all rounded-lg"
-      href="/orders">
-      <span class="material-symbols-outlined">package_2</span>
-      <span class="font-manrope text-sm font-semibold uppercase tracking-widest">Đơn hàng</span>
     </a>
   </nav>
 

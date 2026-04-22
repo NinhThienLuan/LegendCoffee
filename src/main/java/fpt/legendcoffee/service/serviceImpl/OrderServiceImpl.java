@@ -2,14 +2,26 @@ package fpt.legendcoffee.service.serviceImpl;
 
 import fpt.legendcoffee.dto.app.CheckoutItemRequestDTO;
 import fpt.legendcoffee.dto.app.CheckoutRequestDTO;
+import fpt.legendcoffee.entity.Combo;
+import fpt.legendcoffee.entity.Order;
+import fpt.legendcoffee.entity.OrderItem;
+import fpt.legendcoffee.entity.ProductVariant;
+import fpt.legendcoffee.entity.User;
+import fpt.legendcoffee.entity.ShippingInfo;
 import fpt.legendcoffee.dto.app.OrderListDTO;
 import fpt.legendcoffee.dto.app.OrderStatusDTO;
-import fpt.legendcoffee.entity.*;
 import fpt.legendcoffee.entity.enumeration.OrderStatus;
-import fpt.legendcoffee.repository.*;
+import fpt.legendcoffee.repository.ComboRepository;
+import fpt.legendcoffee.repository.OrderItemRepository;
+import fpt.legendcoffee.repository.OrderRepository;
+import fpt.legendcoffee.repository.ProductVariantRepository;
+import fpt.legendcoffee.repository.UserRepository;
+import fpt.legendcoffee.repository.ShippingInfoRepository;
 import fpt.legendcoffee.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +29,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -27,6 +41,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemRepository orderItemRepository;
     private final ProductVariantRepository productVariantRepository;
     private final ComboRepository comboRepository;
+    private final UserRepository userRepository;
     private final ShippingInfoRepository shippingInfoRepository;
 
     @Override
@@ -40,8 +55,10 @@ public class OrderServiceImpl implements OrderService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal shippingFee = BigDecimal.valueOf(checkout.getShippingFee() != null ? checkout.getShippingFee() : 0);
+        Optional<User> currentUser = getCurrentUser();
 
         Order order = Order.builder()
+            .user(currentUser.orElse(null))
                 .orderDate(LocalDateTime.now())
                 .subTotal(subTotal)
                 .discount(BigDecimal.ZERO)
@@ -60,15 +77,67 @@ public class OrderServiceImpl implements OrderService {
         }
 
         log.info("[OrderService] Created order successfully with ID: {}", savedOrder.getId());
+
         return savedOrder;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<OrderListDTO> getAllOrdersForList() {
-        List<Order> orders = orderRepository.findAll();
+        List<Order> orders = orderRepository.findAllWithDetails();
+        return mapOrdersToDTO(orders);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<OrderListDTO> getOrdersByStatus(OrderStatus status) {
+        List<Order> orders = orderRepository.findByStatusWithDetails(status);
+        return mapOrdersToDTO(orders);
+    }
+
+    private List<OrderListDTO> mapOrdersToDTO(List<Order> orders) {
         return orders.stream().map(order -> {
-            // Lấy sản phẩm đầu tiên
-            String itemName = null, itemDetail = null, itemImage = null;
+            List<OrderItem> items = order.getOrderItems();
+            String itemName = "Sản phẩm";
+            String itemDetail = "";
+            String firstImage = null;
+            List<String> allImages = new ArrayList<>();
+            int additionalCount = 0;
+
+            if (items != null && !items.isEmpty()) {
+                // Chỉ lấy ảnh từ sản phẩm (variant -> product)
+                for (OrderItem item : items) {
+                    if (item.getVariant() != null) {
+                        String img = item.getVariant().getImageUrl();
+                        if (img == null && item.getVariant().getProduct() != null) {
+                            img = item.getVariant().getProduct().getImageUrl();
+                        }
+                        if (img != null && !allImages.contains(img)) {
+                            allImages.add(img);
+                        }
+                    }
+                }
+
+                // Lấy thông tin từ item đầu tiên có variant
+                OrderItem first = items.stream()
+                        .filter(i -> i.getVariant() != null)
+                        .findFirst()
+                        .orElse(items.get(0));
+
+                if (first.getVariant() != null) {
+                    itemName = first.getVariant().getProduct() != null
+                            ? first.getVariant().getProduct().getName()
+                            : first.getVariant().getVariantName();
+                    itemDetail = first.getVariant().getVariantName();
+                    firstImage = allImages.isEmpty() ? null : allImages.get(0);
+                } else if (first.getCombo() != null) {
+                    itemName = first.getCombo().getName();
+                    itemDetail = "Combo Legend";
+                }
+
+                additionalCount = items.size() - 1;
+            }
+
             // Lấy trạng thái shipping
             ShippingInfo shipping = order.getShippingInfo();
             String shippingStatus = shipping != null ? shipping.getStatus() : "pending";
@@ -79,11 +148,13 @@ public class OrderServiceImpl implements OrderService {
                     .totalAmount(order.getTotalAmount())
                     .firstItemName(itemName)
                     .firstItemDetail(itemDetail)
-                    .firstItemImage(itemImage)
+                    .firstItemImage(firstImage)
+                    .itemImages(allImages)
+                    .additionalItemsCount(additionalCount)
                     .shippingStatus(shippingStatus)
                     .shippingStatusLabel(OrderStatusDTO.mapStatusLabel(shippingStatus))
                     .build();
-        }).toList();
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -163,5 +234,13 @@ public class OrderServiceImpl implements OrderService {
         }
 
         return items;
+    }
+
+    private Optional<User> getCurrentUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+            return Optional.empty();
+        }
+        return userRepository.findByEmail(auth.getName());
     }
 }

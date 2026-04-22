@@ -36,4 +36,13 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     public List<ProductVariant> getAllVariants() {
         return productVariantRepository.findAllBy();
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductVariant> searchVariants(String keyword, Boolean active) {
+        return productVariantRepository.searchVariants(
+                (keyword != null && !keyword.isBlank()) ? keyword.trim() : null,
+                active
+        );
+    }
 }
