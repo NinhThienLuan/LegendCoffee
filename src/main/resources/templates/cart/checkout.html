@@ -299,6 +299,9 @@
     </main> <!-- End Main -->
 
     <div th:replace="~{fragments/toast :: errorToast('checkout-toast')}"></div>
+    <script th:if="${checkoutError}">
+        sessionStorage.removeItem('orderInProgress');
+    </script>
     <script th:inline="javascript">
         function formatCurrency(num) {
             return new Intl.NumberFormat('vi-VN').format(num) + ' ₫';
@@ -325,6 +328,13 @@
             if (serverError) {
                 showToast(serverError);
             }
+            // Chống quay lại trang checkout bằng nút Back của trình duyệt (bfcache)
+            window.addEventListener('pageshow', (event) => {
+                if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+                    // Page was restored from bfcache (back navigation)
+                    window.location.reload();
+                }
+            });
 
             const cart = window.CartSystem ? window.CartSystem.getCart() : [];
 
@@ -400,6 +410,9 @@
                     }
                     
                     bindCheckoutItems(latestCart);
+                    
+                    // Đánh dấu đơn hàng đang được xử lý để xoá giỏ hàng ở trang tiếp theo
+                    sessionStorage.setItem('orderInProgress', 'true');
                 });
             }
 

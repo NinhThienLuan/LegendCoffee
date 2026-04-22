@@ -397,8 +397,15 @@ public class ShippingServiceImpl implements ShippingService {
     @Override
     public OrderStatusDTO getOrderStatus(Long orderId) {
         ShippingInfo info = shippingInfoRepository.findByOrderId(orderId)
-                .orElseThrow(() -> new GHNException(
-                        "Không tìm thấy thông tin vận chuyển cho đơn " + orderId));
+                .orElseThrow(() -> new GHNException("Không tìm thấy thông tin vận chuyển cho đơn " + orderId));
+
+        if (info.getGhnOrderCode() == null || info.getGhnOrderCode().isBlank()) {
+            return OrderStatusDTO.builder()
+                    .status(info.getStatus())
+                    .statusLabel(OrderStatusDTO.mapStatusLabel(info.getStatus()))
+                    .logs(new ArrayList<>())
+                    .build();
+        }
         return getOrderStatusByGHNCode(info.getGhnOrderCode());
     }
 
@@ -497,7 +504,15 @@ public class ShippingServiceImpl implements ShippingService {
             return false;
         }
 
-        boolean success = ghnService.cancelOrder(List.of(info.getGhnOrderCode()));
+        String ghnCode = info.getGhnOrderCode();
+        boolean success = true;
+
+        if (ghnCode != null && !ghnCode.isBlank()) {
+            success = ghnService.cancelOrder(List.of(ghnCode));
+        } else {
+            log.info("[Shipping] Order #{} has no GHN code, cancelling locally only.", orderId);
+        }
+
         if (success) {
             info.setStatus("cancel");
             shippingInfoRepository.save(info);

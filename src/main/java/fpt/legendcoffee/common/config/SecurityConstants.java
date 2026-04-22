@@ -7,10 +7,8 @@ public class SecurityConstants {
             "/login",
             "/register",
             "/cart",
-            "/checkout",                   // Page checkout
-            "/checkout/place-order",       // Submit đặt hàng
-            "/api/shipping/**",            // REST API tính phí & địa chỉ (gọi AJAX từ checkout)
-            "/webhook/ghn",               // Webhook GHN — phải public để GHN gọi được
+            "/api/shipping/**", // REST API tính phí & địa chỉ (gọi AJAX từ checkout)
+            "/webhook/ghn", // Webhook GHN — phải public để GHN gọi được
             "/articles/**",
             "/products/**",
             "/combos",
