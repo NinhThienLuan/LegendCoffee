@@ -31,35 +31,54 @@
                 <div
                     class="bg-surface-container-low p-4 rounded-lg flex flex-col md:flex-row gap-4 items-center justify-between">
                     <div class="flex flex-wrap gap-2">
-                        <button class="bg-primary text-on-primary px-4 py-2 rounded-md text-sm font-semibold">Tất cả
-                        </button>
-                        <button
-                            class="bg-surface-container-lowest text-on-surface-variant border border-outline-variant/10 hover:bg-surface-variant px-4 py-2 rounded-md text-sm font-medium transition-colors">
-                            Đang rang
-                        </button>
-                        <button
-                            class="bg-surface-container-lowest text-on-surface-variant border border-outline-variant/10 hover:bg-surface-variant px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                        <!-- All -->
+                        <a th:href="@{/orders}"
+                           th:classappend="${selectedStatus == null or selectedStatus == ''} ? 'bg-primary text-on-primary' : 'bg-surface-container-lowest text-on-surface-variant border border-outline-variant/10 hover:bg-surface-variant'"
+                           class="px-4 py-2 rounded-md text-sm font-semibold transition-colors">
+                            Tất cả
+                            <span class="ml-1 text-[10px] font-bold opacity-70" th:text="'(' + ${#lists.size(orders)} + ')'"></span>
+                        </a>
+                        <!-- PENDING -->
+                        <a th:href="@{/orders(status='PENDING')}"
+                           th:classappend="${selectedStatus == 'PENDING'} ? 'bg-primary text-on-primary' : 'bg-surface-container-lowest text-on-surface-variant border border-outline-variant/10 hover:bg-surface-variant'"
+                           class="px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                            Chờ xác nhận
+                        </a>
+                        <!-- CONFIRMED -->
+                        <a th:href="@{/orders(status='CONFIRMED')}"
+                           th:classappend="${selectedStatus == 'CONFIRMED'} ? 'bg-primary text-on-primary' : 'bg-surface-container-lowest text-on-surface-variant border border-outline-variant/10 hover:bg-surface-variant'"
+                           class="px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                            Đã xác nhận
+                        </a>
+                        <!-- SHIPPING -->
+                        <a th:href="@{/orders(status='SHIPPING')}"
+                           th:classappend="${selectedStatus == 'SHIPPING'} ? 'bg-primary text-on-primary' : 'bg-surface-container-lowest text-on-surface-variant border border-outline-variant/10 hover:bg-surface-variant'"
+                           class="px-4 py-2 rounded-md text-sm font-medium transition-colors">
                             Đang giao
-                        </button>
-                        <button
-                            class="bg-surface-container-lowest text-on-surface-variant border border-outline-variant/10 hover:bg-surface-variant px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                        </a>
+                        <!-- COMPLETED -->
+                        <a th:href="@{/orders(status='COMPLETED')}"
+                           th:classappend="${selectedStatus == 'COMPLETED'} ? 'bg-primary text-on-primary' : 'bg-surface-container-lowest text-on-surface-variant border border-outline-variant/10 hover:bg-surface-variant'"
+                           class="px-4 py-2 rounded-md text-sm font-medium transition-colors">
                             Hoàn tất
-                        </button>
+                        </a>
+                        <!-- CANCELLED -->
+                        <a th:href="@{/orders(status='CANCELLED')}"
+                           th:classappend="${selectedStatus == 'CANCELLED'} ? 'bg-primary text-on-primary' : 'bg-surface-container-lowest text-on-surface-variant border border-outline-variant/10 hover:bg-surface-variant'"
+                           class="px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                            Đã huỷ
+                        </a>
                     </div>
                     <div class="flex gap-2 w-full md:w-auto">
                         <div class="relative flex-1">
                             <span
-                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm"
-                                data-icon="filter_list">filter_list</span>
-                            <select
-                                class="bg-surface-container-lowest border-none rounded-md pl-10 pr-8 py-2 text-sm focus:ring-1 focus:ring-primary w-full md:w-48 appearance-none ring-1 ring-outline-variant/20">
-                                <option>Thời gian: Gần nhất</option>
-                                <option>Thời gian: Tháng này</option>
-                                <option>Giá trị: Cao - Thấp</option>
-                            </select>
+                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">filter_list</span>
+                            <span class="text-xs text-on-surface-variant pl-10 py-2 block"
+                                  th:text="'Hiển thị ' + ${#lists.size(orders)} + ' đơn hàng'">Hiển thị 0 đơn hàng</span>
                         </div>
                     </div>
                 </div>
+
                 <!-- Order Table -->
                 <div
                     class="bg-surface-container-lowest rounded-xl overflow-hidden border border-outline-variant/10 shadow-sm">

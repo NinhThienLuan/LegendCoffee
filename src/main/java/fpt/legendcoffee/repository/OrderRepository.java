@@ -2,6 +2,7 @@ package fpt.legendcoffee.repository;
 
 import fpt.legendcoffee.entity.Order;
 import fpt.legendcoffee.entity.User;
+import fpt.legendcoffee.entity.enumeration.OrderStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,4 +17,11 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
 	@Query("SELECT o FROM Order o LEFT JOIN FETCH o.user WHERE o.id = :id")
 	Optional<Order> findByIdWithUser(@Param("id") Long id);
+
+	@Query("SELECT o FROM Order o LEFT JOIN FETCH o.user ORDER BY o.orderDate DESC")
+	List<Order> findAllWithUser();
+
+	@Query("SELECT o FROM Order o LEFT JOIN FETCH o.user WHERE o.status = :status ORDER BY o.orderDate DESC")
+	List<Order> findByStatusWithUser(@Param("status") OrderStatus status);
 }
+

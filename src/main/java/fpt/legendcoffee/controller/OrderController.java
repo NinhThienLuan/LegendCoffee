@@ -4,9 +4,9 @@ import fpt.legendcoffee.dto.app.CheckoutRequestDTO;
 import fpt.legendcoffee.dto.app.OrderListDTO;
 import fpt.legendcoffee.entity.Order;
 import fpt.legendcoffee.entity.OrderItem;
-import fpt.legendcoffee.entity.ProductVariant;
 import fpt.legendcoffee.entity.ShippingInfo;
 import fpt.legendcoffee.entity.User;
+import fpt.legendcoffee.entity.enumeration.OrderStatus;
 import fpt.legendcoffee.repository.OrderItemRepository;
 import fpt.legendcoffee.repository.OrderRepository;
 import fpt.legendcoffee.repository.ShippingInfoRepository;
@@ -25,9 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -47,7 +45,7 @@ public class OrderController {
     // =========================================================================
 
     @GetMapping("/orders")
-    public String orderPage(Model model) {
+    public String orderPage(@RequestParam(required = false) String status, Model model) {
         Optional<User> currentUser = getCurrentUser();
         if (currentUser.isEmpty()) {
             return "redirect:/login";
@@ -56,16 +54,31 @@ public class OrderController {
         boolean isAdmin = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
-        List<fpt.legendcoffee.dto.app.OrderListDTO> allOrders = orderService.getAllOrdersForList();
+        // Parse status filter
+        OrderStatus orderStatus = null;
+        if (status != null && !status.isBlank()) {
+            try { orderStatus = OrderStatus.valueOf(status.toUpperCase()); } catch (IllegalArgumentException ignored) {}
+        }
+
+        List<OrderListDTO> allOrders;
+        if (orderStatus != null) {
+            allOrders = orderService.getOrdersByStatus(orderStatus);
+        } else {
+            allOrders = orderService.getAllOrdersForList();
+        }
+
+        // Non-admin users can only see their own orders
         if (!isAdmin) {
-            allOrders = allOrders.stream().filter(dto -> 
+            final Long userId = currentUser.get().getId();
+            allOrders = allOrders.stream().filter(dto ->
                 orderRepository.findById(dto.getId())
                     .map(Order::getUser)
-                    .map(User::getId).orElse(-1L).equals(currentUser.get().getId())
+                    .map(User::getId).orElse(-1L).equals(userId)
             ).toList();
         }
 
         model.addAttribute("orders", allOrders);
+        model.addAttribute("selectedStatus", status != null ? status.toUpperCase() : "");
         return "order/order";
     }
 

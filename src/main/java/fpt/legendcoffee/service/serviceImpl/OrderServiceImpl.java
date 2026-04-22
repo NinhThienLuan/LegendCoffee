@@ -82,11 +82,19 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderListDTO> getAllOrdersForList() {
-        List<Order> orders = orderRepository.findAll();
+        List<Order> orders = orderRepository.findAllWithUser();
+        return mapOrdersToDTO(orders);
+    }
+
+    @Override
+    public List<OrderListDTO> getOrdersByStatus(OrderStatus status) {
+        List<Order> orders = orderRepository.findByStatusWithUser(status);
+        return mapOrdersToDTO(orders);
+    }
+
+    private List<OrderListDTO> mapOrdersToDTO(List<Order> orders) {
         return orders.stream().map(order -> {
-            // Lấy sản phẩm đầu tiên
             String itemName = null, itemDetail = null, itemImage = null;
-            // Lấy trạng thái shipping
             ShippingInfo shipping = order.getShippingInfo();
             String shippingStatus = shipping != null ? shipping.getStatus() : "pending";
 
