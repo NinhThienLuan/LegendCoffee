@@ -142,16 +142,16 @@
                             </div>
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center border border-outline-variant/30 rounded overflow-hidden shadow-sm">
-                                    <button onclick="window.CartSystem.updateQuantity('${item.id}', '${item.variant}', ${item.quantity - 1}, ${item.comboId ? `'${item.comboId}'` : 'null'})" class="px-3 py-1 hover:bg-surface-container transition-colors"><span
+                                    <button onclick="window.CartSystem.updateQuantity('${item.variantId || item.id}', '${item.variant}', ${item.quantity - 1}, ${item.comboId ? `'${item.comboId}'` : 'null'})" class="px-3 py-1 hover:bg-surface-container transition-colors"><span
                                             class="material-symbols-outlined text-sm">remove</span></button>
                                     <input
                                         class="w-16 text-center border-none bg-transparent font-black text-base text-primary focus:ring-0 p-0"
                                         type="number" readonly value="${item.quantity}" />
-                                    <button onclick="window.CartSystem.updateQuantity('${item.id}', '${item.variant}', ${item.quantity + 1}, ${item.comboId ? `'${item.comboId}'` : 'null'})" class="px-3 py-1 hover:bg-surface-container transition-colors"><span
+                                    <button onclick="window.CartSystem.updateQuantity('${item.variantId || item.id}', '${item.variant}', ${item.quantity + 1}, ${item.comboId ? `'${item.comboId}'` : 'null'})" class="px-3 py-1 hover:bg-surface-container transition-colors"><span
                                             class="material-symbols-outlined text-sm">add</span></button>
                                 </div>
                                 <button
-                                    onclick="window.CartSystem.removeFromCart('${item.id}', '${item.variant}', ${item.comboId ? `'${item.comboId}'` : 'null'})"
+                                    onclick="window.CartSystem.removeFromCart('${item.variantId || item.id}', '${item.variant}', ${item.comboId ? `'${item.comboId}'` : 'null'})"
                                     class="text-error flex items-center gap-2 text-sm font-bold uppercase tracking-wider opacity-60 hover:opacity-100 transition-opacity">
                                     <span class="material-symbols-outlined text-lg">delete</span> Gỡ bỏ
                                 </button>
