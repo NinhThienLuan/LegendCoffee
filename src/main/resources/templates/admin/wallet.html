@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: sharedHead('Industrial Excellence - Quản lý Tài chính')}"></head>
+
+<body class="bg-surface selection:bg-stone-200 min-h-screen font-sans">
+
+    <!-- Sidebar Fragment -->
+    <aside th:replace="~{fragments/admin-sidebar :: adminSidebar}"></aside>
+
+    <div class="ml-64 flex flex-col">
+        <!-- Topbar Fragment -->
+        <header
+            th:replace="~{fragments/admin-topbar :: adminTopbar('Quản lý Tài chính / Ví hệ thống', 'Tìm kiếm giao dịch...')}">
+        </header>
+
+        <main class="p-8 flex flex-col gap-8">
+
+            <!-- Summary Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Platform Balance -->
+                <div class="bg-stone-950 text-white rounded-2xl p-6 shadow-sm relative overflow-hidden">
+                    <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-500 font-manrope">Số dư hệ
+                        thống</span>
+                    <div class="flex items-baseline gap-2 mt-2">
+                        <span class="text-3xl font-black font-manrope tracking-tighter"
+                            th:text="${#numbers.formatDecimal(adminWallet.balance, 0, 'COMMA', 0, 'POINT')}">150.000.000</span>
+                        <span class="text-xs font-bold text-stone-500 uppercase">VNĐ</span>
+                    </div>
+                    <div class="mt-4 flex items-center gap-2 text-[10px] font-bold text-success font-manrope">
+                        <span class="material-symbols-outlined text-[14px]">trending_up</span>
+                        <span>+12% so với tháng trước</span>
+                    </div>
+                </div>
+
+                <!-- Total Revenue -->
+                <div class="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm">
+                    <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-500 font-manrope">Tổng
+                        doanh thu (30 ngày)</span>
+                    <div class="flex items-baseline gap-2 mt-2">
+                        <span class="text-2xl font-black text-stone-900 font-manrope tracking-tighter">45.000.000</span>
+                        <span class="text-xs font-bold text-stone-400 uppercase">VNĐ</span>
+                    </div>
+                    <div class="mt-4 text-xs font-semibold text-stone-500">
+                        240 giao dịch thành công
+                    </div>
+                </div>
+
+                <!-- Payouts -->
+                <div class="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm">
+                    <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-500 font-manrope">Tổng chi
+                        phí / Hoàn tiền</span>
+                    <div class="flex items-baseline gap-2 mt-2">
+                        <span class="text-2xl font-black text-stone-900 font-manrope tracking-tighter">12.500.000</span>
+                        <span class="text-xs font-bold text-stone-400 uppercase">VNĐ</span>
+                    </div>
+                    <div class="mt-4 text-xs font-semibold text-error/80">
+                        8 yêu cầu đang chờ duyệt
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Transactions -->
+            <section class="bg-white border border-stone-200 rounded-3xl overflow-hidden shadow-sm">
+                <div class="px-8 py-6 border-b border-stone-100 flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold text-stone-900 font-manrope tracking-tight">Nhật ký giao dịch hệ
+                            thống</h3>
+                        <p class="text-xs text-stone-500 font-medium">Toàn bộ dòng tiền ra vào của nền tảng</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="p-2 border border-stone-200 rounded-lg hover:bg-stone-50 transition-colors">
+                            <span class="material-symbols-outlined text-[20px] text-stone-600">filter_list</span>
+                        </button>
+                        <button class="p-2 border border-stone-200 rounded-lg hover:bg-stone-50 transition-colors">
+                            <span class="material-symbols-outlined text-[20px] text-stone-600">download</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left font-manrope border-collapse">
+                        <thead>
+                            <tr
+                                class="bg-stone-50/50 text-[10px] font-bold text-stone-500 uppercase tracking-widest border-b border-stone-100">
+                                <th class="px-8 py-4">Giao dịch / ID</th>
+                                <th class="px-8 py-4">Người thực hiện</th>
+                                <th class="px-8 py-4">Ngày</th>
+                                <th class="px-8 py-4 text-right">Số tiền</th>
+                                <th class="px-8 py-4 text-right">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-stone-100">
+                            <tr th:each="history : ${adminWallet.transactionHistory}"
+                                class="hover:bg-stone-50/30 transition-colors">
+                                <td class="px-8 py-5">
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-bold text-stone-900" th:text="${history.type}">Hoàn
+                                            tiền combo</span>
+                                        <span class="text-[10px] font-medium text-stone-400"
+                                            th:text="'ID: ' + ${history.id}">#TX-123456789</span>
+                                    </div>
+                                </td>
+                                <td class="px-8 py-5">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-6 h-6 rounded-full bg-stone-100 flex items-center justify-center">
+                                            <span
+                                                class="material-symbols-outlined text-[14px] text-stone-500">person</span>
+                                        </div>
+                                        <span class="text-xs font-bold text-stone-700"
+                                            th:text="${history.username != null ? history.username : 'Hệ thống'}">Khanh
+                                            Nguyễn</span>
+                                    </div>
+                                </td>
+                                <td class="px-8 py-5 text-xs text-stone-500 font-medium"
+                                    th:text="${#temporals.format(history.createdAt, 'dd/MM/yyyy HH:mm')}">
+                                    22/04/2026 14:00
+                                </td>
+                                <td class="px-8 py-5 text-right">
+                                    <span class="text-sm font-black tracking-tighter"
+                                        th:classappend="${history.amount > 0 ? 'text-success' : 'text-stone-900'}"
+                                        th:text="${(history.amount > 0 ? '+' : '') + #numbers.formatDecimal(history.amount, 0, 'COMMA', 0, 'POINT')}">
+                                        -500.000
+                                    </span>
+                                </td>
+                                <td class="px-8 py-5 text-right">
+                                    <button class="text-stone-400 hover:text-stone-900 transition-colors">
+                                        <span class="material-symbols-outlined text-[20px]">more_vert</span>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div th:if="${adminWallet.transactionHistory == null or #lists.isEmpty(adminWallet.transactionHistory)}"
+                    class="py-24 flex flex-col items-center justify-center text-center gap-4">
+                    <div class="w-16 h-16 rounded-full bg-stone-50 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[32px] text-stone-200">account_balance_wallet</span>
+                    </div>
+                    <div>
+                        <p class="text-stone-900 font-bold font-manrope tracking-tight">Chưa có bản ghi giao dịch</p>
+                        <p class="text-xs text-stone-500">Mọi biến động số dư sẽ được hiển thị tại đây.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+</body>
+
+</html>
