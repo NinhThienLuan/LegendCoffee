@@ -16,6 +16,7 @@ public class ComboItemResponseDTO {
     private Long variantId;
     private String variantName;
     private String productName;
+    private String imageUrl;
     private Integer quantity;
     private BigDecimal unitPrice;
     private BigDecimal lineTotal;

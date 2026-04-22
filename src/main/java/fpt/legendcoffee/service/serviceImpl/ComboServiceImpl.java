@@ -169,14 +169,23 @@ public class ComboServiceImpl implements ComboService {
         List<ComboItemResponseDTO> itemResponses = comboItems.stream().map(item -> {
             BigDecimal unitPrice = item.getVariant() != null ? item.getVariant().getPrice() : BigDecimal.ZERO;
             BigDecimal lineTotal = unitPrice.multiply(BigDecimal.valueOf(item.getQuantity() == null ? 0 : item.getQuantity()));
-            return new ComboItemResponseDTO(
-                    item.getId(),
-                    item.getVariant() != null ? item.getVariant().getId() : null,
-                    item.getVariant() != null ? item.getVariant().getVariantName() : null,
-                    item.getVariant() != null && item.getVariant().getProduct() != null ? item.getVariant().getProduct().getName() : null,
-                    item.getQuantity(),
-                    unitPrice,
-                    lineTotal);
+            String itemImageUrl = null;
+            if (item.getVariant() != null) {
+                itemImageUrl = item.getVariant().getImageUrl();
+                if ((itemImageUrl == null || itemImageUrl.isBlank()) && item.getVariant().getProduct() != null) {
+                    itemImageUrl = item.getVariant().getProduct().getImageUrl();
+                }
+            }
+            ComboItemResponseDTO dto = new ComboItemResponseDTO();
+            dto.setId(item.getId());
+            dto.setVariantId(item.getVariant() != null ? item.getVariant().getId() : null);
+            dto.setVariantName(item.getVariant() != null ? item.getVariant().getVariantName() : null);
+            dto.setProductName(item.getVariant() != null && item.getVariant().getProduct() != null ? item.getVariant().getProduct().getName() : null);
+            dto.setImageUrl(itemImageUrl);
+            dto.setQuantity(item.getQuantity());
+            dto.setUnitPrice(unitPrice);
+            dto.setLineTotal(lineTotal);
+            return dto;
         }).toList();
 
         BigDecimal originalPrice = itemResponses.stream()
@@ -184,18 +193,26 @@ public class ComboServiceImpl implements ComboService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal savings = originalPrice.subtract(combo.getPrice() != null ? combo.getPrice() : BigDecimal.ZERO);
 
-        return new ComboResponseDTO(
-                combo.getId(),
-                combo.getName(),
-                combo.getDescription(),
-                combo.getPrice(),
-                originalPrice,
-                savings,
-                combo.getStartDate(),
-                combo.getEndDate(),
-                combo.getIsActive(),
-                isCurrentlyAvailable(combo),
-                itemResponses);
+        // Use first item's image as the combo cover image
+        String comboImageUrl = itemResponses.stream()
+                .filter(i -> i.getImageUrl() != null && !i.getImageUrl().isBlank())
+                .map(ComboItemResponseDTO::getImageUrl)
+                .findFirst().orElse(null);
+
+        ComboResponseDTO response = new ComboResponseDTO();
+        response.setId(combo.getId());
+        response.setName(combo.getName());
+        response.setDescription(combo.getDescription());
+        response.setPrice(combo.getPrice());
+        response.setOriginalPrice(originalPrice);
+        response.setSavings(savings);
+        response.setImageUrl(comboImageUrl);
+        response.setStartDate(combo.getStartDate());
+        response.setEndDate(combo.getEndDate());
+        response.setActive(combo.getIsActive());
+        response.setAvailableNow(isCurrentlyAvailable(combo));
+        response.setItems(itemResponses);
+        return response;
     }
 
     private boolean isCurrentlyAvailable(Combo combo) {
