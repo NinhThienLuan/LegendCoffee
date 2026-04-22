@@ -6,10 +6,15 @@ import fpt.legendcoffee.dto.app.*;
 import fpt.legendcoffee.dto.ghn.*;
 import fpt.legendcoffee.entity.Order;
 import fpt.legendcoffee.entity.ShippingInfo;
+import fpt.legendcoffee.entity.enumeration.OrderStatus;
+import fpt.legendcoffee.entity.enumeration.PaymentStatus;
 import fpt.legendcoffee.repository.OrderRepository;
+import fpt.legendcoffee.repository.PaymentRepository;
 import fpt.legendcoffee.repository.ShippingInfoRepository;
 import fpt.legendcoffee.service.GHNService;
 import fpt.legendcoffee.service.ShippingService;
+import fpt.legendcoffee.service.WalletService;
+import fpt.legendcoffee.entity.Payment;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -42,6 +47,8 @@ public class ShippingServiceImpl implements ShippingService {
     private final GHNService ghnService;
     private final ShippingInfoRepository shippingInfoRepository;
     private final OrderRepository orderRepository;
+    private final PaymentRepository paymentRepository;
+    private final WalletService walletService;
     private final GHNProperties props;
 
     // ================================================================
@@ -86,9 +93,9 @@ public class ShippingServiceImpl implements ShippingService {
 
         // 2. Gọi fee + leadtime song song cho từng dịch vụ (CompletableFuture)
         List<CompletableFuture<ShippingOptionDTO>> futures = services.stream()
-            .filter(service -> service.getServiceTypeId() == null || service.getServiceTypeId() != 5)
-                .map(service -> CompletableFuture.supplyAsync(() ->
-                buildShippingOption(service, query, effectiveWeight)))
+                .filter(service -> service.getServiceTypeId() == null || service.getServiceTypeId() != 5)
+                .map(service -> CompletableFuture
+                        .supplyAsync(() -> buildShippingOption(service, query, effectiveWeight)))
                 .toList();
 
         // 3. Chờ tất cả hoàn thành và gộp kết quả
@@ -96,14 +103,16 @@ public class ShippingServiceImpl implements ShippingService {
         for (CompletableFuture<ShippingOptionDTO> future : futures) {
             try {
                 ShippingOptionDTO opt = future.get();
-                if (opt != null) options.add(opt);
+                if (opt != null)
+                    options.add(opt);
             } catch (Exception e) {
                 log.warn("[Shipping] Failed to get option for one service: {}", e.getMessage());
             }
         }
 
         if (options.isEmpty()) {
-            throw new GHNException("GHN không trả được phí vận chuyển cho địa chỉ này. Vui lòng kiểm tra cấu hình kho gửi hoặc thử địa chỉ khác.");
+            throw new GHNException(
+                    "GHN không trả được phí vận chuyển cho địa chỉ này. Vui lòng kiểm tra cấu hình kho gửi hoặc thử địa chỉ khác.");
         }
 
         return options;
@@ -176,7 +185,8 @@ public class ShippingServiceImpl implements ShippingService {
             }
 
             for (DistrictDTO district : districts) {
-                if (district != null && district.getDistrictId() != null && district.getDistrictId().equals(fromDistrictId)) {
+                if (district != null && district.getDistrictId() != null
+                        && district.getDistrictId().equals(fromDistrictId)) {
                     effectiveFromDistrictName = district.getDistrictName();
                     effectiveFromProvinceName = province.getProvinceName();
                     return;
@@ -214,17 +224,17 @@ public class ShippingServiceImpl implements ShippingService {
                     .build();
 
             // Gọi song song fee + leadtime cho service này
-            CompletableFuture<FeeResponseDTO> feeFuture =
-                    CompletableFuture.supplyAsync(() -> ghnService.calculateFee(feeReq));
-            CompletableFuture<LeadtimeResponseDTO> leadFuture =
-                    CompletableFuture.supplyAsync(() -> ghnService.getLeadtime(leadReq));
+            CompletableFuture<FeeResponseDTO> feeFuture = CompletableFuture
+                    .supplyAsync(() -> ghnService.calculateFee(feeReq));
+            CompletableFuture<LeadtimeResponseDTO> leadFuture = CompletableFuture
+                    .supplyAsync(() -> ghnService.getLeadtime(leadReq));
 
             FeeResponseDTO fee = feeFuture.get();
             LeadtimeResponseDTO lead = leadFuture.get();
 
             LocalDateTime leadtime = lead.getLeadtime() != null
                     ? LocalDateTime.ofInstant(Instant.ofEpochSecond(lead.getLeadtime()),
-                                              ZoneId.of("Asia/Ho_Chi_Minh"))
+                            ZoneId.of("Asia/Ho_Chi_Minh"))
                     : null;
 
             return ShippingOptionDTO.builder()
@@ -312,7 +322,7 @@ public class ShippingServiceImpl implements ShippingService {
                 .serviceId(info.getServiceId())
                 .serviceTypeId(2) // Bắt buộc truyền 2 (Giao chuẩn)
                 .paymentTypeId(info.getPaymentTypeId())
-                .weight(500)   // TODO: tính từ giỏ hàng thực tế
+                .weight(500) // TODO: tính từ giỏ hàng thực tế
                 .length(20)
                 .width(20)
                 .height(10)
@@ -325,8 +335,7 @@ public class ShippingServiceImpl implements ShippingService {
                                 .name("Đơn hàng Legend Coffee")
                                 .quantity(1)
                                 .weight(500)
-                                .build()
-                ))
+                                .build()))
                 .build();
 
         // Gọi GHN API tạo đơn
@@ -415,8 +424,10 @@ public class ShippingServiceImpl implements ShippingService {
                 .build());
 
         // BƯỚC 2: Đang vận chuyển (Nếu status thuộc nhóm đang giao hoặc đã xong)
-        boolean isDelivering = finalStatus.contains("deliv") || finalStatus.contains("transport") || finalStatus.contains("picking");
-        boolean isFinished = finalStatus.contains("delivered") || finalStatus.contains("received") || finalStatus.contains("finish");
+        boolean isDelivering = finalStatus.contains("deliv") || finalStatus.contains("transport")
+                || finalStatus.contains("picking");
+        boolean isFinished = finalStatus.contains("delivered") || finalStatus.contains("received")
+                || finalStatus.contains("finish");
 
         if (isDelivering || isFinished) {
             timeline.add(OrderStatusDTO.LogItemDTO.builder()
@@ -475,8 +486,10 @@ public class ShippingServiceImpl implements ShippingService {
         ShippingInfo info = shippingInfoRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new GHNException("Không tìm thấy thông tin vận chuyển"));
 
-        // Kiểm tra trạng thái trong DB: chỉ cho phép huỷ khi còn ở trạng thái 'ready_to_pick'
-        // Tránh phụ thuộc hoàn toàn vào API GHN nếu trạng thái trên hệ thống đối tác chưa cập nhật kịp
+        // Kiểm tra trạng thái trong DB: chỉ cho phép huỷ khi còn ở trạng thái
+        // 'ready_to_pick'
+        // Tránh phụ thuộc hoàn toàn vào API GHN nếu trạng thái trên hệ thống đối tác
+        // chưa cập nhật kịp
         if (!"ready_to_pick".equalsIgnoreCase(info.getStatus())) {
             log.warn("[Shipping] Không thể huỷ đơn {} vì trạng thái DB hiện tại là: {}",
                     info.getGhnOrderCode(), info.getStatus());
@@ -487,8 +500,49 @@ public class ShippingServiceImpl implements ShippingService {
         if (success) {
             info.setStatus("cancel");
             shippingInfoRepository.save(info);
-            log.info("[Shipping] Order {} cancelled successfully", info.getGhnOrderCode());
+
+            // Cập nhật trạng thái đơn hàng thành CANCELLED
+            Order order = info.getOrder();
+            order.setStatus(OrderStatus.CANCELLED);
+            orderRepository.save(order);
+
+            log.info("[Shipping] Order {} cancelled successfully and Order status updated to CANCELLED", info.getGhnOrderCode());
+
+            // Xử lý hoàn tiền trực tiếp nếu đã thanh toán
+            try {
+                processRefund(order);
+            } catch (Exception e) {
+                log.error("[Shipping] Lỗi khi hoàn tiền cho đơn hàng #{}: {}", order.getId(), e.getMessage());
+            }
         }
         return success;
+    }
+
+    private void processRefund(Order order) {
+        // Tìm thanh toán thành công của đơn hàng
+        java.util.Optional<Payment> paymentOpt = paymentRepository.findByOrderIdAndStatus(order.getId(), PaymentStatus.SUCCESS);
+        
+        if (paymentOpt.isPresent()) {
+            Payment payment = paymentOpt.get();
+            java.math.BigDecimal refundAmount = payment.getAmount();
+
+            if (refundAmount != null && refundAmount.compareTo(java.math.BigDecimal.ZERO) > 0) {
+                String adminDesc = "Hoàn tiền cho đơn hàng #" + order.getId() + " bị huỷ";
+                String userDesc = "Hoàn tiền từ đơn hàng #" + order.getId();
+
+                // 1. Trừ tiền admin
+                walletService.debitAdminWallet(refundAmount, adminDesc);
+
+                // 2. Cộng tiền cho user
+                if (order.getUser() != null) {
+                    walletService.creditWallet(order.getUser().getId(), refundAmount, userDesc);
+                    log.info("[Shipping] Đã hoàn {} cho UserId={} từ đơn hàng #{}", refundAmount, order.getUser().getId(), order.getId());
+                } else {
+                    log.warn("[Shipping] Không tìm thấy User để hoàn tiền cho đơn hàng #{}", order.getId());
+                }
+            }
+        } else {
+            log.info("[Shipping] Đơn hàng #{} chưa có thanh toán thành công, không cần hoàn tiền", order.getId());
+        }
     }
 }

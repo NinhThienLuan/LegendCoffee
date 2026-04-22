@@ -12,6 +12,7 @@ import fpt.legendcoffee.service.VNPayApplicationService;
 import fpt.legendcoffee.service.VNPayService;
 import fpt.legendcoffee.repository.OrderRepository;
 import fpt.legendcoffee.repository.PaymentRepository;
+import fpt.legendcoffee.service.WalletService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -37,15 +38,18 @@ public class VNPayApplicationServiceImpl implements VNPayApplicationService {
     private final OrderRepository orderRepository;
     private final PaymentRepository paymentRepository;
     private final ShippingService shippingService;
+    private final WalletService walletService;
 
     public VNPayApplicationServiceImpl(VNPayService vnPayService,
             OrderRepository orderRepository,
             PaymentRepository paymentRepository,
-            ShippingService shippingService) {
+            ShippingService shippingService,
+            WalletService walletService) {
         this.vnPayService = vnPayService;
         this.orderRepository = orderRepository;
         this.paymentRepository = paymentRepository;
         this.shippingService = shippingService;
+        this.walletService = walletService;
     }
 
     // createPayment — Tạo Payment PENDING + URL VNPay
@@ -187,6 +191,14 @@ public class VNPayApplicationServiceImpl implements VNPayApplicationService {
                 log.error("[VNPay IPN] Thanh toán thành công nhưng lỗi khi đẩy sang GHN: {}", e.getMessage());
                 // Tuỳ business: có thể cho phép admin push tay sau nếu lỗi ở đây
             }
+
+            // Cộng tiền vào ví admin
+            try {
+                String description = "Nhận tiền từ đơn hàng #" + order.getId();
+                walletService.creditAdminWallet(receivedAmount, description);
+            } catch (Exception e) {
+                log.error("[VNPay IPN] Lỗi khi cộng tiền vào ví admin: {}", e.getMessage());
+            }
         } else {
             log.warn("[VNPay IPN] Thanh toán thất bại - TxnRef={}, ResponseCode={}",
                     txnRef, responseCode);
@@ -226,7 +238,6 @@ public class VNPayApplicationServiceImpl implements VNPayApplicationService {
 
     /**
      * Chuyển VNPay response code sang thông báo lỗi tiếng Việt.
-     * Xem đầy đủ tại: https://sandbox.vnpayment.vn/apis/docs/thanh-toan-pay/pay.md
      */
     private String resolveErrorMessage(String responseCode) {
         if (responseCode == null)
