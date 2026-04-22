@@ -1,10 +1,13 @@
 package fpt.legendcoffee.controller;
 
+import fpt.legendcoffee.common.util.WebUtils;
 import fpt.legendcoffee.dto.app.CheckoutRequestDTO;
 import fpt.legendcoffee.entity.Order;
 import fpt.legendcoffee.entity.ShippingInfo;
 import fpt.legendcoffee.service.OrderService;
 import fpt.legendcoffee.service.ShippingService;
+import fpt.legendcoffee.service.VNPayApplicationService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +24,7 @@ public class OrderController {
 
     private final ShippingService shippingService;
     private final OrderService orderService;
+    private final VNPayApplicationService vnPayApplicationService;
 
     // =========================================================================
     // Trang danh sách đơn hàng & chi tiết
@@ -71,6 +75,7 @@ public class OrderController {
     @PostMapping("/checkout/place-order")
     public String placeOrder(@Valid @ModelAttribute("checkoutRequest") CheckoutRequestDTO checkout,
                              BindingResult bindingResult,
+                             HttpServletRequest request,
                              Model model,
                              RedirectAttributes redirectAttributes) {
 
@@ -80,19 +85,18 @@ public class OrderController {
         }
 
         try {
-            // Bước 1 — Lưu Order vào DB, gán orderId vào checkout
+            // Bước 1 — Lưu Order vào DB
             Order order = orderService.createOrder(checkout);
-            checkout.setOrderId(order.getId());
+            
+            // Bước 2 — Lưu thông tin vận chuyển (chưa đẩy sang GHN)
+            shippingService.saveShippingInfo(checkout, order);
 
-            // Bước 2 — Tạo đơn GHN (yêu cầu checkout.orderId đã được gán)
-            ShippingInfo shippingInfo = shippingService.createGHNOrder(checkout);
+            // Bước 3 — Chuyển hướng sang thanh toán online qua VNPay
+            String ipAddress = WebUtils.getClientIp(request);
+            String paymentUrl = vnPayApplicationService.createPayment(order.getId(), ipAddress);
 
-            log.info("[Checkout] Đặt hàng thành công. GHN code: {}", shippingInfo.getGhnOrderCode());
-            redirectAttributes.addFlashAttribute("successMessage",
-                    "Đặt hàng thành công! Mã vận chuyển: " + shippingInfo.getGhnOrderCode());
-
-            // Mặc định route "/orders/{id}" không tồn tại và bị chặn bởi Security -> Redirect sang trang tracking
-            return "redirect:/orders/" + checkout.getOrderId() + "/track";
+            log.info("[Checkout] Đặt hàng thành công. Chuyển hướng sang VNPay cho OrderId={}", order.getId());
+            return "redirect:" + paymentUrl;
 
         } catch (Exception e) {
             log.error("[Checkout] Đặt hàng thất bại: {}", e.getMessage(), e);

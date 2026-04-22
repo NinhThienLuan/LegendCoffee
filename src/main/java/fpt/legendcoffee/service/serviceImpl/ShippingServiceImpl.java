@@ -155,43 +155,75 @@ public class ShippingServiceImpl implements ShippingService {
 
     @Override
     @Transactional
-    public ShippingInfo createGHNOrder(CheckoutRequestDTO checkout) {
-        // Lấy đối tượng Order từ DB
-        Order order = orderRepository.findById(checkout.getOrderId())
-                .orElseThrow(() -> new GHNException("Không tìm thấy đơn hàng với ID: " + checkout.getOrderId()));
+    public ShippingInfo saveShippingInfo(CheckoutRequestDTO checkout, Order order) {
+        log.info("[Shipping] Saving shipping info for order: {}", order.getId());
 
-        // Tránh tạo đơn trùng cho cùng một order
-        if (shippingInfoRepository.existsByOrderId(checkout.getOrderId())) {
-            throw new GHNException("Đơn hàng này đã được tạo vận chuyển trước đó");
+        // Tránh tạo thông tin vận chuyển trùng cho cùng một order
+        if (shippingInfoRepository.existsByOrderId(order.getId())) {
+            throw new GHNException("Đơn hàng này đã có thông tin vận chuyển");
+        }
+
+        ShippingInfo info = ShippingInfo.builder()
+                .order(order)
+                .recipientName(checkout.getRecipientName())
+                .recipientPhone(checkout.getRecipientPhone())
+                .recipientAddress(checkout.getRecipientAddress())
+                .provinceId(checkout.getProvinceId())
+                .provinceName(checkout.getProvinceName())
+                .districtId(checkout.getDistrictId())
+                .districtName(checkout.getDistrictName())
+                .wardCode(checkout.getWardCode())
+                .wardName(checkout.getWardName())
+                .serviceId(checkout.getServiceId())
+                .serviceName(checkout.getServiceName())
+                .shippingFee(checkout.getShippingFee())
+                .paymentTypeId(checkout.getPaymentTypeId())
+                .status("pending_payment") // Trạng thái chờ thanh toán
+                .note(checkout.getNote())
+                .build();
+
+        return shippingInfoRepository.save(info);
+    }
+
+    @Override
+    @Transactional
+    public ShippingInfo pushOrderToGHN(Long orderId) {
+        log.info("[Shipping] Pushing order {} to GHN gateway", orderId);
+
+        ShippingInfo info = shippingInfoRepository.findByOrderId(orderId)
+                .orElseThrow(() -> new GHNException("Không tìm thấy thông tin vận chuyển cho đơn hàng: " + orderId));
+
+        if (info.getGhnOrderCode() != null) {
+            log.warn("[Shipping] Order {} already has a GHN code: {}", orderId, info.getGhnOrderCode());
+            return info;
         }
 
         // Tạo request cho GHN
         CreateOrderRequestDTO createReq = CreateOrderRequestDTO.builder()
-                .toName(checkout.getRecipientName())
-                .toPhone(checkout.getRecipientPhone())
-                .toAddress(checkout.getRecipientAddress())
-                .toWardName(checkout.getWardName())
-                .toDistrictName(checkout.getDistrictName())
-                .toProvinceName(checkout.getProvinceName())
-                .toWardCode(checkout.getWardCode())
-                .toDistrictId(checkout.getDistrictId())
-                .serviceId(checkout.getServiceId())
-                .serviceTypeId(2) // Bắt buộc truyền 2 (Giao chuẩn) để tránh lỗi lệch serviceId của tuyến đường
-                .paymentTypeId(checkout.getPaymentTypeId())
+                .toName(info.getRecipientName())
+                .toPhone(info.getRecipientPhone())
+                .toAddress(info.getRecipientAddress())
+                .toWardName(info.getWardName())
+                .toDistrictName(info.getDistrictName())
+                .toProvinceName(info.getProvinceName())
+                .toWardCode(info.getWardCode())
+                .toDistrictId(info.getDistrictId())
+                .serviceId(info.getServiceId())
+                .serviceTypeId(2) // Bắt buộc truyền 2 (Giao chuẩn)
+                .paymentTypeId(info.getPaymentTypeId())
                 .weight(500)   // TODO: tính từ giỏ hàng thực tế
                 .length(20)
                 .width(20)
                 .height(10)
                 .insuranceValue(0L)
-                .codAmount(checkout.getPaymentTypeId() == 2 ? checkout.getShippingFee() : 0L)
-                .note(checkout.getNote())
+                .codAmount(info.getPaymentTypeId() == 2 ? info.getShippingFee() : 0L)
+                .note(info.getNote())
                 .requiredNote("CHOTHUHANG")
-                // BUG GHN "Tên hàng hoá bắt buộc": Thêm mock item cho đến khi tích hợp với cart thật
                 .items(List.of(
                         CreateOrderRequestDTO.OrderItemDTO.builder()
-                                .name("Đơn hàng Legend Coffee") // Tên bắt buộc
-                                .quantity(1)                    // Số lượng bắt buộc
-                                .weight(500)                    // Cân nặng bắt buộc
+                                .name("Đơn hàng Legend Coffee")
+                                .quantity(1)
+                                .weight(500)
                                 .build()
                 ))
                 .build();
@@ -214,28 +246,11 @@ public class ShippingServiceImpl implements ShippingService {
             }
         }
 
-        // Lưu thông tin vận chuyển vào DB
-        // Lưu ý: createdAt / updatedAt được quản lý tự động bởi BaseEntity (JPA Auditing)
-        ShippingInfo info = ShippingInfo.builder()
-                .order(order)                                        // @OneToOne với Order
-                .ghnOrderCode(ghnResponse.getOrderCode())
-                .recipientName(checkout.getRecipientName())
-                .recipientPhone(checkout.getRecipientPhone())
-                .recipientAddress(checkout.getRecipientAddress())
-                .provinceId(checkout.getProvinceId())
-                .provinceName(checkout.getProvinceName())
-                .districtId(checkout.getDistrictId())
-                .districtName(checkout.getDistrictName())
-                .wardCode(checkout.getWardCode())
-                .wardName(checkout.getWardName())
-                .serviceId(checkout.getServiceId())
-                .serviceName(checkout.getServiceName())
-                .shippingFee(ghnResponse.getTotalFee())
-                .paymentTypeId(checkout.getPaymentTypeId())
-                .status("ready_to_pick")
-                .expectedDeliveryTime(expectedTime)
-                .note(checkout.getNote())
-                .build();
+        // Cập nhật thông tin vào DB
+        info.setGhnOrderCode(ghnResponse.getOrderCode());
+        info.setShippingFee(ghnResponse.getTotalFee());
+        info.setStatus("ready_to_pick");
+        info.setExpectedDeliveryTime(expectedTime);
 
         return shippingInfoRepository.save(info);
     }
