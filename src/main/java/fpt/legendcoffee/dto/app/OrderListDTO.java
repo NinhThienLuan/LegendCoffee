@@ -21,6 +21,10 @@ public class OrderListDTO {
     private String firstItemDetail;
     private String firstItemImage;
 
+    // Logic cho stack ảnh
+    private java.util.List<String> itemImages;
+    private int additionalItemsCount;
+
     // Trạng thái shipping (từ ShippingInfo)
     private String shippingStatus; // ready_to_pick, delivering, delivered, cancel...
     private String shippingStatusLabel; // Chờ lấy hàng, Đang giao hàng...
