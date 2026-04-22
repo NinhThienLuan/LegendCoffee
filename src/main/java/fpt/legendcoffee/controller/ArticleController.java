@@ -85,12 +85,17 @@ public class ArticleController {
                         """);
 
         model.addAttribute("article", article);
-        return "articles/articles";
+        return "articles/detail";
     }
 
-    @GetMapping("/articles/detail")
-    public String articleDetail(Model model) {
-        return "articles/articles";
+    @GetMapping("/articles")
+    public String articleList(Model model) {
+        List<ArticleResponseDTO> articles = articleService.getAllArticles()
+                .stream()
+                .map(ArticleMapper::toResponseDTO)
+                .toList();
+        model.addAttribute("articles", articles);
+        return "articles/list";
     }
 
     @GetMapping("/admin/articles/view/{id}")
@@ -100,7 +105,7 @@ public class ArticleController {
             return "redirect:/admin/posts";
         }
         model.addAttribute("article", article);
-        return "articles/articles"; // This points to your existing template
+        return "articles/detail"; // This points to your existing template
     }
 
     @GetMapping("/admin/posts")
