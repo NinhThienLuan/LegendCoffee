@@ -82,13 +82,15 @@ public class AuthController {
             this.securityContextHolderStrategy.setContext(context);
             this.securityContextRepository.saveContext(context, httpRequest, httpResponse);
 
-            // Force change password detection
             String forceChangeEmail = (String) httpRequest.getSession().getAttribute("forceChangeEmail");
             if (request.email().equalsIgnoreCase(forceChangeEmail)) {
                 return "redirect:/login?forceChange=true&email=" + request.email();
             }
 
-            return "redirect:/home";
+            CustomUserDetails userDetails = (CustomUserDetails) authenticationResponse.getPrincipal();
+            boolean isAdmin = userDetails.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+            return isAdmin ? "redirect:/admin" : "redirect:/home";
         } catch (Exception e) {
             log.warn("Login failed for email={}", request.email());
             model.addAttribute("errorMessage", "Email hoặc mật khẩu không chính xác.");
