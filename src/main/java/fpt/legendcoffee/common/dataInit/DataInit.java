@@ -323,6 +323,7 @@ public class DataInit implements CommandLineRunner {
                                         .user(admin).title("Nghệ thuật pha chế Pour Over")
                                         .summary("Bí quyết kiểm soát dòng chảy để có tách cà phê hoàn hảo.")
                                         .contentJson("{\"time\":1713550000000,\"version\":\"2.29.1\",\"blocks\":[{\"type\":\"paragraph\",\"data\":{\"text\":\"Đổ nước quá nhanh sẽ làm nhạt cà phê...\"}}]}")
+                                        .coverImageUrl("https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")
                                         .status(ArticleStatus.PUBLISHED).publishedAt(LocalDateTime.now()).isActive(true)
                                         .build();
 
@@ -330,6 +331,7 @@ public class DataInit implements CommandLineRunner {
                                         .user(admin).title("Phân biệt Arabica và Robusta")
                                         .summary("Những điểm khác biệt cốt lõi giữa hai dòng hạt phổ biến nhất.")
                                         .contentJson("{\"time\":1713550000001,\"version\":\"2.29.1\",\"blocks\":[{\"type\":\"paragraph\",\"data\":{\"text\":\"Arabica có vị chua thanh, Robusta đắng đậm...\"}}]}")
+                                        .coverImageUrl("https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")
                                         .status(ArticleStatus.PUBLISHED).publishedAt(LocalDateTime.now().minusDays(1))
                                         .isActive(true).build();
 
@@ -337,6 +339,7 @@ public class DataInit implements CommandLineRunner {
                                         .user(admin).title("Bảo quản cà phê đúng cách")
                                         .summary("Hướng dẫn bảo quản hạt tránh mất hương vị.")
                                         .contentJson("{\"time\":1713550000002,\"version\":\"2.29.1\",\"blocks\":[{\"type\":\"paragraph\",\"data\":{\"text\":\"Tuyệt đối không để cà phê hạt vào tủ lạnh...\"}}]}")
+                                        .coverImageUrl("https://images.unsplash.com/photo-1556742526-795a8eac090e?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")
                                         .status(ArticleStatus.PUBLISHED).publishedAt(LocalDateTime.now().minusDays(2))
                                         .isActive(true).build();
 
@@ -344,6 +347,7 @@ public class DataInit implements CommandLineRunner {
                                         .user(admin).title("Cà phê Cold Brew giải nhiệt mùa hè")
                                         .summary("Công thức ngâm lạnh tại nhà cực kỳ dễ làm.")
                                         .contentJson("{\"time\":1713550000003,\"version\":\"2.29.1\",\"blocks\":[{\"type\":\"paragraph\",\"data\":{\"text\":\"Tỷ lệ 1:10 và thời gian ngâm 16-24 tiếng...\"}}]}")
+                                        .coverImageUrl("https://images.unsplash.com/photo-1495774856032-8b90bbb32b32?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")
                                         .status(ArticleStatus.PUBLISHED).publishedAt(LocalDateTime.now().minusDays(3))
                                         .isActive(true).build();
 
@@ -351,6 +355,7 @@ public class DataInit implements CommandLineRunner {
                                         .user(admin).title("Tương lai của ngành Specialty Coffee")
                                         .summary("Xu hướng trải nghiệm cà phê đặc sản năm nay.")
                                         .contentJson("{\"time\":1713550000004,\"version\":\"2.29.1\",\"blocks\":[{\"type\":\"paragraph\",\"data\":{\"text\":\"Người dùng đang tìm kiếm những nốt hương hoa quả...\"}}]}")
+                                        .coverImageUrl("https://images.unsplash.com/photo-1498804103079-a6351b050096?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")
                                         .status(ArticleStatus.PUBLISHED).publishedAt(LocalDateTime.now().minusDays(4))
                                         .isActive(true).build();
 
