@@ -4,8 +4,5 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 public record ForgotPasswordRequestDTO(
-        @NotBlank(message = "Email is required")
-        @Email(message = "Invalid email format")
-        String email
-) {
+                @NotBlank(message = "Email không được để trống") @Email(message = "Email không hợp lệ") String email) {
 }

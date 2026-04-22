@@ -192,7 +192,9 @@ public class AuthController {
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Thông tin không hợp lệ. Mật khẩu phải từ 6 ký tự.");
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.resetPasswordDto",
+                    bindingResult);
+            redirectAttributes.addFlashAttribute("resetPasswordDto", request);
             return "redirect:/reset-password";
         }
         try {
@@ -234,7 +236,9 @@ public class AuthController {
             RedirectAttributes redirectAttributes,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
         if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Thông tin không hợp lệ.");
+            redirectAttributes.addFlashAttribute("profileDto",
+                    bindingResult);
+            redirectAttributes.addFlashAttribute("profileDto", profileDto);
             return "redirect:/profile";
         }
         try {
@@ -245,6 +249,13 @@ public class AuthController {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/profile";
         }
+    }
+
+    @GetMapping("/api/auth/check-email")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public String checkEmail(@org.springframework.web.bind.annotation.RequestParam String email, Model model) {
+        boolean exists = authenService.isEmailValid(email);
+        return exists ? "exists" : "not_exists";
     }
 
     private boolean isAuthenticated() {
