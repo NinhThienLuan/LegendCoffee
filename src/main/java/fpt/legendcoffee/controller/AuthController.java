@@ -4,6 +4,7 @@ import fpt.legendcoffee.dto.request.ForgotPasswordRequestDTO;
 import fpt.legendcoffee.dto.request.LoginRequestDTO;
 import fpt.legendcoffee.dto.request.RegisterRequestDTO;
 import fpt.legendcoffee.dto.request.ResetPasswordRequestDTO;
+import fpt.legendcoffee.dto.response.ProfileDTO;
 import fpt.legendcoffee.service.AuthenService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -38,10 +39,22 @@ public class AuthController {
             .getContextHolderStrategy();
     private final AuthenService authenService;
 
+    @GetMapping("/home")
+    public String home() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            return "redirect:/admin";
+        }
+        return "index";
+    }
+
     @GetMapping("/login")
     public String showLoginForm(Model model) {
-        if (isAuthenticated()) {
-            return "redirect:/home";
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
+            boolean isAdmin = auth.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+            return isAdmin ? "redirect:/admin" : "redirect:/home";
         }
         if (!model.containsAttribute("loginDto")) {
             model.addAttribute("loginDto", new LoginRequestDTO("", ""));
@@ -94,8 +107,11 @@ public class AuthController {
 
     @GetMapping("/register")
     public String showRegisterForm(Model model) {
-        if (isAuthenticated()) {
-            return "redirect:/home";
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
+            boolean isAdmin = auth.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+            return isAdmin ? "redirect:/admin" : "redirect:/home";
         }
         if (!model.containsAttribute("registerDto")) {
             model.addAttribute("registerDto", new RegisterRequestDTO("", "", "", "", ""));
@@ -136,8 +152,8 @@ public class AuthController {
 
     @PostMapping("/forgot-password")
     public String forgotPassword(@Valid @ModelAttribute("forgotPasswordDto") ForgotPasswordRequestDTO request,
-                                 BindingResult bindingResult,
-                                 RedirectAttributes redirectAttributes) {
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Email không hợp lệ.");
             return "redirect:/login";
@@ -149,7 +165,8 @@ public class AuthController {
             return "redirect:/login";
         } catch (Exception e) {
             log.error("Error processing forgot password for {}: {}", request.email(), e.getMessage(), e);
-            // If it's a mail auth error, provide a clearer message than just 'Authentication failed'
+            // If it's a mail auth error, provide a clearer message than just
+            // 'Authentication failed'
             String errorMsg = e.getMessage();
             if (errorMsg != null && errorMsg.toLowerCase().contains("authentication failed")) {
                 errorMsg = "Lỗi hệ thống: Không thể gửi email (Sai cấu hình Gmail).";
@@ -172,8 +189,8 @@ public class AuthController {
 
     @PostMapping("/reset-password")
     public String resetPassword(@Valid @ModelAttribute("resetPasswordDto") ResetPasswordRequestDTO request,
-                                BindingResult bindingResult,
-                                RedirectAttributes redirectAttributes) {
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Thông tin không hợp lệ. Mật khẩu phải từ 6 ký tự.");
             return "redirect:/reset-password";
@@ -188,8 +205,8 @@ public class AuthController {
 
             // Clear force change state
             org.springframework.web.context.request.RequestContextHolder.getRequestAttributes()
-                .removeAttribute("forceChangeEmail",
-                                org.springframework.web.context.request.RequestAttributes.SCOPE_SESSION);
+                    .removeAttribute("forceChangeEmail",
+                            org.springframework.web.context.request.RequestAttributes.SCOPE_SESSION);
 
             redirectAttributes.addFlashAttribute("successMessage", "Đổi mật khẩu thành công! Vui lòng đăng nhập lại.");
             return "redirect:/login";
@@ -210,6 +227,26 @@ public class AuthController {
         model.addAttribute("profileDto", authenService.getProfile(userId));
         return "authen/profile";
     }
+
+    @PostMapping("/edit-profile")
+    public String editProfile(@Valid @ModelAttribute("profileDto") ProfileDTO profileDto,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Thông tin không hợp lệ.");
+            return "redirect:/profile";
+        }
+        try {
+            authenService.updateProfile(userDetails.getUser().getId(), profileDto);
+            redirectAttributes.addFlashAttribute("successMessage", "Cập nhật thông tin thành công!");
+            return "redirect:/profile";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/profile";
+        }
+    }
+
     private boolean isAuthenticated() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication.getPrincipal().equals("anonymousUser")) {

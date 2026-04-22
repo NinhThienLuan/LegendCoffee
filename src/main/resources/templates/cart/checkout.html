@@ -473,9 +473,15 @@
                 shippingContainer.innerHTML = '<div class="col-span-full py-8 text-center"><div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-primary border-t-transparent"></div></div>';
 
                 try {
+                    const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+                    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
                     const response = await fetch('/api/shipping/options', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            [csrfHeader]: csrfToken
+                        },
                         body: JSON.stringify({
                             districtId: parseInt(districtId),
                             wardCode: wardCode,
@@ -597,15 +603,12 @@
                     const quantity = Number(item.quantity) || 0;
                     if (quantity <= 0) return;
 
-                    const variantId = item.variantId || item.id;
-                    const comboId = item.comboId;
-
-                    if (variantId) {
+                    // Strictly enforce: variantId OR comboId, never both.
+                    if (item.comboId) {
+                        hiddenContainer.appendChild(createHiddenField(`items[${index}].comboId`, item.comboId));
+                    } else {
+                        const variantId = item.variantId || item.id;
                         hiddenContainer.appendChild(createHiddenField(`items[${index}].variantId`, variantId));
-                    }
-
-                    if (comboId) {
-                        hiddenContainer.appendChild(createHiddenField(`items[${index}].comboId`, comboId));
                     }
 
                     hiddenContainer.appendChild(createHiddenField(`items[${index}].quantity`, quantity));
