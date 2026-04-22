@@ -2,8 +2,7 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <body>
-  <nav th:fragment="navbar(navItems)"
-    id="mainNavbar"
+  <nav th:fragment="navbar(navItems)" id="mainNavbar"
     class="fixed top-0 w-full z-[100] bg-[#faf9f5]/85 dark:bg-[#1a1614]/85 backdrop-blur-md border-b border-outline-variant/20 transition-transform duration-300">
     <div class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20">
       <!-- Container chính dùng flex và justify-between để đẩy 3 cụm ra 2 đầu và giữa -->
@@ -28,9 +27,15 @@
           <a href="/products"
             th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/products')} ? ' text-[#351f1b] dark:text-[#ffffff]' : ' text-[#5b4a45] dark:text-[#d4c3bf] hover:text-[#351f1b] dark:hover:text-[#ffffff]'"
             class="transition-colors duration-300">Sản Phẩm</a>
+          <a href="/combos"
+            th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/combos')} ? ' text-[#351f1b] dark:text-[#ffffff]' : ' text-[#5b4a45] dark:text-[#d4c3bf] hover:text-[#351f1b] dark:hover:text-[#ffffff]'"
+            class="transition-colors duration-300">Combo</a>
           <a href="/orders"
             th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/orders')} ? ' text-[#351f1b] dark:text-[#ffffff]' : ' text-[#5b4a45] dark:text-[#d4c3bf] hover:text-[#351f1b] dark:hover:text-[#ffffff]'"
             class="transition-colors duration-300">Đơn hàng</a>
+          <a href="/articles"
+            th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/orders')} ? ' text-[#351f1b] dark:text-[#ffffff]' : ' text-[#5b4a45] dark:text-[#d4c3bf] hover:text-[#351f1b] dark:hover:text-[#ffffff]'"
+            class="transition-colors duration-300">Bài viết</a>
         </div>
 
         <!-- 3. CỤM PHẢI: ICONS -->
@@ -42,7 +47,8 @@
                 class="h-9 w-9 inline-flex items-center justify-center text-[#5b4a45] hover:text-[#351f1b] hover:bg-[#efe9e5] rounded-full transition-colors"
                 aria-label="Cart">
                 <span class="material-symbols-outlined text-[20px]">shopping_cart</span>
-                <span id="cart-badge" class="absolute -top-1 -right-1 bg-primary text-on-primary text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center opacity-0 transition-opacity">0</span>
+                <span id="cart-badge"
+                  class="absolute -top-1 -right-1 bg-primary text-on-primary text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center opacity-0 transition-opacity">0</span>
               </a>
             </div>
 
@@ -81,45 +87,87 @@
           <a href="/products"
             th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/products')} ? ' text-[#351f1b]' : ' text-[#6f605c] hover:text-[#351f1b]'"
             class="transition-colors">Sản Phẩm</a>
-          <a href="/products"
+          <a href="/combos"
+            th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/combos')} ? ' text-[#351f1b]' : ' text-[#6f605c] hover:text-[#351f1b]'"
+            class="transition-colors">Combo</a>
+          <a href="/orders"
             th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/orders')} ? ' text-[#351f1b]' : ' text-[#6f605c] hover:text-[#351f1b]'"
             class="transition-colors">Đơn hàng</a>
         </div>
       </div>
     </div>
   </nav>
-</div>
-<script>
-// Navbar scroll behavior
-let lastScrollY = window.scrollY;
-const navbar = document.getElementById('mainNavbar');
-window.addEventListener('scroll', () => {
-  if (!navbar) return;
-  if (window.scrollY > lastScrollY && window.scrollY > 40) {
-    navbar.style.transform = 'translateY(-100%)';
-  } else {
-    navbar.style.transform = 'translateY(0)';
-  }
-  lastScrollY = window.scrollY;
-});
+  <script>
+    // Navbar scroll behavior
+    let lastScrollY = window.scrollY;
+    const navbar = document.getElementById('mainNavbar');
+    window.addEventListener('scroll', () => {
+      if (!navbar) return;
+      if (window.scrollY > lastScrollY && window.scrollY > 40) {
+        navbar.style.transform = 'translateY(-100%)';
+      } else {
+        navbar.style.transform = 'translateY(0)';
+      }
+      lastScrollY = window.scrollY;
+    });
 
-// Cart Badge Update Logic
-function updateNavbarCartBadge() {
-  const badge = document.getElementById('cart-badge');
-  if (!badge || !window.CartSystem) return;
-  
-  const count = window.CartSystem.getCartCount();
-  if (count > 0) {
-    badge.innerText = count;
-    badge.classList.remove('opacity-0');
-  } else {
-    badge.classList.add('opacity-0');
-  }
-}
+    // Cart Badge Update Logic
+    function updateNavbarCartBadge() {
+      const badge = document.getElementById('cart-badge');
+      if (!badge) {
+        console.log('[CartBadge] Badge element not found');
+        return;
+      }
 
-window.addEventListener('load', updateNavbarCartBadge);
-window.addEventListener('cartUpdated', updateNavbarCartBadge);
-</script>
+      let count = 0;
+      if (window.CartSystem && typeof window.CartSystem.getCartCount === 'function') {
+        count = window.CartSystem.getCartCount();
+        console.log('[CartBadge] Got cart count from CartSystem:', count);
+      } else {
+        // Fallback: read cart from localStorage
+        try {
+          const cartRaw = localStorage.getItem('cart');
+          console.log('[CartBadge] Fallback to localStorage. Raw cart:', cartRaw);
+          if (cartRaw) {
+            const cart = JSON.parse(cartRaw);
+            if (Array.isArray(cart)) {
+              count = cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
+              console.log('[CartBadge] Parsed cart array. Total quantity:', count, cart);
+            } else {
+              console.log('[CartBadge] Cart in localStorage is not an array:', cart);
+            }
+          } else {
+            console.log('[CartBadge] No cart found in localStorage');
+          }
+        } catch (e) {
+          console.log('[CartBadge] Error parsing cart from localStorage:', e);
+        }
+      }
+      if (count > 0) {
+        badge.innerText = count;
+        badge.classList.remove('opacity-0');
+      } else {
+        badge.classList.add('opacity-0');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      console.log('[CartBadge] Script loaded, DOMContentLoaded');
+      updateNavbarCartBadge();
+      console.log('[CartBadge] DOMContentLoaded, badge updated');
+    });
+    window.addEventListener('cartUpdated', function () {
+      updateNavbarCartBadge();
+      console.log('[CartBadge] cartUpdated event, badge updated');
+    });
+    // Also update on storage event (multi-tab)
+    window.addEventListener('storage', function (e) {
+      if (e.key === 'cart') {
+        updateNavbarCartBadge();
+        console.log('[CartBadge] storage event, badge updated');
+      }
+    });
+  </script>
 </body>
 
 </html>

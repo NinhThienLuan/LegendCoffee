@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,18 +26,22 @@ public class DataInit implements CommandLineRunner {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
     private final ProductVariantRepository productVariantRepository;
+    private final ComboRepository comboRepository;
     private final ArticleRepository articleRepository;
     private final CategoryRepository categoryRepository;
+    private final ShippingInfoRepository shippingInfoRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
-    public void run(String... args) throws Exception {
+    public void run(@NonNull String... args) {
         log.info("Starting data initialization...");
 
         seedUsers();
         seedData();
+        seedCombos();
 
         log.info("Data initialization completed.");
     }
@@ -44,7 +49,7 @@ public class DataInit implements CommandLineRunner {
     private void seedUsers() {
         if (userRepository.count() == 0) {
             log.info("Seeding users...");
-            
+
             User admin = User.builder()
                     .username("Admin Legend")
                     .email("admin@legendcoffee.com")
@@ -97,7 +102,8 @@ public class DataInit implements CommandLineRunner {
                     .origin("Đà Lạt, Việt Nam")
                     .expiryDate(LocalDate.now().plusMonths(12))
                     .manufacturerDate(LocalDate.now())
-                    .imageUrl("/images/arabica.png")
+                    .imageUrl(
+                            "https://res.cloudinary.com/myimagename/image/upload/q_auto/f_auto/v1776703528/Gemini_Generated_Image_ymu9s0ymu9s0ymu9_jqlxbd.png")
                     .isActive(true)
                     .build();
             productRepository.save(arabica);
@@ -130,7 +136,8 @@ public class DataInit implements CommandLineRunner {
                     .origin("Đắk Lắk, Việt Nam")
                     .expiryDate(LocalDate.now().plusMonths(12))
                     .manufacturerDate(LocalDate.now())
-                    .imageUrl("/images/robusta.png")
+                    .imageUrl(
+                            "https://res.cloudinary.com/myimagename/image/upload/q_auto/f_auto/v1776704007/39e9e7ac-801d-4380-80c0-a6aeabd3590e_s8s2jh.jpg")
                     .isActive(true)
                     .build();
             productRepository.save(robusta);
@@ -154,7 +161,8 @@ public class DataInit implements CommandLineRunner {
                     .origin("Lâm Đồng, Việt Nam")
                     .expiryDate(LocalDate.now().plusMonths(12))
                     .manufacturerDate(LocalDate.now())
-                    .imageUrl("/images/ground.png")
+                    .imageUrl(
+                            "https://res.cloudinary.com/myimagename/image/upload/q_auto/f_auto/v1776704017/3530370d-f499-49b9-949c-f8ca3780dfa9_xmutfc.jpg")
                     .isActive(true)
                     .build();
             productRepository.save(espressoGround);
@@ -174,127 +182,224 @@ public class DataInit implements CommandLineRunner {
             User admin = userRepository.findByEmail("admin@legendcoffee.com").orElse(null);
             Article article1 = Article.builder()
                     .user(admin)
-                    .title("Cách pha cà phê Pour-over chuẩn vị tại nhà")
-                    .summary("Khám phá kỹ thuật pha Pour-over để tận hưởng trọn vẹn hương vị của hạt Arabica.")
-                    .contentJson("{\"content\": [{\"type\": \"paragraph\", \"text\": \"Dụng cụ cần thiết: Phễu lọc, giấy lọc, bình đựng, cân điện tử...\"}]}")
-                    .coverImageUrl("/images/pourover.png")
+                    .title("Tối ưu hóa chuỗi cung ứng cà phê trong kỷ nguyên số")
+                    .summary("Bài viết mô phỏng dữ liệu từ model để render nội dung động theo format Editor.js.")
+                    .contentJson(
+                            """
+                                    {
+                                        "time": 1713550000000,
+                                        "version": "2.29.1",
+                                        "blocks": [
+                                            {
+                                                "type": "header",
+                                                "data": {
+                                                    "text": "Tư duy vận hành hiện đại cho ngành cà phê",
+                                                    "level": 2
+                                                }
+                                            },
+                                            {
+                                                "type": "paragraph",
+                                                "data": {
+                                                    "text": "Doanh nghiệp B2B cần kết nối rang xay, kho vận và dữ liệu thời gian thực để giảm rủi ro và tăng hiệu suất."
+                                                }
+                                            },
+                                            {
+                                                "type": "image",
+                                                "data": {
+                                                    "url": "https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=1200&q=80",
+                                                    "caption": "Theo dõi chất lượng hạt và dữ liệu vận hành theo thời gian thực"
+                                                }
+                                            },
+                                            {
+                                                "type": "list",
+                                                "data": {
+                                                    "style": "unordered",
+                                                    "items": [
+                                                        "Theo dõi tồn kho theo lô hàng",
+                                                        "Chuẩn hóa chất lượng theo profile rang",
+                                                        "Tối ưu chi phí logistics liên vùng"
+                                                    ]
+                                                }
+                                            },
+                                            {
+                                                "type": "quote",
+                                                "data": {
+                                                    "text": "Dữ liệu tốt giúp quyết định nhanh và đúng trong chuỗi cung ứng.",
+                                                    "caption": "RoastLogistics Insight"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                    """)
+                    .coverImageUrl(
+                            "https://res.cloudinary.com/myimagename/image/upload/q_auto/f_auto/v1776704026/45933f08-70d1-4bbf-805f-54690cd822ef_rhtyhx.jpg")
                     .status(ArticleStatus.PUBLISHED)
                     .publishedAt(LocalDateTime.now())
                     .isActive(true)
                     .build();
 
             User customer = userRepository.findByEmail("user@gmail.com").orElse(null);
-            // Order #2 — PENDING, amount lớn hơn để test case khác
+
+            // Lấy variants đã seed để gắn vào OrderItem
+            List<ProductVariant> allVariants = productVariantRepository.findAll();
+            ProductVariant variant1 = allVariants.size() > 0 ? allVariants.get(0) : null;
+            ProductVariant variant2 = allVariants.size() > 1 ? allVariants.get(1) : null;
+            ProductVariant variant3 = allVariants.size() > 2 ? allVariants.get(2) : null;
+
+            // === Order 1: ready_to_pick (để test nút Admin "Giao hàng") ===
+            Order order1 = Order.builder()
+                    .user(customer)
+                    .orderDate(LocalDateTime.now().minusDays(2))
+                    .subTotal(new BigDecimal("125000000"))
+                    .discount(BigDecimal.ZERO)
+                    .totalAmount(new BigDecimal("125000000"))
+                    .status(OrderStatus.CONFIRMED)
+                    .build();
+            orderRepository.save(order1);
+
+            if (variant1 != null) {
+                OrderItem item1 = OrderItem.builder()
+                        .order(order1).variant(variant1).quantity(500)
+                        .unitPrice(variant1.getPrice())
+                        .subTotal(new BigDecimal("125000000"))
+                        .discount(BigDecimal.ZERO)
+                        .totalAmount(new BigDecimal("125000000"))
+                        .status("CONFIRMED")
+                        .build();
+                orderItemRepository.save(item1);
+            }
+
+            ShippingInfo ship1 = ShippingInfo.builder()
+                    .order(order1)
+                    .ghnOrderCode("GHN-TEST-001")
+                    .recipientName("Nguyễn Văn A")
+                    .recipientPhone("0901234567")
+                    .recipientAddress("123 Lê Lợi, Q.1, TP.HCM")
+                    .districtId(1442).wardCode("20101")
+                    .status("ready_to_pick")
+                    .build();
+            shippingInfoRepository.save(ship1);
+
+            // === Order 2: delivering ===
             Order order2 = Order.builder()
                     .user(customer)
-                    .orderDate(LocalDateTime.now().minusHours(1))
-                    .subTotal(new BigDecimal("320000"))
-                    .discount(new BigDecimal("20000"))
-                    .totalAmount(new BigDecimal("300000")) // 300.000 VND
-                    .status(OrderStatus.PENDING)
+                    .orderDate(LocalDateTime.now().minusDays(5))
+                    .subTotal(new BigDecimal("58000000"))
+                    .discount(BigDecimal.ZERO)
+                    .totalAmount(new BigDecimal("58000000"))
+                    .status(OrderStatus.SHIPPING)
                     .build();
             orderRepository.save(order2);
 
+            if (variant2 != null) {
+                OrderItem item2 = OrderItem.builder()
+                        .order(order2).variant(variant2).quantity(200)
+                        .unitPrice(variant2.getPrice())
+                        .subTotal(new BigDecimal("58000000"))
+                        .discount(BigDecimal.ZERO)
+                        .totalAmount(new BigDecimal("58000000"))
+                        .status("SHIPPING")
+                        .build();
+                orderItemRepository.save(item2);
+            }
+
+            ShippingInfo ship2 = ShippingInfo.builder()
+                    .order(order2)
+                    .ghnOrderCode("GHN-TEST-002")
+                    .recipientName("Trần Thị B")
+                    .recipientPhone("0907654321")
+                    .recipientAddress("456 Nguyễn Huệ, Q.1, TP.HCM")
+                    .districtId(1442).wardCode("20102")
+                    .status("delivering")
+                    .build();
+            shippingInfoRepository.save(ship2);
+
+            // === Order 3: delivered ===
+            Order order3 = Order.builder()
+                    .user(customer)
+                    .orderDate(LocalDateTime.now().minusDays(10))
+                    .subTotal(new BigDecimal("192000000"))
+                    .discount(BigDecimal.ZERO)
+                    .totalAmount(new BigDecimal("192000000"))
+                    .status(OrderStatus.COMPLETED)
+                    .build();
+            orderRepository.save(order3);
+
+            if (variant3 != null) {
+                OrderItem item3 = OrderItem.builder()
+                        .order(order3).variant(variant3).quantity(800)
+                        .unitPrice(variant3.getPrice())
+                        .subTotal(new BigDecimal("192000000"))
+                        .discount(BigDecimal.ZERO)
+                        .totalAmount(new BigDecimal("192000000"))
+                        .status("COMPLETED")
+                        .build();
+                orderItemRepository.save(item3);
+            }
+
+            ShippingInfo ship3 = ShippingInfo.builder()
+                    .order(order3)
+                    .ghnOrderCode("GHN-TEST-003")
+                    .recipientName("Lê Văn C")
+                    .recipientPhone("0912345678")
+                    .recipientAddress("789 Pasteur, Q.3, TP.HCM")
+                    .districtId(1443).wardCode("20201")
+                    .status("delivered")
+                    .build();
+            shippingInfoRepository.save(ship3);
+
             articleRepository.saveAll(List.of(article1));
         }
+    }
 
-        // ===== Categories, Products & Variants =====
-        if (categoryRepository.count() == 0) {
-            Category hat = Category.builder()
-                    .categoryName("Cà phê hạt")
-                    .description("Các loại cà phê hạt nguyên chất Robusta, Arabica...")
-                    .build();
-            categoryRepository.save(hat);
-
-            Category bot = Category.builder()
-                    .categoryName("Cà phê bột")
-                    .description("Cà phê rang xay sẵn đóng túi")
-                    .build();
-            categoryRepository.save(bot);
-
-            Category dungCu = Category.builder()
-                    .categoryName("Dụng cụ pha chế")
-                    .description("Phin, máy pha cà phê, giấy lọc...")
-                    .build();
-            categoryRepository.save(dungCu);
-
-            // Seed Products
-            Product p1 = Product.builder()
-                    .name("Cà phê Robusta Nguyên Chất")
-                    .category(hat)
-                    .origin("Lâm Đồng")
-                    .description("Cà phê Robusta đậm đà, hậu vị ngọt, phù hợp pha phin.")
-                    .manufacturerDate(LocalDate.now().minusMonths(1))
-                    .expiryDate(LocalDate.now().plusMonths(11))
-                    .isActive(true)
-                    .build();
-            productRepository.save(p1);
-
-            Product p2 = Product.builder()
-                    .name("Cà phê Arabica Cầu Đất")
-                    .category(hat)
-                    .origin("Cầu Đất, Đà Lạt")
-                    .description("Cà phê Arabica thơm nhẹ, vị chua thanh, chuẩn gu thượng hạng.")
-                    .manufacturerDate(LocalDate.now().minusDays(15))
-                    .expiryDate(LocalDate.now().plusMonths(11).plusDays(15))
-                    .isActive(true)
-                    .build();
-            productRepository.save(p2);
-
-            Product p3 = Product.builder()
-                    .name("Phin Pha Cà Phê Inox")
-                    .category(dungCu)
-                    .origin("Việt Nam")
-                    .description("Phin inox cao cấp, lọc chậm, giữ trọn hương vị cà phê.")
-                    .isActive(true)
-                    .build();
-            productRepository.save(p3);
-
-            // Seed Variants
-            ProductVariant v1_1 = ProductVariant.builder()
-                    .product(p1)
-                    .variantName("Bao 1kg - Hạt")
-                    .packaging("Bao")
-                    .size(1000)
-                    .price(new BigDecimal("210000"))
-                    .stockQuantity(100)
-                    .isActive(true)
-                    .build();
-            productVariantRepository.save(v1_1);
-
-            ProductVariant v1_2 = ProductVariant.builder()
-                    .product(p1)
-                    .variantName("Túi 500g - Hạt")
-                    .packaging("Túi")
-                    .size(500)
-                    .price(new BigDecimal("110000"))
-                    .stockQuantity(250)
-                    .isActive(true)
-                    .build();
-            productVariantRepository.save(v1_2);
-
-            ProductVariant v2_1 = ProductVariant.builder()
-                    .product(p2)
-                    .variantName("Gói 250g - Hạt")
-                    .packaging("Gói")
-                    .size(250)
-                    .price(new BigDecimal("145000"))
-                    .stockQuantity(150)
-                    .isActive(true)
-                    .build();
-            productVariantRepository.save(v2_1);
-
-            ProductVariant v3_1 = ProductVariant.builder()
-                    .product(p3)
-                    .variantName("Size M")
-                    .packaging("Hộp")
-                    .price(new BigDecimal("45000"))
-                    .stockQuantity(300)
-                    .isActive(true)
-                    .build();
-            productVariantRepository.save(v3_1);
-
-            System.out.println("  [DataInit] Seed Categories, Products & Variants thành công");
+    private void seedCombos() {
+        if (comboRepository.count() > 0 || productVariantRepository.count() == 0) {
+            return;
         }
+
+        ProductVariant arabica250 = productVariantRepository.findAll().stream()
+                .filter(variant -> variant.getProduct() != null
+                        && "Legend Arabica Special".equals(variant.getProduct().getName())
+                        && "Túi 250g".equals(variant.getVariantName()))
+                .findFirst()
+                .orElse(null);
+
+        ProductVariant robusta500 = productVariantRepository.findAll().stream()
+                .filter(variant -> variant.getProduct() != null
+                        && "Legend Robusta Bold".equals(variant.getProduct().getName())
+                        && "Túi 500g".equals(variant.getVariantName()))
+                .findFirst()
+                .orElse(null);
+
+        ProductVariant ground200 = productVariantRepository.findAll().stream()
+                .filter(variant -> variant.getProduct() != null
+                        && "Espresso Premium Blend (Xay)".equals(variant.getProduct().getName())
+                        && "Hộp 200g".equals(variant.getVariantName()))
+                .findFirst()
+                .orElse(null);
+
+        if (arabica250 == null || robusta500 == null || ground200 == null) {
+            log.warn("Skipping combo seed because one or more required variants were not found.");
+            return;
+        }
+
+        Combo discoveryCombo = Combo.builder()
+                .name("Combo Discovery 3 vị")
+                .description("Bộ thử vị gồm 3 dòng sản phẩm chủ lực với giá ưu đãi.")
+                .price(new BigDecimal("540000"))
+                .startDate(LocalDateTime.now().minusDays(7))
+                .endDate(LocalDateTime.now().plusMonths(2))
+                .isActive(true)
+                .build();
+
+        discoveryCombo.getComboItems()
+                .add(ComboItem.builder().combo(discoveryCombo).variant(arabica250).quantity(1).build());
+        discoveryCombo.getComboItems()
+                .add(ComboItem.builder().combo(discoveryCombo).variant(robusta500).quantity(1).build());
+        discoveryCombo.getComboItems()
+                .add(ComboItem.builder().combo(discoveryCombo).variant(ground200).quantity(1).build());
+
+        comboRepository.save(discoveryCombo);
+        log.info("Seeded combo data successfully.");
     }
 }

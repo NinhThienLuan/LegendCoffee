@@ -30,4 +30,10 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     public List<ProductVariant> findByProduct(Product product) {
         return productVariantRepository.findByProduct(product);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductVariant> getAllVariants() {
+        return productVariantRepository.findAllBy();
+    }
 }

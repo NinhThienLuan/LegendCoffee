@@ -7,7 +7,7 @@ public class SecurityConstants {
             "/login",
             "/register",
             "/cart",
-            "/checkout",                   // Trang checkout (yêu cầu đăng nhập thì xoá dòng này)
+            "/checkout",                   // Page checkout
             "/checkout/place-order",       // Submit đặt hàng
             "/orders/*/track",
             "/orders/{orderId}/cancel",// Trang tracking đơn hàng
@@ -15,13 +15,17 @@ public class SecurityConstants {
             "/webhook/ghn",               // Webhook GHN — phải public để GHN gọi được
             "/articles/**",
             "/products/**",
+            "/combos",
+            "/combos/**",
+            "/forgot-password",
+            "/reset-password",
             "/css/**",
             "/js/**",
             "/images/**",
+            "/favicon.ico",
             "/payment/vnpay/callback",
             "/payment/vnpay/ipn",
-            "/assets/**",
-            "/favicon.ico"
+            "/error",
+            "/assets/**"
     };
 }
-

@@ -88,13 +88,11 @@
                             KÝ MỚI</a>
                     </div>
                     <!-- Auth Form -->
-                    <form class="space-y-6" method="POST" th:action="@{/login}">
-                        <div id="login-error-message" th:if="${param.error}" class="hidden"
-                            th:text="${param.error[0] == 'auth_failed' ? 'Email hoặc mật khẩu không chính xác.' : param.error[0]}">
+                    <form class="space-y-6" method="POST" th:action="@{/login}" th:object="${loginDto}">
+                        <div id="login-error-message" th:if="${errorMessage}" class="hidden" th:text="${errorMessage}">
                         </div>
-                        <div th:if="${param.success}" class="bg-primary/10 border-l-4 border-primary p-3 mb-4">
-                            <p class="text-xs text-primary font-bold"
-                                th:text="${param.success[0] == 'register_success' ? 'Đăng ký thành công! Vui lòng đăng nhập.' : ''}">
+                        <div th:if="${successMessage}" class="bg-primary/10 border-l-4 border-primary p-3 mb-4">
+                            <p class="text-xs text-primary font-bold" th:text="${successMessage}">
                             </p>
                         </div>
                         <div class="space-y-1">
@@ -106,8 +104,10 @@
                                     data-icon="mail">mail</span>
                                 <input
                                     class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium"
-                                    id="email" name="email" placeholder="email@company.vn" required="" type="email" />
+                                    id="email" th:field="*{email}" placeholder="email@company.vn" required=""
+                                    type="email" />
                             </div>
+                            <p class="text-xs text-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
                         </div>
                         <div class="space-y-1">
                             <div class="flex justify-between items-center mb-1">
@@ -119,8 +119,10 @@
                                     data-icon="lock">lock</span>
                                 <input
                                     class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium"
-                                    id="password" name="password" placeholder="••••••••" required="" type="password" />
+                                    id="password" th:field="*{password}" placeholder="••••••••" required=""
+                                    type="password" minlength="6" />
                             </div>
+                            <p class="text-xs text-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
                             <div class="flex justify-between items-center mb-1 mt-1">
                                 <button type="button" onclick="showResetFlow()"
                                     class="text-[10px] font-bold text-secondary hover:text-primary transition-colors cursor-pointer">
@@ -181,7 +183,7 @@
                     </div>
 
                     <!-- Step 1: Request Reset Form -->
-                    <div id="resetStep1">
+                    <form id="resetStep1" th:action="@{/forgot-password}" th:object="${forgotPasswordDto}" method="POST">
                         <div class="space-y-1 mb-6">
                             <label
                                 class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1"
@@ -191,21 +193,21 @@
                                     data-icon="mail">mail</span>
                                 <input
                                     class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium"
-                                    id="resetEmail" type="email" placeholder="Nhập email của bạn..." />
+                                    id="resetEmailInput" name="email" type="email" placeholder="Nhập email của bạn..." required />
                             </div>
                         </div>
                         <div class="pt-4 space-y-4 text-center">
-                            <button onclick="submitResetPassword()"
+                            <button type="submit"
                                 class="w-full bg-primary text-on-primary font-headline font-bold py-4 rounded-md shadow-sm hover:bg-primary-container transition-all active:scale-[0.98] flex justify-center items-center gap-2">
                                 GỬI EMAIL KHÔI PHỤC
                                 <span class="material-symbols-outlined text-xl" data-icon="send">send</span>
                             </button>
-                            <button onclick="showLogin()"
+                            <button type="button" onclick="showLogin()"
                                 class="text-xs font-bold text-on-surface-variant hover:text-primary underline underline-offset-4 cursor-pointer">
                                 Quay lại Đăng nhập
                             </button>
                         </div>
-                    </div>
+                    </form>
                 </div>
 
                 <!-- Post-login Password Change Prompt -->
@@ -224,48 +226,62 @@
                                 class="w-full bg-primary text-on-primary font-headline font-semibold py-4 rounded-md shadow-sm hover:bg-primary-container transition-all">
                                 CÓ, ĐỔI MẬT KHẨU
                             </button>
-                            <button onclick="continueSession()"
-                                class="w-full bg-surface-container-high text-on-surface-variant font-semibold py-4 rounded-md hover:bg-surface-variant transition-all hover:text-primary">
+                            <a th:href="@{/home}"
+                                class="w-full bg-surface-container-high text-on-surface-variant font-semibold py-4 rounded-md hover:bg-surface-variant transition-all hover:text-primary flex justify-center items-center">
                                 KHÔNG, TIẾP TỤC ĐĂNG NHẬP
-                            </button>
+                            </a>
                         </div>
                     </div>
 
                     <div id="forceChangeInputs" class="hidden">
-                        <div class="space-y-4 mb-6">
-                            <div class="space-y-1">
-                                <label
-                                    class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Mật
-                                    khẩu mới</label>
-                                <div class="ghost-border bg-surface-container-low px-4 py-3 flex items-center gap-3">
-                                    <span class="material-symbols-outlined text-outline text-xl"
-                                        data-icon="lock_open">lock_open</span>
-                                    <input
-                                        class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium"
-                                        type="password" placeholder="Mật khẩu ít nhất 8 ký tự..." />
+                        <form th:action="@{/reset-password}" method="POST" id="forceChangeForm">
+                            <input type="hidden" name="email" th:value="${param.email}" />
+                            <div class="space-y-4 mb-6">
+                                <div class="space-y-1">
+                                    <label
+                                        class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Mật khẩu hiện tại</label>
+                                    <div class="ghost-border bg-surface-container-low px-4 py-3 flex items-center gap-3 border-secondary/30">
+                                        <span class="material-symbols-outlined text-outline text-xl"
+                                            data-icon="key">key</span>
+                                        <input
+                                            class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium"
+                                            name="oldPassword" type="password" placeholder="Mật khẩu bạn vừa đăng nhập..." required />
+                                    </div>
+                                </div>
+                                <div class="space-y-1">
+                                    <label
+                                        class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Mật
+                                        khẩu mới</label>
+                                    <div class="ghost-border bg-surface-container-low px-4 py-3 flex items-center gap-3">
+                                        <span class="material-symbols-outlined text-outline text-xl"
+                                            data-icon="lock_open">lock_open</span>
+                                        <input
+                                            class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium"
+                                            name="newPassword" type="password" placeholder="Mật khẩu ít nhất 8 ký tự..." required />
+                                    </div>
+                                </div>
+                                <div class="space-y-1">
+                                    <label
+                                        class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Xác
+                                        nhận mật khẩu mới</label>
+                                    <div class="ghost-border bg-surface-container-low px-4 py-3 flex items-center gap-3">
+                                        <span class="material-symbols-outlined text-outline text-xl"
+                                            data-icon="lock">lock</span>
+                                        <input
+                                            class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium"
+                                            name="confirmPassword" type="password" placeholder="Nhập lại mật khẩu..." required />
+                                    </div>
                                 </div>
                             </div>
-                            <div class="space-y-1">
-                                <label
-                                    class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Xác
-                                    nhận mật khẩu mới</label>
-                                <div class="ghost-border bg-surface-container-low px-4 py-3 flex items-center gap-3">
-                                    <span class="material-symbols-outlined text-outline text-xl"
-                                        data-icon="lock">lock</span>
-                                    <input
-                                        class="bg-transparent border-none focus:ring-0 w-full text-primary placeholder:text-outline/50 font-medium"
-                                        type="password" placeholder="Nhập lại mật khẩu..." />
-                                </div>
+                            <div class="pt-4 space-y-4">
+                                <button type="submit"
+                                    class="w-full bg-primary text-on-primary font-headline font-bold py-4 rounded-md shadow-sm hover:bg-primary-container transition-all active:scale-[0.98] flex justify-center items-center gap-2">
+                                    LƯU VÀ TIẾP TỤC
+                                    <span class="material-symbols-outlined text-xl"
+                                        data-icon="check_circle">check_circle</span>
+                                </button>
                             </div>
-                        </div>
-                        <div class="pt-4 space-y-4">
-                            <button onclick="confirmForceChange()"
-                                class="w-full bg-primary text-on-primary font-headline font-bold py-4 rounded-md shadow-sm hover:bg-primary-container transition-all active:scale-[0.98] flex justify-center items-center gap-2">
-                                LƯU VÀ TIẾP TỤC
-                                <span class="material-symbols-outlined text-xl"
-                                    data-icon="check_circle">check_circle</span>
-                            </button>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -303,16 +319,6 @@
         function showLogin() {
             document.getElementById('resetPasswordWrapper').classList.add('hidden');
             document.getElementById('mainLoginWrapper').classList.remove('hidden');
-        }
-
-        function submitResetPassword() {
-            const emailValue = document.getElementById('resetEmail').value;
-            if (!emailValue) {
-                alert('Vui lòng nhập Email.');
-                return;
-            }
-            alert('Mật khẩu mới đã được gửi tới email của bạn!');
-            showLogin();
         }
 
         function showForceChangeInputs() {

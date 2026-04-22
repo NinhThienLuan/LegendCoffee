@@ -28,6 +28,17 @@ import java.util.concurrent.CompletableFuture;
 @RequiredArgsConstructor
 public class ShippingServiceImpl implements ShippingService {
 
+    private static final int DEFAULT_ITEM_WEIGHT_GRAMS = 250;
+    private static final int MIN_WEIGHT_GRAMS = 50;
+    private static final int DEFAULT_LENGTH_CM = 20;
+    private static final int DEFAULT_WIDTH_CM = 20;
+    private static final int DEFAULT_HEIGHT_CM = 10;
+    private volatile boolean senderLocationValidated;
+    private volatile String effectiveFromWardCode;
+    private volatile String effectiveFromWardName;
+    private volatile String effectiveFromDistrictName;
+    private volatile String effectiveFromProvinceName;
+
     private final GHNService ghnService;
     private final ShippingInfoRepository shippingInfoRepository;
     private final OrderRepository orderRepository;
@@ -62,6 +73,9 @@ public class ShippingServiceImpl implements ShippingService {
 
     @Override
     public List<ShippingOptionDTO> getShippingOptions(AddressQueryDTO query) {
+        validateSenderLocationConfig();
+        int effectiveWeight = safeWeight(query.getWeight());
+
         // 1. Lấy danh sách dịch vụ khả dụng từ kho -> đến địa chỉ giao
         List<GHNServiceDTO> services = ghnService.getAvailableServices(
                 props.getFromDistrictId(), query.getDistrictId());
@@ -72,8 +86,9 @@ public class ShippingServiceImpl implements ShippingService {
 
         // 2. Gọi fee + leadtime song song cho từng dịch vụ (CompletableFuture)
         List<CompletableFuture<ShippingOptionDTO>> futures = services.stream()
+            .filter(service -> service.getServiceTypeId() == null || service.getServiceTypeId() != 5)
                 .map(service -> CompletableFuture.supplyAsync(() ->
-                        buildShippingOption(service, query)))
+                buildShippingOption(service, query, effectiveWeight)))
                 .toList();
 
         // 3. Chờ tất cả hoàn thành và gộp kết quả
@@ -87,27 +102,113 @@ public class ShippingServiceImpl implements ShippingService {
             }
         }
 
+        if (options.isEmpty()) {
+            throw new GHNException("GHN không trả được phí vận chuyển cho địa chỉ này. Vui lòng kiểm tra cấu hình kho gửi hoặc thử địa chỉ khác.");
+        }
+
         return options;
     }
 
-    private ShippingOptionDTO buildShippingOption(GHNServiceDTO service, AddressQueryDTO query) {
+    private void validateSenderLocationConfig() {
+        if (senderLocationValidated) {
+            return;
+        }
+
+        synchronized (this) {
+            if (senderLocationValidated) {
+                return;
+            }
+
+            if (props.getFromDistrictId() == null || isBlank(props.getFromWardCode())) {
+                throw new GHNException("Thiếu cấu hình kho gửi GHN: from_district_id hoặc from_ward_code.");
+            }
+
+            List<WardDTO> wards = ghnService.getWards(props.getFromDistrictId());
+            if (wards == null || wards.isEmpty()) {
+                throw new GHNException("Không tải được danh sách phường/xã của kho gửi GHN.");
+            }
+
+            String configuredWardCode = props.getFromWardCode().trim();
+            WardDTO matchedWard = wards.stream()
+                    .filter(w -> w.getWardCode() != null
+                            && w.getWardCode().trim().equalsIgnoreCase(configuredWardCode))
+                    .findFirst()
+                    .orElse(null);
+
+            if (matchedWard != null) {
+                effectiveFromWardCode = matchedWard.getWardCode().trim();
+                effectiveFromWardName = matchedWard.getWardName();
+            } else {
+                WardDTO fallbackWard = wards.get(0);
+                if (fallbackWard.getWardCode() == null || fallbackWard.getWardCode().trim().isEmpty()) {
+                    throw new GHNException("Không tìm được from_ward_code hợp lệ cho from_district_id cấu hình.");
+                }
+
+                effectiveFromWardCode = fallbackWard.getWardCode().trim();
+                effectiveFromWardName = fallbackWard.getWardName();
+                log.warn("[Shipping] from_ward_code={} không thuộc from_district_id={}. Fallback sang wardCode={} ({})",
+                        configuredWardCode,
+                        props.getFromDistrictId(),
+                        effectiveFromWardCode,
+                        fallbackWard.getWardName() != null ? fallbackWard.getWardName() : "N/A");
+            }
+
+            resolveDistrictProvinceNames(props.getFromDistrictId());
+
+            senderLocationValidated = true;
+        }
+    }
+
+    private void resolveDistrictProvinceNames(Integer fromDistrictId) {
+        List<ProvinceDTO> provinces = ghnService.getProvinces();
+        if (provinces == null || provinces.isEmpty()) {
+            throw new GHNException("Không lấy được danh sách tỉnh/thành GHN để xác định kho gửi.");
+        }
+
+        for (ProvinceDTO province : provinces) {
+            if (province == null || province.getProvinceId() == null) {
+                continue;
+            }
+
+            List<DistrictDTO> districts = ghnService.getDistricts(province.getProvinceId());
+            if (districts == null || districts.isEmpty()) {
+                continue;
+            }
+
+            for (DistrictDTO district : districts) {
+                if (district != null && district.getDistrictId() != null && district.getDistrictId().equals(fromDistrictId)) {
+                    effectiveFromDistrictName = district.getDistrictName();
+                    effectiveFromProvinceName = province.getProvinceName();
+                    return;
+                }
+            }
+        }
+
+        throw new GHNException("Không tìm thấy tên quận/huyện và tỉnh/thành cho from_district_id trong GHN.");
+    }
+
+    private ShippingOptionDTO buildShippingOption(GHNServiceDTO service, AddressQueryDTO query, int effectiveWeight) {
         try {
             // Gọi fee
             FeeRequestDTO feeReq = FeeRequestDTO.builder()
                     .serviceId(service.getServiceId())
+                    .serviceTypeId(service.getServiceTypeId())
                     .fromDistrictId(props.getFromDistrictId())
-                    .fromWardCode(props.getFromWardCode())
+                    .fromWardCode(effectiveFromWardCode)
                     .toDistrictId(query.getDistrictId())
                     .toWardCode(query.getWardCode())
-                    .weight(query.getWeight() != null ? query.getWeight() : 500)
-                    .insuranceValue(query.getInsuranceValue())
+                    .weight(effectiveWeight)
+                    .length(DEFAULT_LENGTH_CM)
+                    .width(DEFAULT_WIDTH_CM)
+                    .height(DEFAULT_HEIGHT_CM)
+                    .insuranceValue(query.getInsuranceValue() != null ? query.getInsuranceValue() : 0L)
                     .build();
 
             // Gọi leadtime
             LeadtimeRequestDTO leadReq = LeadtimeRequestDTO.builder()
                     .serviceId(service.getServiceId())
                     .fromDistrictId(props.getFromDistrictId())
-                    .fromWardCode(props.getFromWardCode())
+                    .fromWardCode(effectiveFromWardCode)
                     .toDistrictId(query.getDistrictId())
                     .toWardCode(query.getWardCode())
                     .build();
@@ -134,7 +235,7 @@ public class ShippingServiceImpl implements ShippingService {
                     .build();
 
         } catch (Exception e) {
-            log.error("[Shipping] Error calculating option for serviceId={}: {}",
+            log.warn("[Shipping] Skip serviceId={} due to invalid GHN response: {}",
                     service.getServiceId(), e.getMessage());
             return null;
         }
@@ -253,6 +354,30 @@ public class ShippingServiceImpl implements ShippingService {
         info.setExpectedDeliveryTime(expectedTime);
 
         return shippingInfoRepository.save(info);
+    }
+
+    private int safeWeight(Integer rawWeight) {
+        if (rawWeight == null) {
+            return 500;
+        }
+        return Math.max(MIN_WEIGHT_GRAMS, rawWeight);
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
+    }
+
+    private String firstNonBlank(String... values) {
+        if (values == null) {
+            return null;
+        }
+
+        for (String value : values) {
+            if (!isBlank(value)) {
+                return value.trim();
+            }
+        }
+        return null;
     }
 
     // ================================================================

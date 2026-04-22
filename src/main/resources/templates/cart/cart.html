@@ -7,10 +7,13 @@
 <body class="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container antialiased">
     <div th:replace="~{fragments/navbar :: navbar(${navItems})}"></div>
     <main class="pt-16 min-h-screen flex flex-col md:flex-row">
-        <div class="w-full max-w-7xl mx-auto px-8 sm:px-12 lg:px-20 flex flex-col md:flex-row">
+        <div class="w-full max-w-7xl mx-auto px-8 sm:px-12 lg:px-20 flex flex-col md:flex-row gap-8 lg:gap-12">
         <section class="flex-1 py-12 bg-surface">
             <div class="mb-12">
-                <h1 class="text-4xl font-extrabold tracking-tight text-primary mb-2 uppercase">Giỏ hàng</h1>
+                <div class="flex items-center gap-4 mb-2">
+                    <h1 class="text-4xl font-extrabold tracking-tight text-primary uppercase">Giỏ hàng</h1>
+                    <span id="cart-count-header" class="px-3 py-1 bg-primary/10 text-primary text-lg font-black rounded-full min-w-[3rem] text-center">0</span>
+                </div>
                 <p class="text-on-surface-variant font-medium">Quản lý các lô hàng và thông số kỹ thuật rang xay.</p>
             </div>
             
@@ -68,6 +71,8 @@
                     </div>
 
                     <button
+                        id="checkout-btn"
+                        type="button"
                         class="w-full bg-primary text-on-primary py-5 rounded-md font-extrabold uppercase tracking-[0.15em] text-sm flex items-center justify-center gap-3 active:scale-[0.98] transition-all hover:bg-primary-container shadow-lg shadow-primary/10">
                         Đặt hàng ngay <span class="material-symbols-outlined">arrow_forward</span>
                     </button>
@@ -159,6 +164,7 @@
                 const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
                 document.getElementById('subtotal-label').innerText = `Tạm tính (${totalItems} kg)`;
+                document.getElementById('cart-count-header').innerText = totalItems;
                 document.getElementById('subtotal-price').innerText = formatCurrency(totals.subtotal);
                 document.getElementById('shipping-price').innerText = formatCurrency(totals.shipping);
                 document.getElementById('total-price').innerText = formatCurrency(totals.total);
@@ -166,9 +172,25 @@
 
             window.addEventListener('load', renderCartItems);
             window.addEventListener('cartUpdated', renderCartItems);
+
+            // Checkout button handler
+            document.addEventListener('DOMContentLoaded', function () {
+                const checkoutBtn = document.getElementById('checkout-btn');
+                if (checkoutBtn) {
+                    checkoutBtn.addEventListener('click', function () {
+                        const cart = window.CartSystem ? window.CartSystem.getCart() : [];
+                        if (!cart || cart.length === 0) {
+                            alert('Giỏ hàng của bạn đang trống.');
+                            return;
+                        }
+                        window.location.href = '/checkout';
+                    });
+                }
+            });
         </script>
     </main>
     <div th:replace="~{fragments/footer :: footer}"></div>
+  <script src="assets/cart-badge.js" th:src="@{/assets/cart-badge.js}"></script>
 </body>
 
 </html>

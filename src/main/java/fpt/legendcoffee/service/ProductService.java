@@ -3,22 +3,35 @@ package fpt.legendcoffee.service;
 import java.util.List;
 
 import fpt.legendcoffee.dto.request.ProductRequestDTO;
+import fpt.legendcoffee.dto.response.ProductDetailDTO;
 import fpt.legendcoffee.dto.response.ProductResponseDTO;
 import fpt.legendcoffee.entity.Category;
 import fpt.legendcoffee.entity.Product;
 
 public interface ProductService {
-	Product addProduct(ProductRequestDTO request);
+    Product addProduct(ProductRequestDTO request);
 
-	List<Product> getAllProducts();
+    List<Product> getAllProducts();
 
-	List<ProductResponseDTO> getAllProductResponses();
+    List<ProductResponseDTO> getAllProductResponses();
 
-	Product getProductById(Long id);
+    Product getProductById(Long id);
 
-	Product updateProduct(Long id, ProductRequestDTO request);
+    ProductDetailDTO getProductDetail(Long id);
 
-	void deleteProduct(Long id);
+    Product updateProduct(Long id, ProductRequestDTO request);
 
-	List<Category> getAllCategories();
+    void deleteProduct(Long id);
+
+    ProductRequestDTO getProductRequestById(Long id);
+
+    ProductRequestDTO sanitize(ProductRequestDTO request);
+
+    List<Category> getAllCategories();
+
+    Long countProducts();
+
+    Long countActiveProducts();
+
+    Long countLowStockProducts();
 }

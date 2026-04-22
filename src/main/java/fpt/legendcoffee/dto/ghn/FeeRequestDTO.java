@@ -10,6 +10,9 @@ public class FeeRequestDTO {
     @JsonProperty("service_id")
     private Integer serviceId;
 
+    @JsonProperty("service_type_id")
+    private Integer serviceTypeId;
+
     @JsonProperty("from_district_id")
     private Integer fromDistrictId;
 

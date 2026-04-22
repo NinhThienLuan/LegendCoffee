@@ -12,9 +12,11 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 
 @Service
@@ -36,13 +38,23 @@ public class GHNServiceImpl implements GHNService {
     private HttpHeaders buildHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Token", props.getToken());
+        
+        String token = props.getToken() != null ? props.getToken().trim() : "";
+        if (token.isEmpty()) {
+            log.error("[GHN] Token is MISSING or empty! Check your application.properties.");
+        } else {
+            String masked = token.substring(0, Math.min(token.length(), 4)) + "..." + 
+                            token.substring(Math.max(0, token.length() - 4));
+            log.info("[GHN] Building headers with token: {}", masked);
+        }
+        
+        headers.set("token", token);
         return headers;
     }
 
     private HttpHeaders buildHeadersWithShopId() {
         HttpHeaders headers = buildHeaders();
-        headers.set("ShopId", String.valueOf(props.getShopId()));
+        headers.set("shopid", String.valueOf(props.getShopId()));
         return headers;
     }
 
@@ -64,9 +76,10 @@ public class GHNServiceImpl implements GHNService {
 
             GHNApiResponse<T> apiResponse = response.getBody();
             if (apiResponse == null || !apiResponse.isSuccess()) {
+                int code = apiResponse != null ? apiResponse.getCode() : -1;
                 String msg = apiResponse != null ? apiResponse.getMessage() : "No response from GHN";
-                log.error("[GHN] POST {} failed: {}", path, msg);
-                throw new GHNException(apiResponse != null ? apiResponse.getCode() : -1, msg);
+                log.error("[GHN] POST {} failed: code={}, message={}", path, code, msg);
+                throw new GHNException(code, msg);
             }
             return apiResponse.getData();
 
@@ -82,30 +95,29 @@ public class GHNServiceImpl implements GHNService {
     private <T> T get(String path, Map<String, ?> params,
                       ParameterizedTypeReference<GHNApiResponse<T>> typeRef, boolean withShopId) {
         HttpHeaders headers = withShopId ? buildHeadersWithShopId() : buildHeaders();
-
-        // Note: GHN's GET APIs typically don't take a body. 
-        // For simple GET without query params:
         HttpEntity<Void> entity = new HttpEntity<>(headers);
         
-        // If params are needed for GET, they should be query parameters, 
-        // but GHN Master Data often uses headers or is just a simple GET.
-        // For District/Ward which need ID, GHN actually often uses POST or 
-        // specific GET behavior that we might need to adjust.
-        
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url(path));
+        if (params != null) {
+            params.forEach(builder::queryParam);
+        }
+        log.info("[GHN] GET request: {}", builder.build().toUri());
+
         try {
-            // If there are params, for GHN Master data, we might need to handle them differently.
-            // But let's keep the exchange call structure.
             ResponseEntity<GHNApiResponse<T>> response = restTemplate.exchange(
-                    url(path), HttpMethod.GET, entity, typeRef);
+                    builder.build().toUri(), HttpMethod.GET, entity, typeRef);
 
             GHNApiResponse<T> body = response.getBody();
             if (body == null || !body.isSuccess()) {
-                throw new GHNException(body != null ? body.getMessage() : "No response");
+                int code = body != null ? body.getCode() : -1;
+                String msg = body != null ? body.getMessage() : "No response";
+                log.error("[GHN] GET {} failed: code={}, message={}", path, code, msg);
+                throw new GHNException(code, msg);
             }
             return body.getData();
 
         } catch (HttpClientErrorException ex) {
-            log.error("[GHN] HTTP error GET {}: {}", path, ex.getMessage());
+            log.error("[GHN] HTTP error GET {}: {} - {}", path, ex.getStatusCode(), ex.getResponseBodyAsString());
             throw new GHNException("GHN API lỗi: " + ex.getMessage());
         }
     }
@@ -124,18 +136,14 @@ public class GHNServiceImpl implements GHNService {
     @Override
     public List<DistrictDTO> getDistricts(Integer provinceId) {
         log.info("[GHN] Fetching districts for provinceId={}", provinceId);
-        // Map<String, Integer> params = Map.of("province_id", provinceId);
-        // Note: GHN master-data/district actually usually uses POST with {"province_id": ...}
-        // or GET with query params. Let's use POST as it's more reliable for GHN.
-        return post("/master-data/district", Map.of("province_id", provinceId),
+        return get("/master-data/district", Map.of("province_id", provinceId),
                 new ParameterizedTypeReference<GHNApiResponse<List<DistrictDTO>>>() {}, false);
     }
 
     @Override
     public List<WardDTO> getWards(Integer districtId) {
         log.info("[GHN] Fetching wards for districtId={}", districtId);
-        // GHN master-data/ward usually uses POST with {"district_id": ...}
-        return post("/master-data/ward", Map.of("district_id", districtId),
+        return get("/master-data/ward", Map.of("district_id", districtId),
                 new ParameterizedTypeReference<GHNApiResponse<List<WardDTO>>>() {}, false);
     }
 
@@ -157,9 +165,39 @@ public class GHNServiceImpl implements GHNService {
 
     @Override
     public FeeResponseDTO calculateFee(FeeRequestDTO request) {
-        log.info("[GHN] Calculating fee for service_id={}", request.getServiceId());
-        return post("/v2/shipping-order/fee", request,
+        log.info("[GHN] Calculating fee: serviceId={}, serviceTypeId={}, weight={}, fromDistrict={}, fromWard={}, toDistrict={}, toWard={}",
+            request.getServiceId(), request.getServiceTypeId(), request.getWeight(),
+            request.getFromDistrictId(), request.getFromWardCode(),
+            request.getToDistrictId(), request.getToWardCode());
+
+        try {
+            return post("/v2/shipping-order/fee", request,
                 new ParameterizedTypeReference<GHNApiResponse<FeeResponseDTO>>() {}, true);
+        } catch (GHNException ex) {
+            if (request.getServiceId() != null && request.getServiceTypeId() != null) {
+            log.warn("[GHN] Fee failed with service_id={}, retrying with service_type_id={} only. Error={}",
+                request.getServiceId(), request.getServiceTypeId(), ex.getMessage());
+
+            FeeRequestDTO retryReq = FeeRequestDTO.builder()
+                .serviceTypeId(request.getServiceTypeId())
+                .fromDistrictId(request.getFromDistrictId())
+                .fromWardCode(request.getFromWardCode())
+                .toDistrictId(request.getToDistrictId())
+                .toWardCode(request.getToWardCode())
+                .weight(request.getWeight())
+                .length(request.getLength())
+                .width(request.getWidth())
+                .height(request.getHeight())
+                .insuranceValue(request.getInsuranceValue())
+                .coupon(request.getCoupon())
+                .build();
+
+            return post("/v2/shipping-order/fee", retryReq,
+                new ParameterizedTypeReference<GHNApiResponse<FeeResponseDTO>>() {}, true);
+            }
+
+            throw ex;
+        }
     }
 
     @Override
@@ -167,6 +205,22 @@ public class GHNServiceImpl implements GHNService {
         log.info("[GHN] Getting leadtime for service_id={}", request.getServiceId());
         return post("/v2/shipping-order/leadtime", request,
                 new ParameterizedTypeReference<GHNApiResponse<LeadtimeResponseDTO>>() {}, true);
+    }
+
+    @Override
+    public GHNShopDTO getCurrentShopProfile() {
+        GHNShopAllDataDTO data = get("/v2/shop/all", Map.of("offset", 0, "limit", 100),
+                new ParameterizedTypeReference<GHNApiResponse<GHNShopAllDataDTO>>() {}, true);
+
+        if (data == null || data.getShops() == null || data.getShops().isEmpty()) {
+            throw new GHNException("Không lấy được thông tin shop GHN.");
+        }
+
+        Optional<GHNShopDTO> match = data.getShops().stream()
+                .filter(s -> s.getId() != null && s.getId().equals(props.getShopId()))
+                .findFirst();
+
+        return match.orElseGet(() -> data.getShops().get(0));
     }
 
     // ================================================================
