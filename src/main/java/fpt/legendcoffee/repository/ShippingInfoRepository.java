@@ -24,6 +24,6 @@ public interface ShippingInfoRepository extends JpaRepository<ShippingInfo, Long
     @Modifying
     @Query("UPDATE ShippingInfo s SET s.status = :status, s.updatedAt = CURRENT_TIMESTAMP " +
             "WHERE s.ghnOrderCode = :ghnOrderCode")
-    int updateStatusByGhnOrderCode(@Param("ghnOrderCode") String ghnOrderCode,
+    int     updateStatusByGhnOrderCode(@Param("ghnOrderCode") String ghnOrderCode,
                                    @Param("status") String status);
 }
