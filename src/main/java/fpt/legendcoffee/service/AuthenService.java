@@ -18,4 +18,6 @@ public interface AuthenService {
     ProfileDTO getProfile(long id);
 
     void updateProfile(long id, ProfileDTO profile);
+
+    boolean isEmailValid(String email);
 }

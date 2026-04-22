@@ -7,7 +7,6 @@ import fpt.legendcoffee.dto.response.ProductDetailDTO;
 import fpt.legendcoffee.dto.response.ProductResponseDTO;
 import fpt.legendcoffee.entity.Category;
 import fpt.legendcoffee.entity.Product;
-import org.jspecify.annotations.Nullable;
 
 public interface ProductService {
     Product addProduct(ProductRequestDTO request);

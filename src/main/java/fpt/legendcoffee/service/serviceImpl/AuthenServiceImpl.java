@@ -17,7 +17,6 @@ import fpt.legendcoffee.repository.UserRepository;
 import fpt.legendcoffee.repository.WalletRepository;
 import fpt.legendcoffee.service.AuthenService;
 import fpt.legendcoffee.service.MailService;
-import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 @Service
 @AllArgsConstructor
@@ -94,8 +93,8 @@ public class AuthenServiceImpl implements AuthenService {
         userRepository.save(user);
         try {
             mailService.sendHtml(email, "Legend Coffee - Forgot Password", "<h1>Your new password is: " + newPassword + "</h1>");
-        } catch (MessagingException e) {
-            throw new AuthenException("Failed to send email");
+        } catch (Exception e) {
+            throw new AuthenException("Hệ thống gửi thư gặp sự cố. Vui lòng kiểm tra cấu hình Gmail.");
         }
     }
 
@@ -125,6 +124,11 @@ public class AuthenServiceImpl implements AuthenService {
         user.setPhone(profile.getPhone());
         user.setAddress(profile.getAddress());
         userRepository.save(user);
+    }
+
+    @Override
+    public boolean isEmailValid(String email) {
+        return userRepository.findByEmail(email).isPresent();
     }
 
     //Helper method
