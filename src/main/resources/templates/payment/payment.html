@@ -82,6 +82,11 @@
 
                 <script th:if="${payment.success}">
                     document.addEventListener('DOMContentLoaded', function() {
+                        // Clear the cart storage after successful checkout
+                        if (window.CartSystem) {
+                            window.CartSystem.clearCart();
+                        }
+
                         let seconds = 5;
                         const countdownEl = document.getElementById('countdown');
                         const orderId = [[${payment.orderId}]];

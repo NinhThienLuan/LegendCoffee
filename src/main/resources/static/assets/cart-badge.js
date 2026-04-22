@@ -24,23 +24,23 @@
       count = window.CartSystem.getCartCount();
       console.log('[CartBadge] Got cart count from CartSystem:', count);
     } else {
-      // Fallback: read cart from localStorage
+      // Fallback: read cart from sessionStorage
       try {
-        const cartRaw = localStorage.getItem('cart');
-        console.log('[CartBadge] Fallback to localStorage. Raw cart:', cartRaw);
+        const cartRaw = sessionStorage.getItem('industrial_legend_cart');
+        console.log('[CartBadge] Fallback to sessionStorage. Raw cart:', cartRaw);
         if (cartRaw) {
           const cart = JSON.parse(cartRaw);
           if (Array.isArray(cart)) {
-            count = cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
+            count = cart.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0);
             console.log('[CartBadge] Parsed cart array. Total quantity:', count, cart);
           } else {
-            console.log('[CartBadge] Cart in localStorage is not an array:', cart);
+            console.log('[CartBadge] Cart in sessionStorage is not an array:', cart);
           }
         } else {
-          console.log('[CartBadge] No cart found in localStorage');
+          console.log('[CartBadge] No cart found in sessionStorage');
         }
       } catch (e) {
-        console.log('[CartBadge] Error parsing cart from localStorage:', e);
+        console.log('[CartBadge] Error parsing cart from sessionStorage:', e);
       }
     }
     const cartIconLink = badge.closest('a[aria-label="Cart"]');

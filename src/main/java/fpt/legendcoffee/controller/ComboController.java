@@ -34,6 +34,18 @@ public class ComboController {
         return "product/catalogs";
     }
 
+    @GetMapping("/combos/{id}")
+    public String viewCombo(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            ComboResponseDTO combo = comboService.getById(id);
+            model.addAttribute("combo", combo);
+            return "product/combo-detail";
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/combos";
+        }
+    }
+
     @GetMapping("/admin/combos")
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public String adminComboList(Model model) {

@@ -21,6 +21,7 @@ import java.util.List;
 public class HomeController {
 
     private final ProductService productService;
+    private final fpt.legendcoffee.service.ArticleService articleService;
 
     @GetMapping({ "/", "/home", "/index"})
     public String index(Model model) {
@@ -30,6 +31,12 @@ public class HomeController {
             products = products.subList(0, 3);
         }
         model.addAttribute("products", products);
+
+        List<fpt.legendcoffee.entity.Article> articles = articleService.getPublishedArticles();
+        if (articles.size() > 3) {
+            articles = articles.subList(0, 3);
+        }
+        model.addAttribute("articles", articles);
         
         Authentication authenticationResponse = SecurityContextHolder.getContext().getAuthentication();
 
