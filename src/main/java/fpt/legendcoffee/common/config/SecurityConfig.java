@@ -26,19 +26,23 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Disable CSRF for manual transition
                 .authorizeHttpRequests(auth -> auth
+                        // Public endpoints
                         .requestMatchers(HttpMethod.POST, "/forgot-password", "/reset-password").permitAll()
                         .requestMatchers(SecurityConstants.PUBLIC_MATCHERS).permitAll()
+                        // Admin-only section
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/cart/**", "/checkout/**", "/payment/**", "/profile").hasRole("USER")
-
+                        // Customer-only pages — ADMIN is blocked from these
+                        .requestMatchers("/cart/**", "/checkout/**", "/payment/**").hasRole("USER")
                         .anyRequest().authenticated())
                 .securityContext(context -> context
                         .securityContextRepository(securityContextRepository()))
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint((request, response, authException) -> {
+                            System.out.println("Authentication failed: " + authException.getMessage());
                             response.sendRedirect("/login");
                         })
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            // Redirect ADMIN away from customer pages → admin dashboard
                             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
                             if (auth != null && auth.getAuthorities().stream()
                                     .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {

@@ -61,7 +61,10 @@ public class OrderController {
         // Parse status filter
         OrderStatus orderStatus = null;
         if (status != null && !status.isBlank()) {
-            try { orderStatus = OrderStatus.valueOf(status.toUpperCase()); } catch (IllegalArgumentException ignored) {}
+            try {
+                orderStatus = OrderStatus.valueOf(status.toUpperCase());
+            } catch (IllegalArgumentException ignored) {
+            }
         }
 
         List<OrderListDTO> allOrders;
@@ -74,15 +77,17 @@ public class OrderController {
         // Non-admin users can only see their own orders
         if (!isAdmin) {
             final Long userId = currentUser.get().getId();
-            allOrders = allOrders.stream().filter(dto ->
-                orderRepository.findById(dto.getId())
+            allOrders = allOrders.stream().filter(dto -> orderRepository.findById(dto.getId())
                     .map(Order::getUser)
-                    .map(User::getId).orElse(-1L).equals(userId)
-            ).toList();
+                    .map(User::getId).orElse(-1L).equals(userId)).toList();
         }
 
         model.addAttribute("orders", allOrders);
         model.addAttribute("selectedStatus", status != null ? status.toUpperCase() : "");
+
+        if (isAdmin) {
+            return "admin/orders";
+        }
         return "order/order";
     }
 
@@ -99,7 +104,7 @@ public class OrderController {
 
     @GetMapping("/orders/{orderId}")
     public String orderDetailPage(@PathVariable("orderId") Long orderId, Model model,
-                                  RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes) {
         Optional<User> currentUser = getCurrentUser();
         if (currentUser.isEmpty()) {
             return "redirect:/login";
@@ -161,13 +166,15 @@ public class OrderController {
     /**
      * GET /checkout
      * Hiển thị trang checkout với danh sách tỉnh/thành phố.
-     * Quận/huyện và phường/xã được tải động qua AJAX (/api/shipping/districts & /api/shipping/wards).
+     * Quận/huyện và phường/xã được tải động qua AJAX (/api/shipping/districts &
+     * /api/shipping/wards).
      */
     @GetMapping("/checkout")
     public String checkoutPage(@RequestHeader(value = "Referer", required = false) String referer,
-                               Model model) {
-        
-        // Kiểm tra luồng: Phải đi từ /cart (trừ khi đang ở chính trang /checkout - refresh)
+            Model model) {
+
+        // Kiểm tra luồng: Phải đi từ /cart (trừ khi đang ở chính trang /checkout -
+        // refresh)
         if (referer == null || (!referer.contains("/cart") && !referer.contains("/checkout"))) {
             log.warn("[Access Control] Ngăn chặn truy cập trực tiếp trang checkout. Referer: {}", referer);
             return "redirect:/cart";
@@ -194,7 +201,8 @@ public class OrderController {
         } catch (Exception e) {
             log.warn("[Checkout] Không thể tải dữ liệu khởi tạo: {}", e.getMessage());
             model.addAttribute("provinces", java.util.Collections.emptyList());
-            model.addAttribute("warningMessage", "Dịch vụ vận chuyển đang gặp sự cố. Bạn vẫn có thể nhập địa chỉ thủ công.");
+            model.addAttribute("warningMessage",
+                    "Dịch vụ vận chuyển đang gặp sự cố. Bạn vẫn có thể nhập địa chỉ thủ công.");
         }
 
         model.addAttribute("checkoutRequest", checkoutRequest);
@@ -204,16 +212,16 @@ public class OrderController {
     /**
      * POST /checkout/place-order
      * Xử lý đặt hàng:
-     *  1. Lưu Order vào DB, lấy orderId
-        *  2. Tạo đơn GHN
-        *  3. Redirect sang danh sách đơn hàng
+     * 1. Lưu Order vào DB, lấy orderId
+     * 2. Tạo đơn GHN
+     * 3. Redirect sang danh sách đơn hàng
      */
     @PostMapping("/checkout/place-order")
     public String placeOrder(@Valid @ModelAttribute("checkoutRequest") CheckoutRequestDTO checkout,
-                             BindingResult bindingResult,
-                             HttpServletRequest request,
-                             Model model,
-                             RedirectAttributes redirectAttributes) {
+            BindingResult bindingResult,
+            HttpServletRequest request,
+            Model model,
+            RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("provinces", shippingService.getProvinces());
@@ -226,7 +234,7 @@ public class OrderController {
 
             // Bước 1 — Lưu Order vào DB, gán orderId vào checkout
             Order order = orderService.createOrder(checkout);
-            
+
             // Bước 2 — Lưu thông tin vận chuyển (chưa đẩy sang GHN)
             shippingService.saveShippingInfo(checkout, order);
 
@@ -275,7 +283,7 @@ public class OrderController {
      */
     @PostMapping("/orders/{orderId}/cancel")
     public String cancelOrder(@PathVariable Long orderId,
-                              RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes) {
         try {
             boolean success = shippingService.cancelShipping(orderId);
             if (success) {
@@ -298,4 +306,3 @@ public class OrderController {
         return userRepository.findByEmail(auth.getName());
     }
 }
-
