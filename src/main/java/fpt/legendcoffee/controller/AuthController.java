@@ -40,13 +40,20 @@ public class AuthController {
 
     @GetMapping("/home")
     public String home() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            return "redirect:/admin";
+        }
         return "index";
     }
 
     @GetMapping("/login")
     public String showLoginForm(Model model) {
-        if (isAuthenticated()) {
-            return "redirect:/home";
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
+            boolean isAdmin = auth.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+            return isAdmin ? "redirect:/admin" : "redirect:/home";
         }
         if (!model.containsAttribute("loginDto")) {
             model.addAttribute("loginDto", new LoginRequestDTO("", ""));
@@ -99,8 +106,11 @@ public class AuthController {
 
     @GetMapping("/register")
     public String showRegisterForm(Model model) {
-        if (isAuthenticated()) {
-            return "redirect:/home";
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
+            boolean isAdmin = auth.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+            return isAdmin ? "redirect:/admin" : "redirect:/home";
         }
         if (!model.containsAttribute("registerDto")) {
             model.addAttribute("registerDto", new RegisterRequestDTO("", "", "", "", ""));
