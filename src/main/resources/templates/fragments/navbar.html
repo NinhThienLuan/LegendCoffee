@@ -2,8 +2,7 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <body>
-  <nav th:fragment="navbar(navItems)"
-    id="mainNavbar"
+  <nav th:fragment="navbar(navItems)" id="mainNavbar"
     class="fixed top-0 w-full z-[100] bg-[#faf9f5]/85 dark:bg-[#1a1614]/85 backdrop-blur-md border-b border-outline-variant/20 transition-transform duration-300">
     <div class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20">
       <!-- Container chính dùng flex và justify-between để đẩy 3 cụm ra 2 đầu và giữa -->
@@ -34,6 +33,9 @@
           <a href="/orders"
             th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/orders')} ? ' text-[#351f1b] dark:text-[#ffffff]' : ' text-[#5b4a45] dark:text-[#d4c3bf] hover:text-[#351f1b] dark:hover:text-[#ffffff]'"
             class="transition-colors duration-300">Đơn hàng</a>
+          <a href="/articles"
+            th:classappend="${#httpServletRequest != null and #strings.startsWith(#httpServletRequest.requestURI, '/orders')} ? ' text-[#351f1b] dark:text-[#ffffff]' : ' text-[#5b4a45] dark:text-[#d4c3bf] hover:text-[#351f1b] dark:hover:text-[#ffffff]'"
+            class="transition-colors duration-300">Bài viết</a>
         </div>
 
         <!-- 3. CỤM PHẢI: ICONS -->
@@ -45,7 +47,8 @@
                 class="h-9 w-9 inline-flex items-center justify-center text-[#5b4a45] hover:text-[#351f1b] hover:bg-[#efe9e5] rounded-full transition-colors"
                 aria-label="Cart">
                 <span class="material-symbols-outlined text-[20px]">shopping_cart</span>
-                <span id="cart-badge" class="absolute -top-1 -right-1 bg-primary text-on-primary text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center opacity-0 transition-opacity">0</span>
+                <span id="cart-badge"
+                  class="absolute -top-1 -right-1 bg-primary text-on-primary text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center opacity-0 transition-opacity">0</span>
               </a>
             </div>
 
@@ -148,17 +151,17 @@
       }
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       console.log('[CartBadge] Script loaded, DOMContentLoaded');
       updateNavbarCartBadge();
       console.log('[CartBadge] DOMContentLoaded, badge updated');
     });
-    window.addEventListener('cartUpdated', function() {
+    window.addEventListener('cartUpdated', function () {
       updateNavbarCartBadge();
       console.log('[CartBadge] cartUpdated event, badge updated');
     });
     // Also update on storage event (multi-tab)
-    window.addEventListener('storage', function(e) {
+    window.addEventListener('storage', function (e) {
       if (e.key === 'cart') {
         updateNavbarCartBadge();
         console.log('[CartBadge] storage event, badge updated');
@@ -166,4 +169,5 @@
     });
   </script>
 </body>
+
 </html>

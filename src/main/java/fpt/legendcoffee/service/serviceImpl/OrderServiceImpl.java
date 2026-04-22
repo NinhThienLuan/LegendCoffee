@@ -30,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -81,20 +82,63 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<OrderListDTO> getAllOrdersForList() {
-        List<Order> orders = orderRepository.findAllWithUser();
+        List<Order> orders = orderRepository.findAllWithDetails();
         return mapOrdersToDTO(orders);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<OrderListDTO> getOrdersByStatus(OrderStatus status) {
-        List<Order> orders = orderRepository.findByStatusWithUser(status);
+        List<Order> orders = orderRepository.findByStatusWithDetails(status);
         return mapOrdersToDTO(orders);
     }
 
     private List<OrderListDTO> mapOrdersToDTO(List<Order> orders) {
         return orders.stream().map(order -> {
-            String itemName = null, itemDetail = null, itemImage = null;
+            List<OrderItem> items = order.getOrderItems();
+            String itemName = "Sản phẩm";
+            String itemDetail = "";
+            String firstImage = null;
+            List<String> allImages = new ArrayList<>();
+            int additionalCount = 0;
+
+            if (items != null && !items.isEmpty()) {
+                // Chỉ lấy ảnh từ sản phẩm (variant -> product)
+                for (OrderItem item : items) {
+                    if (item.getVariant() != null) {
+                        String img = item.getVariant().getImageUrl();
+                        if (img == null && item.getVariant().getProduct() != null) {
+                            img = item.getVariant().getProduct().getImageUrl();
+                        }
+                        if (img != null && !allImages.contains(img)) {
+                            allImages.add(img);
+                        }
+                    }
+                }
+
+                // Lấy thông tin từ item đầu tiên có variant
+                OrderItem first = items.stream()
+                        .filter(i -> i.getVariant() != null)
+                        .findFirst()
+                        .orElse(items.get(0));
+
+                if (first.getVariant() != null) {
+                    itemName = first.getVariant().getProduct() != null
+                            ? first.getVariant().getProduct().getName()
+                            : first.getVariant().getVariantName();
+                    itemDetail = first.getVariant().getVariantName();
+                    firstImage = allImages.isEmpty() ? null : allImages.get(0);
+                } else if (first.getCombo() != null) {
+                    itemName = first.getCombo().getName();
+                    itemDetail = "Combo Legend";
+                }
+
+                additionalCount = items.size() - 1;
+            }
+
+            // Lấy trạng thái shipping
             ShippingInfo shipping = order.getShippingInfo();
             String shippingStatus = shipping != null ? shipping.getStatus() : "pending";
 
@@ -104,11 +148,13 @@ public class OrderServiceImpl implements OrderService {
                     .totalAmount(order.getTotalAmount())
                     .firstItemName(itemName)
                     .firstItemDetail(itemDetail)
-                    .firstItemImage(itemImage)
+                    .firstItemImage(firstImage)
+                    .itemImages(allImages)
+                    .additionalItemsCount(additionalCount)
                     .shippingStatus(shippingStatus)
                     .shippingStatusLabel(OrderStatusDTO.mapStatusLabel(shippingStatus))
                     .build();
-        }).toList();
+        }).collect(Collectors.toList());
     }
 
     @Override

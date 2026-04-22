@@ -117,20 +117,28 @@
                                         th:text="${ord.orderDate != null ? #temporals.format(ord.orderDate, 'dd/MM/yyyy HH:mm') : '--'}">
                                         Ngày đặt</td>
                                     <td class="px-6 py-5">
-                                        <div class="flex items-center gap-3">
-                                            <div
-                                                class="w-10 h-10 rounded bg-surface-container-high overflow-hidden flex-shrink-0">
-                                                <img class="w-full h-full object-cover"
-                                                    th:src="${ord.firstItemImage != null ? ord.firstItemImage : 'https://placehold.co/40x40?text=☕'}"
-                                                    alt="Product" />
-                                            </div>
-                                            <div>
-                                                <p class="text-sm font-bold text-on-surface"
-                                                    th:text="${ord.firstItemName != null ? ord.firstItemName : 'Sản phẩm'}">
-                                                    Tên sản phẩm</p>
-                                                <p class="text-xs text-on-surface-variant"
-                                                    th:text="${ord.firstItemDetail != null ? ord.firstItemDetail : ''}">
-                                                    Chi tiết</p>
+                                        <div class="flex items-center">
+                                            <!-- Image Stack Section -->
+                                            <div class="relative flex-shrink-0">
+                                                <!-- Offset background square for multiple items -->
+                                                <div th:if="${ord.additionalItemsCount > 0}" 
+                                                     class="absolute -top-1 -right-1 w-10 h-10 rounded bg-surface-variant border border-outline-variant/20 z-0"></div>
+                                                
+                                                <!-- Main product image -->
+                                                <div class="relative w-10 h-10 rounded bg-surface-container-high overflow-hidden border border-outline-variant/20 shadow-sm z-10 flex items-center justify-center">
+                                                    <img th:if="${ord.firstItemImage != null}" 
+                                                         class="w-full h-full object-cover"
+                                                         th:src="${ord.firstItemImage}"
+                                                         alt="Product" />
+                                                    <span th:if="${ord.firstItemImage == null}" 
+                                                          class="material-symbols-outlined text-on-surface-variant text-lg">coffee_bean</span>
+                                                    
+                                                    <!-- Optional small overlay for count if needed, but the stack itself conveys "multiple" -->
+                                                    <div th:if="${ord.additionalItemsCount > 0}" 
+                                                         class="absolute inset-0 bg-primary/40 flex items-center justify-center z-20">
+                                                        <span class="text-[10px] font-black text-on-primary" th:text="'+' + ${ord.additionalItemsCount}">+1</span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </td>
