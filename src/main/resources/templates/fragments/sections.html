@@ -119,6 +119,7 @@
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       <!-- Loop through dynamic products -->
+      <!--/*@thymesVar id="products" type=""*/-->
       <div th:each="product : ${products}"
         class="bg-surface-container-lowest overflow-hidden flex flex-col h-full border-b-4 border-primary shadow-sm hover:shadow-xl transition-all duration-500 group relative">
 
