@@ -25,20 +25,29 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 	List<Order> findByStatusWithUser(@Param("status") OrderStatus status);
 
 	@Query("SELECT DISTINCT o FROM Order o " +
-		   "LEFT JOIN FETCH o.orderItems oi " +
-		   "LEFT JOIN FETCH oi.variant v " +
-		   "LEFT JOIN FETCH v.product p " +
-		   "LEFT JOIN FETCH o.shippingInfo s " +
-		   "WHERE o.status = :status " +
-		   "ORDER BY o.orderDate DESC")
+			"LEFT JOIN FETCH o.orderItems oi " +
+			"LEFT JOIN FETCH oi.variant v " +
+			"LEFT JOIN FETCH v.product p " +
+			"LEFT JOIN FETCH o.shippingInfo s " +
+			"WHERE o.status = :status " +
+			"ORDER BY o.orderDate DESC")
 	List<Order> findByStatusWithDetails(@Param("status") OrderStatus status);
 	@Query("SELECT DISTINCT o FROM Order o " +
-		   "LEFT JOIN FETCH o.orderItems oi " +
-		   "LEFT JOIN FETCH oi.variant v " +
-		   "LEFT JOIN FETCH v.product p " +
-		   "LEFT JOIN FETCH o.shippingInfo s " +
-		   "ORDER BY o.orderDate DESC")
+			"LEFT JOIN FETCH o.orderItems oi " +
+			"LEFT JOIN FETCH oi.variant v " +
+			"LEFT JOIN FETCH v.product p " +
+			"LEFT JOIN FETCH o.shippingInfo s " +
+			"ORDER BY o.orderDate DESC")
 	List<Order> findAllWithDetails();
+
+	@Query("SELECT DISTINCT o FROM Order o " +
+			"LEFT JOIN FETCH o.orderItems oi " +
+			"LEFT JOIN FETCH oi.variant v " +
+			"LEFT JOIN FETCH v.product p " +
+			"LEFT JOIN FETCH o.shippingInfo s " +
+			"WHERE o.id = :id")
+	Optional<Order> findByIdWithDetails(@Param("id") Long id);
+
 	@Query("SELECT o.status, COUNT(o) FROM Order o GROUP BY o.status")
 	List<Object[]> countOrdersByStatus();
 
@@ -52,10 +61,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 	long countOrdersSince(@Param("startDate") java.time.LocalDateTime startDate);
 
 	@Query("SELECT MONTH(o.orderDate), SUM(o.totalAmount) FROM Order o " +
-		   "WHERE o.status IN :statuses " +
-		   "AND o.orderDate >= :startDate " +
-		   "GROUP BY MONTH(o.orderDate) " +
-		   "ORDER BY MONTH(o.orderDate)")
+			"WHERE o.status IN :statuses " +
+			"AND o.orderDate >= :startDate " +
+			"GROUP BY MONTH(o.orderDate) " +
+			"ORDER BY MONTH(o.orderDate)")
 	List<Object[]> getMonthlyRevenueSince(@Param("startDate") java.time.LocalDateTime startDate, @Param("statuses") List<OrderStatus> statuses);
 }
-

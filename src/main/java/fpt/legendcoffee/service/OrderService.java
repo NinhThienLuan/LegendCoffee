@@ -13,6 +13,7 @@ public interface OrderService {
     List<OrderListDTO> getAllOrdersForList();
     List<OrderListDTO> getOrdersByStatus(OrderStatus status);
     void startDelivering(Long orderId);
+    Order getOrderWithDetails(Long id);
 
 }
 

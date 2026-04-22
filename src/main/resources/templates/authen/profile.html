@@ -162,6 +162,8 @@
         </div>
     </main>
 
+    <script src="assets/effects.js" th:src="@{/assets/effects.js}"></script>
+    <script src="assets/cart-badge.js" th:src="@{/assets/cart-badge.js}"></script>
     <script th:inline="javascript">
         document.addEventListener('DOMContentLoaded', function () {
             const editBtn = document.getElementById('edit-btn');
@@ -203,7 +205,6 @@
             });
         });
     </script>
-
     <!-- Footer Fragment -->
     <div th:replace="~{fragments/footer :: footer}"></div>
 </body>

@@ -17,6 +17,7 @@ public class PaymentReturnDTO {
     private String bankCode; // vnp_BankCode — ngân hàng thanh toán
     private String responseCode; // vnp_ResponseCode — "00" = thành công
     private String payDate; // vnp_PayDate — thời gian thanh toán
+    private String orderId; // extracted from txnRef
 
     public PaymentReturnDTO() {
     }
@@ -83,6 +84,36 @@ public class PaymentReturnDTO {
 
     public void setPayDate(String payDate) {
         this.payDate = payDate;
+    }
+
+    public String getOrderId() {
+        if (orderId != null) return orderId;
+        if (txnRef != null && txnRef.contains("_")) {
+            return txnRef.split("_")[0];
+        }
+        return txnRef;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
+
+    public String getFormattedPayDate() {
+        if (payDate == null || payDate.length() < 14) {
+            return payDate;
+        }
+        try {
+            // yyyyMMddHHmmss -> dd/MM/yyyy HH:mm:ss
+            return String.format("%s/%s/%s %s:%s:%s",
+                    payDate.substring(6, 8),
+                    payDate.substring(4, 6),
+                    payDate.substring(0, 4),
+                    payDate.substring(8, 10),
+                    payDate.substring(10, 12),
+                    payDate.substring(12, 14));
+        } catch (Exception e) {
+            return payDate;
+        }
     }
 
     public static PaymentReturnDTO success(String txnRef, BigDecimal amount,

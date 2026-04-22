@@ -11,7 +11,8 @@
         <div class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20">
             <!-- Header -->
             <div class="mb-12">
-                <h1 class="text-4xl md:text-5xl font-headline font-extrabold text-primary mb-4 tracking-tighter">
+                <h1
+                    class="text-4xl md:text-5xl font-headline font-extrabold text-primary mb-4 tracking-tighter scroll-reveal-text">
                     KIẾN THỨC CÀ PHÊ &amp; XU HƯỚNG B2B
                 </h1>
                 <p class="text-on-surface-variant max-w-2xl text-lg">
@@ -39,14 +40,7 @@
 
                     <!-- Article Information Section -->
                     <div class="p-6 flex flex-col flex-grow">
-                        <!-- Tags / Categories -->
-                        <div class="flex flex-wrap gap-2 mb-4">
-                            <span
-                                class="text-xs font-bold text-primary bg-primary-container/30 px-3 py-1 rounded-sm uppercase tracking-widest"
-                                th:text="${article.status == 'PUBLISHED' ? 'TIN TỨC' : 'NỘI BỘ'}">
-                                CATEGORY
-                            </span>
-                        </div>
+                        <!-- Title -->
 
                         <!-- Title -->
                         <h3 class="text-xl font-headline font-bold text-on-surface mb-4 group-hover:text-primary transition-colors line-clamp-2"
@@ -89,6 +83,8 @@
     </main>
 
     <!-- Footer -->
+    <script src="assets/effects.js" th:src="@{/assets/effects.js}"></script>
+    <script src="assets/cart-badge.js" th:src="@{/assets/cart-badge.js}"></script>
     <div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 

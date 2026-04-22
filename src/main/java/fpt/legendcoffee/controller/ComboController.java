@@ -35,9 +35,15 @@ public class ComboController {
     }
 
     @GetMapping("/combos/{id}")
-    public String publicComboDetail(@PathVariable Long id, Model model) {
-        model.addAttribute("combo", comboService.getById(id));
-        return "product/combo-detail";
+    public String viewCombo(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            ComboResponseDTO combo = comboService.getById(id);
+            model.addAttribute("combo", combo);
+            return "product/combo-detail";
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/combos";
+        }
     }
 
     @GetMapping("/admin/combos")
