@@ -44,7 +44,7 @@ public class RefundServiceImpl implements RefundService {
             throw new IllegalArgumentException("Bạn không có quyền yêu cầu hoàn tiền cho đơn hàng này");
         }
 
-        if (order.getStatus() != OrderStatus.COMPLETED) {
+        if (order.getStatus() != OrderStatus.CONFIRMED && order.getStatus() != OrderStatus.SHIPPING && order.getStatus() != OrderStatus.COMPLETED) {
             throw new IllegalStateException("Chỉ đơn hàng đã thanh toán mới được phép hoàn tiền");
         }
 
@@ -105,11 +105,21 @@ public class RefundServiceImpl implements RefundService {
 
         Order order = request.getOrder();
         order.setStatus(OrderStatus.REFUNDED);
+        Wallet adminWallet = walletRepository.findByIdWithLock(1L)
+        .orElseThrow(() -> new IllegalStateException("Không tìm thấy ví Admin/Hệ thống để trừ tiền"));
+
+// Đảm bảo ví admin không bị âm (tuỳ policy của bạn, có thể bỏ qua nếu cho phép ví hệ thống âm)
+if (adminWallet.getAmount().compareTo(refundAmount) < 0) {
+    throw new IllegalStateException("Số dư ví hệ thống không đủ để hoàn tiền");
+}
+
+adminWallet.setAmount(adminWallet.getAmount().subtract(refundAmount));
+walletRepository.save(adminWallet);
         orderRepository.save(order);
 
         log.info("[Refund] Đã duyệt thành công Request {}. Đã cộng {} vào Wallet {}", 
                  refundRequestId, refundAmount, wallet.getId());
-    }
+        }
 
     // ==========================================
     // ADMIN TỪ CHỐI HOÀN TIỀN

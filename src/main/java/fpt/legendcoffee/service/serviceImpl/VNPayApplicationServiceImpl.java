@@ -1,25 +1,29 @@
 package fpt.legendcoffee.service.serviceImpl;
 
-import fpt.legendcoffee.entity.Order;
-import fpt.legendcoffee.entity.Payment;
-import fpt.legendcoffee.entity.enumeration.OrderStatus;
-import fpt.legendcoffee.entity.enumeration.PaymentMethod;
-import fpt.legendcoffee.entity.enumeration.PaymentStatus;
-import fpt.legendcoffee.dto.request.PaymentReturnDTO;
-import fpt.legendcoffee.dto.response.VNPayIpnResponseDTO;
-import fpt.legendcoffee.service.VNPayApplicationService;
-import fpt.legendcoffee.service.VNPayService;
-import fpt.legendcoffee.repository.OrderRepository;
-import fpt.legendcoffee.repository.PaymentRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import fpt.legendcoffee.dto.request.PaymentReturnDTO;
+import fpt.legendcoffee.dto.response.VNPayIpnResponseDTO;
+import fpt.legendcoffee.entity.Order;
+import fpt.legendcoffee.entity.Payment;
+import fpt.legendcoffee.entity.Wallet;
+import fpt.legendcoffee.entity.enumeration.OrderStatus;
+import fpt.legendcoffee.entity.enumeration.PaymentMethod;
+import fpt.legendcoffee.entity.enumeration.PaymentStatus;
+import fpt.legendcoffee.repository.OrderRepository;
+import fpt.legendcoffee.repository.PaymentRepository;
+import fpt.legendcoffee.repository.WalletRepository;
+import fpt.legendcoffee.service.VNPayApplicationService;
+import fpt.legendcoffee.service.VNPayService;
 
 /**
  * Business logic VNPay payment.
@@ -29,6 +33,12 @@ import java.util.Optional;
  */
 @Service
 public class VNPayApplicationServiceImpl implements VNPayApplicationService {
+    @Autowired private WalletRepository walletRepository;
+
+    // @Autowired private WalletTransactionRepository transactionRepository;
+
+    // Giả sử ID của ví Admin (Công ty) luôn là 1. Bạn có thể thay đổi logic tìm ví admin theo hệ thống của bạn.
+    private static final Long ADMIN_WALLET_ID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(VNPayApplicationServiceImpl.class);
 
@@ -173,6 +183,20 @@ public class VNPayApplicationServiceImpl implements VNPayApplicationService {
             Order order = payment.getOrder();
             order.setStatus(OrderStatus.CONFIRMED);
             orderRepository.save(order);
+           
+            Long userId = order.getUser().getId(); 
+
+            
+            Wallet adminWallet = walletRepository.findById(ADMIN_WALLET_ID)
+                    .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy ví admin"));
+
+          BigDecimal orderTotal = order.getTotalAmount(); 
+
+        // Cộng tiền cho hệ thống (Admin)
+        adminWallet.setAmount(adminWallet.getAmount().add(orderTotal));
+         
+            walletRepository.save(adminWallet);
+
             log.info("[VNPay IPN] Thanh toán thành công - TxnRef={}, OrderId={}",
                     txnRef, order.getId());
         } else {
