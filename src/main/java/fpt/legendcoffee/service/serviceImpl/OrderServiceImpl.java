@@ -142,6 +142,16 @@ public class OrderServiceImpl implements OrderService {
             ShippingInfo shipping = order.getShippingInfo();
             String shippingStatus = shipping != null ? shipping.getStatus() : "pending";
 
+            // Lấy URL thanh toán VNPay nếu đang PENDING
+            String paymentUrl = null;
+            if (order.getPayments() != null) {
+                paymentUrl = order.getPayments().stream()
+                        .filter(p -> fpt.legendcoffee.entity.enumeration.PaymentStatus.PENDING.equals(p.getStatus()))
+                        .map(fpt.legendcoffee.entity.Payment::getPaymentUrl)
+                        .findFirst()
+                        .orElse(null);
+            }
+
             return OrderListDTO.builder()
                     .id(order.getId())
                     .orderDate(order.getOrderDate())
@@ -153,6 +163,7 @@ public class OrderServiceImpl implements OrderService {
                     .additionalItemsCount(additionalCount)
                     .shippingStatus(shippingStatus)
                     .shippingStatusLabel(OrderStatusDTO.mapStatusLabel(shippingStatus))
+                    .paymentUrl(paymentUrl)
                     .build();
         }).collect(Collectors.toList());
     }

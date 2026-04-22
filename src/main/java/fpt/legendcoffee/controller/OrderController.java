@@ -10,6 +10,7 @@ import fpt.legendcoffee.entity.User;
 import fpt.legendcoffee.entity.enumeration.OrderStatus;
 import fpt.legendcoffee.repository.OrderItemRepository;
 import fpt.legendcoffee.repository.OrderRepository;
+import fpt.legendcoffee.repository.PaymentRepository;
 import fpt.legendcoffee.repository.ShippingInfoRepository;
 import fpt.legendcoffee.repository.UserRepository;
 import fpt.legendcoffee.service.OrderService;
@@ -43,6 +44,7 @@ public class OrderController {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final ShippingInfoRepository shippingInfoRepository;
+    private final PaymentRepository paymentRepository;
 
     // =========================================================================
     // Trang danh sách đơn hàng & chi tiết
@@ -141,6 +143,10 @@ public class OrderController {
             model.addAttribute("vat", vat);
             model.addAttribute("totalAmount", totalAmount);
             model.addAttribute("orderId", orderId);
+
+            // Tìm URL thanh toán VNPay nếu đơn hàng đang chờ thanh toán
+            paymentRepository.findByOrderIdAndStatus(orderId, fpt.legendcoffee.entity.enumeration.PaymentStatus.PENDING)
+                    .ifPresent(p -> model.addAttribute("paymentUrl", p.getPaymentUrl()));
 
             // Tích hợp dữ liệu tracking trực tiếp vào trang detail
             try {

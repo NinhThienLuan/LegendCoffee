@@ -88,6 +88,10 @@ public class VNPayApplicationServiceImpl implements VNPayApplicationService {
         String paymentUrl = vnPayService.createPaymentUrl(
                 totalAmount.longValue(), txnRef, orderInfo, ipAddress);
 
+        // 6. Lưu URL thanh toán để user có thể quay lại sau
+        payment.setPaymentUrl(paymentUrl);
+        paymentRepository.save(payment);
+
         log.info("[VNPay] Tạo payment thành công - OrderId={}, TxnRef={}", orderId, txnRef);
         return paymentUrl;
     }

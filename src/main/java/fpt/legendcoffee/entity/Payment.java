@@ -52,4 +52,7 @@ public class Payment extends BaseEntity {
     @Column(name = "error_message", columnDefinition = "NVARCHAR(255)")
     private String errorMessage;
 
+    @Column(name = "payment_url", length = 2048)
+    private String paymentUrl;
+
 }
