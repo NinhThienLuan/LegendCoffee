@@ -4,6 +4,7 @@ import fpt.legendcoffee.dto.app.*;
 import fpt.legendcoffee.dto.ghn.DistrictDTO;
 import fpt.legendcoffee.dto.ghn.ProvinceDTO;
 import fpt.legendcoffee.dto.ghn.WardDTO;
+import fpt.legendcoffee.entity.Order;
 import fpt.legendcoffee.entity.ShippingInfo;
 
 import java.util.List;
@@ -21,8 +22,11 @@ public interface ShippingService {
     // Tính phí & thời gian giao — gọi song song cho tất cả service
     List<ShippingOptionDTO> getShippingOptions(AddressQueryDTO query);
 
-    // Tạo đơn GHN sau khi đơn hàng đã được lưu vào DB
-    ShippingInfo createGHNOrder(CheckoutRequestDTO checkout);
+    // Lưu thông tin vận chuyển vào DB (chưa đẩy qua GHN)
+    ShippingInfo saveShippingInfo(CheckoutRequestDTO checkout, Order order);
+
+    // Đẩy đơn hàng sang GHN sau khi thanh toán thành công
+    ShippingInfo pushOrderToGHN(Long orderId);
 
     // Tracking
     OrderStatusDTO getOrderStatus(Long orderId);
