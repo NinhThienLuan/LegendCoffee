@@ -5,6 +5,7 @@ import fpt.legendcoffee.common.properties.GHNProperties;
 import fpt.legendcoffee.dto.app.*;
 import fpt.legendcoffee.dto.ghn.*;
 import fpt.legendcoffee.entity.Order;
+import fpt.legendcoffee.entity.OrderItem;
 import fpt.legendcoffee.entity.ShippingInfo;
 import fpt.legendcoffee.repository.OrderRepository;
 import fpt.legendcoffee.repository.ShippingInfoRepository;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
@@ -287,7 +289,7 @@ public class ShippingServiceImpl implements ShippingService {
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public ShippingInfo pushOrderToGHN(Long orderId) {
         log.info("[Shipping] Pushing order {} to GHN gateway", orderId);
 
@@ -299,8 +301,53 @@ public class ShippingServiceImpl implements ShippingService {
             return info;
         }
 
-        // Tạo request cho GHN
+        // Chuyển đổi danh sách OrderItem thực tế sang định dạng GHN
+        Order order = info.getOrder();
+        List<OrderItem> orderItems = order.getOrderItems();
+        if (orderItems == null || orderItems.isEmpty()) {
+            throw new GHNException("Đơn hàng không có sản phẩm nào để giao");
+        }
+
+        List<CreateOrderRequestDTO.OrderItemDTO> ghnItems = orderItems.stream().map(item -> {
+            String itemName = "Sản phẩm Legend Coffee";
+            if (item.getVariant() != null && item.getVariant().getProduct() != null) {
+                itemName = item.getVariant().getProduct().getName() + " - " + item.getVariant().getVariantName();
+            } else if (item.getCombo() != null) {
+                itemName = "Combo: " + item.getCombo().getName();
+            }
+
+            int itemWeight = 500; // Mặc định 500g nếu không có thông tin
+            if (item.getVariant() != null && item.getVariant().getSize() != null) {
+                itemWeight = item.getVariant().getSize();
+            } else if (item.getCombo() != null) {
+                // Nếu là combo, tính tổng cân nặng của các thành phần trong combo
+                itemWeight = item.getCombo().getComboItems().stream()
+                        .filter(ci -> ci.getVariant() != null && ci.getVariant().getSize() != null)
+                        .mapToInt(ci -> ci.getVariant().getSize() * ci.getQuantity())
+                        .sum();
+                if (itemWeight == 0) itemWeight = 500; // Fallback
+            }
+
+            return CreateOrderRequestDTO.OrderItemDTO.builder()
+                    .name(itemName)
+                    .quantity(item.getQuantity())
+                    .weight(itemWeight)
+                    .build();
+        }).toList();
+
+        // Tính tổng cân nặng (gram)
+        int totalWeight = ghnItems.stream()
+                .mapToInt(item -> item.getWeight() * item.getQuantity())
+                .sum();
+
+        // Tạo request cho GHN với dữ liệu thực tế
         CreateOrderRequestDTO createReq = CreateOrderRequestDTO.builder()
+                .fromName(props.getFromName())
+                .fromPhone(props.getFromPhone())
+                .fromAddress(props.getFromAddress())
+                .fromWardName(props.getFromWardName())
+                .fromDistrictName(props.getFromDistrictName())
+                .fromProvinceName(props.getFromProvinceName())
                 .toName(info.getRecipientName())
                 .toPhone(info.getRecipientPhone())
                 .toAddress(info.getRecipientAddress())
@@ -312,7 +359,7 @@ public class ShippingServiceImpl implements ShippingService {
                 .serviceId(info.getServiceId())
                 .serviceTypeId(2) // Bắt buộc truyền 2 (Giao chuẩn)
                 .paymentTypeId(info.getPaymentTypeId())
-                .weight(500)   // TODO: tính từ giỏ hàng thực tế
+                .weight(totalWeight)
                 .length(20)
                 .width(20)
                 .height(10)
@@ -320,13 +367,7 @@ public class ShippingServiceImpl implements ShippingService {
                 .codAmount(info.getPaymentTypeId() == 2 ? info.getShippingFee() : 0L)
                 .note(info.getNote())
                 .requiredNote("CHOTHUHANG")
-                .items(List.of(
-                        CreateOrderRequestDTO.OrderItemDTO.builder()
-                                .name("Đơn hàng Legend Coffee")
-                                .quantity(1)
-                                .weight(500)
-                                .build()
-                ))
+                .items(ghnItems)
                 .build();
 
         // Gọi GHN API tạo đơn
