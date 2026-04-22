@@ -1,6 +1,8 @@
 package fpt.legendcoffee.repository;
 
 import fpt.legendcoffee.entity.OrderItem;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -29,6 +31,6 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 			GROUP BY p.name
 			ORDER BY totalSold DESC
 			""")
-	List<Object[]> getTopSellingProducts(org.springframework.data.domain.Pageable pageable);
+	List<Object[]> getTopSellingProducts(Pageable pageable);
 }
 
