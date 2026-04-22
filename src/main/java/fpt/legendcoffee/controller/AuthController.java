@@ -148,7 +148,6 @@ public class AuthController {
             return "redirect:/login";
         }
         try {
-            log.info("Processing forgot password request for email: {}", request.email());
             authenService.forgotPassword(request.email());
             log.info("Forgot password email sent successfully to: {}", request.email());
             redirectAttributes.addFlashAttribute("successMessage", "Mật khẩu mới đã được gửi vào email của bạn.");
@@ -191,12 +190,12 @@ public class AuthController {
             }
             authenService.resetPassword(request.email(), request.oldPassword(), request.newPassword());
             log.info("Password reset successful for email: {}", request.email());
-            
+
             // Clear force change state
             org.springframework.web.context.request.RequestContextHolder.getRequestAttributes()
-                .removeAttribute("forceChangeEmail", 
+                .removeAttribute("forceChangeEmail",
                                 org.springframework.web.context.request.RequestAttributes.SCOPE_SESSION);
-                                
+
             redirectAttributes.addFlashAttribute("successMessage", "Đổi mật khẩu thành công! Vui lòng đăng nhập lại.");
             return "redirect:/login";
         } catch (Exception e) {
