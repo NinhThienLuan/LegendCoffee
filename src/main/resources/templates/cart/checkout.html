@@ -320,6 +320,12 @@
         }
 
         document.addEventListener('DOMContentLoaded', function () {
+            // Display server-side error message if exists
+            const serverError = [[${errorMessage}]];
+            if (serverError) {
+                showToast(serverError);
+            }
+
             const cart = window.CartSystem ? window.CartSystem.getCart() : [];
 
             // Guard: Redirect if cart is empty
@@ -363,13 +369,36 @@
 
             if (checkoutForm) {
                 checkoutForm.addEventListener('submit', function (e) {
+                    const latestCart = window.CartSystem ? window.CartSystem.getCart() : [];
+                    
+                    // 1. Client-side validation using values from Backend
+                    const MAX_ITEM_QTY = [[${maxItemQty}]];
+                    const MAX_TOTAL_QTY = [[${maxTotalQty}]];
+                    let totalQty = 0;
+                    let hasExceededItemLimit = false;
+
+                    latestCart.forEach(item => {
+                        const qty = parseInt(item.quantity) || 0;
+                        totalQty += qty;
+                        if (qty > MAX_ITEM_QTY) {
+                            hasExceededItemLimit = true;
+                        }
+                    });
+
+                    if (hasExceededItemLimit || totalQty > MAX_TOTAL_QTY) {
+                        e.preventDefault();
+                        showToast('Đặt quá giới hạn online. Vui lòng liên hệ tổng đài để được hỗ trợ');
+                        return;
+                    }
+
+                    // 2. Validate shipping selection
                     const shippingFee = document.getElementById('selectedShippingFee').value;
                     if (!shippingFee || shippingFee === '') {
                         e.preventDefault();
                         showToast('Vui lòng chọn dịch vụ vận chuyển để tiếp tục.');
                         return;
                     }
-                    const latestCart = window.CartSystem ? window.CartSystem.getCart() : [];
+                    
                     bindCheckoutItems(latestCart);
                 });
             }

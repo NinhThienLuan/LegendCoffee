@@ -218,6 +218,8 @@ public class OrderController {
         }
 
         model.addAttribute("checkoutRequest", checkoutRequest);
+        model.addAttribute("maxItemQty", orderService.getMaxQuantityPerItem());
+        model.addAttribute("maxTotalQty", orderService.getMaxTotalQuantity());
         return "cart/checkout";
     }
 
@@ -237,6 +239,8 @@ public class OrderController {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("provinces", shippingService.getProvinces());
+            model.addAttribute("maxItemQty", orderService.getMaxQuantityPerItem());
+            model.addAttribute("maxTotalQty", orderService.getMaxTotalQuantity());
             return "cart/checkout";
         }
 
@@ -261,6 +265,8 @@ public class OrderController {
             log.error("[Checkout] Đặt hàng thất bại: {}", e.getMessage(), e);
             model.addAttribute("errorMessage", "Đặt hàng thất bại: " + e.getMessage());
             model.addAttribute("provinces", shippingService.getProvinces());
+            model.addAttribute("maxItemQty", orderService.getMaxQuantityPerItem());
+            model.addAttribute("maxTotalQty", orderService.getMaxTotalQuantity());
             return "cart/checkout";
         }
     }

@@ -12,6 +12,7 @@ import fpt.legendcoffee.repository.OrderRepository;
 import fpt.legendcoffee.repository.PaymentRepository;
 import fpt.legendcoffee.repository.ShippingInfoRepository;
 import fpt.legendcoffee.service.GHNService;
+import fpt.legendcoffee.service.OrderService;
 import fpt.legendcoffee.service.ShippingService;
 import fpt.legendcoffee.service.WalletService;
 import fpt.legendcoffee.entity.Payment;
@@ -46,9 +47,9 @@ public class ShippingServiceImpl implements ShippingService {
 
     private final GHNService ghnService;
     private final ShippingInfoRepository shippingInfoRepository;
-    private final OrderRepository orderRepository;
     private final PaymentRepository paymentRepository;
     private final WalletService walletService;
+    private final OrderService orderService;
     private final GHNProperties props;
 
     // ================================================================
@@ -501,18 +502,16 @@ public class ShippingServiceImpl implements ShippingService {
             info.setStatus("cancel");
             shippingInfoRepository.save(info);
 
-            // Cập nhật trạng thái đơn hàng thành CANCELLED
-            Order order = info.getOrder();
-            order.setStatus(OrderStatus.CANCELLED);
-            orderRepository.save(order);
+            // Cập nhật trạng thái đơn hàng và hoàn kho thông qua OrderService
+            orderService.cancelOrder(info.getOrder().getId());
 
-            log.info("[Shipping] Order {} cancelled successfully and Order status updated to CANCELLED", info.getGhnOrderCode());
+            log.info("[Shipping] Order {} cancelled successfully and stock restored", info.getGhnOrderCode());
 
             // Xử lý hoàn tiền trực tiếp nếu đã thanh toán
             try {
-                processRefund(order);
+                processRefund(info.getOrder());
             } catch (Exception e) {
-                log.error("[Shipping] Lỗi khi hoàn tiền cho đơn hàng #{}: {}", order.getId(), e.getMessage());
+                log.error("[Shipping] Lỗi khi hoàn tiền cho đơn hàng #{}: {}", info.getOrder().getId(), e.getMessage());
             }
         }
         return success;

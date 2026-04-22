@@ -44,12 +44,22 @@ public class OrderServiceImpl implements OrderService {
     private final UserRepository userRepository;
     private final ShippingInfoRepository shippingInfoRepository;
 
+    private static final int MAX_QUANTITY_PER_ITEM = 10;
+    private static final int MAX_TOTAL_QUANTITY = 30;
+
     @Override
     @Transactional
     public Order createOrder(CheckoutRequestDTO checkout) {
         log.info("[OrderService] Creating new order for recipient: {}", checkout.getRecipientName());
 
         List<OrderItem> draftItems = buildOrderItems(checkout.getItems());
+        
+        // 1. Validate total quantity
+        int totalQuantity = draftItems.stream().mapToInt(OrderItem::getQuantity).sum();
+        if (totalQuantity > MAX_TOTAL_QUANTITY) {
+            throw new IllegalArgumentException("Đặt quá giới hạn online. Vui lòng liên hệ tổng đài để được hỗ trợ");
+        }
+
         BigDecimal subTotal = draftItems.stream()
                 .map(OrderItem::getSubTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -66,6 +76,15 @@ public class OrderServiceImpl implements OrderService {
                 .status(OrderStatus.PENDING)
                 .build();
 
+        // 2. Deduct Stock
+        for (OrderItem item : draftItems) {
+            if (item.getVariant() != null) {
+                deductVariantStock(item.getVariant(), item.getQuantity());
+            } else if (item.getCombo() != null) {
+                deductComboStock(item.getCombo(), item.getQuantity());
+            }
+        }
+
         Order savedOrder = orderRepository.save(order);
 
         if (!draftItems.isEmpty()) {
@@ -79,6 +98,22 @@ public class OrderServiceImpl implements OrderService {
         log.info("[OrderService] Created order successfully with ID: {}", savedOrder.getId());
 
         return savedOrder;
+    }
+
+    private void deductVariantStock(ProductVariant variant, int quantity) {
+        int currentStock = variant.getStockQuantity() != null ? variant.getStockQuantity() : 0;
+        if (currentStock < quantity) {
+            throw new IllegalArgumentException("Sản phẩm '" + variant.getVariantName() + "' đã hết hàng hoặc không đủ số lượng");
+        }
+        variant.setStockQuantity(currentStock - quantity);
+        productVariantRepository.save(variant);
+    }
+
+    private void deductComboStock(Combo combo, int comboQuantity) {
+        for (fpt.legendcoffee.entity.ComboItem comboItem : combo.getComboItems()) {
+            int requiredQuantity = comboItem.getQuantity() * comboQuantity;
+            deductVariantStock(comboItem.getVariant(), requiredQuantity);
+        }
     }
 
     @Override
@@ -183,9 +218,60 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
+    public void cancelOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng #" + orderId));
+
+        if (OrderStatus.CANCELLED.equals(order.getStatus())) {
+            log.info("[OrderService] Order #{} is already cancelled", orderId);
+            return;
+        }
+
+        log.info("[OrderService] Cancelling order #{} and restoring stock", orderId);
+        order.setStatus(OrderStatus.CANCELLED);
+        orderRepository.save(order);
+
+        // Restore stock
+        if (order.getOrderItems() != null) {
+            for (OrderItem item : order.getOrderItems()) {
+                if (item.getVariant() != null) {
+                    restoreVariantStock(item.getVariant(), item.getQuantity());
+                } else if (item.getCombo() != null) {
+                    restoreComboStock(item.getCombo(), item.getQuantity());
+                }
+            }
+        }
+    }
+
+    private void restoreVariantStock(ProductVariant variant, int quantity) {
+        int currentStock = variant.getStockQuantity() != null ? variant.getStockQuantity() : 0;
+        variant.setStockQuantity(currentStock + quantity);
+        productVariantRepository.save(variant);
+    }
+
+    private void restoreComboStock(Combo combo, int comboQuantity) {
+        for (fpt.legendcoffee.entity.ComboItem comboItem : combo.getComboItems()) {
+            int quantityToRestore = comboItem.getQuantity() * comboQuantity;
+            restoreVariantStock(comboItem.getVariant(), quantityToRestore);
+        }
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Order getOrderWithDetails(Long id) {
         return orderRepository.findByIdWithDetails(id).orElse(null);
+    }
+
+
+    @Override
+    public int getMaxQuantityPerItem() {
+        return MAX_QUANTITY_PER_ITEM;
+    }
+
+    @Override
+    public int getMaxTotalQuantity() {
+        return MAX_TOTAL_QUANTITY;
     }
 
 
@@ -199,6 +285,9 @@ public class OrderServiceImpl implements OrderService {
             int quantity = request.getQuantity() != null ? request.getQuantity() : 0;
             if (quantity <= 0) {
                 throw new IllegalArgumentException("Số lượng sản phẩm phải lớn hơn 0");
+            }
+            if (quantity > MAX_QUANTITY_PER_ITEM) {
+                throw new IllegalArgumentException("Đặt quá giới hạn online. Vui lòng liên hệ tổng đài để được hỗ trợ");
             }
 
             boolean hasVariant = request.getVariantId() != null;

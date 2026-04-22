@@ -14,6 +14,10 @@ public interface OrderService {
     List<OrderListDTO> getOrdersByStatus(OrderStatus status);
     void startDelivering(Long orderId);
     Order getOrderWithDetails(Long id);
+    void cancelOrder(Long orderId);
+
+    int getMaxQuantityPerItem();
+    int getMaxTotalQuantity();
 
 }
 
