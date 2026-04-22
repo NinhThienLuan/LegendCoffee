@@ -98,9 +98,9 @@ const CartSystem = {
 
     calculateTotals() {
         const subtotal = this.getCart().reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        const shipping = subtotal > 0 ? 120000 : 0; // Flat industrial shipping
-        const total = subtotal + shipping;
-        return { subtotal, shipping, total };
+        const vat = Math.round(subtotal * 0.08);
+        const total = subtotal + vat;
+        return { subtotal, vat, total, shipping: 0 };
     },
 
     clearCart() {

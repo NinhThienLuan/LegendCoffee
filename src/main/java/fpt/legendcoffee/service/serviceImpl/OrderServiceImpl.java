@@ -171,6 +171,12 @@ public class OrderServiceImpl implements OrderService {
         shippingInfoRepository.save(info);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Order getOrderWithDetails(Long id) {
+        return orderRepository.findByIdWithDetails(id).orElse(null);
+    }
+
 
     private List<OrderItem> buildOrderItems(List<CheckoutItemRequestDTO> itemRequests) {
         if (itemRequests == null || itemRequests.isEmpty()) {

@@ -32,15 +32,6 @@ public class PaymentController {
         this.vnPayApplicationService = vnPayApplicationService;
     }
 
-    // =========================================================================
-    // GET /payment — Trang payment hiện tại (giữ nguyên route cũ)
-    // =========================================================================
-
-    @GetMapping("/payment")
-    public String paymentPage(Model model) {
-        return "payment/payment";
-    }
-
     // POST /payment/vnpay/create — Khởi tạo thanh toán VNPay
     /**
      * Nhận orderId, tạo Payment PENDING, sinh URL VNPay và redirect sang đó.
@@ -63,19 +54,20 @@ public class PaymentController {
         }
     }
 
-    // ================== ENDPOINT TEST TẠM THỜI (MỞ BẰNG TRÌNH DUYỆT) ==================
+    // ================== ENDPOINT TEST TẠM THỜI (MỞ BẰNG TRÌNH DUYỆT)
+    // ==================
     @GetMapping("/test/vnpay")
     @ResponseBody
     public String testVNPayPayment() {
         return """
-               <html>
-               <body onload="document.forms[0].submit()">
-                 <form method="POST" action="/payment/vnpay/create?orderId=1">
-                    Đang chuyển hướng sang VNPay...
-                 </form>
-               </body>
-               </html>
-               """;
+                <html>
+                <body onload="document.forms[0].submit()">
+                  <form method="POST" action="/payment/vnpay/create?orderId=1">
+                     Đang chuyển hướng sang VNPay...
+                  </form>
+                </body>
+                </html>
+                """;
     }
     // ==================================================================================
 

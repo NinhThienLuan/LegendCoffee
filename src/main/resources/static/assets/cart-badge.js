@@ -1,5 +1,5 @@
 // Cart Badge Update Logic for Navbar
-(function() {
+(function () {
   // Navbar scroll behavior
   let lastScrollY = window.scrollY;
   const navbar = document.getElementById('mainNavbar');
@@ -59,16 +59,16 @@
       }
     }
   }
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function () {
     console.log('[CartBadge] Script loaded, DOMContentLoaded');
     updateNavbarCartBadge();
     console.log('[CartBadge] DOMContentLoaded, badge updated');
   });
-  window.addEventListener('cartUpdated', function() {
+  window.addEventListener('cartUpdated', function () {
     updateNavbarCartBadge();
     console.log('[CartBadge] cartUpdated event, badge updated');
   });
-  window.addEventListener('storage', function(e) {
+  window.addEventListener('storage', function (e) {
     if (e.key === 'cart') {
       updateNavbarCartBadge();
       console.log('[CartBadge] storage event, badge updated');

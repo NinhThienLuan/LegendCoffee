@@ -17,5 +17,8 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     @Query("SELECT a FROM Article a LEFT JOIN FETCH a.user")
     List<Article> findAll();
 
+    @Query("SELECT a FROM Article a LEFT JOIN FETCH a.user WHERE a.status = :status ORDER BY a.publishedAt DESC")
+    List<Article> findByStatusOrderByPublishedAtDesc(fpt.legendcoffee.entity.enumeration.ArticleStatus status);
+
     void deleteById(Long id);
 }

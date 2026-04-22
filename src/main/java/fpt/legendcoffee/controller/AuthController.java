@@ -152,8 +152,8 @@ public class AuthController {
 
     @PostMapping("/forgot-password")
     public String forgotPassword(@Valid @ModelAttribute("forgotPasswordDto") ForgotPasswordRequestDTO request,
-                                 BindingResult bindingResult,
-                                 RedirectAttributes redirectAttributes) {
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Email không hợp lệ.");
             return "redirect:/login";
@@ -165,7 +165,8 @@ public class AuthController {
             return "redirect:/login";
         } catch (Exception e) {
             log.error("Error processing forgot password for {}: {}", request.email(), e.getMessage(), e);
-            // If it's a mail auth error, provide a clearer message than just 'Authentication failed'
+            // If it's a mail auth error, provide a clearer message than just
+            // 'Authentication failed'
             String errorMsg = e.getMessage();
             if (errorMsg != null && errorMsg.toLowerCase().contains("authentication failed")) {
                 errorMsg = "Lỗi hệ thống: Không thể gửi email (Sai cấu hình Gmail).";
@@ -188,8 +189,8 @@ public class AuthController {
 
     @PostMapping("/reset-password")
     public String resetPassword(@Valid @ModelAttribute("resetPasswordDto") ResetPasswordRequestDTO request,
-                                BindingResult bindingResult,
-                                RedirectAttributes redirectAttributes) {
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Thông tin không hợp lệ. Mật khẩu phải từ 6 ký tự.");
             return "redirect:/reset-password";
@@ -204,8 +205,8 @@ public class AuthController {
 
             // Clear force change state
             org.springframework.web.context.request.RequestContextHolder.getRequestAttributes()
-                .removeAttribute("forceChangeEmail",
-                                org.springframework.web.context.request.RequestAttributes.SCOPE_SESSION);
+                    .removeAttribute("forceChangeEmail",
+                            org.springframework.web.context.request.RequestAttributes.SCOPE_SESSION);
 
             redirectAttributes.addFlashAttribute("successMessage", "Đổi mật khẩu thành công! Vui lòng đăng nhập lại.");
             return "redirect:/login";
@@ -229,9 +230,9 @@ public class AuthController {
 
     @PostMapping("/edit-profile")
     public String editProfile(@Valid @ModelAttribute("profileDto") ProfileDTO profileDto,
-                              BindingResult bindingResult,
-                              RedirectAttributes redirectAttributes,
-                              @AuthenticationPrincipal CustomUserDetails userDetails) {
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Thông tin không hợp lệ.");
             return "redirect:/profile";
@@ -245,8 +246,6 @@ public class AuthController {
             return "redirect:/profile";
         }
     }
-
-
 
     private boolean isAuthenticated() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

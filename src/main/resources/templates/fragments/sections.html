@@ -296,7 +296,7 @@
         </h2>
       </div>
       <div class="flex-shrink-0">
-        <a href="#"
+        <a href="/articles"
           class="group flex items-center gap-3 text-sm font-bold uppercase tracking-widest text-primary hover:text-secondary-fixed transition-colors">
           Xem tất cả tin tức
           <span
@@ -306,86 +306,37 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-0 md:gap-px bg-surface-container-low overflow-hidden rounded-md">
-      <article
-        class="bg-surface-container-lowest p-8 md:p-12 flex flex-col group hover:bg-surface transition-colors duration-500">
+      <!-- Loop through real articles -->
+      <article th:each="article : ${articles}"
+        class="bg-surface-container-lowest p-8 md:p-12 flex flex-col group hover:bg-surface transition-colors duration-500 relative">
+
+        <a th:href="@{/articles/{id}(id=${article.id})}" class="absolute inset-0 z-20"></a>
+
         <div class="aspect-[4/3] mb-8 overflow-hidden rounded-sm">
-          <img src="/assets/images/news_vietnam_specialty.png" th:src="@{/assets/images/news_vietnam_specialty.png}"
-            alt="Vietnam Specialty Coffee"
+          <img th:src="${article.coverImageUrl}" th:alt="${article.title}"
             class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
         </div>
-        <div class="flex items-center gap-4 mb-4">
-          <span
-            class="text-[10px] font-bold uppercase tracking-widest text-secondary-container bg-on-secondary-container px-2 py-0.5 rounded-sm">Xu
-            hướng</span>
-          <span class="text-[10px] font-medium uppercase tracking-widest text-on-surface-variant">16 Th4, 2024</span>
-        </div>
         <h3
-          class="text-xl font-bold text-primary font-headline mb-4 leading-snug group-hover:text-secondary transition-colors">
+          class="text-xl font-bold text-primary font-headline mb-4 leading-snug group-hover:text-secondary transition-colors line-clamp-2"
+          th:text="${article.title}">
           Tương lai của ngành cà phê Specialty tại Việt Nam 2024
         </h3>
-        <p class="text-sm text-on-surface-variant font-body leading-relaxed mb-8 flex-grow">
+        <p class="text-sm text-on-surface-variant font-body leading-relaxed mb-8 flex-grow line-clamp-3"
+          th:text="${article.summary}">
           Khám phá những chuyển dịch quan trọng trong chuỗi cung ứng và tác động của biến đổi khí hậu đến các vùng
           nguyên liệu trọng điểm tại Tây Nguyên.
         </p>
-        <button
+        <div
           class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-primary group-hover:gap-4 transition-all">
           Chi tiết <span class="material-symbols-outlined text-sm">trending_flat</span>
-        </button>
+        </div>
       </article>
 
-      <article
-        class="bg-surface-container-lowest p-8 md:p-12 flex flex-col group hover:bg-surface transition-colors duration-500">
-        <div class="aspect-[4/3] mb-8 overflow-hidden rounded-sm">
-          <img src="/assets/images/news_precision_roasting.png" th:src="@{/assets/images/news_precision_roasting.png}"
-            alt="Precision Roasting"
-            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-        </div>
-        <div class="flex items-center gap-4 mb-4">
-          <span
-            class="text-[10px] font-bold uppercase tracking-widest text-secondary-container bg-on-secondary-container px-2 py-0.5 rounded-sm">Kỹ
-            thuật</span>
-          <span class="text-[10px] font-medium uppercase tracking-widest text-on-surface-variant">12 Th4, 2024</span>
-        </div>
-        <h3
-          class="text-xl font-bold text-primary font-headline mb-4 leading-snug group-hover:text-secondary transition-colors">
-          Kỹ thuật rang Precision: Chìa khóa ổn định chất lượng
-        </h3>
-        <p class="text-sm text-on-surface-variant font-body leading-relaxed mb-8 flex-grow">
-          Phân tích cách tích hợp hệ thống điều khiển kỹ thuật số để duy trì profile hương vị đồng nhất trên hàng chục
-          tấn cà phê mỗi tháng.
-        </p>
-        <button
-          class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-primary group-hover:gap-4 transition-all">
-          Chi tiết <span class="material-symbols-outlined text-sm">trending_flat</span>
-        </button>
-      </article>
-
-      <article
-        class="bg-surface-container-lowest p-8 md:p-12 flex flex-col group hover:bg-surface transition-colors duration-500">
-        <div class="aspect-[4/3] mb-8 overflow-hidden rounded-sm">
-          <img src="/assets/images/news_market_report.png" th:src="@{/assets/images/news_market_report.png}"
-            alt="Market Report"
-            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-        </div>
-        <div class="flex items-center gap-4 mb-4">
-          <span
-            class="text-[10px] font-bold uppercase tracking-widest text-secondary-container bg-on-secondary-container px-2 py-0.5 rounded-sm">Thị
-            trường</span>
-          <span class="text-[10px] font-medium uppercase tracking-widest text-on-surface-variant">08 Th4, 2024</span>
-        </div>
-        <h3
-          class="text-xl font-bold text-primary font-headline mb-4 leading-snug group-hover:text-secondary transition-colors">
-          Báo cáo thị trường cà phê B2B toàn cầu quý 1/2024
-        </h3>
-        <p class="text-sm text-on-surface-variant font-body leading-relaxed mb-8 flex-grow">
-          Dữ liệu chuyên sâu về biến động giá Robusta toàn cầu và các cơ hội xuất khẩu mới vào thị trường Châu Âu trong
-          bối cảnh lạm phát.
-        </p>
-        <button
-          class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-primary group-hover:gap-4 transition-all">
-          Chi tiết <span class="material-symbols-outlined text-sm">trending_flat</span>
-        </button>
-      </article>
+      <!-- Fallback if no articles -->
+      <div th:if="${articles == null or #lists.isEmpty(articles)}"
+        class="col-span-full py-20 text-center bg-surface-container-lowest">
+        <p class="text-on-surface-variant italic">Đang cập nhật tin tức mới nhất...</p>
+      </div>
     </div>
 
     <div class="mt-32 bg-surface-container-low p-12 md:p-16 rounded-3xl flex flex-col md:flex-row items-center gap-12">
