@@ -22,7 +22,7 @@ public class HomeController {
 
     private final ProductService productService;
 
-    @GetMapping({ "/","/home"})
+    @GetMapping("/")
     public String index(Model model,
             HttpServletRequest httpRequest,
             HttpServletResponse httpResponse) {
@@ -34,11 +34,9 @@ public class HomeController {
         model.addAttribute("products", products);
         Authentication authenticationResponse = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authenticationResponse.getPrincipal() instanceof CustomUserDetails userDetails) {
-            boolean isAdmin = userDetails.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
-            return isAdmin ? "redirect:/admin" : "redirect:/index";
-        }
-        return "redirect:/login";
+        CustomUserDetails userDetails = (CustomUserDetails) authenticationResponse.getPrincipal();
+        boolean isAdmin = userDetails.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        return isAdmin ? "redirect:/admin" : "redirect:/home";
     }
 }
