@@ -21,5 +21,14 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 			WHERE oi.order.id = :orderId
 			""")
 	List<OrderItem> findByOrderIdWithDetails(@Param("orderId") Long orderId);
+	@Query("""
+			SELECT p.name, SUM(oi.quantity) as totalSold
+			FROM OrderItem oi
+			LEFT JOIN oi.variant v
+			LEFT JOIN v.product p
+			GROUP BY p.name
+			ORDER BY totalSold DESC
+			""")
+	List<Object[]> getTopSellingProducts(org.springframework.data.domain.Pageable pageable);
 }
 

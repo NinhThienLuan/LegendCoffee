@@ -31,29 +31,26 @@
               <div class="bg-surface-container-low p-6">
                 <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Doanh thu tháng
                 </p>
-                <p class="text-3xl font-bold text-primary">842 tr</p>
-                <p class="text-xs text-green-600 mt-2 flex items-center gap-1 font-semibold">
-                  <span class="material-symbols-outlined text-xs">trending_up</span> +18% tháng này
-                </p>
+                <p class="text-3xl font-bold text-primary" th:text="${#numbers.formatDecimal(stats.monthlyRevenue / 1000000.0, 1, 'POINT', 1, 'COMMA') + ' tr'}">842 tr</p>
               </div>
               <div class="bg-surface-container-low p-6">
                 <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Đơn hàng hôm nay
                 </p>
-                <p class="text-3xl font-bold text-primary">127</p>
-                <p class="text-xs text-on-surface-variant mt-2">Cần xử lý: 14 đơn</p>
+                <p class="text-3xl font-bold text-primary" th:text="${stats.todayOrders}">127</p>
+                <p class="text-xs text-on-surface-variant mt-2">Đơn hàng mới trong ngày</p>
               </div>
               <div class="bg-surface-container-low p-6">
                 <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Sản phẩm đang
                   bán</p>
-                <p class="text-3xl font-bold text-primary">64</p>
-                <p class="text-xs text-on-surface-variant mt-2">3 sắp hết hàng</p>
+                <p class="text-3xl font-bold text-primary" th:text="${stats.activeProducts}">64</p>
+                <p class="text-xs text-on-surface-variant mt-2" th:text="${stats.lowStockProducts + ' sắp hết hàng'}">3 sắp hết hàng</p>
               </div>
               <div class="bg-surface-container-low p-6">
                 <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Người dùng mới
                 </p>
-                <p class="text-3xl font-bold text-primary">38</p>
+                <p class="text-3xl font-bold text-primary" th:text="${stats.newUsers}">38</p>
                 <p class="text-xs text-green-600 mt-2 flex items-center gap-1 font-semibold">
-                  <span class="material-symbols-outlined text-xs">trending_up</span> +9% tuần này
+                  <span class="material-symbols-outlined text-xs">trending_up</span> Mới trong tháng
                 </p>
               </div>
             </div>
@@ -128,22 +125,22 @@
                 <div class="flex items-center gap-2">
                   <span class="h-2.5 w-2.5 rounded-full bg-green-500 flex-shrink-0"></span>
                   <span class="text-xs text-on-surface-variant">Đã giao <strong
-                      class="text-on-surface">58%</strong></span>
+                      class="text-on-surface" th:text="${stats.orderStatusDistribution['COMPLETED']}">58</strong></span>
                 </div>
                 <div class="flex items-center gap-2">
                   <span class="h-2.5 w-2.5 rounded-full bg-blue-500 flex-shrink-0"></span>
                   <span class="text-xs text-on-surface-variant">Đang giao <strong
-                      class="text-on-surface">21%</strong></span>
+                      class="text-on-surface" th:text="${stats.orderStatusDistribution['SHIPPING']}">21</strong></span>
                 </div>
                 <div class="flex items-center gap-2">
                   <span class="h-2.5 w-2.5 rounded-full bg-amber-500 flex-shrink-0"></span>
                   <span class="text-xs text-on-surface-variant">Chờ xử lý <strong
-                      class="text-on-surface">14%</strong></span>
+                      class="text-on-surface" th:text="${stats.orderStatusDistribution['PENDING']}">14</strong></span>
                 </div>
                 <div class="flex items-center gap-2">
                   <span class="h-2.5 w-2.5 rounded-full bg-red-400 flex-shrink-0"></span>
                   <span class="text-xs text-on-surface-variant">Đã huỷ <strong
-                      class="text-on-surface">7%</strong></span>
+                      class="text-on-surface" th:text="${stats.orderStatusDistribution['CANCELLED']}">7</strong></span>
                 </div>
               </div>
             </div>
@@ -208,7 +205,7 @@
 
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-  <script>
+  <script th:inline="javascript">
     // ── Shared palette (Industrial Architect) ─────────────────────────────────
     const PRIMARY = '#351f1b';
     const PRIMARY_30 = 'rgba(53,31,27,0.15)';
@@ -223,10 +220,10 @@
     new Chart(document.getElementById('revenueChart'), {
       type: 'line',
       data: {
-        labels: ['Tháng 11', 'Tháng 12', 'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4'],
+        labels: /*[[${stats.revenueLabels}]]*/ ['Tháng 11', 'Tháng 12', 'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4'],
         datasets: [{
           label: 'Doanh thu (triệu ₫)',
-          data: [612, 785, 530, 698, 760, 842],
+          data: /*[[${stats.revenueData}]]*/ [612, 785, 530, 698, 760, 842],
           borderColor: PRIMARY,
           backgroundColor: PRIMARY_30,
           borderWidth: 2,
@@ -274,10 +271,10 @@
     new Chart(document.getElementById('topProductsChart'), {
       type: 'bar',
       data: {
-        labels: ['Robusta 60kg', 'Cold Brew', 'Arabica Cầu Đất', 'Blend Espresso', 'Cà phê Chồn'],
+        labels: /*[[${stats.topProductLabels}]]*/ ['Robusta 60kg', 'Cold Brew', 'Arabica Cầu Đất', 'Blend Espresso', 'Cà phê Chồn'],
         datasets: [{
           label: 'Lượt bán',
-          data: [1284, 877, 642, 389, 214],
+          data: /*[[${stats.topProductData}]]*/ [1284, 877, 642, 389, 214],
           backgroundColor: [
             PRIMARY,
             'rgba(53,31,27,0.75)',
@@ -325,7 +322,12 @@
       data: {
         labels: ['Đã giao', 'Đang giao', 'Chờ xử lý', 'Đã huỷ'],
         datasets: [{
-          data: [58, 21, 14, 7],
+          data: [
+            /*[[${stats.orderStatusDistribution['COMPLETED']}]]*/ 58,
+            /*[[${stats.orderStatusDistribution['SHIPPING']}]]*/ 21,
+            /*[[${stats.orderStatusDistribution['PENDING']}]]*/ 14,
+            /*[[${stats.orderStatusDistribution['CANCELLED']}]]*/ 7
+          ],
           backgroundColor: [
             '#22c55e',   // green-500
             '#3b82f6',   // blue-500
