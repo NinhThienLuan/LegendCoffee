@@ -319,11 +319,18 @@
     }
 
     // ── Real-time Listeners ───────────────────────────────────────────────────
-    bankNameInput.addEventListener('input', validateBankName);
-    bankCodeInput.addEventListener('input', validateBankCode);
-    accNumInput.addEventListener('input', validateAccNum);
-    accHoldInput.addEventListener('input', validateAccHold);
-    amountInput.addEventListener('input', validateAmount);
+    [bankNameInput, bankCodeInput, accNumInput, accHoldInput, amountInput].forEach(input => {
+        const validator = {
+            'bankName': validateBankName,
+            'bankCode': validateBankCode,
+            'accountNumber': validateAccNum,
+            'accountHolder': validateAccHold,
+            'amount': validateAmount
+        }[input.id];
+
+        input.addEventListener('input', validator);
+        input.addEventListener('blur', validator);
+    });
 
     // ── Final Submit Check ────────────────────────────────────────────────────
     form.addEventListener('submit', function (e) {
