@@ -128,6 +128,7 @@ public class ProductServiceImpl implements ProductService {
             return ProductResponseDTO.builder()
                     .id(product.getId())
                     .name(product.getName())
+                    .description(product.getDescription())
                     .categoryName(product.getCategory() != null ? product.getCategory().getCategoryName() : null)
                     .price(minPrice)
                     .stockQuantity(totalStock)

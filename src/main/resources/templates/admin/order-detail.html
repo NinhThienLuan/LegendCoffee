@@ -42,13 +42,32 @@
                 <!-- Header: Order Identity -->
                 <header class="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div>
-                        <nav class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-2">
-                            <a th:href="@{/admin/dashboard}" class="hover:text-primary transition-colors">Admin</a>
-                            <span class="material-symbols-outlined text-[10px]">arrow_forward_ios</span>
-                            <a th:href="@{/admin/orders}" class="hover:text-primary transition-colors">Đơn hàng</a>
-                            <span class="material-symbols-outlined text-[10px]">arrow_forward_ios</span>
-                            <span class="text-primary">#ORD-<span th:text="${order != null ? order.id : orderId}">1</span></span>
+                        <!-- Breadcrumbs (Premium Coffee Style) -->
+                        <nav class="flex text-[11px] font-black uppercase tracking-[0.2em] mb-6" aria-label="Breadcrumb">
+                            <ol class="inline-flex items-center space-x-2">
+                                <li class="inline-flex items-center">
+                                    <a th:href="@{/admin}" class="text-secondary hover:text-primary transition-colors flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-base">dashboard</span>
+                                        Quản trị
+                                    </a>
+                                </li>
+                                <li>
+                                    <div class="flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-xs text-primary/20">arrow_forward_ios</span>
+                                        <a th:href="@{/admin/orders}" class="text-secondary hover:text-primary transition-colors">Đơn hàng</a>
+                                    </div>
+                                </li>
+                                <li aria-current="page">
+                                    <div class="flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-xs text-primary/20">arrow_forward_ios</span>
+                                        <span class="text-primary bg-primary/10 px-4 py-1.5 rounded-full border border-primary/20 shadow-sm">
+                                            Chi tiết #[[${orderId}]]
+                                        </span>
+                                    </div>
+                                </li>
+                            </ol>
                         </nav>
+                        
                         <h1 class="font-headline text-4xl font-black text-primary tracking-tighter mb-2">
                             Đơn hàng #ORD-<span th:text="${order != null ? order.id : orderId}">1</span>
                         </h1>
@@ -172,8 +191,27 @@
                                             <p class="text-xl font-extrabold text-primary" th:text="${#numbers.formatDecimal(item.totalAmount, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0 ₫</p>
                                         </div>
                                         <div class="flex justify-between items-center text-sm font-bold tracking-widest text-on-surface-variant uppercase">
-                                            <span th:text="${item.variant != null ? item.variant.variantName : 'Gói Combo'}">Variant</span>
+                                            <span th:text="${item.variant != null ? item.variant.variantName : 'Gói Combo Legend'}">Variant</span>
                                             <p th:text="${#numbers.formatDecimal(item.unitPrice, 0, 'COMMA', 0, 'POINT') + ' ₫ x ' + item.quantity}">Price x Quantity</p>
+                                        </div>
+
+                                        <!-- Combo Items Detail (Added based on user request) -->
+                                        <div th:if="${item.combo != null and item.combo.comboItems != null and !#lists.isEmpty(item.combo.comboItems)}" 
+                                             class="mt-4 p-4 bg-surface-container rounded-xl border border-primary/5 space-y-3">
+                                            <p class="text-[10px] font-black uppercase text-primary/60 flex items-center gap-2 tracking-widest">
+                                                <span class="material-symbols-outlined text-sm">inventory</span>
+                                                Thành phần gói combo:
+                                            </p>
+                                            <ul class="space-y-2">
+                                                <li th:each="ci : ${item.combo.comboItems}" class="flex justify-between items-center text-xs font-bold text-primary">
+                                                    <div class="flex items-center gap-2">
+                                                        <span class="w-1 h-1 rounded-full bg-primary/30"></span>
+                                                        <span th:text="${ci.variant.product.name + ' - ' + ci.variant.variantName}">Product Name</span>
+                                                    </div>
+                                                    <span class="text-[10px] px-2 py-0.5 bg-primary/5 rounded border border-primary/10" 
+                                                          th:text="'SL Tổng: ' + ${ci.quantity * item.quantity}">x1</span>
+                                                </li>
+                                            </ul>
                                         </div>
                                     </div>
                                 </div>
@@ -192,14 +230,20 @@
                                 </h3>
 
                                 <div class="space-y-4 mb-8 max-h-[400px] overflow-y-auto pr-2 border-b border-primary/20 pb-6">
-                                    <div th:each="item : ${orderItems}" class="space-y-1">
-                                        <div class="flex justify-between items-start gap-3">
-                                            <p class="text-[13px] font-bold text-primary flex-1 leading-tight" th:text="${item.variant != null ? (item.variant.product != null ? item.variant.product.name : 'Sản phẩm') : (item.combo != null ? item.combo.name : 'Combo Legend')}">Product Name</p>
-                                            <p class="text-[13px] font-black text-primary whitespace-nowrap" th:text="${#numbers.formatDecimal(item.totalAmount, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0 ₫</p>
+                                    <div th:each="item : ${orderItems}" class="flex gap-4 items-start">
+                                        <div class="w-16 h-16 rounded-lg bg-surface-container overflow-hidden flex-shrink-0 border border-primary/5">
+                                            <img th:src="${item.variant != null and item.variant.product != null and !#strings.isEmpty(item.variant.product.imageUrl)} ? ${item.variant.product.imageUrl} : (${item.combo != null and !#strings.isEmpty(item.combo.imageUrl)} ? ${item.combo.imageUrl} : 'https://plus.unsplash.com/premium_photo-1671379523824-c8aae61cb52a?q=80&w=200&auto=format&fit=crop')" 
+                                                 class="w-full h-full object-cover">
                                         </div>
-                                        <div class="flex justify-between items-center">
-                                            <p class="text-[10px] text-on-surface-variant uppercase font-medium line-clamp-1" th:text="${item.variant != null ? item.variant.variantName : 'Gói Combo'}">Variant</p>
-                                            <p class="text-[10px] text-on-surface-variant font-bold" th:text="${#numbers.formatDecimal(item.unitPrice, 0, 'COMMA', 0, 'POINT') + ' ₫ x ' + item.quantity}">Price x Quantity</p>
+                                        <div class="flex-1 space-y-1">
+                                            <div class="flex justify-between items-start gap-3">
+                                                <p class="text-[13px] font-bold text-primary flex-1 leading-tight" th:text="${item.variant != null ? (item.variant.product != null ? item.variant.product.name : 'Sản phẩm') : (item.combo != null ? item.combo.name : 'Combo Legend')}">Product Name</p>
+                                                <p class="text-[13px] font-black text-primary whitespace-nowrap" th:text="${#numbers.formatDecimal(item.totalAmount, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0 ₫</p>
+                                            </div>
+                                            <div class="flex justify-between items-center">
+                                                <p class="text-[10px] text-on-surface-variant uppercase font-medium line-clamp-1" th:text="${item.variant != null ? item.variant.variantName : 'Gói Combo'}">Variant</p>
+                                                <p class="text-[10px] font-black text-primary" th:text="'x' + ${item.quantity}">x1</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
