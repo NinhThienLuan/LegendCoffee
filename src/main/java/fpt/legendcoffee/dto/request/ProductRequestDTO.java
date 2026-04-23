@@ -6,6 +6,9 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -16,12 +19,14 @@ import lombok.NoArgsConstructor;
 public class ProductRequestDTO {
 
     /** Tên sản phẩm hiển thị trên hệ thống. */
+    @NotBlank(message = "Tên sản phẩm không được để trống")
     private String name;
 
     /** Mô tả chi tiết về sản phẩm. */
     private String description;
 
     /** Nguồn gốc/xuất xứ của sản phẩm. */
+    @NotBlank(message = "Xuất xứ không được để trống")
     private String origin;
 
     /** Ngày hết hạn của sản phẩm. */
@@ -31,6 +36,7 @@ public class ProductRequestDTO {
     private LocalDate manufacturerDate;
 
     /** ID danh mục, dùng để liên kết Category khi lưu Product. */
+    @NotNull(message = "Vui lòng chọn danh mục")
     private Long categoryId;
 
     /** Trạng thái kích hoạt sản phẩm (true: hoạt động, false: ẩn). */
@@ -40,6 +46,7 @@ public class ProductRequestDTO {
     private MultipartFile image;
 
     /** Danh sách biến thể gửi từ form. */
+    @Valid
     private List<ProductVariantRequestDTO> variants = new ArrayList<>();
 
     public String getName() {

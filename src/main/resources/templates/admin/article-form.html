@@ -17,15 +17,13 @@
             <div class="grid md:grid-cols-2 gap-4">
               <div>
                 <label class="block text-xs font-semibold uppercase tracking-widest mb-1">Tiêu đề</label>
-                <input th:field="*{title}" type="text"
-                  class="w-full rounded-lg border px-3 py-2 text-sm"
+                <input th:field="*{title}" type="text" class="w-full rounded-lg border px-3 py-2 text-sm"
                   th:classappend="${#fields.hasErrors('title')} ? 'border-red-500 bg-red-50' : 'border-outline-variant'"
-                  placeholder="Nhập tiêu đề bài viết" />
-                
+                  placeholder="Nhập tiêu đề bài viết" required minlength="10" maxlength="200" />
+
                 <!-- Hiển thị thông báo lỗi -->
-                <p class="text-red-500 text-[10px] mt-1 font-bold" 
-                   th:if="${#fields.hasErrors('title')}" 
-                   th:errors="*{title}"></p>
+                <p class="text-red-500 text-[10px] mt-1 font-bold" th:if="${#fields.hasErrors('title')}"
+                  th:errors="*{title}"></p>
               </div>
               <div>
                 <label class="block text-xs font-semibold uppercase tracking-widest mb-1">Slug</label>
@@ -34,13 +32,11 @@
               </div>
               <div class="md:col-span-2">
                 <label class="block text-xs font-semibold uppercase tracking-widest mb-1">Tóm tắt</label>
-                <textarea th:field="*{summary}" rows="2"
-                  class="w-full rounded-lg border px-3 py-2 text-sm"
+                <textarea th:field="*{summary}" rows="2" class="w-full rounded-lg border px-3 py-2 text-sm"
                   th:classappend="${#fields.hasErrors('summary')} ? 'border-red-500 bg-red-50' : 'border-outline-variant'"
-                  placeholder="Tóm tắt ngắn gọn"></textarea>
-                <p class="text-red-500 text-[10px] mt-1 font-bold" 
-                   th:if="${#fields.hasErrors('summary')}" 
-                   th:errors="*{summary}"></p>
+                  placeholder="Tóm tắt ngắn gọn" required maxlength="500"></textarea>
+                <p class="text-red-500 text-[10px] mt-1 font-bold" th:if="${#fields.hasErrors('summary')}"
+                  th:errors="*{summary}"></p>
               </div>
               <div>
                 <label class="block text-xs font-semibold uppercase tracking-widest mb-1">Ảnh bìa (URL)</label>
@@ -58,13 +54,11 @@
             </div>
             <div>
               <label class="block text-xs font-semibold uppercase tracking-widest mb-1">Nội dung (content_json)</label>
-              <textarea th:field="*{contentJson}" rows="12"
-                class="w-full rounded-lg border px-3 py-2 text-sm font-mono"
+              <textarea th:field="*{contentJson}" rows="12" class="w-full rounded-lg border px-3 py-2 text-sm font-mono"
                 th:classappend="${#fields.hasErrors('contentJson')} ? 'border-red-500 bg-red-50' : 'border-outline-variant'"
-                placeholder="Dán JSON nội dung bài viết hoặc nhập trực tiếp"></textarea>
-              <p class="text-red-500 text-[10px] mt-1 font-bold" 
-                 th:if="${#fields.hasErrors('contentJson')}" 
-                 th:errors="*{contentJson}"></p>
+                placeholder="Dán JSON nội dung bài viết hoặc nhập trực tiếp" required></textarea>
+              <p class="text-red-500 text-[10px] mt-1 font-bold" th:if="${#fields.hasErrors('contentJson')}"
+                th:errors="*{contentJson}"></p>
             </div>
             <div class="flex gap-4 mt-6">
               <button type="submit"
