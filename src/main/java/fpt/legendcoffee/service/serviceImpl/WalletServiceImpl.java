@@ -32,6 +32,7 @@ public class WalletServiceImpl implements WalletService {
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy người dùng với ID: " + userId));
         
         Wallet wallet = getOrCreateWallet(user);
+
         wallet.setAmount(wallet.getAmount().add(amount));
         walletRepository.save(wallet);
 
@@ -46,6 +47,7 @@ public class WalletServiceImpl implements WalletService {
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy người dùng với ID: " + userId));
         
         Wallet wallet = getOrCreateWallet(user);
+
         if (wallet.getAmount().compareTo(amount) < 0) {
             throw new IllegalStateException("Số dư ví không đủ");
         }

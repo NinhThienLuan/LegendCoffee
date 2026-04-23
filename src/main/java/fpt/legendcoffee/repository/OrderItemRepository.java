@@ -1,6 +1,9 @@
 package fpt.legendcoffee.repository;
 
 import fpt.legendcoffee.entity.OrderItem;
+import fpt.legendcoffee.entity.enumeration.OrderStatus;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,9 +29,10 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 			FROM OrderItem oi
 			LEFT JOIN oi.variant v
 			LEFT JOIN v.product p
+			WHERE oi.order.status IN :statuses
 			GROUP BY p.name
 			ORDER BY totalSold DESC
 			""")
-	List<Object[]> getTopSellingProducts(org.springframework.data.domain.Pageable pageable);
+	List<Object[]> getTopSellingProducts(@Param("statuses") List<OrderStatus> statuses, Pageable pageable);
 }
 

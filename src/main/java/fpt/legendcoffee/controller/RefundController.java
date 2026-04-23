@@ -2,6 +2,7 @@ package fpt.legendcoffee.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -14,8 +15,7 @@ import fpt.legendcoffee.dto.request.RefundRequestDTO;
 import fpt.legendcoffee.service.RefundService;
 import lombok.RequiredArgsConstructor;
 
-@RestController
-@RequestMapping("/api/v1/refunds")
+@Controller("/refund")
 @RequiredArgsConstructor
 public class RefundController {
 

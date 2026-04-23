@@ -7,8 +7,8 @@ import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -40,5 +40,5 @@ public class Combo extends BaseEntity {
 
     @OneToMany(mappedBy = "combo", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    private Set<ComboItem> comboItems = new LinkedHashSet<>();
+    private List<ComboItem> comboItems = new ArrayList<>();
 }

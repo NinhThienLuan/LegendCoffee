@@ -278,6 +278,12 @@ public class OrderServiceImpl implements OrderService {
 
         log.info("[OrderService] Cancelling order #{} and restoring stock", orderId);
         order.setStatus(OrderStatus.CANCELLED);
+        
+        // Cập nhật trạng thái vận chuyển đồng bộ
+        if (order.getShippingInfo() != null) {
+            order.getShippingInfo().setStatus("cancel");
+        }
+        
         orderRepository.save(order);
 
         // Restore stock
@@ -319,6 +325,16 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public int getMaxTotalQuantity() {
         return MAX_TOTAL_QUANTITY;
+    }
+
+    @Override
+    public Optional<Order> findById(Long orderId) {
+        return orderRepository.findById(orderId);
+    }
+
+    @Override
+    public Optional<Order> findByIdWithUser(Long orderId) {
+        return orderRepository.findByIdWithUser(orderId);
     }
 
     private List<OrderItem> buildOrderItems(List<CheckoutItemRequestDTO> itemRequests) {
