@@ -1,23 +1,56 @@
-|/////////////|
-|ADMIN ACCOUNT|
-|/////////////|
-
-email: admin@legendcoffee.com
-password: password123
-
 |////////////|
 |USER ACCOUNT|
 |////////////|
 
-email: user@gmail.com
-password: password123
+Admin: admin@legendcoffee.com / admin123
+User: user@gmail.com / user123
 
 |/////////////|
 |PAYMENT VNPAY|
 |/////////////|
 
-NCB
-9704198526191432198
-NGUYEN VAN A
-07/15
-123456
+Ngân hàng: NCB
+Số thẻ: 9704198526191432198
+Tên chủ thẻ: NGUYEN VAN A
+Ngày phát hành: 07/15
+Mật khẩu OTP: 123456
+
+|////////////////////|
+|DATA DEMO: SẢN PHẨM |
+|////////////////////|
+
+1. Cà phê Liberica (Hạt hiếm)
+- Danh mục: Hạt cà phê
+- Mô tả: Hạt cà phê Liberica (cà phê Mít) có hương vị gỗ, khói và mít chín đặc trưng. Vị chua thanh và hậu vị ngọt kéo dài.
+- Xuất xứ: Đắk Lắk, Việt Nam
+- Biến thể: Túi 250g (Giá: 180,000đ), Túi 500g (Giá: 340,000đ)
+- Image URL: https://res.cloudinary.com/myimagename/image/upload/v1713840000/liberica_beans.jpg
+
+2. Bình Pha French Press Timemore
+- Danh mục: Phụ kiện pha chế
+- Mô tả: Bình pha cà phê kiểu Pháp chất liệu thủy tinh chịu nhiệt và thép không gỉ. Giúp giữ trọn vẹn hương vị dầu trong cà phê.
+- Xuất xứ: Đài Loan
+- Biến thể: Size 450ml (Giá: 350,000đ)
+- Image URL: https://res.cloudinary.com/myimagename/image/upload/v1713840000/french_press.jpg
+
+|/////////////////|
+|DATA DEMO: COMBO |
+|/////////////////|
+
+1. Combo "Buổi Sáng Năng Lượng"
+- Tên: Combo Morning Energy
+- Mô tả: Sự kết hợp giữa Robusta Bold và Phin inox. Giúp bạn tỉnh táo tức thì để bắt đầu ngày mới.
+- Sản phẩm chọn: 
+  + Legend Robusta Bold (Túi 500g)
+  + Phin pha cà phê inox (Size Tiêu Chuẩn)
+- Giá Combo: 260,000đ (Giá gốc: 305,000đ)
+
+2. Combo "Trải Nghiệm Đỉnh Cao"
+- Tên: Combo Premium Experience
+- Mô tả: Bộ kit chuyên nghiệp dành cho tín đồ Pour-over.
+- Sản phẩm chọn:
+  + Máy xay cà phê cầm tay C3
+  + Phễu pha V60 Hario (Size 02)
+  + Giấy lọc V60 (Hộp 100 tờ)
+  + Legend Arabica Special (Túi 250g)
+- Giá Combo: 1,750,000đ (Giá gốc: 1,970,000đ)
