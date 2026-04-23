@@ -57,8 +57,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 	@Query("SELECT SUM(o.totalAmount) FROM Order o WHERE o.status IN :statuses AND o.orderDate >= :startDate")
 	java.math.BigDecimal sumRevenueSince(@Param("startDate") java.time.LocalDateTime startDate, @Param("statuses") List<OrderStatus> statuses);
 
-	@Query("SELECT COUNT(o) FROM Order o WHERE o.orderDate >= :startDate")
-	long countOrdersSince(@Param("startDate") java.time.LocalDateTime startDate);
+	@Query("SELECT COUNT(o) FROM Order o WHERE o.status IN :statuses AND o.orderDate >= :startDate")
+	long countOrdersSince(@Param("startDate") java.time.LocalDateTime startDate, @Param("statuses") List<OrderStatus> statuses);
 
 	@Query("SELECT MONTH(o.orderDate), SUM(o.totalAmount) FROM Order o " +
 			"WHERE o.status IN :statuses " +
