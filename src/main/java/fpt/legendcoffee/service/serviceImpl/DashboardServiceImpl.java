@@ -50,7 +50,7 @@ public class DashboardServiceImpl implements DashboardService {
                     .doubleValue() * 100;
         }
 
-        long todayOrders = orderRepository.countOrdersSince(startOfToday);
+        long todayOrders = orderRepository.countOrdersSince(startOfToday, revenueStatuses);
         long activeProducts = productService.countActiveProducts();
         long lowStockProducts = productService.countLowStockProducts();
         long newUsers = userRepository.countUsersSince(startOfMonth);
@@ -70,7 +70,7 @@ public class DashboardServiceImpl implements DashboardService {
         statusMap.put("CANCELLED", rawStatusMap.getOrDefault("CANCELLED", 0L));
 
         // Top selling products
-        List<Object[]> topProductList = orderItemRepository.getTopSellingProducts(PageRequest.of(0, 5));
+        List<Object[]> topProductList = orderItemRepository.getTopSellingProducts(revenueStatuses, PageRequest.of(0, 5));
         List<String> topLabels = topProductList.stream().map(obj -> (String) obj[0]).collect(Collectors.toList());
         List<Long> topData = topProductList.stream().map(obj -> (Long) obj[1]).collect(Collectors.toList());
 
