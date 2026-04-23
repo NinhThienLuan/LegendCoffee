@@ -598,9 +598,9 @@ public class DataInit implements CommandLineRunner {
                                         .endDate(LocalDateTime.now().plusMonths(3))
                                         .isActive(true)
                                         .build();
-                        discoveryCombo.getComboItems().add(ComboItem.builder().combo(discoveryCombo).variant(arabica250).quantity(1).build());
-                        discoveryCombo.getComboItems().add(ComboItem.builder().combo(discoveryCombo).variant(robusta500).quantity(1).build());
-                        discoveryCombo.getComboItems().add(ComboItem.builder().combo(discoveryCombo).variant(ground200).quantity(1).build());
+                        discoveryCombo.getComboItems().add(ComboItem.builder().combo(discoveryCombo).variant(arabica250).quantity(2).build());
+                        discoveryCombo.getComboItems().add(ComboItem.builder().combo(discoveryCombo).variant(robusta500).quantity(2).build());
+                        discoveryCombo.getComboItems().add(ComboItem.builder().combo(discoveryCombo).variant(ground200).quantity(2).build());
                         comboRepository.save(discoveryCombo);
                 }
 
@@ -614,8 +614,8 @@ public class DataInit implements CommandLineRunner {
                                         .endDate(LocalDateTime.now().plusMonths(6))
                                         .isActive(true)
                                         .build();
-                        starterCombo.getComboItems().add(ComboItem.builder().combo(starterCombo).variant(phin).quantity(1).build());
-                        starterCombo.getComboItems().add(ComboItem.builder().combo(starterCombo).variant(robusta500).quantity(1).build());
+                        starterCombo.getComboItems().add(ComboItem.builder().combo(starterCombo).variant(phin).quantity(2).build());
+                        starterCombo.getComboItems().add(ComboItem.builder().combo(starterCombo).variant(robusta500).quantity(2).build());
                         comboRepository.save(starterCombo);
                 }
 
@@ -629,10 +629,10 @@ public class DataInit implements CommandLineRunner {
                                         .endDate(LocalDateTime.now().plusMonths(6))
                                         .isActive(true)
                                         .build();
-                        proCombo.getComboItems().add(ComboItem.builder().combo(proCombo).variant(grinder).quantity(1).build());
-                        proCombo.getComboItems().add(ComboItem.builder().combo(proCombo).variant(v60).quantity(1).build());
-                        proCombo.getComboItems().add(ComboItem.builder().combo(proCombo).variant(paperFilter).quantity(1).build());
-                        proCombo.getComboItems().add(ComboItem.builder().combo(proCombo).variant(arabica500).quantity(1).build());
+                        proCombo.getComboItems().add(ComboItem.builder().combo(proCombo).variant(grinder).quantity(2).build());
+                        proCombo.getComboItems().add(ComboItem.builder().combo(proCombo).variant(v60).quantity(2).build());
+                        proCombo.getComboItems().add(ComboItem.builder().combo(proCombo).variant(paperFilter).quantity(2).build());
+                        proCombo.getComboItems().add(ComboItem.builder().combo(proCombo).variant(arabica500).quantity(2).build());
                         comboRepository.save(proCombo);
                 }
 
