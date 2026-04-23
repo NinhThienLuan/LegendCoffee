@@ -7,6 +7,7 @@ import fpt.legendcoffee.entity.Article;
 import fpt.legendcoffee.entity.enumeration.ArticleStatus;
 import fpt.legendcoffee.repository.UserRepository;
 import fpt.legendcoffee.service.ArticleService;
+import fpt.legendcoffee.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -26,7 +27,7 @@ import java.util.List;
 public class ArticleController {
 
     private final ArticleService articleService;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @GetMapping("/articles/{id}")
     public String article(@PathVariable Long id, Model model) {
@@ -117,7 +118,7 @@ public class ArticleController {
             // 2. Dùng Mapper để gán dữ liệu từ DTO sang Entity
             ArticleMapper.updateEntity(article, req);
             if (principal != null) {
-                userRepository.findByEmail(principal.getName()).ifPresent(article::setUser);
+                userService.findByEmail(principal.getName()).ifPresent(article::setUser);
             }
 
             if (article.getStatus() == ArticleStatus.PUBLISHED && article.getPublishedAt() == null) {
