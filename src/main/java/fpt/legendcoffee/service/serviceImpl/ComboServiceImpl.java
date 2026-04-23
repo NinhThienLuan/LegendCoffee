@@ -209,6 +209,7 @@ public class ComboServiceImpl implements ComboService {
         response.setImageUrl(comboImageUrl);
         response.setStartDate(combo.getStartDate());
         response.setEndDate(combo.getEndDate());
+        response.setCreatedAt(combo.getCreatedAt());
         response.setActive(combo.getIsActive());
         response.setAvailableNow(isCurrentlyAvailable(combo));
         response.setItems(itemResponses);

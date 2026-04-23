@@ -3,6 +3,9 @@ package fpt.legendcoffee.service.serviceImpl;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,18 +20,22 @@ import fpt.legendcoffee.entity.ProductVariant;
 import fpt.legendcoffee.repository.CategoryRepository;
 import fpt.legendcoffee.repository.ProductRepository;
 import fpt.legendcoffee.repository.ProductVariantRepository;
+import fpt.legendcoffee.repository.OrderItemRepository;
 import fpt.legendcoffee.service.ImageService;
 import fpt.legendcoffee.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final ImageService imageService;
     private final CategoryRepository categoryRepository;
     private final ProductVariantRepository productVariantRepository;
+    private final OrderItemRepository orderItemRepository;
 
     @Override
     @Transactional
@@ -110,13 +117,21 @@ public class ProductServiceImpl implements ProductService {
                         .sum();
             }
 
+            int soldCount = 0;
+            try {
+                Integer totalSold = orderItemRepository.sumQuantityByProductId(product.getId());
+                soldCount = totalSold != null ? totalSold : 0;
+            } catch (Exception e) {
+                log.warn("Failed to calculate sold count for product {}: {}", product.getId(), e.getMessage());
+            }
+
             return ProductResponseDTO.builder()
                     .id(product.getId())
                     .name(product.getName())
                     .categoryName(product.getCategory() != null ? product.getCategory().getCategoryName() : null)
                     .price(minPrice)
                     .stockQuantity(totalStock)
-                    .soldCount(0)
+                    .soldCount(soldCount)
                     .isActive(product.getIsActive())
                     .imageUrl(product.getImageUrl())
                     .defaultVariantId(defaultVariantId)
@@ -209,11 +224,47 @@ public class ProductServiceImpl implements ProductService {
 
         product = productRepository.save(product);
 
-        productVariantRepository.deleteByProduct(product);
-        if (request.getVariants() != null) {
+        List<ProductVariant> currentVariants = productVariantRepository.findByProduct(product);
+        if (request.getVariants() == null || request.getVariants().isEmpty()) {
+            productVariantRepository.deleteAll(currentVariants);
+        } else {
+            Set<Long> requestIds = request.getVariants().stream()
+                    .map(ProductVariantRequestDTO::getId)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
+
+            List<ProductVariant> toDelete = currentVariants.stream()
+                    .filter(v -> !requestIds.contains(v.getId()))
+                    .collect(Collectors.toList());
+            
+            if (!toDelete.isEmpty()) {
+                productVariantRepository.deleteAll(toDelete);
+            }
+
             for (ProductVariantRequestDTO variantDTO : request.getVariants()) {
-                ProductVariant variant = buildVariant(variantDTO, product);
-                productVariantRepository.save(variant);
+                if (variantDTO.getId() != null) {
+                    ProductVariant existing = currentVariants.stream()
+                            .filter(v -> v.getId().equals(variantDTO.getId()))
+                            .findFirst()
+                            .orElse(null);
+                    
+                    if (existing != null) {
+                        existing.setVariantName(variantDTO.getVariantName());
+                        existing.setPackaging(variantDTO.getPackaging());
+                        existing.setSize(variantDTO.getSize());
+                        existing.setPrice(variantDTO.getPrice());
+                        existing.setStockQuantity(variantDTO.getStockQuantity());
+                        existing.setIsActive(variantDTO.getIsActive() != null ? variantDTO.getIsActive() : Boolean.TRUE);
+                        productVariantRepository.save(existing);
+                    } else {
+                        // Trường hợp ID không khớp (có thể do lỗi dữ liệu từ client)
+                        ProductVariant variant = buildVariant(variantDTO, product);
+                        productVariantRepository.save(variant);
+                    }
+                } else {
+                    ProductVariant variant = buildVariant(variantDTO, product);
+                    productVariantRepository.save(variant);
+                }
             }
         }
 
