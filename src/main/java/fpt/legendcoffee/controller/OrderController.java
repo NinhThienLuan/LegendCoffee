@@ -120,25 +120,27 @@ public class OrderController {
     }
 
     @PostMapping("/admin/orders/{orderId}/start-delivering")
-    public String startDelivering(@PathVariable Long orderId, RedirectAttributes redirectAttributes) {
+    public String startDelivering(@PathVariable Long orderId, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         try {
             orderService.startDelivering(orderId);
-            redirectAttributes.addFlashAttribute("successMessage", "Đã chuyển sang trạng thái Đang giao hàng");
+            redirectAttributes.addFlashAttribute("infoMessage", "Ghi chú hệ thống: Đơn hàng #" + orderId + " đã được chuyển sang trạng thái Đang giao hàng.");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "Cập nhật thất bại: " + e.getMessage());
         }
-        return "redirect:/orders";
+        
+        return "redirect:/orders/" + orderId;
     }
 
     @PostMapping("/admin/orders/{orderId}/complete-delivery")
-    public String completeDelivery(@PathVariable Long orderId, RedirectAttributes redirectAttributes) {
+    public String completeDelivery(@PathVariable Long orderId, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         try {
             orderService.completeDelivery(orderId);
-            redirectAttributes.addFlashAttribute("successMessage", "Đã xác nhận khách hàng nhận hàng thành công");
+            redirectAttributes.addFlashAttribute("infoMessage", "Ghi chú hệ thống: Đã xác nhận hoàn thành đơn hàng #" + orderId + " (Khách đã nhận hàng).");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "Xác nhận thất bại: " + e.getMessage());
         }
-        return "redirect:/orders";
+        
+        return "redirect:/orders/" + orderId;
     }
 
     @GetMapping("/orders/{orderId}")
@@ -199,6 +201,9 @@ public class OrderController {
                 log.warn("[Tracking] Không tìm thấy thông tin vận chuyển cho orderId={}", orderId);
             }
 
+            if (isAdmin) {
+                return "admin/order-detail";
+            }
             return "order/order-detail";
         } catch (Exception e) {
             log.error("Error rendering order-detail for ID {}: {}", orderId, e.getMessage());

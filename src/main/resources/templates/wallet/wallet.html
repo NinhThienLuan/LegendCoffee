@@ -163,16 +163,13 @@
                                             0 ₫</p>
                                     </td>
                                     <td class="px-8 py-6 text-center">
-                                        <span
-                                            th:if="${req.status == T(fpt.legendcoffee.entity.enumeration.WithdrawalStatus).PENDING}"
+                                        <span th:if="${req.status.name() == 'PENDING'}"
                                             class="inline-block px-3 py-1 bg-amber-50 text-amber-700 text-[9px] font-bold uppercase rounded-full border border-amber-100">Chờ
                                             duyệt</span>
-                                        <span
-                                            th:if="${req.status == T(fpt.legendcoffee.entity.enumeration.WithdrawalStatus).APPROVED}"
+                                        <span th:if="${req.status.name() == 'APPROVED'}"
                                             class="inline-block px-3 py-1 bg-green-50 text-green-700 text-[9px] font-bold uppercase rounded-full border border-green-100">Hoàn
                                             tất</span>
-                                        <span
-                                            th:if="${req.status == T(fpt.legendcoffee.entity.enumeration.WithdrawalStatus).REJECTED}"
+                                        <span th:if="${req.status.name() == 'REJECTED'}"
                                             class="inline-block px-3 py-1 bg-red-50 text-red-700 text-[9px] font-bold uppercase rounded-full border border-red-100 group relative cursor-help">
                                             Từ chối
                                             <span

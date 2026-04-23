@@ -59,6 +59,46 @@ public class WalletController {
         return "wallet/wallet";
     }
 
+    /**
+     * POST /wallet/withdraw
+     * User tạo yêu cầu rút tiền.
+     */
+    @PostMapping("/wallet/withdraw")
+    public String requestWithdrawal(
+            @Valid @ModelAttribute("withdrawalRequest") WithdrawalRequestDTO dto,
+            BindingResult bindingResult,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
+        Optional<User> currentUser = getCurrentUser();
+        if (currentUser.isEmpty())
+            return "redirect:/login";
+
+        // Guard: Admin không được tạo yêu cầu rút tiền qua route này
+        if (isCurrentUserAdmin()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Admin không thể tạo yêu cầu rút tiền.");
+            return "redirect:/wallet";
+        }
+
+        if (bindingResult.hasErrors()) {
+            Long userId = currentUser.get().getId();
+            model.addAttribute("wallet", walletService.getWallet(userId));
+            model.addAttribute("myRequests", withdrawalService.getRequestsByUser(userId));
+            model.addAttribute("isAdmin", false);
+            return "wallet/wallet";
+        }
+
+        try {
+            withdrawalService.requestWithdrawal(currentUser.get().getId(), dto);
+            redirectAttributes.addFlashAttribute("successMessage",
+                    "Yêu cầu rút tiền đã được gửi. Vui lòng đợi admin xét duyệt.");
+        } catch (Exception e) {
+            log.error("[Wallet] Tạo yêu cầu rút tiền thất bại: {}", e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/wallet";
+    }
+
     // =========================================================================
     // Admin — Quản lý yêu cầu rút tiền
     // =========================================================================
@@ -98,7 +138,7 @@ public class WalletController {
             log.error("[Admin][Withdrawal] Approve thất bại requestId={}: {}", id, e.getMessage());
             redirectAttributes.addFlashAttribute("errorMessage", "Lỗi: " + e.getMessage());
         }
-        return "redirect:/admin/withdrawals";
+        return "redirect:/admin/wallet";
     }
 
     /**
@@ -118,7 +158,7 @@ public class WalletController {
             log.error("[Admin][Withdrawal] Reject thất bại requestId={}: {}", id, e.getMessage());
             redirectAttributes.addFlashAttribute("errorMessage", "Lỗi: " + e.getMessage());
         }
-        return "redirect:/admin/withdrawals";
+        return "redirect:/admin/wallet";
     }
 
     // =========================================================================
