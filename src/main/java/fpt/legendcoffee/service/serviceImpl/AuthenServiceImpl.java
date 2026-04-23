@@ -63,7 +63,8 @@ public class AuthenServiceImpl implements AuthenService {
         User savedUser = userRepository.save(user);
         Wallet wallet = Wallet.builder()
                 .user(savedUser)
-                .amount(BigDecimal.ZERO)
+                .availableAmount(BigDecimal.ZERO)
+                .reservedAmount(BigDecimal.ZERO)
                 .build();
 
         walletRepository.save(wallet);
