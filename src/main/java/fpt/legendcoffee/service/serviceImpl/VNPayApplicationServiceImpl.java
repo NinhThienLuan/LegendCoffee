@@ -7,6 +7,7 @@ import fpt.legendcoffee.entity.enumeration.PaymentMethod;
 import fpt.legendcoffee.entity.enumeration.PaymentStatus;
 import fpt.legendcoffee.dto.request.PaymentReturnDTO;
 import fpt.legendcoffee.dto.response.VNPayIpnResponseDTO;
+import fpt.legendcoffee.service.OrderService;
 import fpt.legendcoffee.service.ShippingService;
 import fpt.legendcoffee.service.VNPayApplicationService;
 import fpt.legendcoffee.service.VNPayService;
@@ -39,17 +40,20 @@ public class VNPayApplicationServiceImpl implements VNPayApplicationService {
     private final PaymentRepository paymentRepository;
     private final ShippingService shippingService;
     private final WalletService walletService;
+    private final OrderService orderService;
 
     public VNPayApplicationServiceImpl(VNPayService vnPayService,
             OrderRepository orderRepository,
             PaymentRepository paymentRepository,
             ShippingService shippingService,
-            WalletService walletService) {
+            WalletService walletService,
+            OrderService orderService) {
         this.vnPayService = vnPayService;
         this.orderRepository = orderRepository;
         this.paymentRepository = paymentRepository;
         this.shippingService = shippingService;
         this.walletService = walletService;
+        this.orderService = orderService;
     }
 
     // createPayment — Tạo Payment PENDING + URL VNPay
@@ -206,6 +210,17 @@ public class VNPayApplicationServiceImpl implements VNPayApplicationService {
         } else {
             log.warn("[VNPay IPN] Thanh toán thất bại - TxnRef={}, ResponseCode={}",
                     txnRef, responseCode);
+            
+            // Tự động hủy đơn và hoàn kho khi thanh toán thất bại
+            Order order = payment.getOrder();
+            if (order != null && order.getStatus() == OrderStatus.PENDING) {
+                try {
+                    orderService.cancelOrder(order.getId());
+                    log.info("[VNPay IPN] Đã hủy đơn #{} và hoàn kho do thanh toán thất bại", order.getId());
+                } catch (Exception e) {
+                    log.error("[VNPay IPN] Lỗi khi hủy đơn #{} sau thanh toán thất bại: {}", order.getId(), e.getMessage());
+                }
+            }
         }
 
         // Luôn trả "00" để VNPay biết đã nhận IPN (dù thành công hay thất bại)

@@ -8,6 +8,7 @@ import fpt.legendcoffee.entity.Order;
 import fpt.legendcoffee.entity.ShippingInfo;
 import fpt.legendcoffee.entity.enumeration.OrderStatus;
 import fpt.legendcoffee.entity.enumeration.PaymentStatus;
+
 import fpt.legendcoffee.repository.OrderRepository;
 import fpt.legendcoffee.repository.PaymentRepository;
 import fpt.legendcoffee.repository.ShippingInfoRepository;
@@ -44,7 +45,7 @@ public class ShippingServiceImpl implements ShippingService {
     private volatile String effectiveFromWardName;
     private volatile String effectiveFromDistrictName;
     private volatile String effectiveFromProvinceName;
-
+    private final OrderRepository orderRepository;
     private final GHNService ghnService;
     private final ShippingInfoRepository shippingInfoRepository;
     private final PaymentRepository paymentRepository;
@@ -501,9 +502,9 @@ public class ShippingServiceImpl implements ShippingService {
             shippingInfoRepository.findByGhnOrderCode(ghnOrderCode).ifPresent(info -> {
                 Order order = info.getOrder();
                 if (order != null && order.getStatus() != OrderStatus.CANCELLED) {
-                    order.setStatus(OrderStatus.CANCELLED);
-                    orderRepository.save(order);
-                    log.info("[Webhook] Shipping cancelled - Order #{} updated to CANCELLED", order.getId());
+                    // Sử dụng OrderService để hủy đơn và hoàn kho
+                    orderService.cancelOrder(order.getId());
+                    log.info("[Webhook] Shipping cancelled - Order #{} cancelled and stock restored", order.getId());
 
                     // Tự động hoàn tiền nếu đơn bị huỷ (và đã thanh toán thành công trước đó)
                     try {
@@ -549,16 +550,17 @@ public class ShippingServiceImpl implements ShippingService {
             info.setStatus("cancel");
             shippingInfoRepository.save(info);
 
-            // Cập nhật trạng thái đơn hàng và hoàn kho thông qua OrderService
-            orderService.cancelOrder(info.getOrder().getId());
+            // Sử dụng OrderService để hủy đơn và hoàn kho
+            Order order = info.getOrder();
+            orderService.cancelOrder(order.getId());
 
             log.info("[Shipping] Order {} cancelled successfully and stock restored", info.getGhnOrderCode());
-
+            
             // Xử lý hoàn tiền trực tiếp nếu đã thanh toán
             try {
-                processRefund(info.getOrder());
+                processRefund(order);
             } catch (Exception e) {
-                log.error("[Shipping] Lỗi khi hoàn tiền cho đơn hàng #{}: {}", info.getOrder().getId(), e.getMessage());
+                log.error("[Shipping] Lỗi khi hoàn tiền cho đơn hàng #{}: {}", order.getId(), e.getMessage());
             }
         }
         return success;
