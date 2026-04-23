@@ -35,19 +35,11 @@
                   <span class="material-symbols-outlined text-xs">trending_up</span>bài viết tháng này
                 </p>
               </div>
-<!--              <div class="bg-surface-container-low p-6">-->
-<!--                <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Đã đăng</p>-->
-<!--                <p class="text-3xl font-bold text-primary">156</p>-->
-<!--                <p class="text-xs text-on-surface-variant mt-2"></p>-->
-<!--              </div>-->
-<!--              <div class="bg-surface-container-low p-6">-->
-<!--                <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Tổng lượt xem-->
-<!--                </p>-->
-<!--                <p class="text-3xl font-bold text-primary">94.2K</p>-->
-<!--                <p class="text-xs text-green-600 mt-2 flex items-center gap-1 font-semibold">-->
-<!--                  <span class="material-symbols-outlined text-xs">trending_up</span>-->
-<!--                </p>-->
-<!--              </div>-->
+              <div class="bg-surface-container-low p-6">
+                <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Đã đăng</p>
+                <p class="text-3xl font-bold text-primary" th:text="${articles != null ? #lists.size(articles.?[status == 'PUBLISHED']) : 0}">156</p>
+                <p class="text-xs text-on-surface-variant mt-2"></p>
+              </div>
             </div>
           </div>
           <div class="lg:col-span-4">
@@ -86,11 +78,10 @@
                 <thead>
                   <tr
                     class="bg-surface-container-low text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">
-                    <th class="px-6 py-4 w-[28%]">Tiêu đề bài viết</th>
+                    <th class="px-6 py-4 w-[38%]">Tiêu đề bài viết</th>
                     <th class="px-6 py-4 w-[16%]">Tác giả</th>
                     <th class="px-6 py-4 w-[16%]">Danh mục</th>
                     <th class="px-6 py-4 w-[13%]">Ngày đăng</th>
-                    <th class="px-6 py-4 w-[10%]">Lượt xem</th>
                     <th class="px-6 py-4 w-[9%]">Trạng thái</th>
                     <th class="px-6 py-4 w-[8%] text-right">Hành động</th>
                   </tr>
@@ -112,7 +103,6 @@
                     </td>
                     <td class="px-6 py-5 text-sm whitespace-nowrap" th:text="${art.publishedDate}">
                       Ngày đăng</td>
-                    <td class="px-6 py-5 text-sm font-medium">0</td>
                     <td class="px-6 py-5">
                       <span class="inline-block px-2 py-1 text-[10px] font-bold uppercase rounded"
                         th:classappend="${art.status == 'PUBLISHED' ? 'bg-green-100 text-green-700' : (art.status == 'DRAFT' ? 'bg-stone-100 text-stone-500' : 'bg-amber-100 text-amber-700')}"
@@ -136,28 +126,6 @@
                   </tr>
                 </tbody>
               </table>
-            </div>
-            <!-- Pagination -->
-            <div class="p-6 bg-surface-container-low/30 flex flex-col sm:flex-row justify-between items-center gap-4">
-              <p class="text-xs text-on-surface-variant"
-                th:text="'Đang hiển thị ' + ${#lists.size(articles)} + ' bài viết'">Đang hiển thị 5 trên 184 bài viết
-              </p>
-              <div class="flex gap-1">
-                <button
-                  class="h-8 w-8 flex items-center justify-center rounded border border-stone-200 bg-white text-stone-600 hover:bg-stone-50 transition-colors">
-                  <span class="material-symbols-outlined text-sm">chevron_left</span>
-                </button>
-                <button
-                  class="h-8 w-8 flex items-center justify-center rounded border border-stone-200 bg-primary text-white font-bold">1</button>
-                <button
-                  class="h-8 w-8 flex items-center justify-center rounded border border-stone-200 bg-white text-stone-600 hover:bg-stone-50 transition-colors">2</button>
-                <button
-                  class="h-8 w-8 flex items-center justify-center rounded border border-stone-200 bg-white text-stone-600 hover:bg-stone-50 transition-colors">3</button>
-                <button
-                  class="h-8 w-8 flex items-center justify-center rounded border border-stone-200 bg-white text-stone-600 hover:bg-stone-50 transition-colors">
-                  <span class="material-symbols-outlined text-sm">chevron_right</span>
-                </button>
-              </div>
             </div>
           </div>
         </div>
