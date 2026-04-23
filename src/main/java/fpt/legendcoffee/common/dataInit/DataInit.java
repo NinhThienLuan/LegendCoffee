@@ -576,49 +576,75 @@ public class DataInit implements CommandLineRunner {
                         return;
                 }
 
-                ProductVariant arabica250 = productVariantRepository.findAll().stream()
-                                .filter(variant -> variant.getProduct() != null
-                                                && "Legend Arabica Special".equals(variant.getProduct().getName())
-                                                && "Túi 250g".equals(variant.getVariantName()))
-                                .findFirst()
-                                .orElse(null);
+                log.info("Seeding combos...");
+                List<ProductVariant> allVariants = productVariantRepository.findAll();
 
-                ProductVariant robusta500 = productVariantRepository.findAll().stream()
-                                .filter(variant -> variant.getProduct() != null
-                                                && "Legend Robusta Bold".equals(variant.getProduct().getName())
-                                                && "Túi 500g".equals(variant.getVariantName()))
-                                .findFirst()
-                                .orElse(null);
+                ProductVariant arabica250 = findVariant(allVariants, "Legend Arabica Special", "Túi 250g");
+                ProductVariant arabica500 = findVariant(allVariants, "Legend Arabica Special", "Túi 500g");
+                ProductVariant robusta500 = findVariant(allVariants, "Legend Robusta Bold", "Túi 500g");
+                ProductVariant ground200 = findVariant(allVariants, "Espresso Premium Blend (Xay)", "Hộp 200g");
+                ProductVariant phin = findVariant(allVariants, "Phin pha cà phê inox", "Size Tiêu Chuẩn");
+                ProductVariant v60 = findVariant(allVariants, "Phễu pha V60 Hario", "Size 02");
+                ProductVariant grinder = findVariant(allVariants, "Máy xay cà phê cầm tay", "C3");
+                ProductVariant paperFilter = findVariant(allVariants, "Giấy lọc V60", "Hộp 100 tờ");
 
-                ProductVariant ground200 = productVariantRepository.findAll().stream()
-                                .filter(variant -> variant.getProduct() != null
-                                                && "Espresso Premium Blend (Xay)".equals(variant.getProduct().getName())
-                                                && "Hộp 200g".equals(variant.getVariantName()))
-                                .findFirst()
-                                .orElse(null);
-
-                if (arabica250 == null || robusta500 == null || ground200 == null) {
-                        log.warn("Skipping combo seed because one or more required variants were not found.");
-                        return;
+                // 1. Combo Discovery (3 vị) - Trải nghiệm các dòng hạt chủ lực
+                if (arabica250 != null && robusta500 != null && ground200 != null) {
+                        Combo discoveryCombo = Combo.builder()
+                                        .name("Combo Discovery 3 Vị")
+                                        .description("Trải nghiệm trọn bộ 3 dòng sản phẩm: Arabica Special, Robusta Bold và Espresso Blend.")
+                                        .price(new BigDecimal("499000")) // Tổng lẻ: 150k + 220k + 185k = 555k
+                                        .startDate(LocalDateTime.now().minusDays(7))
+                                        .endDate(LocalDateTime.now().plusMonths(3))
+                                        .isActive(true)
+                                        .build();
+                        discoveryCombo.getComboItems().add(ComboItem.builder().combo(discoveryCombo).variant(arabica250).quantity(1).build());
+                        discoveryCombo.getComboItems().add(ComboItem.builder().combo(discoveryCombo).variant(robusta500).quantity(1).build());
+                        discoveryCombo.getComboItems().add(ComboItem.builder().combo(discoveryCombo).variant(ground200).quantity(1).build());
+                        comboRepository.save(discoveryCombo);
                 }
 
-                Combo discoveryCombo = Combo.builder()
-                                .name("Combo Discovery 3 vị")
-                                .description("Bộ thử vị gồm 3 dòng sản phẩm chủ lực với giá ưu đãi.")
-                                .price(new BigDecimal("540000"))
-                                .startDate(LocalDateTime.now().minusDays(7))
-                                .endDate(LocalDateTime.now().plusMonths(2))
-                                .isActive(true)
-                                .build();
+                // 2. Combo Khởi Đầu (Starter Brew) - Dành cho người mới
+                if (phin != null && robusta500 != null) {
+                        Combo starterCombo = Combo.builder()
+                                        .name("Combo Khởi Đầu")
+                                        .description("Bộ đôi hoàn hảo cho người mới: Phin inox cao cấp và cà phê Robusta đậm đà.")
+                                        .price(new BigDecimal("265000")) // Tổng lẻ: 85k + 220k = 305k
+                                        .startDate(LocalDateTime.now())
+                                        .endDate(LocalDateTime.now().plusMonths(6))
+                                        .isActive(true)
+                                        .build();
+                        starterCombo.getComboItems().add(ComboItem.builder().combo(starterCombo).variant(phin).quantity(1).build());
+                        starterCombo.getComboItems().add(ComboItem.builder().combo(starterCombo).variant(robusta500).quantity(1).build());
+                        comboRepository.save(starterCombo);
+                }
 
-                discoveryCombo.getComboItems()
-                                .add(ComboItem.builder().combo(discoveryCombo).variant(arabica250).quantity(1).build());
-                discoveryCombo.getComboItems()
-                                .add(ComboItem.builder().combo(discoveryCombo).variant(robusta500).quantity(1).build());
-                discoveryCombo.getComboItems()
-                                .add(ComboItem.builder().combo(discoveryCombo).variant(ground200).quantity(1).build());
+                // 3. Combo Chuyên Nghiệp (Pro Pour-over) - Dành cho tín đồ Pour-over
+                if (grinder != null && v60 != null && paperFilter != null && arabica500 != null) {
+                        Combo proCombo = Combo.builder()
+                                        .name("Combo Chuyên Nghiệp")
+                                        .description("Nâng tầm pha chế với máy xay Timemore C3, phễu V60, giấy lọc và Arabica Special.")
+                                        .price(new BigDecimal("1850000")) // Tổng lẻ: 1.25M + 450k + 120k + 280k = 2.1M
+                                        .startDate(LocalDateTime.now())
+                                        .endDate(LocalDateTime.now().plusMonths(6))
+                                        .isActive(true)
+                                        .build();
+                        proCombo.getComboItems().add(ComboItem.builder().combo(proCombo).variant(grinder).quantity(1).build());
+                        proCombo.getComboItems().add(ComboItem.builder().combo(proCombo).variant(v60).quantity(1).build());
+                        proCombo.getComboItems().add(ComboItem.builder().combo(proCombo).variant(paperFilter).quantity(1).build());
+                        proCombo.getComboItems().add(ComboItem.builder().combo(proCombo).variant(arabica500).quantity(1).build());
+                        comboRepository.save(proCombo);
+                }
 
-                comboRepository.save(discoveryCombo);
                 log.info("Seeded combo data successfully.");
+        }
+
+        private ProductVariant findVariant(List<ProductVariant> variants, String productName, String variantName) {
+                return variants.stream()
+                                .filter(v -> v.getProduct() != null 
+                                                && productName.equals(v.getProduct().getName()) 
+                                                && variantName.equals(v.getVariantName()))
+                                .findFirst()
+                                .orElse(null);
         }
 }
