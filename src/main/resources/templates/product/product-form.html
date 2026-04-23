@@ -257,7 +257,7 @@
                                                 <input type="text"
                                                     th:field="*{variants[__${vStat.index}__].variantName}"
                                                     placeholder="Ví dụ: Robusta 60kg"
-                                                    required minlength="10"
+                                                    required minlength="6"
                                                     pattern="^[a-zA-Z0-9À-ỹ\s]+$"
                                                     oninput="this.value = this.value.replace(/[^a-zA-Z0-9À-ỹ\s]/g, '')"
                                                     class="variant-name w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none" />
@@ -402,7 +402,7 @@
 
         function validateVariantName(val) {
             if (!val.trim()) return 'Tên biến thể là bắt buộc.';
-            if (val.trim().length < 10) return `Tên biến thể phải có ít nhất 10 ký tự (hiện tại: ${val.trim().length}).`;
+            if (val.trim().length < 6) return `Tên biến thể phải có ít nhất 6 ký tự (hiện tại: ${val.trim().length}).`;
             return '';
         }
 
