@@ -39,14 +39,14 @@ public class AuthController {
             .getContextHolderStrategy();
     private final AuthenService authenService;
 
-    @GetMapping("/home")
-    public String home() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-            return "redirect:/admin";
-        }
-        return "index";
-    }
+    // @GetMapping("/home")
+    // public String home() {
+    //     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    //     if (auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+    //         return "redirect:/admin";
+    //     }
+    //     return "index";
+    // }
 
     @GetMapping("/login")
     public String showLoginForm(Model model) {
