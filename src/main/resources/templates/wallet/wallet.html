@@ -110,7 +110,8 @@
                                     class="block text-[10px] font-bold uppercase tracking-widest text-stone-500 mb-2 ml-1">Tên
                                     chủ tài khoản</label>
                                 <input type="text" th:field="*{accountHolder}" placeholder="NGUYEN VAN A" required
-                                    minlength="10" oninput="this.value = this.value.toUpperCase()"
+                                    minlength="10" 
+                                    oninput="this.value = this.value.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/Đ/g, 'D')"
                                     class="w-full px-5 py-3.5 bg-stone-50 border border-stone-200 rounded-2xl focus:ring-4 focus:ring-primary/5 focus:border-primary outline-none transition-all text-sm uppercase font-bold text-stone-900" />
                                 <p id="accountHolderError" class="mt-2 text-[11px] text-red-500 font-bold hidden"></p>
                             </div>
@@ -293,6 +294,10 @@
         }
         if (val.length < 10) {
             showError(accHoldInput, accHoldErr, 'Tên phải có ít nhất 10 ký tự.');
+            return false;
+        }
+        if (!/^[A-Z ]+$/.test(val)) {
+            showError(accHoldInput, accHoldErr, 'Tên phải là chữ in hoa không dấu (A-Z).');
             return false;
         }
         clearError(accHoldInput, accHoldErr);
