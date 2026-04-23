@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,7 @@ public class ProductRequestDTO {
 
     /** Tên sản phẩm hiển thị trên hệ thống. */
     @NotBlank(message = "Tên sản phẩm không được để trống")
+    @Size(min = 10, message = "Tên sản phẩm phải có ít nhất 10 ký tự")
     private String name;
 
     /** Mô tả chi tiết về sản phẩm. */

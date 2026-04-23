@@ -35,6 +35,10 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         // Customer-only pages — ADMIN is blocked from these
                         .requestMatchers("/cart/**", "/checkout/**", "/payment/**").hasRole("USER")
+                        // Tạo yêu cầu rút tiền chỉ dành cho USER (admin không rút tiền qua form này)
+                        .requestMatchers(HttpMethod.POST, "/wallet/withdraw").hasRole("USER")
+                        // Xem trang ví: cả USER và ADMIN đều được (nhưng thấy nội dung khác nhau)
+                        .requestMatchers("/wallet", "/wallet/**").authenticated()
                         .anyRequest().authenticated())
                 .securityContext(context -> context
                         .securityContextRepository(securityContextRepository()))

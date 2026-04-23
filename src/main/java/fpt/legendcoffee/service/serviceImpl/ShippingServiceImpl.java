@@ -6,6 +6,7 @@ import fpt.legendcoffee.dto.app.*;
 import fpt.legendcoffee.dto.ghn.*;
 import fpt.legendcoffee.entity.Order;
 import fpt.legendcoffee.entity.ShippingInfo;
+import fpt.legendcoffee.entity.enumeration.GhnPaymentTypeId;
 import fpt.legendcoffee.entity.enumeration.OrderStatus;
 import fpt.legendcoffee.entity.enumeration.PaymentStatus;
 
@@ -329,7 +330,7 @@ public class ShippingServiceImpl implements ShippingService {
                 .width(20)
                 .height(10)
                 .insuranceValue(0L)
-                .codAmount(info.getPaymentTypeId() == 2 ? info.getShippingFee() : 0L)
+                .codAmount(info.getPaymentTypeId() != null && info.getPaymentTypeId() == GhnPaymentTypeId.CUSTOMER_PAYS.getValue() ? info.getShippingFee() : 0L)
                 .note(info.getNote())
                 .requiredNote("CHOTHUHANG")
                 .items(List.of(

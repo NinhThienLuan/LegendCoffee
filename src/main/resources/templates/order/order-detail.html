@@ -55,13 +55,13 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
-                    <a href="/"
+                    <a href="/" sec:authorize="!hasRole('ADMIN')"
                         class="px-6 py-3 bg-surface-container-highest text-on-surface font-bold rounded-lg hover:bg-surface-container-high transition-all active:scale-95 text-sm uppercase tracking-widest">
                         Tiếp tục mua sắm
                     </a>
 
                     <!-- Continue Payment Button -->
-                    <a th:if="${paymentUrl != null}" th:href="${paymentUrl}"
+                    <a th:if="${paymentUrl != null}" th:href="${paymentUrl}" sec:authorize="!hasRole('ADMIN')"
                         class="px-6 py-3 bg-primary text-on-primary font-bold rounded-lg hover:bg-primary-container hover:text-on-primary-container transition-all active:scale-95 text-sm uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-primary/20">
                         <span class="material-symbols-outlined text-sm">payments</span>
                         Tiếp tục thanh toán
@@ -302,15 +302,15 @@
                 <div class="sticky top-28 space-y-10">
                     <!-- Mini Items List (Standardized with Cart/Checkout) -->
                     <div
-                        class="bg-surface-container-lowest p-8 rounded-2xl border border-outline-variant/10 shadow-sm relative overflow-hidden">
+                        class="bg-surface-container-lowest p-8 rounded-2xl border border-primary/10 shadow-sm relative overflow-hidden">
                         <h3
                             class="text-xs font-bold uppercase tracking-[0.2em] text-on-surface-variant mb-6 flex items-center gap-2">
                             <span class="material-symbols-outlined text-sm">inventory_2</span>
-                            Danh mục tóm tắt
+                            Chi tiết đơn hàng
                         </h3>
 
                         <div
-                            class="space-y-4 mb-8 max-h-[300px] overflow-y-auto pr-2 border-b border-outline-variant/10 pb-6 custom-scrollbar">
+                            class="space-y-4 mb-8 max-h-[300px] overflow-y-auto pr-2 border-b border-primary/20 pb-6 custom-scrollbar">
                             <div th:each="item : ${orderItems}" class="space-y-1">
                                 <div class="flex justify-between items-center">
                                     <p class="text-sm font-bold text-primary truncate pr-4"
@@ -333,7 +333,7 @@
 
                         <!-- Card: Financial Summary -->
                         <div class="space-y-6">
-                            <div class="flex justify-between items-center pb-4 border-b border-outline-variant/20">
+                            <div class="flex justify-between items-center pb-4 border-b border-primary/10">
                                 <span class="text-on-surface-variant font-medium text-sm"
                                     th:text="${'Tạm tính (' + (orderItems != null ? #lists.size(orderItems) : 0) + ' món)'}">Tạm
                                     tính (0 món)</span>
@@ -343,7 +343,7 @@
                             </div>
 
                             <div th:if="${order != null && order.discount != null && order.discount > 0}"
-                                class="flex justify-between items-center text-[#ff3333] pb-4 border-b border-outline-variant/20">
+                                class="flex justify-between items-center text-[#ff3333] pb-4 border-b border-primary/10">
                                 <span class="font-medium text-sm">Giảm giá</span>
                                 <span class="font-bold text-sm"
                                     th:text="${'-' + #numbers.formatDecimal(order.discount, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0
@@ -388,9 +388,10 @@
     </main>
 
     <!-- Footer -->
-    <div th:replace="~{fragments/footer :: footer}"></div>
+    <b <div th:replace="~{fragments/footer :: footer}"></div>
 
-    <script src="assets/cart-badge.js" th:src="@{/assets/cart-badge.js}"></script>
+        <script src="assets/cart-badge.js" th:src="@{/assets/cart-badge.js}"></script>
+        <script src="assets/smooth-scroll.js" th:src="@{/assets/smooth-scroll.js}"></script>
 </body>
 
 </html>

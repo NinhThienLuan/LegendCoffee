@@ -109,12 +109,8 @@
   <div class="max-w-7xl mx-auto w-full px-8 sm:px-12 lg:px-20">
     <div class="flex justify-between items-end mb-16">
       <div>
-        <h2 class="text-3xl font-black uppercase tracking-tight text-primary font-headline">Danh mục sản phẩm bán sỉ
+        <h2 class="text-3xl font-black uppercase tracking-tight text-primary font-headline">Sản phẩm
         </h2>
-        <p class="text-on-surface-variant mt-2">Áp dụng cho đơn hàng tối thiểu từ 50kg</p>
-      </div>
-      <div class="text-right hidden md:block">
-        <span class="text-sm font-bold text-primary uppercase tracking-widest">Cập nhật: 2024</span>
       </div>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -163,7 +159,7 @@
               <span
                 th:text="${#numbers.formatDecimal(product.price != null ? product.price : 0, 0, 'COMMA', 0, 'POINT')}">145.000</span>
               <span class="text-sm font-bold text-on-surface-variant tracking-tighter">₫ <span
-                  class="text-[10px] font-medium opacity-50">/ kg</span></span>
+                  class="text-[10px] font-medium opacity-50">/ gram</span></span>
             </div>
 
             <div class="text-primary group-hover:translate-x-2 transition-transform duration-300">

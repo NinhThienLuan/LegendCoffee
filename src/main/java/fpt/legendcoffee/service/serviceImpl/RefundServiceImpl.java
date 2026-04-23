@@ -87,7 +87,7 @@ public class RefundServiceImpl implements RefundService {
                 .orElseThrow(() -> new IllegalStateException("Hệ thống chưa tạo ví cho User này"));
 
         BigDecimal refundAmount = request.getAmount();
-        wallet.setAmount(wallet.getAmount().add(refundAmount));
+        wallet.setAvailableAmount(wallet.getAvailableAmount().add(refundAmount));
         walletRepository.save(wallet);
 
         // Lưu lịch sử giao dịch ví
