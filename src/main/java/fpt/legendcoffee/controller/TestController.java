@@ -33,22 +33,22 @@ public class TestController {
         return "admin/products";
     }
 
-    @GetMapping("/wallet")
-    public String customerWallet(Model model) {
-        Map<String, Object> wallet = new HashMap<>();
-        wallet.put("id", 12345);
-        wallet.put("balance", 5000000.0);
-
-        List<Map<String, Object>> history = new ArrayList<>();
-        history.add(createTransaction("Nạp tiền", "+1,000,000", "Nạp qua VNPay", 1000000,
-                LocalDateTime.now().minusHours(2)));
-        history.add(createTransaction("Thanh toán", "-500,000", "Thanh toán Đơn hàng #101", -500000,
-                LocalDateTime.now().minusDays(1)));
-
-        wallet.put("transactionHistory", history);
-        model.addAttribute("wallet", wallet);
-        return "wallet/wallet";
-    }
+//    @GetMapping("/wallet")
+//    public String customerWallet(Model model) {
+//        Map<String, Object> wallet = new HashMap<>();
+//        wallet.put("id", 12345);
+//        wallet.put("balance", 5000000.0);
+//
+//        List<Map<String, Object>> history = new ArrayList<>();
+//        history.add(createTransaction("Nạp tiền", "+1,000,000", "Nạp qua VNPay", 1000000,
+//                LocalDateTime.now().minusHours(2)));
+//        history.add(createTransaction("Thanh toán", "-500,000", "Thanh toán Đơn hàng #101", -500000,
+//                LocalDateTime.now().minusDays(1)));
+//
+//        wallet.put("transactionHistory", history);
+//        model.addAttribute("wallet", wallet);
+//        return "wallet/wallet";
+//    }
 
     @GetMapping("/admin/wallet")
     public String adminWallet(Model model) {
