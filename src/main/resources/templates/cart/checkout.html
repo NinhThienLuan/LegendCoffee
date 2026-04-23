@@ -265,20 +265,11 @@
                             <span id="summary-shipping" class="font-black text-primary uppercase tracking-tighter">Tự
                                 động tính</span>
                         </div>
-                        <div class="flex justify-between text-[11px]">
-                            <span class="text-on-surface-variant uppercase tracking-[0.15em] font-medium">Thuế VAT
-                                (8%)</span>
-                            <span id="summary-vat" class="font-black text-primary">0 ₫</span>
-                        </div>
                         <div class="flex justify-between items-end pt-8 border-t-2 border-primary/30">
                             <div class="flex flex-col gap-1">
                                 <span
                                     class="text-primary font-black uppercase tracking-[0.3em] text-[10px] font-headline">Tổng
                                     cộng</span>
-                                <span
-                                    class="text-[9px] text-on-surface-variant/50 uppercase font-black tracking-[0.15em] font-label">
-                                    (Đã bao gồm VAT)
-                                </span>
                             </div>
                             <div class="text-right">
                                 <span id="summary-total"
@@ -626,12 +617,10 @@
             function updateFinalSummary(shippingFee) {
                 const baseTotals = window.CartSystem.calculateTotals();
                 const subtotal = baseTotals.subtotal;
-                const vat = subtotal * 0.08;
-                const total = subtotal + vat + shippingFee;
+                const total = subtotal + shippingFee;
 
                 document.getElementById('summary-subtotal').textContent = formatCurrency(subtotal);
                 document.getElementById('summary-shipping').textContent = shippingFee > 0 ? formatCurrency(shippingFee) : 'Chưa tính';
-                document.getElementById('summary-vat').textContent = formatCurrency(vat);
                 document.getElementById('summary-total').textContent = formatCurrency(total);
             }
 
