@@ -8,14 +8,13 @@ import fpt.legendcoffee.entity.OrderItem;
 import fpt.legendcoffee.entity.ShippingInfo;
 import fpt.legendcoffee.entity.User;
 import fpt.legendcoffee.entity.enumeration.OrderStatus;
+import fpt.legendcoffee.entity.enumeration.PaymentStatus;
 import fpt.legendcoffee.repository.OrderItemRepository;
 import fpt.legendcoffee.repository.OrderRepository;
 import fpt.legendcoffee.repository.PaymentRepository;
 import fpt.legendcoffee.repository.ShippingInfoRepository;
 import fpt.legendcoffee.repository.UserRepository;
-import fpt.legendcoffee.service.OrderService;
-import fpt.legendcoffee.service.ShippingService;
-import fpt.legendcoffee.service.VNPayApplicationService;
+import fpt.legendcoffee.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -42,11 +41,10 @@ public class OrderController {
     private final ShippingService shippingService;
     private final OrderService orderService;
     private final VNPayApplicationService vnPayApplicationService;
-    private final UserRepository userRepository;
-    private final OrderRepository orderRepository;
-    private final OrderItemRepository orderItemRepository;
-    private final ShippingInfoRepository shippingInfoRepository;
-    private final PaymentRepository paymentRepository;
+    private final UserService userService;
+    private final OrderItemService orderItemService;
+    private final ShippingInfoService shippingInfoService;
+    private final PaymentService paymentService;
 
     // =========================================================================
     // Trang danh sách đơn hàng & chi tiết
@@ -81,7 +79,7 @@ public class OrderController {
         // Non-admin users can only see their own orders
         if (!isAdmin) {
             final Long userId = currentUser.get().getId();
-            allOrders = allOrders.stream().filter(dto -> orderRepository.findById(dto.getId())
+            allOrders = allOrders.stream().filter(dto -> orderService.findById(dto.getId())
                     .map(Order::getUser)
                     .map(User::getId).orElse(-1L).equals(userId)).toList();
         }
@@ -125,7 +123,7 @@ public class OrderController {
             return "redirect:/login";
         }
 
-        Optional<Order> orderOpt = orderRepository.findByIdWithUser(orderId);
+        Optional<Order> orderOpt = orderService.findByIdWithUser(orderId);
         if (orderOpt.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy đơn hàng.");
             return "redirect:/orders";
@@ -138,8 +136,8 @@ public class OrderController {
             return "redirect:/orders";
         }
 
-        List<OrderItem> orderItems = orderItemRepository.findByOrderIdWithDetails(orderId);
-        ShippingInfo shippingInfo = shippingInfoRepository.findByOrderId(orderId).orElse(null);
+        List<OrderItem> orderItems = orderItemService.findByOrderIdWithDetails(orderId);
+        ShippingInfo shippingInfo = shippingInfoService.findByOrderId(orderId).orElse(null);
 
         BigDecimal shippingFee = shippingInfo != null && shippingInfo.getShippingFee() != null
                 ? BigDecimal.valueOf(shippingInfo.getShippingFee())
@@ -158,7 +156,7 @@ public class OrderController {
             model.addAttribute("orderId", orderId);
 
             // Tìm URL thanh toán VNPay nếu đơn hàng đang chờ thanh toán
-            paymentRepository.findByOrderIdAndStatus(orderId, fpt.legendcoffee.entity.enumeration.PaymentStatus.PENDING)
+            paymentService.findByOrderIdAndStatus(orderId, PaymentStatus.PENDING)
                     .filter(p -> p.getCreatedAt() == null
                             || p.getCreatedAt().plusMinutes(15).isAfter(LocalDateTime.now()))
                     .ifPresent(p -> model.addAttribute("paymentUrl", p.getPaymentUrl()));
@@ -220,7 +218,7 @@ public class OrderController {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
                 String email = auth.getName(); // Spring Security mặc định dùng email/username làm Name
-                Optional<fpt.legendcoffee.entity.User> userOpt = userRepository.findByEmail(email);
+                Optional<fpt.legendcoffee.entity.User> userOpt = userService.findByEmail(email);
 
                 userOpt.ifPresent(u -> {
                     checkoutRequest.setRecipientName(u.getUsername()); // fullname
@@ -309,7 +307,7 @@ public class OrderController {
             return "redirect:/login";
         }
 
-        Optional<Order> orderOpt = orderRepository.findById(orderId);
+        Optional<Order> orderOpt = orderService.findById(orderId);
         if (orderOpt.isEmpty() || orderOpt.get().getUser() == null
                 || !orderOpt.get().getUser().getId().equals(currentUser.get().getId())) {
             redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền theo dõi đơn hàng này.");
@@ -343,7 +341,7 @@ public class OrderController {
             return "redirect:/login";
         }
 
-        Optional<Order> orderOpt = orderRepository.findById(orderId);
+        Optional<Order> orderOpt = orderService.findById(orderId);
         if (orderOpt.isEmpty() || orderOpt.get().getUser() == null
                 || !orderOpt.get().getUser().getId().equals(currentUser.get().getId())) {
             redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền huỷ đơn hàng này.");
@@ -374,6 +372,6 @@ public class OrderController {
         if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
             return Optional.empty();
         }
-        return userRepository.findByEmail(auth.getName());
+        return userService.findByEmail(auth.getName());
     }
 }

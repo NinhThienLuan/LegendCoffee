@@ -6,6 +6,7 @@ import fpt.legendcoffee.entity.Order;
 import fpt.legendcoffee.entity.enumeration.OrderStatus;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface OrderService {
     Order createOrder(CheckoutRequestDTO checkout);
@@ -20,5 +21,8 @@ public interface OrderService {
     int getMaxQuantityPerItem();
     int getMaxTotalQuantity();
 
+    Optional<Order> findById(Long orderId);
+
+    Optional<Order> findByIdWithUser(Long orderId);
 }
 
