@@ -120,8 +120,12 @@
                                     class="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/60 font-label">Số
                                     nhà, tên đường</label>
                                 <input th:field="*{recipientAddress}"
+                                    id="recipientAddress"
                                     class="bg-surface-container-lowest border border-outline-variant/20 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all p-4 rounded-xl text-sm font-medium"
-                                    placeholder="Số 123 Đường Công Nghiệp, Khu Công Nghệ Cao" type="text" required />
+                                    placeholder="Số 123 Đường Công Nghiệp, Khu Công Nghệ Cao" type="text" required
+                                    pattern="^[a-zA-Z0-9À-ỹ\s,./-]+$"
+                                    oninput="this.value = this.value.replace(/[^a-zA-Z0-9À-ỹ\s,./-]/g, '')"
+                                    title="Địa chỉ chỉ được chứa chữ cái, số và các ký tự , . / -" />
                                 <p th:if="${#fields.hasErrors('recipientAddress')}" th:errors="*{recipientAddress}"
                                     class="text-error text-[10px] uppercase font-bold mt-1"></p>
                             </div>
@@ -389,6 +393,15 @@
                     if (!phoneRegex.test(recipientPhone)) {
                         e.preventDefault();
                         showToast('Số điện thoại không hợp lệ (Phải có 10 chữ số và thuộc các nhà mạng VN).');
+                        return;
+                    }
+
+                    // 0.2 Validate special characters in Address
+                    const recipientAddress = document.getElementById('recipientAddress').value;
+                    const addressRegex = /^[a-zA-Z0-9À-ỹ\s,./-]+$/;
+                    if (!addressRegex.test(recipientAddress)) {
+                        e.preventDefault();
+                        showToast('Địa chỉ không được chứa ký tự đặc biệt lạ.');
                         return;
                     }
 

@@ -21,6 +21,9 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 			LEFT JOIN FETCH oi.variant v
 			LEFT JOIN FETCH v.product p
 			LEFT JOIN FETCH oi.combo c
+			LEFT JOIN FETCH c.comboItems ci
+			LEFT JOIN FETCH ci.variant cv
+			LEFT JOIN FETCH cv.product cp
 			WHERE oi.order.id = :orderId
 			""")
 	List<OrderItem> findByOrderIdWithDetails(@Param("orderId") Long orderId);

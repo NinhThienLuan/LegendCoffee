@@ -195,18 +195,20 @@ public class OrderController {
                             || p.getCreatedAt().plusMinutes(15).isAfter(LocalDateTime.now()))
                     .ifPresent(p -> model.addAttribute("paymentUrl", p.getPaymentUrl()));
 
+            // Fallback label based on internal order status
+            String fallbackLabel = "Đang xử lý";
+            if (order.getStatus() == OrderStatus.PENDING) fallbackLabel = "Chờ thanh toán";
+            else if (order.getStatus() == OrderStatus.CONFIRMED) fallbackLabel = "Đã xác nhận";
+            else if (order.getStatus() == OrderStatus.CANCELLED) fallbackLabel = "Đã hủy";
+            else if (order.getStatus() == OrderStatus.COMPLETED) fallbackLabel = "Đã hoàn thành";
+            model.addAttribute("orderStatusLabel", fallbackLabel);
+
             // Tích hợp dữ liệu tracking trực tiếp vào trang detail
             try {
                 OrderStatusDTO os = shippingService.getOrderStatus(orderId);
                 model.addAttribute("orderStatus", os);
             } catch (Exception e) {
                 log.warn("[Tracking] Không tìm thấy thông tin vận chuyển cho orderId={}", orderId);
-                // Fallback label based on internal order status
-                String fallbackLabel = "Đang xử lý";
-                if (order.getStatus() == OrderStatus.PENDING) fallbackLabel = "Chờ thanh toán";
-                else if (order.getStatus() == OrderStatus.CONFIRMED) fallbackLabel = "Đã xác nhận";
-                else if (order.getStatus() == OrderStatus.CANCELLED) fallbackLabel = "Đã hủy";
-                model.addAttribute("orderStatusLabel", fallbackLabel);
             }
 
             if (isAdmin) {
