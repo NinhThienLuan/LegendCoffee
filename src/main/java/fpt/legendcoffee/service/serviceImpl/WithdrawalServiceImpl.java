@@ -191,7 +191,7 @@ public class WithdrawalServiceImpl implements WithdrawalService {
         // =========================================================================
 
         private WithdrawalRequest getAndValidatePending(Long requestId) {
-                WithdrawalRequest request = withdrawalRequestRepository.findById(requestId)
+                WithdrawalRequest request = withdrawalRequestRepository.findByIdWithUser(requestId)
                                 .orElseThrow(() -> new IllegalArgumentException(
                                                 "Không tìm thấy yêu cầu rút tiền #" + requestId));
 
