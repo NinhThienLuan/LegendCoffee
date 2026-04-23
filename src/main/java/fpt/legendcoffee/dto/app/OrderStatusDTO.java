@@ -43,6 +43,8 @@ public class OrderStatusDTO {
             case "return"          -> "Đang hoàn hàng";
             case "returned"        -> "Đã hoàn hàng";
             case "cancel"          -> "Đã huỷ";
+            case "pending"         -> "Chờ xử lý";
+            case "pending_payment" -> "Chờ thanh toán";
             default                -> status;
         };
     }
