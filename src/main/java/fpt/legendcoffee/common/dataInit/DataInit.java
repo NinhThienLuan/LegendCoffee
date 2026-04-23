@@ -223,6 +223,7 @@ public class DataInit implements CommandLineRunner {
                                         .category(accessories)
                                         .name("Phin pha cà phê inox")
                                         .description("Phin inox cao cấp, giữ nhiệt tốt.")
+                                        .imageUrl("https://unsplash.com/photos/a-jar-filled-with-coffee-beans-next-to-a-box-jddERMaoNmY")
                                         .origin("Việt Nam")
                                         .isActive(true)
                                         .build();
@@ -238,6 +239,7 @@ public class DataInit implements CommandLineRunner {
                                         .category(accessories)
                                         .name("Phễu pha V60 Hario")
                                         .description("Phễu pha cà phê pour-over bằng sứ.")
+                                        .imageUrl("https://unsplash.com/photos/clear-glass-coffee-pitcher-ZMnBy_vwlCY")
                                         .origin("Nhật Bản")
                                         .isActive(true)
                                         .build();
