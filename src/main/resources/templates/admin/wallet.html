@@ -1,151 +1,203 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<html class="light" lang="vi" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="~{fragments/head :: sharedHead('Industrial Excellence - Quản lý Tài chính')}"></head>
+<head th:replace="~{fragments/head :: sharedHead('Quản lý Ví tiền | LegendCoffee Admin')}"></head>
 
-<body class="bg-surface selection:bg-stone-200 min-h-screen font-sans">
+<body class="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container">
 
-    <!-- Sidebar Fragment -->
-    <aside th:replace="~{fragments/admin-sidebar :: adminSidebar}"></aside>
+    <main class="flex min-h-screen">
+        <aside th:replace="~{fragments/admin-sidebar :: adminSidebar}"></aside>
 
-    <div class="ml-64 flex flex-col">
-        <!-- Topbar Fragment -->
-        <header
-            th:replace="~{fragments/admin-topbar :: adminTopbar('Quản lý Tài chính / Ví hệ thống', 'Tìm kiếm giao dịch...')}">
-        </header>
+        <section class="flex-1 ml-64 min-h-screen bg-surface">
+            <header
+                th:replace="~{fragments/admin-topbar :: adminTopbar('Quản lý yêu cầu rút tiền', 'Tìm kiếm theo tên user, mã lệnh...')}">
+            </header>
 
-        <main class="p-8 flex flex-col gap-8">
+            <div class="p-8 space-y-8">
 
-            <!-- Summary Stats -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Platform Balance -->
-                <div class="bg-stone-950 text-white rounded-2xl p-6 shadow-sm relative overflow-hidden">
-                    <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-500 font-manrope">Số dư hệ
-                        thống</span>
-                    <div class="flex items-baseline gap-2 mt-2">
-                        <span class="text-3xl font-black font-manrope tracking-tighter"
-                            th:text="${#numbers.formatDecimal(adminWallet.balance, 0, 'COMMA', 0, 'POINT')}">150.000.000</span>
-                        <span class="text-xs font-bold text-stone-500 uppercase">VNĐ</span>
-                    </div>
-                    <div class="mt-4 flex items-center gap-2 text-[10px] font-bold text-success font-manrope">
-                        <span class="material-symbols-outlined text-[14px]">trending_up</span>
-                        <span>+12% so với tháng trước</span>
-                    </div>
+                <!-- Alerts -->
+                <div th:if="${successMessage}"
+                    class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 border border-green-200" role="alert">
+                    <span class="font-bold">Thành công!</span> [[${successMessage}]]
+                </div>
+                <div th:if="${errorMessage}"
+                    class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200" role="alert">
+                    <span class="font-bold">Lỗi!</span> [[${errorMessage}]]
                 </div>
 
-                <!-- Total Revenue -->
-                <div class="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm">
-                    <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-500 font-manrope">Tổng
-                        doanh thu (30 ngày)</span>
-                    <div class="flex items-baseline gap-2 mt-2">
-                        <span class="text-2xl font-black text-stone-900 font-manrope tracking-tighter">45.000.000</span>
-                        <span class="text-xs font-bold text-stone-400 uppercase">VNĐ</span>
+                <!-- ── Stats Grid ────────────────────────────────────────────────────── -->
+                <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10">
+                        <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Ví hệ
+                            thống (Admin)</p>
+                        <p class="text-3xl font-black text-primary font-manrope"
+                            th:text="${#numbers.formatDecimal(wallet.availableAmount, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0
+                            ₫</p>
                     </div>
-                    <div class="mt-4 text-xs font-semibold text-stone-500">
-                        240 giao dịch thành công
+                    <div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10">
+                        <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Yêu cầu
+                            chờ duyệt</p>
+                        <p class="text-3xl font-black text-amber-600 font-manrope"
+                            th:text="${#lists.size(withdrawalRequests.?[status == T(fpt.legendcoffee.entity.enumeration.WithdrawalStatus).PENDING])}">
+                            0</p>
                     </div>
-                </div>
+                    <div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10">
+                        <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Tổng
+                            tiền chờ rút</p>
+                        <p class="text-3xl font-black text-on-surface font-manrope"
+                            th:text="${#numbers.formatDecimal(#aggregates.sum(withdrawalRequests.?[status == T(fpt.legendcoffee.entity.enumeration.WithdrawalStatus).PENDING].![amount]) ?: 0, 0, 'COMMA', 0, 'POINT')} + ' ₫'">
+                            0 ₫</p>
+                    </div>
+                </section>
 
-                <!-- Payouts -->
-                <div class="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm">
-                    <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-500 font-manrope">Tổng chi
-                        phí / Hoàn tiền</span>
-                    <div class="flex items-baseline gap-2 mt-2">
-                        <span class="text-2xl font-black text-stone-900 font-manrope tracking-tighter">12.500.000</span>
-                        <span class="text-xs font-bold text-stone-400 uppercase">VNĐ</span>
+                <!-- ── Withdrawal Requests Table ─────────────────────────────────────── -->
+                <div
+                    class="bg-surface-container-lowest border border-outline-variant/20 rounded-2xl shadow-sm overflow-hidden">
+                    <div
+                        class="p-6 border-b border-outline-variant/10 flex justify-between items-center bg-surface-container-low/20">
+                        <h4 class="font-bold text-primary uppercase tracking-widest text-xs">Danh sách yêu cầu rút tiền
+                        </h4>
                     </div>
-                    <div class="mt-4 text-xs font-semibold text-error/80">
-                        8 yêu cầu đang chờ duyệt
-                    </div>
-                </div>
-            </div>
 
-            <!-- Detailed Transactions -->
-            <section class="bg-white border border-stone-200 rounded-3xl overflow-hidden shadow-sm">
-                <div class="px-8 py-6 border-b border-stone-100 flex items-center justify-between">
-                    <div>
-                        <h3 class="text-lg font-bold text-stone-900 font-manrope tracking-tight">Nhật ký giao dịch hệ
-                            thống</h3>
-                        <p class="text-xs text-stone-500 font-medium">Toàn bộ dòng tiền ra vào của nền tảng</p>
-                    </div>
-                    <div class="flex gap-2">
-                        <button class="p-2 border border-stone-200 rounded-lg hover:bg-stone-50 transition-colors">
-                            <span class="material-symbols-outlined text-[20px] text-stone-600">filter_list</span>
-                        </button>
-                        <button class="p-2 border border-stone-200 rounded-lg hover:bg-stone-50 transition-colors">
-                            <span class="material-symbols-outlined text-[20px] text-stone-600">download</span>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left font-manrope border-collapse">
+                    <table class="w-full text-left border-collapse">
                         <thead>
                             <tr
-                                class="bg-stone-50/50 text-[10px] font-bold text-stone-500 uppercase tracking-widest border-b border-stone-100">
-                                <th class="px-8 py-4">Giao dịch / ID</th>
-                                <th class="px-8 py-4">Người thực hiện</th>
-                                <th class="px-8 py-4">Ngày</th>
-                                <th class="px-8 py-4 text-right">Số tiền</th>
-                                <th class="px-8 py-4 text-right">Hành động</th>
+                                class="bg-surface-container-low/50 text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">
+                                <th class="px-6 py-4">Người dùng</th>
+                                <th class="px-6 py-4">Thông tin ngân hàng</th>
+                                <th class="px-6 py-4">Số tiền</th>
+                                <th class="px-6 py-4">Thời gian</th>
+                                <th class="px-6 py-4">Trạng thái</th>
+                                <th class="px-6 py-4 text-right">Hành động</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-stone-100">
-                            <tr th:each="history : ${adminWallet.transactionHistory}"
-                                class="hover:bg-stone-50/30 transition-colors">
-                                <td class="px-8 py-5">
-                                    <div class="flex flex-col">
-                                        <span class="text-sm font-bold text-stone-900" th:text="${history.type}">Hoàn
-                                            tiền combo</span>
-                                        <span class="text-[10px] font-medium text-stone-400"
-                                            th:text="'ID: ' + ${history.id}">#TX-123456789</span>
-                                    </div>
-                                </td>
-                                <td class="px-8 py-5">
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-6 h-6 rounded-full bg-stone-100 flex items-center justify-center">
-                                            <span
-                                                class="material-symbols-outlined text-[14px] text-stone-500">person</span>
+                        <tbody class="divide-y divide-outline-variant/10">
+                            <tr th:each="req : ${withdrawalRequests}"
+                                class="hover:bg-surface-container-low/30 transition-colors group">
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold"
+                                            th:text="${#strings.substring(req.user.username,0,1).toUpperCase()}">U</div>
+                                        <div>
+                                            <p class="text-sm font-bold text-primary" th:text="${req.user.username}">
+                                                Username</p>
+                                            <p class="text-[10px] text-on-surface-variant" th:text="${req.user.email}">
+                                                Email</p>
                                         </div>
-                                        <span class="text-xs font-bold text-stone-700"
-                                            th:text="${history.username != null ? history.username : 'Hệ thống'}">Khanh
-                                            Nguyễn</span>
                                     </div>
                                 </td>
-                                <td class="px-8 py-5 text-xs text-stone-500 font-medium"
-                                    th:text="${#temporals.format(history.createdAt, 'dd/MM/yyyy HH:mm')}">
-                                    22/04/2026 14:00
+                                <td class="px-6 py-4">
+                                    <p class="text-xs font-semibold text-stone-700"
+                                        th:text="${req.bankName} + ' (' + ${req.bankCode} + ')'">Vietcombank</p>
+                                    <p class="text-[10px] text-on-surface-variant mt-0.5"
+                                        th:text="${req.accountNumber} + ' - ' + ${req.accountHolder}">123456789</p>
                                 </td>
-                                <td class="px-8 py-5 text-right">
-                                    <span class="text-sm font-black tracking-tighter"
-                                        th:classappend="${history.amount > 0 ? 'text-success' : 'text-stone-900'}"
-                                        th:text="${(history.amount > 0 ? '+' : '') + #numbers.formatDecimal(history.amount, 0, 'COMMA', 0, 'POINT')}">
-                                        -500.000
+                                <td class="px-6 py-4">
+                                    <p class="text-sm font-black font-manrope text-primary"
+                                        th:text="${#numbers.formatDecimal(req.amount, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0
+                                        ₫</p>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <p class="text-xs text-on-surface-variant"
+                                        th:text="${#temporals.format(req.createdAt, 'dd/MM/yyyy HH:mm')}"></p>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span
+                                        th:if="${req.status == T(fpt.legendcoffee.entity.enumeration.WithdrawalStatus).PENDING}"
+                                        class="px-2 py-1 bg-amber-100 text-amber-700 text-[10px] font-bold uppercase rounded">Chờ
+                                        duyệt</span>
+                                    <span
+                                        th:if="${req.status == T(fpt.legendcoffee.entity.enumeration.WithdrawalStatus).APPROVED}"
+                                        class="px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold uppercase rounded">Hoàn
+                                        thành</span>
+                                    <span
+                                        th:if="${req.status == T(fpt.legendcoffee.entity.enumeration.WithdrawalStatus).REJECTED}"
+                                        class="px-2 py-1 bg-red-100 text-red-700 text-[10px] font-bold uppercase rounded group/reason relative cursor-help">
+                                        Từ chối
+                                        <!-- Tooltip for reject reason -->
+                                        <span
+                                            class="invisible group-hover/reason:visible absolute bottom-full left-1/2 -translate-x-1/2 mb-2 p-3 bg-stone-800 text-white text-[10px] w-48 rounded-lg shadow-2xl normal-case font-normal z-50 text-center"
+                                            th:text="${req.rejectReason ?: 'Không có lý do'}"></span>
                                     </span>
                                 </td>
-                                <td class="px-8 py-5 text-right">
-                                    <button class="text-stone-400 hover:text-stone-900 transition-colors">
-                                        <span class="material-symbols-outlined text-[20px]">more_vert</span>
-                                    </button>
+                                <td class="px-6 py-4 text-right">
+                                    <div th:if="${req.status == T(fpt.legendcoffee.entity.enumeration.WithdrawalStatus).PENDING}"
+                                        class="flex items-center justify-end gap-2">
+                                        <form th:action="@{/admin/withdrawals/{id}/approve(id=${req.id})}" method="POST"
+                                            onsubmit="return confirm('Bạn có chắc chắn muốn duyệt yêu cầu rút tiền này?')">
+                                            <button type="submit"
+                                                class="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                                                title="Duyệt">
+                                                <span class="material-symbols-outlined text-lg">check_circle</span>
+                                            </button>
+                                        </form>
+                                        <button class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                            title="Từ chối" th:onclick="'openRejectModal(' + ${req.id} + ')'">
+                                            <span class="material-symbols-outlined text-lg">cancel</span>
+                                        </button>
+                                    </div>
+                                    <span
+                                        th:unless="${req.status == T(fpt.legendcoffee.entity.enumeration.WithdrawalStatus).PENDING}"
+                                        class="text-[10px] font-bold text-on-surface-variant/40"
+                                        th:text="${req.processedAt != null ? #temporals.format(req.processedAt, 'HH:mm dd/MM') : ''}"></span>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+            </div>
+        </section>
+    </main>
 
-                <div th:if="${adminWallet.transactionHistory == null or #lists.isEmpty(adminWallet.transactionHistory)}"
-                    class="py-24 flex flex-col items-center justify-center text-center gap-4">
-                    <div class="w-16 h-16 rounded-full bg-stone-50 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-[32px] text-stone-200">account_balance_wallet</span>
-                    </div>
-                    <div>
-                        <p class="text-stone-900 font-bold font-manrope tracking-tight">Chưa có bản ghi giao dịch</p>
-                        <p class="text-xs text-stone-500">Mọi biến động số dư sẽ được hiển thị tại đây.</p>
-                    </div>
+    <!-- ── Reject Modal ──────────────────────────────────────────────────── -->
+    <div id="rejectModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-stone-900/40 backdrop-blur-sm" onclick="closeRejectModal()"></div>
+        <div class="relative bg-white w-full max-w-sm rounded-2xl shadow-2xl p-8 scale-in">
+            <h5 class="text-lg font-bold text-primary mb-2">Từ chối rút tiền</h5>
+            <p class="text-xs text-on-surface-variant mb-6 uppercase tracking-widest font-bold">Lý do từ chối</p>
+
+            <form id="rejectForm" method="POST">
+                <textarea name="reason" rows="4" required placeholder="Nhập lý do tại sao yêu cầu này bị từ chối..."
+                    class="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm mb-6"></textarea>
+
+                <div class="flex gap-3">
+                    <button type="button" onclick="closeRejectModal()"
+                        class="flex-1 py-3 text-sm font-bold text-stone-600 bg-stone-100 rounded-xl hover:bg-stone-200 transition-colors">Hủy</button>
+                    <button type="submit"
+                        class="flex-1 py-3 text-sm font-bold text-white bg-red-600 rounded-xl hover:bg-red-700 shadow-lg shadow-red-200 transition-colors">Xác
+                        nhận</button>
                 </div>
-            </section>
-        </main>
+            </form>
+        </div>
     </div>
+
+    <script>
+        function openRejectModal(id) {
+            document.getElementById('rejectForm').action = '/admin/withdrawals/' + id + '/reject';
+            document.getElementById('rejectModal').classList.remove('hidden');
+        }
+        function closeRejectModal() {
+            document.getElementById('rejectModal').classList.add('hidden');
+        }
+    </script>
+
+    <style>
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.95);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .scale-in {
+            animation: scaleIn 0.3s ease-out;
+        }
+    </style>
 
 </body>
 
