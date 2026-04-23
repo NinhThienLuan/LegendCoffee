@@ -1,5 +1,6 @@
 package fpt.legendcoffee.dto.app;
 
+import fpt.legendcoffee.entity.enumeration.GhnPaymentTypeId;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -46,9 +47,9 @@ public class CheckoutRequestDTO {
     private String serviceName;
     private Long shippingFee;
 
-    // Phương thức thanh toán
+    // Phương thức thanh toán (mặc định 1 = VNPay để Thymeleaf render radio checked đúng)
     @NotNull(message = "Vui lòng chọn phương thức thanh toán")
-    private Integer paymentTypeId;
+    private Integer paymentTypeId = GhnPaymentTypeId.SHOP_PAYS.getValue();
 
     // Ghi chú đơn hàng
     private String note;
