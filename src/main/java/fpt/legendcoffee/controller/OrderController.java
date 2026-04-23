@@ -196,9 +196,16 @@ public class OrderController {
 
             // Tích hợp dữ liệu tracking trực tiếp vào trang detail
             try {
-                model.addAttribute("orderStatus", shippingService.getOrderStatus(orderId));
+                OrderStatusDTO os = shippingService.getOrderStatus(orderId);
+                model.addAttribute("orderStatus", os);
             } catch (Exception e) {
                 log.warn("[Tracking] Không tìm thấy thông tin vận chuyển cho orderId={}", orderId);
+                // Fallback label based on internal order status
+                String fallbackLabel = "Đang xử lý";
+                if (order.getStatus() == OrderStatus.PENDING) fallbackLabel = "Chờ thanh toán";
+                else if (order.getStatus() == OrderStatus.CONFIRMED) fallbackLabel = "Đã xác nhận";
+                else if (order.getStatus() == OrderStatus.CANCELLED) fallbackLabel = "Đã hủy";
+                model.addAttribute("orderStatusLabel", fallbackLabel);
             }
 
             if (isAdmin) {

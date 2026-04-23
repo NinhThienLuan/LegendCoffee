@@ -51,7 +51,7 @@
                         <span class="w-1 h-1 bg-outline-variant rounded-full"></span>
                         <span
                             class="text-sm font-bold uppercase tracking-widest px-3 py-1 bg-surface-container rounded-full"
-                            th:if="${orderStatus != null}" th:text="${orderStatus.statusLabel}">Chờ lấy hàng</span>
+                            th:text="${orderStatus != null ? orderStatus.statusLabel : orderStatusLabel}">Chờ lấy hàng</span>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
@@ -388,7 +388,7 @@
     </main>
 
     <!-- Footer -->
-    <b <div th:replace="~{fragments/footer :: footer}"></div>
+    <div th:replace="~{fragments/footer :: footer}"></div>
 
         <script src="assets/cart-badge.js" th:src="@{/assets/cart-badge.js}"></script>
         <script src="assets/smooth-scroll.js" th:src="@{/assets/smooth-scroll.js}"></script>

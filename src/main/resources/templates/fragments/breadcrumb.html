@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+    <!-- 
+        Reusable Breadcrumb Fragment
+        Usage: <nav th:replace="~{fragments/breadcrumb :: breadcrumb(links=${ {'Admin': '/admin', 'Đơn hàng': '/admin/orders'} }, current='Chi tiết #123')}"></nav>
+    -->
+    <nav th:fragment="breadcrumb(links, current)" class="flex text-[11px] font-black uppercase tracking-[0.2em] mb-6" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center space-x-2">
+            <li class="inline-flex items-center">
+                <a th:href="@{/admin}" class="text-secondary hover:text-primary transition-colors flex items-center gap-2">
+                    <span class="material-symbols-outlined text-base">dashboard</span>
+                    Quản trị
+                </a>
+            </li>
+            
+            <li th:each="entry : ${links}">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-xs text-primary/20">arrow_forward_ios</span>
+                    <a th:href="@{${entry.value}}" class="text-secondary hover:text-primary transition-colors" th:text="${entry.key}">Link</a>
+                </div>
+            </li>
+            
+            <li aria-current="page">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-xs text-primary/20">arrow_forward_ios</span>
+                    <span class="text-primary bg-primary/10 px-4 py-1.5 rounded-full border border-primary/20 shadow-sm" th:text="${current}">
+                        Current Page
+                    </span>
+                </div>
+            </li>
+        </ol>
+    </nav>
+</body>
+</html>

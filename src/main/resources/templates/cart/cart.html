@@ -130,8 +130,19 @@
                                         </div>
                                     `).join('')}
                                     ${item.comboId ? `
-                                        <div class="col-span-full text-[10px] text-on-surface-variant font-medium italic">
-                                            Combo tiết kiệm gồm nhiều sản phẩm chất lượng.
+                                        <div class="col-span-full mt-2 p-3 bg-surface-container rounded-lg border border-primary/5">
+                                            <p class="text-[9px] font-black uppercase text-primary/50 mb-2 flex items-center gap-1.5 tracking-widest">
+                                                <span class="material-symbols-outlined text-xs">inventory</span>
+                                                Gói quà tặng bao gồm:
+                                            </p>
+                                            <ul class="space-y-1.5">
+                                                ${(item.comboItems || []).map(ci => `
+                                                    <li class="flex justify-between items-center text-[11px] font-bold text-primary/80">
+                                                        <span>${ci.productName} <span class="text-[9px] opacity-60 font-medium">(${ci.variantName})</span></span>
+                                                        <span class="text-[9px] font-black">x${ci.quantity * item.quantity}</span>
+                                                    </li>
+                                                `).join('')}
+                                            </ul>
                                         </div>
                                     ` : ''}
                                 </div>
