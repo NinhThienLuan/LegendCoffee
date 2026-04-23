@@ -110,8 +110,8 @@
                                         <label for="name" class="block text-sm font-semibold text-on-surface mb-2">
                                             Tên sản phẩm <span class="text-red-500">*</span>
                                         </label>
-                                        <input id="name" type="text" th:field="*{name}" required maxlength="255"
-                                            placeholder="Ví dụ: Arabica Premium Cầu Đất"
+                                        <input id="name" type="text" th:field="*{name}" required minlength="10"
+                                            maxlength="255" placeholder="Ví dụ: Arabica Premium Cầu Đất"
                                             class="w-full rounded-lg bg-surface-container-low border-0 px-4 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:ring-2 focus:ring-primary/40 focus:outline-none transition"
                                             th:classappend="${#fields.hasErrors('name')} ? 'ring-2 ring-red-400' : ''" />
                                         <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}"
@@ -124,9 +124,10 @@
                                     <div class="md:col-span-2">
                                         <label for="description"
                                             class="block text-sm font-semibold text-on-surface mb-2">Mô tả</label>
-                                        <textarea id="description" th:field="*{description}" rows="4"
+                                        <textarea id="description" th:field="*{description}" rows="4" minlength="10"
                                             placeholder="Mô tả ngắn về đặc điểm, hương vị, quy trình rang..."
                                             class="w-full rounded-lg bg-surface-container-low border-0 px-4 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:ring-2 focus:ring-primary/40 focus:outline-none transition resize-none"></textarea>
+                                        <p id="descError" class="mt-1.5 text-xs text-red-500 hidden"></p>
                                     </div>
 
                                     <!-- Origin -->
@@ -249,7 +250,7 @@
                                                 <input type="text"
                                                     th:name="'variants[' + ${vStat.index} + '].variantName'"
                                                     th:value="${v.variantName}" placeholder="Ví dụ: Robusta 60kg"
-                                                    required
+                                                    required minlength="10"
                                                     class="variant-name w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none" />
                                             </div>
 
@@ -260,6 +261,7 @@
                                                 <input type="text"
                                                     th:name="'variants[' + ${vStat.index} + '].packaging'"
                                                     th:value="${v.packaging}" placeholder="Ví dụ: Bao, Túi"
+                                                    minlength="3"
                                                     class="w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none" />
                                             </div>
 
@@ -268,7 +270,7 @@
                                                     class="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Kích
                                                     cỡ (g)</label>
                                                 <input type="number" th:name="'variants[' + ${vStat.index} + '].size'"
-                                                    th:value="${v.size}" placeholder="250" min="0"
+                                                    th:value="${v.size}" placeholder="250" min="250"
                                                     class="w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none" />
                                             </div>
 
@@ -277,7 +279,8 @@
                                                     class="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Giá
                                                     (₫) <span class="text-red-500">*</span></label>
                                                 <input type="number" th:name="'variants[' + ${vStat.index} + '].price'"
-                                                    th:value="${v.price}" placeholder="500000" min="1000" required
+                                                    th:value="${v.price}" placeholder="500000" min="10000" step="1000"
+                                                    required
                                                     class="variant-price w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none" />
                                             </div>
 
@@ -345,28 +348,153 @@
     </main>
 
     <script th:src="@{/assets/effects.js}" src="/assets/effects.js"></script>
-    <script th:inline="javascript">
-        // ──────────────────────────────────────────────────────────────────────────
-        // Add / Edit Product Form — Variant Manager & Validation
-        // ──────────────────────────────────────────────────────────────────────────
+        <script th:inline="javascript">
+            const isEditMode = /*[[${editMode}]]*/ false;
 
-        const isEditMode = /*[[${editMode}]]*/ false;
+            // ── Helpers ───────────────────────────────────────────────────────────────
+            function showError(inputEl, msgEl, message) {
+            if (msgEl) { msgEl.textContent = message; msgEl.classList.remove('hidden'); }
+            if (inputEl) inputEl.classList.add('ring-2', 'ring-red-400');
+        }
 
-        // ── Variant counter (tracks next index even after rows are removed) ────
-        let variantIndex = document.querySelectorAll('.variant-row').length;
+            function clearError(inputEl, msgEl) {
+            if (msgEl) msgEl.classList.add('hidden');
+            if (inputEl) inputEl.classList.remove('ring-2', 'ring-red-400');
+        }
 
-        function getVariantRows() {
+            // ── Validators ────────────────────────────────────────────────────────────
+            function validateName(val) {
+            if (!val.trim()) return 'Vui lòng nhập tên sản phẩm.';
+            if (val.trim().length < 10) return `Tên sản phẩm phải có ít nhất 10 ký tự (hiện tại: ${val.trim().length}).`;
+            if (val.trim().length > 255) return 'Tên sản phẩm không được vượt quá 255 ký tự.';
+            return '';
+        }
+
+            function validateDescription(val) {
+                if (val.trim().length > 0 && val.trim().length < 10)
+                    return `Mô tả phải có ít nhất 10 ký tự (hiện tại: ${val.trim().length}).`;
+                return '';
+            }
+
+            function validateOrigin(val) {
+            if (!val.trim()) return 'Vui lòng nhập xuất xứ.';
+            if (val.trim().length > 255) return 'Xuất xứ không được vượt quá 255 ký tự.';
+            return '';
+        }
+
+            function validateDateRange(mfgVal, expVal) {
+            if (mfgVal && expVal && expVal <= mfgVal) return 'Ngày hết hạn phải sau ngày sản xuất.';
+            return '';
+        }
+
+            function validateVariantName(val) {
+            if (!val.trim()) return 'Tên biến thể là bắt buộc.';
+            if (val.trim().length < 10) return `Tên biến thể phải có ít nhất 10 ký tự (hiện tại: ${val.trim().length}).`;
+            return '';
+        }
+
+            function validateVariantPrice(val) {
+            if (val === '' || val === null) return 'Giá là bắt buộc.';
+            if (Number(val) < 10000) return 'Giá phải ít nhất 10.000 ₫.';
+            return '';
+        }
+
+            function validateVariantStock(val) {
+            if (val === '' || val === null) return 'Tồn kho là bắt buộc.';
+            if (Number(val) < 0) return 'Tồn kho không được âm.';
+            return '';
+        }
+
+            // ── Attach real-time (on input) listeners to a variant row ───────────────
+            function attachVariantRowListeners(row) {
+            const nameInput  = row.querySelector('.variant-name');
+            const priceInput = row.querySelector('.variant-price');
+            const stockInput = row.querySelector('.variant-stock');
+            const descInput  = document.getElementById('description');
+
+            function getOrCreateError(input, id) {
+            let el = row.querySelector(`[data-err="${id}"]`);
+            if (!el) {
+            el = document.createElement('p');
+            el.className = 'mt-1 text-xs text-red-500 hidden';
+            el.dataset.err = id;
+            input.parentNode.appendChild(el);
+        }
+            return el;
+        }
+
+        if (nameInput) {
+            const errEl = getOrCreateError(nameInput, 'vname');
+            nameInput.addEventListener('input', () => {
+            const msg = validateVariantName(nameInput.value);
+            msg ? showError(nameInput, errEl, msg) : clearError(nameInput, errEl);
+        });
+        }
+        if(descInput) {
+            descInput.addEventListener('input', () => {
+                const msg = validateDescription(descInput.value);
+                msg ? showError(descInput, descErrEl, msg) : clearError(descInput, descErrEl);
+            });
+        }
+
+            if (priceInput) {
+            const errEl = getOrCreateError(priceInput, 'vprice');
+            priceInput.addEventListener('input', () => {
+            const msg = validateVariantPrice(priceInput.value);
+            msg ? showError(priceInput, errEl, msg) : clearError(priceInput, errEl);
+        });
+        }
+
+            if (stockInput) {
+            const errEl = getOrCreateError(stockInput, 'vstock');
+            stockInput.addEventListener('input', () => {
+            const msg = validateVariantStock(stockInput.value);
+            msg ? showError(stockInput, errEl, msg) : clearError(stockInput, errEl);
+        });
+        }
+        }
+
+            // ── Core fields: on input ─────────────────────────────────────────────────
+            const nameInput   = document.getElementById('name');
+            const nameErrEl   = document.getElementById('nameError');
+            const descErrEl  = document.getElementById('descError');
+            const originInput = document.getElementById('origin');
+            const originErrEl = document.getElementById('originError');
+            const mfgInput    = document.getElementById('manufacturerDate');
+            const expInput    = document.getElementById('expiryDate');
+            const dateErrEl   = document.getElementById('dateError');
+
+            nameInput.addEventListener('input', () => {
+            const msg = validateName(nameInput.value);
+            msg ? showError(nameInput, nameErrEl, msg) : clearError(nameInput, nameErrEl);
+        });
+
+            originInput.addEventListener('input', () => {
+            const msg = validateOrigin(originInput.value);
+            msg ? showError(originInput, originErrEl, msg) : clearError(originInput, originErrEl);
+        });
+
+            function checkDateRange() {
+            const msg = validateDateRange(mfgInput.value, expInput.value);
+            msg ? showError(expInput, dateErrEl, msg) : clearError(expInput, dateErrEl);
+        }
+            mfgInput.addEventListener('change', checkDateRange);
+            expInput.addEventListener('change', checkDateRange);
+
+            // ── Variant counter & helpers ─────────────────────────────────────────────
+            let variantIndex = document.querySelectorAll('.variant-row').length;
+
+            function getVariantRows() {
             return document.querySelectorAll('#variantsWrapper .variant-row');
         }
 
-        function updateEmptyState() {
+            function updateEmptyState() {
             const empty = document.getElementById('variantEmptyState');
             if (!empty) return;
-            const count = getVariantRows().length;
-            empty.classList.toggle('hidden', count > 0);
+            empty.classList.toggle('hidden', getVariantRows().length > 0);
         }
 
-        function reindexVariants() {
+            function reindexVariants() {
             getVariantRows().forEach((row, i) => {
                 row.querySelectorAll('[name]').forEach(el => {
                     el.name = el.name.replace(/variants\[\d+\]/, `variants[${i}]`);
@@ -375,36 +503,36 @@
             variantIndex = getVariantRows().length;
         }
 
-        function createVariantRow(index) {
+            function createVariantRow(index) {
             const row = document.createElement('div');
             row.className = 'variant-row grid grid-cols-12 gap-3 items-end bg-surface-container-low rounded-lg p-4';
             row.innerHTML = `
         <div class="col-span-12 sm:col-span-3">
           <label class="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Tên biến thể <span class="text-red-500">*</span></label>
-          <input type="text" name="variants[${index}].variantName"
+          <input type="text" name="variants[${index}].variantName" minlength="10"
                  placeholder="Ví dụ: Robusta 60kg" required
                  class="variant-name w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none" />
         </div>
         <div class="col-span-6 sm:col-span-2">
           <label class="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Đóng gói</label>
-          <input type="text" name="variants[${index}].packaging"
+          <input type="text" name="variants[${index}].packaging" minlength="3"
                  placeholder="Bao, Túi, Lon..."
                  class="w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none" />
         </div>
         <div class="col-span-6 sm:col-span-1">
           <label class="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Kích cỡ (g)</label>
-          <input type="number" name="variants[${index}].size" placeholder="250" min="0"
+          <input type="number" name="variants[${index}].size" placeholder="250" min="250"
                  class="w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none" />
         </div>
         <div class="col-span-6 sm:col-span-2">
           <label class="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Giá (₫) <span class="text-red-500">*</span></label>
-          <input type="number" name="variants[${index}].price" placeholder="500000" min="1000" required
+          <input type="number" name="variants[${index}].price" placeholder="500000" min="10000" step="1000" required
                  class="variant-price w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none" />
         </div>
         <div class="col-span-6 sm:col-span-2">
           <label class="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Tồn kho <span class="text-red-500">*</span></label>
           <input type="number" name="variants[${index}].stockQuantity" placeholder="100" min="0" required
-                 class="w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none" />
+                 class="variant-stock w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none" />
         </div>
         <div class="col-span-10 sm:col-span-1 flex items-center gap-1.5 pb-1">
           <input type="checkbox" name="variants[${index}].isActive" checked
@@ -421,113 +549,84 @@
             return row;
         }
 
-        document.getElementById('addVariantBtn').addEventListener('click', () => {
-            const wrapper = document.getElementById('variantsWrapper');
+            document.getElementById('addVariantBtn').addEventListener('click', () => {
+            const wrapper    = document.getElementById('variantsWrapper');
             const emptyState = document.getElementById('variantEmptyState');
-            const row = createVariantRow(variantIndex++);
+            const row        = createVariantRow(variantIndex++);
             if (emptyState) wrapper.insertBefore(row, emptyState);
             else wrapper.appendChild(row);
+            attachVariantRowListeners(row);
             updateEmptyState();
-            // Hide variant error
             document.getElementById('variantError').classList.add('hidden');
-            // Focus the first input of the new row
             row.querySelector('input[type="text"]').focus();
         });
 
-        function removeVariantRow(btn) {
+            function removeVariantRow(btn) {
             btn.closest('.variant-row').remove();
             reindexVariants();
             updateEmptyState();
         }
 
-        // ── Form Validation ────────────────────────────────────────────────────
-        document.getElementById('productForm').addEventListener('submit', function (e) {
+            // Gắn listener cho các hàng biến thể có sẵn (edit mode)
+            document.querySelectorAll('.variant-row').forEach(row => {
+            const stockInput = row.querySelector('input[name*="stockQuantity"]');
+            if (stockInput) stockInput.classList.add('variant-stock');
+            attachVariantRowListeners(row);
+        });
+
+            // ── Submit: chặn nếu còn lỗi ─────────────────────────────────────────────
+            document.getElementById('productForm').addEventListener('submit', function (e) {
             let valid = true;
 
-            // Name
-            const name = document.getElementById('name');
-            const nameError = document.getElementById('nameError');
-            if (!name.value.trim()) {
-                nameError.classList.remove('hidden');
-                name.classList.add('ring-2', 'ring-red-400');
-                valid = false;
-            } else {
-                nameError.classList.add('hidden');
-                name.classList.remove('ring-2', 'ring-red-400');
-            }
+            // Kích hoạt validate toàn bộ lần cuối trước khi submit
+            const nameMsg = validateName(nameInput.value);
+            if (nameMsg) { showError(nameInput, nameErrEl, nameMsg); valid = false; }
+            else clearError(nameInput, nameErrEl);
 
-            // Origin
-            const origin = document.getElementById('origin');
-            const originError = document.getElementById('originError');
-            if (!origin.value.trim()) {
-                originError.classList.remove('hidden');
-                origin.classList.add('ring-2', 'ring-red-400');
-                valid = false;
-            } else {
-                originError.classList.add('hidden');
-                origin.classList.remove('ring-2', 'ring-red-400');
-            }
+            const originMsg = validateOrigin(originInput.value);
+            if (originMsg) { showError(originInput, originErrEl, originMsg); valid = false; }
+            else clearError(originInput, originErrEl);
 
-            // Date range
-            const mfg = document.getElementById('manufacturerDate');
-            const exp = document.getElementById('expiryDate');
-            const dateError = document.getElementById('dateError');
-            if (mfg.value && exp.value && exp.value <= mfg.value) {
-                dateError.classList.remove('hidden');
-                exp.classList.add('ring-2', 'ring-red-400');
-                valid = false;
-            } else {
-                dateError.classList.add('hidden');
-                exp.classList.remove('ring-2', 'ring-red-400');
-            }
+            const dateMsg = validateDateRange(mfgInput.value, expInput.value);
+            if (dateMsg) { showError(expInput, dateErrEl, dateMsg); valid = false; }
+            else clearError(expInput, dateErrEl);
 
-            // Variant required for Add mode
             const variantError = document.getElementById('variantError');
-            const variantRows = getVariantRows();
+            const variantRows  = getVariantRows();
             if (!isEditMode && variantRows.length === 0) {
-                variantError.classList.remove('hidden');
-                valid = false;
-            } else {
-                variantError.classList.add('hidden');
-            }
+            variantError.classList.remove('hidden'); valid = false;
+        } else {
+            variantError.classList.add('hidden');
+        }
 
-            // Validate each variant row
-            variantRows.forEach((row) => {
-                const nameInput = row.querySelector('.variant-name');
-                const priceInput = row.querySelector('.variant-price');
-                if (nameInput && !nameInput.value.trim()) {
-                    nameInput.classList.add('ring-2', 'ring-red-400');
-                    valid = false;
-                } else if (nameInput) {
-                    nameInput.classList.remove('ring-2', 'ring-red-400');
-                }
-                if (priceInput && (priceInput.value === '' || Number(priceInput.value) < 1000)) {
-                    priceInput.classList.add('ring-2', 'ring-red-400');
-                    valid = false;
-                } else if (priceInput) {
-                    priceInput.classList.remove('ring-2', 'ring-red-400');
-                }
-            });
+            variantRows.forEach(row => {
+            function rowErr(input, id) {
+            let el = row.querySelector(`[data-err="${id}"]`);
+            if (!el) {
+            el = document.createElement('p');
+            el.className = 'mt-1 text-xs text-red-500 hidden';
+            el.dataset.err = id;
+            input.parentNode.appendChild(el);
+        }
+            return el;
+        }
+            const vn = row.querySelector('.variant-name');
+            const vp = row.querySelector('.variant-price');
+            const vs = row.querySelector('.variant-stock');
+            if (vn) { const m = validateVariantName(vn.value);   if (m) { showError(vn, rowErr(vn,'vname'),  m); valid = false; } }
+            if (vp) { const m = validateVariantPrice(vp.value);  if (m) { showError(vp, rowErr(vp,'vprice'), m); valid = false; } }
+            if (vs) { const m = validateVariantStock(vs.value);  if (m) { showError(vs, rowErr(vs,'vstock'), m); valid = false; } }
+        });
 
             if (!valid) {
-                e.preventDefault();
-                // Scroll to first error
-                const firstError = document.querySelector('.ring-red-400, [id$="Error"]:not(.hidden)');
-                if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
+            e.preventDefault();
+            const firstError = document.querySelector('.ring-red-400');
+            if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
         });
 
-        // Clear errors on input
-        ['name', 'origin'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.addEventListener('input', () => {
-                document.getElementById(id + 'Error').classList.add('hidden');
-                el.classList.remove('ring-2', 'ring-red-400');
-            });
-        });
-
-        // Initialise empty state on load
-        updateEmptyState();
+            updateEmptyState();
+    </script>
     </script>
 
 </body>

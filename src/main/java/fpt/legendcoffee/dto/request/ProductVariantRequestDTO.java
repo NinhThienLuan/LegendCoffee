@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -16,17 +17,20 @@ public class ProductVariantRequestDTO {
 
     /** Tên biến thể (ví dụ: Robusta 60kg Xay mịn). */
     @NotBlank(message = "Tên biến thể không được để trống")
+    @Size(min = 10, message = "Tên biến thể phải có ít nhất 10 ký tự")
     private String variantName;
 
     /** Hình thức đóng gói (ví dụ: Túi, Bao, Lon). */
+    @Size(min = 3, message = "Đóng gói phải có ít nhất 3 ký tự")
     private String packaging;
 
     /** Kích cỡ / khối lượng (đơn vị: gram). */
+    @Min(value = 250, message = "Kích cỡ thấp nhất là 250")
     private Integer size;
 
     /** Đơn giá bán của biến thể. */
     @NotNull(message = "Giá không được để trống")
-    @Min(value = 1000, message = "Giá không được nhỏ hơn 1.000")
+    @Min(value = 10000, message = "Giá không được nhỏ hơn 10.000")
     private BigDecimal price;
 
     /** Số lượng tồn kho. */
