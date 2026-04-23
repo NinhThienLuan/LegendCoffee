@@ -107,8 +107,8 @@ public class RefundServiceImpl implements RefundService {
         order.setStatus(OrderStatus.REFUNDED);
         orderRepository.save(order);
 
-        log.info("[Refund] Đã duyệt thành công Request {}. Đã cộng {} vào Wallet {}", 
-                 refundRequestId, refundAmount, wallet.getId());
+        log.info("[Refund] Đã duyệt thành công Request {}. Đã cộng {} vào Wallet {}",
+                refundRequestId, refundAmount, wallet.getId());
     }
 
     // ==========================================
@@ -132,7 +132,7 @@ public class RefundServiceImpl implements RefundService {
 
         // Khôi phục trạng thái đơn hàng (để user dùng tiếp hoặc khiếu nại lại)
         Order order = request.getOrder();
-        order.setStatus(OrderStatus.COMPLETED); 
+        order.setStatus(OrderStatus.COMPLETED);
         orderRepository.save(order);
     }
 }

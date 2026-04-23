@@ -87,8 +87,18 @@ public class ProductServiceImpl implements ProductService {
 
             BigDecimal minPrice = null;
             int totalStock = 0;
+            Long defaultVariantId = null;
+            String defaultVariantName = null;
 
             if (!variants.isEmpty()) {
+                ProductVariant firstActive = variants.stream()
+                        .filter(v -> Boolean.TRUE.equals(v.getIsActive()))
+                        .findFirst()
+                        .orElse(variants.get(0));
+
+                defaultVariantId = firstActive.getId();
+                defaultVariantName = firstActive.getVariantName();
+
                 minPrice = variants.stream()
                         .map(ProductVariant::getPrice)
                         .filter(p -> p != null)
@@ -109,6 +119,8 @@ public class ProductServiceImpl implements ProductService {
                     .soldCount(0)
                     .isActive(product.getIsActive())
                     .imageUrl(product.getImageUrl())
+                    .defaultVariantId(defaultVariantId)
+                    .defaultVariantName(defaultVariantName)
                     .build();
         }).toList();
     }

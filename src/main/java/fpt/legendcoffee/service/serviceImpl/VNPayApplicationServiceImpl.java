@@ -7,11 +7,13 @@ import fpt.legendcoffee.entity.enumeration.PaymentMethod;
 import fpt.legendcoffee.entity.enumeration.PaymentStatus;
 import fpt.legendcoffee.dto.request.PaymentReturnDTO;
 import fpt.legendcoffee.dto.response.VNPayIpnResponseDTO;
+import fpt.legendcoffee.service.OrderService;
 import fpt.legendcoffee.service.ShippingService;
 import fpt.legendcoffee.service.VNPayApplicationService;
 import fpt.legendcoffee.service.VNPayService;
 import fpt.legendcoffee.repository.OrderRepository;
 import fpt.legendcoffee.repository.PaymentRepository;
+import fpt.legendcoffee.service.WalletService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -37,15 +39,21 @@ public class VNPayApplicationServiceImpl implements VNPayApplicationService {
     private final OrderRepository orderRepository;
     private final PaymentRepository paymentRepository;
     private final ShippingService shippingService;
+    private final WalletService walletService;
+    private final OrderService orderService;
 
     public VNPayApplicationServiceImpl(VNPayService vnPayService,
             OrderRepository orderRepository,
             PaymentRepository paymentRepository,
-            ShippingService shippingService) {
+            ShippingService shippingService,
+            WalletService walletService,
+            OrderService orderService) {
         this.vnPayService = vnPayService;
         this.orderRepository = orderRepository;
         this.paymentRepository = paymentRepository;
         this.shippingService = shippingService;
+        this.walletService = walletService;
+        this.orderService = orderService;
     }
 
     // createPayment — Tạo Payment PENDING + URL VNPay
@@ -83,6 +91,10 @@ public class VNPayApplicationServiceImpl implements VNPayApplicationService {
         // 5. Tạo URL VNPay và trả về
         String paymentUrl = vnPayService.createPaymentUrl(
                 totalAmount.longValue(), txnRef, orderInfo, ipAddress);
+
+        // 6. Lưu URL thanh toán để user có thể quay lại sau
+        payment.setPaymentUrl(paymentUrl);
+        paymentRepository.save(payment);
 
         log.info("[VNPay] Tạo payment thành công - OrderId={}, TxnRef={}", orderId, txnRef);
         return paymentUrl;
@@ -187,9 +199,28 @@ public class VNPayApplicationServiceImpl implements VNPayApplicationService {
                 log.error("[VNPay IPN] Thanh toán thành công nhưng lỗi khi đẩy sang GHN: {}", e.getMessage());
                 // Tuỳ business: có thể cho phép admin push tay sau nếu lỗi ở đây
             }
+
+            // Cộng tiền vào ví admin
+            try {
+                String description = "Nhận tiền từ đơn hàng #" + order.getId();
+                walletService.creditAdminWallet(receivedAmount, description);
+            } catch (Exception e) {
+                log.error("[VNPay IPN] Lỗi khi cộng tiền vào ví admin: {}", e.getMessage());
+            }
         } else {
             log.warn("[VNPay IPN] Thanh toán thất bại - TxnRef={}, ResponseCode={}",
                     txnRef, responseCode);
+            
+            // Tự động hủy đơn và hoàn kho khi thanh toán thất bại
+            Order order = payment.getOrder();
+            if (order != null && order.getStatus() == OrderStatus.PENDING) {
+                try {
+                    orderService.cancelOrder(order.getId());
+                    log.info("[VNPay IPN] Đã hủy đơn #{} và hoàn kho do thanh toán thất bại", order.getId());
+                } catch (Exception e) {
+                    log.error("[VNPay IPN] Lỗi khi hủy đơn #{} sau thanh toán thất bại: {}", order.getId(), e.getMessage());
+                }
+            }
         }
 
         // Luôn trả "00" để VNPay biết đã nhận IPN (dù thành công hay thất bại)
@@ -226,7 +257,6 @@ public class VNPayApplicationServiceImpl implements VNPayApplicationService {
 
     /**
      * Chuyển VNPay response code sang thông báo lỗi tiếng Việt.
-     * Xem đầy đủ tại: https://sandbox.vnpayment.vn/apis/docs/thanh-toan-pay/pay.md
      */
     private String resolveErrorMessage(String responseCode) {
         if (responseCode == null)

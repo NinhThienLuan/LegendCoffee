@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html class="light" lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: sharedHead('404 - Không tìm thấy trang')}"></head>
+
+<body class="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-container">
+  <div th:replace="~{fragments/navbar :: navbar(null)}"></div>
+
+  <main class="min-h-[70vh] flex items-center justify-center pt-20">
+    <div class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20 py-20 text-center">
+      <div class="relative inline-block mb-8">
+        <h1 class="text-[12rem] sm:text-[16rem] font-black text-outline-variant/10 leading-none select-none">404</h1>
+        <div class="absolute inset-0 flex flex-col items-center justify-center">
+          <span class="material-symbols-outlined text-primary text-6xl sm:text-8xl mb-4 animate-bounce">coffee</span>
+          <h2
+            class="text-3xl sm:text-4xl font-black text-[#351f1b] dark:text-white tracking-tight uppercase font-headline">
+            Rất tiếc! Trang không tồn tại
+          </h2>
+        </div>
+      </div>
+
+      <p class="text-lg text-[#5b4a45] dark:text-[#d4c3bf] max-w-xl mx-auto mb-12 font-medium">
+        Có vẻ như ly cà phê bạn đang tìm kiếm đã được pha hết hoặc đường dẫn đã thay đổi.
+        Hãy để chúng tôi đưa bạn trở về nơi bắt đầu.
+      </p>
+
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="/"
+          class="h-12 px-8 inline-flex items-center justify-center bg-primary text-on-primary rounded-full font-bold uppercase tracking-widest text-xs transition-all hover:scale-105 active:scale-95 shadow-lg shadow-primary/20">
+          Về trang chủ
+        </a>
+        <a href="/products"
+          class="h-12 px-8 inline-flex items-center justify-center border border-outline-variant text-[#351f1b] dark:text-white rounded-full font-bold uppercase tracking-widest text-xs transition-all hover:bg-outline-variant/10">
+          Xem sản phẩm
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <div th:replace="~{fragments/footer :: footer}"></div>
+
+  <script src="/assets/effects.js" th:src="@{/assets/effects.js}"></script>
+  <script src="/assets/cart-badge.js" th:src="@{/assets/cart-badge.js}"></script>
+</body>
+
+</html>

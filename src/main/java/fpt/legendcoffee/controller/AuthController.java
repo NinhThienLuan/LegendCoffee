@@ -152,8 +152,8 @@ public class AuthController {
 
     @PostMapping("/forgot-password")
     public String forgotPassword(@Valid @ModelAttribute("forgotPasswordDto") ForgotPasswordRequestDTO request,
-                                 BindingResult bindingResult,
-                                 RedirectAttributes redirectAttributes) {
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Email không hợp lệ.");
             return "redirect:/login";
@@ -165,7 +165,8 @@ public class AuthController {
             return "redirect:/login";
         } catch (Exception e) {
             log.error("Error processing forgot password for {}: {}", request.email(), e.getMessage(), e);
-            // If it's a mail auth error, provide a clearer message than just 'Authentication failed'
+            // If it's a mail auth error, provide a clearer message than just
+            // 'Authentication failed'
             String errorMsg = e.getMessage();
             if (errorMsg != null && errorMsg.toLowerCase().contains("authentication failed")) {
                 errorMsg = "Lỗi hệ thống: Không thể gửi email (Sai cấu hình Gmail).";
@@ -188,10 +189,12 @@ public class AuthController {
 
     @PostMapping("/reset-password")
     public String resetPassword(@Valid @ModelAttribute("resetPasswordDto") ResetPasswordRequestDTO request,
-                                BindingResult bindingResult,
-                                RedirectAttributes redirectAttributes) {
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Thông tin không hợp lệ. Mật khẩu phải từ 6 ký tự.");
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.resetPasswordDto",
+                    bindingResult);
+            redirectAttributes.addFlashAttribute("resetPasswordDto", request);
             return "redirect:/reset-password";
         }
         try {
@@ -204,8 +207,8 @@ public class AuthController {
 
             // Clear force change state
             org.springframework.web.context.request.RequestContextHolder.getRequestAttributes()
-                .removeAttribute("forceChangeEmail",
-                                org.springframework.web.context.request.RequestAttributes.SCOPE_SESSION);
+                    .removeAttribute("forceChangeEmail",
+                            org.springframework.web.context.request.RequestAttributes.SCOPE_SESSION);
 
             redirectAttributes.addFlashAttribute("successMessage", "Đổi mật khẩu thành công! Vui lòng đăng nhập lại.");
             return "redirect:/login";
@@ -229,11 +232,13 @@ public class AuthController {
 
     @PostMapping("/edit-profile")
     public String editProfile(@Valid @ModelAttribute("profileDto") ProfileDTO profileDto,
-                              BindingResult bindingResult,
-                              RedirectAttributes redirectAttributes,
-                              @AuthenticationPrincipal CustomUserDetails userDetails) {
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
         if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Thông tin không hợp lệ.");
+            redirectAttributes.addFlashAttribute("profileDto",
+                    bindingResult);
+            redirectAttributes.addFlashAttribute("profileDto", profileDto);
             return "redirect:/profile";
         }
         try {
@@ -246,7 +251,12 @@ public class AuthController {
         }
     }
 
-
+    @GetMapping("/api/auth/check-email")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public String checkEmail(@org.springframework.web.bind.annotation.RequestParam String email, Model model) {
+        boolean exists = authenService.isEmailValid(email);
+        return exists ? "exists" : "not_exists";
+    }
 
     private boolean isAuthenticated() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

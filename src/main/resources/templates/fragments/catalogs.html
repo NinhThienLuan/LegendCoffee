@@ -7,23 +7,28 @@
     <section class="bg-primary py-20 text-on-primary relative overflow-hidden">
       <div class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20 grid md:grid-cols-2 items-center gap-12 relative z-10">
         <div>
-          <h1 th:if="${pageType == 'combos'}" class="text-5xl md:text-7xl font-extrabold tracking-tighter mb-6 leading-none">
-            COMBO<br/>ƯU ĐÃI
+          <h1 th:if="${pageType == 'combos'}"
+            class="text-5xl md:text-7xl font-extrabold tracking-tighter mb-6 leading-none">
+            COMBO<br />ƯU ĐÃI
           </h1>
-          <h1 th:if="${pageType != 'combos'}" class="text-5xl md:text-7xl font-extrabold tracking-tighter mb-6 leading-none">
-            DANH MỤC<br/>CÀ PHÊ
+          <h1 th:if="${pageType != 'combos'}"
+            class="text-5xl md:text-7xl font-extrabold tracking-tighter mb-6 leading-none">
+            DANH MỤC<br />CÀ PHÊ
           </h1>
           <p th:if="${pageType == 'combos'}" class="text-on-primary-container text-lg max-w-md mb-8 font-light">
             Kết hợp nhiều biến thể với giá tốt hơn so với mua lẻ. Tiết kiệm chi phí với combo hấp dẫn.
           </p>
           <p th:if="${pageType != 'combos'}" class="text-on-primary-container text-lg max-w-md mb-8 font-light">
-            Giải pháp cung ứng cà phê công nghiệp quy mô lớn. Đảm bảo chất lượng đồng nhất, chứng nhận HACCP &amp; ISO cho chuỗi cung ứng toàn cầu.
+            Giải pháp cung ứng cà phê công nghiệp quy mô lớn. Đảm bảo chất lượng đồng nhất, chứng nhận HACCP &amp; ISO
+            cho chuỗi cung ứng toàn cầu.
           </p>
           <div class="flex gap-4">
           </div>
         </div>
         <div class="hidden md:block">
-          <img class="rounded-xl shadow-2xl grayscale contrast-125 object-cover h-[400px] w-full" data-alt="industrial coffee roasting machine with stainless steel components and high-capacity drum in a modern production facility" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAp3MuX3p1EpHoydnutmImfIHb2URt_eYn54OEHRsZGQHPf3-a3si7iIM7eVEM57AjyuWh0LhAwb4TfrJr0L3cj72ea-cU-K-6pv_qeodRplr0rD-6io3-pjvnK93KjFj12tsS0E57YUtc3jtio0FkEGoYG2MDB5MRen_iJ8LCyqzuHqbfdcZ4tbFIQQ2aWzmmX3LfXsEWiMg7XTG5ujCOegsmvM-ifKEuV6Xu-VC5Q1jlBLA2JD9TT8aS0FULjTdgRsZvgHNawP8PD"/>
+          <img class="rounded-xl shadow-2xl grayscale contrast-125 object-cover h-[400px] w-full"
+            data-alt="industrial coffee roasting machine with stainless steel components and high-capacity drum in a modern production facility"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAp3MuX3p1EpHoydnutmImfIHb2URt_eYn54OEHRsZGQHPf3-a3si7iIM7eVEM57AjyuWh0LhAwb4TfrJr0L3cj72ea-cU-K-6pv_qeodRplr0rD-6io3-pjvnK93KjFj12tsS0E57YUtc3jtio0FkEGoYG2MDB5MRen_iJ8LCyqzuHqbfdcZ4tbFIQQ2aWzmmX3LfXsEWiMg7XTG5ujCOegsmvM-ifKEuV6Xu-VC5Q1jlBLA2JD9TT8aS0FULjTdgRsZvgHNawP8PD" />
         </div>
       </div>
     </section>
@@ -34,14 +39,14 @@
         <div class="sticky top-28 mt-11">
           <div class="flex flex-col gap-2">
             <a href="/products"
-               th:classappend="${pageType != 'combos'} ? 'bg-primary text-on-primary' : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-on-surface'"
-               class="flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all">
+              th:classappend="${pageType != 'combos'} ? 'bg-primary text-on-primary' : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-on-surface'"
+              class="flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all">
               <span class="material-symbols-outlined text-sm">coffee</span>
               Sản Phẩm
             </a>
             <a href="/combos"
-               th:classappend="${pageType == 'combos'} ? 'bg-primary text-on-primary' : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-on-surface'"
-               class="flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all">
+              th:classappend="${pageType == 'combos'} ? 'bg-primary text-on-primary' : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-on-surface'"
+              class="flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all">
               <span class="material-symbols-outlined text-sm">featured_play_list</span>
               Combo
             </a>
@@ -52,37 +57,51 @@
       <section class="flex-1 py-10 md:pl-12">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4">
           <div>
-            <span class="inline-block py-1 px-3 bg-primary text-on-primary text-[10px] font-bold uppercase tracking-[0.2em] mb-4 rounded-sm">Kho hàng</span>
-            <h2 th:if="${pageType == 'combos'}" class="text-3xl md:text-4xl font-black tracking-tight font-headline uppercase text-primary">Combo hiện có</h2>
-            <h2 th:if="${pageType != 'combos'}" class="text-3xl md:text-4xl font-black tracking-tight font-headline uppercase text-primary">Sản phẩm hiện có</h2>
+            <span
+              class="inline-block py-1 px-3 bg-primary text-on-primary text-[10px] font-bold uppercase tracking-[0.2em] mb-4 rounded-sm">Kho
+              hàng</span>
+            <h2 th:if="${pageType == 'combos'}"
+              class="text-3xl md:text-4xl font-black tracking-tight font-headline uppercase text-primary">Combo hiện có
+            </h2>
+            <h2 th:if="${pageType != 'combos'}"
+              class="text-3xl md:text-4xl font-black tracking-tight font-headline uppercase text-primary">Sản phẩm hiện
+              có</h2>
             <div class="h-1 w-16 bg-primary mt-4"></div>
           </div>
-          <div th:if="${pageType == 'combos'}" class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant"
-               th:text="${combos != null ? #lists.size(combos) : 0} + ' ITEMS TOTAL'">0 ITEMS TOTAL</div>
-          <div th:if="${pageType != 'combos'}" class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant"
-               th:text="${products != null ? #lists.size(products) : 0} + ' ITEMS TOTAL'">0 ITEMS TOTAL</div>
+          <div th:if="${pageType == 'combos'}"
+            class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant"
+            th:text="${combos != null ? #lists.size(combos) : 0} + ' ITEMS TOTAL'">0 ITEMS TOTAL</div>
+          <div th:if="${pageType != 'combos'}"
+            class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant"
+            th:text="${products != null ? #lists.size(products) : 0} + ' ITEMS TOTAL'">0 ITEMS TOTAL</div>
         </div>
 
         <!-- ── PRODUCTS GRID ─── -->
         <div th:if="${pageType != 'combos'}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-             th:classappend="${products == null or #lists.isEmpty(products)} ? 'hidden' : ''">
-          <a th:each="p : ${products}"
-             th:href="@{/products/{id}(id=${p.id})}"
-             class="group relative bg-surface-container-lowest border border-outline-variant/20 overflow-hidden block transition-all hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5">
+          th:classappend="${products == null or #lists.isEmpty(products)} ? 'hidden' : ''">
+          <a th:each="p : ${products}" th:href="@{/products/{id}(id=${p.id})}"
+            class="group relative bg-surface-container-lowest border border-outline-variant/20 overflow-hidden block transition-all hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5">
             <div class="aspect-square overflow-hidden bg-stone-100">
-              <img class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
-                   th:src="${(p.imageUrl != null and !#strings.isEmpty(p.imageUrl)) ? p.imageUrl : 'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=600&q=80'}"
-                   alt="Product" />
+              <img
+                class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
+                th:src="${(p.imageUrl != null and !#strings.isEmpty(p.imageUrl)) ? p.imageUrl : 'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=600&q=80'}"
+                alt="Product" />
             </div>
             <div class="p-4">
-              <span class="inline-block mb-2 px-2 py-0.5 bg-stone-100 text-stone-500 text-[9px] font-bold uppercase tracking-widest rounded"
-                    th:text="'Sản phẩm' + (${p.categoryName != null and !#strings.isEmpty(p.categoryName)} ? ' · ' + ${p.categoryName} : '')">Sản phẩm</span>
+              <div class="flex items-start justify-between mb-2">
+                <span class="inline-block px-2 py-0.5 bg-stone-100 text-stone-500 text-[9px] font-bold uppercase tracking-widest rounded"
+                      th:text="'Sản phẩm' + (${p.categoryName != null and !#strings.isEmpty(p.categoryName)} ? ' · ' + ${p.categoryName} : '')">Sản phẩm</span>
+                
+              </div>
               <h3 class="text-sm font-black tracking-tight mb-1 font-headline uppercase group-hover:text-primary transition-colors"
                   th:text="${p.name}">Product Name</h3>
+
               <div class="flex items-center justify-between mt-3">
                 <span class="text-sm font-black text-primary"
-                      th:text="${p.price != null} ? (${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + ' VND') : 'Liên hệ'">0 VND</span>
-                <span class="material-symbols-outlined text-sm opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0 text-primary">arrow_forward</span>
+                  th:text="${p.price != null} ? (${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + ' VND') : 'Liên hệ'">0
+                  VND</span>
+                <span
+                  class="material-symbols-outlined text-sm opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0 text-primary">arrow_forward</span>
               </div>
             </div>
           </a>
@@ -90,49 +109,55 @@
 
         <!-- ── COMBOS GRID ── -->
         <div th:if="${pageType == 'combos'}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-             th:classappend="${combos == null or #lists.isEmpty(combos)} ? 'hidden' : ''">
-          <article th:each="c : ${combos}"
-                   class="group relative bg-surface-container-lowest border border-outline-variant/20 overflow-hidden block transition-all hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5">
+          th:classappend="${combos == null or #lists.isEmpty(combos)} ? 'hidden' : ''">
+          <a th:each="c : ${combos}" th:href="@{/combos/{id}(id=${c.id})}"
+            class="group relative bg-surface-container-lowest border border-outline-variant/20 overflow-hidden block transition-all hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5">
             <div class="aspect-square overflow-hidden bg-stone-100 relative">
-              <img class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
-                   th:src="${(c.imageUrl != null and !#strings.isEmpty(c.imageUrl)) ? c.imageUrl : 'https://images.unsplash.com/photo-1511537190424-bbbab87ac5eb?w=600&q=80'}"
-                   alt="Combo" />
+              <img
+                class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
+                th:src="${(c.imageUrl != null and !#strings.isEmpty(c.imageUrl)) ? c.imageUrl : 'https://images.unsplash.com/photo-1511537190424-bbbab87ac5eb?w=600&q=80'}"
+                alt="Combo" />
               <span th:if="${c.savings != null}"
-                    class="absolute top-3 right-3 bg-green-600 text-white text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-full shadow"
-                    th:text="'Tiết kiệm ' + ${#numbers.formatDecimal(c.savings, 0, 'COMMA', 0, 'POINT')} + ' ₫'">Save</span>
+                class="absolute top-3 right-3 bg-green-600 text-white text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-full shadow"
+                th:text="'Tiết kiệm ' + ${#numbers.formatDecimal(c.savings, 0, 'COMMA', 0, 'POINT')} + ' ₫'">Save</span>
               <span th:unless="${c.availableNow}"
-                    class="absolute top-3 left-3 bg-stone-700/70 text-white/80 text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded">Ngoài lịch</span>
+                class="absolute top-3 left-3 bg-stone-700/70 text-white/80 text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded">Ngoài
+                lịch</span>
             </div>
             <div class="p-4">
-              <span class="inline-block mb-2 px-2 py-0.5 bg-primary/10 text-primary text-[9px] font-bold uppercase tracking-widest rounded">Combo</span>
-              <h3 class="text-sm font-black tracking-tight mb-1 font-headline uppercase group-hover:text-primary transition-colors"
-                  th:text="${c.name}">Combo Name</h3>
+              <span
+                class="inline-block mb-2 px-2 py-0.5 bg-primary/10 text-primary text-[9px] font-bold uppercase tracking-widest rounded">Combo</span>
+              <h3
+                class="text-sm font-black tracking-tight mb-1 font-headline uppercase group-hover:text-primary transition-colors"
+                th:text="${c.name}">Combo Name</h3>
               <p class="text-[10px] text-on-surface-variant mb-3 leading-relaxed"
-                 th:text="${c.description} ?: 'Kết hợp tiết kiệm'">—</p>
+                th:text="${c.description} ?: 'Kết hợp tiết kiệm'">—</p>
               <div class="flex items-center justify-between mt-3">
                 <div>
                   <span class="text-sm font-black text-primary"
-                        th:text="${c.price != null} ? (${#numbers.formatDecimal(c.price, 0, 'COMMA', 0, 'POINT')} + ' VND') : 'Liên hệ'">0 VND</span>
+                    th:text="${c.price != null} ? (${#numbers.formatDecimal(c.price, 0, 'COMMA', 0, 'POINT')} + ' VND') : 'Liên hệ'">0
+                    VND</span>
                   <span th:if="${c.originalPrice != null}"
-                        class="ml-2 text-[10px] line-through text-on-surface-variant font-medium"
-                        th:text="${#numbers.formatDecimal(c.originalPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</span>
+                    class="ml-2 text-[10px] line-through text-on-surface-variant font-medium"
+                    th:text="${#numbers.formatDecimal(c.originalPrice, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</span>
                 </div>
-                <span class="material-symbols-outlined text-sm opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0 text-primary">arrow_forward</span>
+                <span
+                  class="material-symbols-outlined text-sm opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0 text-primary">arrow_forward</span>
               </div>
             </div>
-          </article>
+          </a>
         </div>
 
         <!-- Empty state products -->
         <div th:if="${pageType != 'combos' and (products == null or #lists.isEmpty(products))}"
-             class="py-16 text-center border border-dashed border-outline-variant/30 rounded-xl">
+          class="py-16 text-center border border-dashed border-outline-variant/30 rounded-xl">
           <span class="material-symbols-outlined text-5xl mb-4 block opacity-30">coffee</span>
           <p class="text-sm font-semibold text-on-surface-variant">Chưa có sản phẩm để hiển thị.</p>
         </div>
 
         <!-- Empty state combos -->
         <div th:if="${pageType == 'combos' and (combos == null or #lists.isEmpty(combos))}"
-             class="py-16 text-center border border-dashed border-outline-variant/30 rounded-xl">
+          class="py-16 text-center border border-dashed border-outline-variant/30 rounded-xl">
           <span class="material-symbols-outlined text-5xl mb-4 block opacity-30">featured_play_list</span>
           <p class="text-sm font-semibold text-on-surface-variant">Hiện chưa có combo nào khả dụng.</p>
         </div>
@@ -140,8 +165,8 @@
     </div>
   </section>
 
-  <section th:fragment="catalogDetail(productId)" class="pt-16 pb-12 max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
-    <nav class="flex items-center space-x-2 text-sm text-on-surface-variant mb-5 font-medium">
+  <section th:fragment="catalogDetail" class="pt-40 pb-32 max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
+    <nav class="flex items-center space-x-2 text-sm text-on-surface-variant mb-10 font-medium">
       <a th:href="@{/}" href="/" class="hover:text-primary">Trang chủ</a>
       <span class="material-symbols-outlined text-xs">chevron_right</span>
       <a th:href="@{/products}" href="/products" class="hover:text-primary">Sản phẩm</a>
@@ -151,86 +176,99 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
       <div class="lg:col-span-7 grid grid-cols-12 gap-3">
-        <div class="col-span-12 aspect-[4/5] bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm relative group">
+        <div
+          class="col-span-12 aspect-[4/5] bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm relative group">
           <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-               th:src="${(product != null and product.imageUrl != null and !#strings.isEmpty(product.imageUrl)) ? product.imageUrl : 'https://via.placeholder.com/800x1000?text=Product'}"
-               src="https://via.placeholder.com/800x1000?text=Product"
-               alt="Main product" />
-          <div class="absolute top-4 left-4 bg-primary text-on-primary px-3 py-1 text-[10px] font-bold tracking-widest uppercase"
-               th:text="${product != null and product.categoryName != null ? product.categoryName : 'Product'}">
+            th:src="${(product != null and product.imageUrl != null and !#strings.isEmpty(product.imageUrl)) ? product.imageUrl : 'https://via.placeholder.com/800x1000?text=Product'}"
+            src="https://via.placeholder.com/800x1000?text=Product" alt="Main product" />
+          <div
+            class="absolute top-4 left-4 bg-primary text-on-primary px-3 py-1 text-[10px] font-bold tracking-widest uppercase"
+            th:text="${product != null and product.categoryName != null ? product.categoryName : 'Product'}">
             Product
           </div>
         </div>
       </div>
 
-      <div class="lg:col-span-5 space-y-4">
+      <div class="lg:col-span-5 space-y-8">
         <div class="space-y-2">
           <h1 class="text-3xl font-headline font-extrabold text-primary leading-tight tracking-tight uppercase"
-              th:text="${product != null ? product.name : 'PRODUCT DETAIL'}">PRODUCT DETAIL</h1>
+            th:text="${product != null ? product.name : 'PRODUCT DETAIL'}">PRODUCT DETAIL</h1>
           <div class="flex items-center space-x-3 text-sm text-on-surface-variant font-medium">
             <p>Mã sản phẩm: <span class="text-primary" th:text="${productId} ?: 'N/A'">N/A</span></p>
             <span class="text-outline-variant">|</span>
-            <p>Xuất xứ: <span class="text-primary" th:text="${product != null and product.origin != null ? product.origin : 'Đang cập nhật'}">Origin</span></p>
+            <p>Xuất xứ: <span class="text-primary"
+                th:text="${product != null and product.origin != null ? product.origin : 'Đang cập nhật'}">Origin</span>
+            </p>
           </div>
         </div>
+        <div class="py-2">
+          <span class="main-price-display text-2xl font-black text-primary">0 VND</span>
+          <span class="text-xs text-on-surface-variant ml-2">/ đơn vị</span>
+        </div>
 
-
-        <div class="pt-3 border-t border-outline-variant/30 space-y-3">
+        <div class="pt-8 border-t border-outline-variant/30 space-y-6">
           <h3 class="font-headline font-bold text-primary uppercase text-sm tracking-widest">Thêm vào giỏ hàng</h3>
 
           <div th:if="${variants != null and !#lists.isEmpty(variants)}" class="space-y-3">
             <div class="space-y-2">
-              <label class="block text-[10px] font-black uppercase tracking-[0.15em] text-on-surface-variant/70 mb-2">Chọn biến thể sản phẩm</label>
+              <label
+                class="block text-[10px] font-black uppercase tracking-[0.15em] text-on-surface-variant/70 mb-2">Chọn
+                biến thể sản phẩm</label>
               <div id="variant-options" class="grid grid-cols-1 sm:grid-cols-2 gap-2"
-                   th:attr="data-default-img=${product != null ? product.imageUrl : ''}">
-                <button type="button"
-                        th:each="v, iter : ${variants}"
-                        th:onclick="'selectVariant(this)'"
-                        th:classappend="${iter.first} ? 'ring-2 ring-primary border-primary bg-primary/5' : 'border-outline-variant/30 hover:border-primary/40'"
-                        class="variant-option group p-3 rounded-xl border bg-surface-container-lowest text-left transition-all duration-300 relative overflow-hidden"
-                        th:data-id="${v.id}"
-                        th:data-variant="${v.variantName != null ? v.variantName : 'Standard'}"
-                        th:data-price="${v.price != null ? v.price : 0}"
-                        th:data-formatted-price="${v.price != null} ? (${#numbers.formatDecimal(v.price, 0, 'COMMA', 0, 'POINT')} + ' VND') : 'Liên hệ'"
-                        th:data-img="${(v.imageUrl != null and !#strings.isEmpty(v.imageUrl)) ? v.imageUrl : (product != null ? product.imageUrl : '')}"
-                        th:data-stock="${v.stockQuantity != null ? v.stockQuantity : 0}">
-                  
+                th:attr="data-default-img=${product != null ? product.imageUrl : ''}">
+                <button type="button" th:each="v, iter : ${variants}" th:onclick="'selectVariant(this)'"
+                  th:classappend="${iter.first} ? 'ring-2 ring-primary border-primary bg-primary/5' : 'border-outline-variant/30 hover:border-primary/40'"
+                  class="variant-option group p-3 rounded-xl border bg-surface-container-lowest text-left transition-all duration-300 relative overflow-hidden"
+                  th:data-id="${v.id}" th:data-variant="${v.variantName != null ? v.variantName : 'Standard'}"
+                  th:data-price="${v.price != null ? v.price : 0}"
+                  th:data-formatted-price="${v.price != null} ? (${#numbers.formatDecimal(v.price, 0, 'COMMA', 0, 'POINT')} + ' VND') : 'Liên hệ'"
+                  th:data-img="${(v.imageUrl != null and !#strings.isEmpty(v.imageUrl)) ? v.imageUrl : (product != null ? product.imageUrl : '')}"
+                  th:data-stock="${v.stockQuantity != null ? v.stockQuantity : 0}">
+
                   <div class="absolute top-2 right-2 opacity-0 group-[.ring-primary]:opacity-100 transition-opacity">
                     <span class="material-symbols-outlined text-primary text-sm">check_circle</span>
                   </div>
                   <div class="relative z-10">
-                    <p class="font-black text-xs uppercase tracking-tight mb-0.5 group-[.ring-primary]:text-primary transition-colors" th:text="${v.variantName}">Variant</p>
+                    <p class="font-black text-xs uppercase tracking-tight mb-0.5 group-[.ring-primary]:text-primary transition-colors"
+                      th:text="${v.variantName}">Variant</p>
                     <div class="flex justify-between items-end">
-                      <p class="text-[10px] text-on-surface-variant font-medium" th:text="${v.packaging ?: 'Quy cách chuẩn'}">Packaging</p>
-                      <p class="text-xs font-black text-primary" 
-                         th:text="${v.price != null} ? (${#numbers.formatDecimal(v.price, 0, 'COMMA', 0, 'POINT')} + ' VND') : 'Liên hệ'">0 VND</p>
+                      <p class="text-[10px] text-on-surface-variant font-medium"
+                        th:text="${v.packaging ?: 'Quy cách chuẩn'}">Packaging</p>
+                      <p class="text-xs font-black text-primary"
+                        th:text="${v.price != null} ? (${#numbers.formatDecimal(v.price, 0, 'COMMA', 0, 'POINT')} + ' VND') : 'Liên hệ'">
+                        0 VND</p>
                     </div>
                   </div>
                 </button>
               </div>
             </div>
 
-            <div class="space-y-2 pt-2">
-              <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/70">Số lượng</label>
+            <div class="space-y-2 pt-8">
+              <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/70">Số
+                lượng</label>
               <div class="flex flex-col sm:flex-row items-center gap-3">
-                <div class="flex items-center bg-surface-container-low rounded-xl p-1 border border-outline-variant/20 w-fit">
-                  <button onclick="changeQty(-1)" class="w-10 h-10 flex items-center justify-center hover:bg-surface-container transition-colors rounded-lg group" type="button">
-                    <span class="material-symbols-outlined text-base group-active:scale-90 transition-transform text-on-surface-variant">remove</span>
+                <div
+                  class="flex items-center bg-surface-container-low rounded-xl p-1 border border-outline-variant/20 w-fit">
+                  <button onclick="changeQty(-1)"
+                    class="w-10 h-10 flex items-center justify-center hover:bg-surface-container transition-colors rounded-lg group"
+                    type="button">
+                    <span
+                      class="material-symbols-outlined text-base group-active:scale-90 transition-transform text-on-surface-variant">remove</span>
                   </button>
                   <input id="product-qty"
-                         class="w-14 text-center border-none bg-transparent font-black text-base text-primary focus:ring-0 p-0"
-                         type="number"
-                         value="1"
-                         min="1" />
-                  <button onclick="changeQty(1)" class="w-10 h-10 flex items-center justify-center hover:bg-surface-container transition-colors rounded-lg group" type="button">
-                    <span class="material-symbols-outlined text-base group-active:scale-90 transition-transform text-on-surface-variant">add</span>
+                    class="w-14 text-center border-none bg-transparent font-black text-base text-primary focus:ring-0 p-0"
+                    type="number" value="1" min="1" />
+                  <button onclick="changeQty(1)"
+                    class="w-10 h-10 flex items-center justify-center hover:bg-surface-container transition-colors rounded-lg group"
+                    type="button">
+                    <span
+                      class="material-symbols-outlined text-base group-active:scale-90 transition-transform text-on-surface-variant">add</span>
                   </button>
                 </div>
 
                 <div class="flex-1 w-full flex">
-                  <button type="button"
-                          onclick="addCurrentProductToCart()"
-                          class="w-full bg-primary text-on-primary h-12 rounded-xl font-black uppercase tracking-[0.2em] text-xs hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center justify-center gap-2 active:scale-[0.98]">
+                  <button type="button" onclick="addCurrentProductToCart()"
+                    class="w-full bg-primary text-on-primary h-12 rounded-xl font-black uppercase tracking-[0.2em] text-xs hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center justify-center gap-2 active:scale-[0.98]">
                     <span class="material-symbols-outlined text-lg">shopping_cart</span>
                     Thêm vào giỏ hàng
                   </button>
@@ -238,33 +276,41 @@
               </div>
             </div>
 
-            <div class="pt-4 border-t border-outline-variant/30 space-y-4">
+            <div class="pt-8 border-t border-outline-variant/30 space-y-6">
               <div class="space-y-2">
                 <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70">Thông tin sản phẩm</h3>
                 <p class="text-xs text-on-surface-variant leading-relaxed font-medium"
-                   th:text="${product != null and product.description != null ? product.description : 'Sản phẩm cà phê tinh tuyển với quy trình kiểm soát chất lượng nghiêm ngặt.'}">
+                  th:text="${product != null and product.description != null ? product.description : 'Sản phẩm cà phê tinh tuyển với quy trình kiểm soát chất lượng nghiêm ngặt.'}">
                   Hạt Arabica từ vùng cầu đất Đà Lạt, hương thơm nhẹ nhàng, vị chua thanh.
                 </p>
               </div>
 
               <div class="grid grid-cols-1 gap-3">
-                <div class="flex items-center gap-3 p-3 rounded-xl bg-surface-container-low/50 border border-outline-variant/10 group hover:border-primary/40 transition-all duration-300">
-                  <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-all duration-300">
+                <div
+                  class="flex items-center gap-3 p-3 rounded-xl bg-surface-container-low/50 border border-outline-variant/10 group hover:border-primary/40 transition-all duration-300">
+                  <div
+                    class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-all duration-300">
                     <span class="material-symbols-outlined text-lg">verified</span>
                   </div>
                   <div>
-                    <p class="text-[9px] font-black uppercase tracking-[0.2em] text-on-surface-variant/50">Tiêu chuẩn</p>
-                    <p class="text-xs font-black uppercase tracking-tight" th:text="${product != null ? product.categoryName : 'Premium'}">Premium</p>
+                    <p class="text-[9px] font-black uppercase tracking-[0.2em] text-on-surface-variant/50">Tiêu chuẩn
+                    </p>
+                    <p class="text-xs font-black uppercase tracking-tight"
+                      th:text="${product != null ? product.categoryName : 'Premium'}">Premium</p>
                   </div>
                 </div>
-                
-                <div class="flex items-center gap-3 p-3 rounded-xl bg-surface-container-low/50 border border-outline-variant/10 group hover:border-primary/40 transition-all duration-300">
-                  <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-all duration-300">
+
+                <div
+                  class="flex items-center gap-3 p-3 rounded-xl bg-surface-container-low/50 border border-outline-variant/10 group hover:border-primary/40 transition-all duration-300">
+                  <div
+                    class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-all duration-300">
                     <span class="material-symbols-outlined text-lg">location_on</span>
                   </div>
                   <div>
-                    <p class="text-[9px] font-black uppercase tracking-[0.2em] text-on-surface-variant/50">Vùng nguyên liệu</p>
-                    <p class="text-xs font-black uppercase tracking-tight" th:text="${product != null ? product.origin : 'Lâm Đồng'}">Lâm Đồng</p>
+                    <p class="text-[9px] font-black uppercase tracking-[0.2em] text-on-surface-variant/50">Vùng nguyên
+                      liệu</p>
+                    <p class="text-xs font-black uppercase tracking-tight"
+                      th:text="${product != null ? product.origin : 'Lâm Đồng'}">Lâm Đồng</p>
                   </div>
                 </div>
               </div>
@@ -297,7 +343,7 @@
           opt.classList.remove('ring-2', 'ring-primary', 'border-primary', 'bg-primary/5');
           opt.classList.add('border-outline-variant/30');
         });
-        
+
         el.classList.add('ring-2', 'ring-primary', 'border-primary', 'bg-primary/5');
         el.classList.remove('border-outline-variant/30');
 
@@ -339,9 +385,10 @@
         if (!qtyInput) return;
 
         const product = {
-          id: [[${productId}]],
+          id: /*[[${productId}]]*/ null,
           variantId: selectedVariantData.id,
-          name: [[${product != null ? product.name : 'Sản phẩm'}]],
+          name: /*[[${product != null ? product.name : 'Sản phẩm'}]]*/ 'Sản phẩm',
+
           price: selectedVariantData.price,
           image: selectedVariantData.img,
           variant: selectedVariantData.variant,
@@ -355,6 +402,199 @@
 
         window.CartSystem.addToCart(product);
         showToast('Đã thêm vào giỏ hàng');
+      }
+
+      function showToast(msg) {
+        let toast = document.getElementById('cart-toast');
+        if (!toast) {
+          toast = document.createElement('div');
+          toast.id = 'cart-toast';
+          toast.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 z-[200] bg-neutral-900 text-white px-8 py-4 rounded-2xl shadow-2xl font-black text-xs uppercase tracking-[0.2em] transform transition-all duration-500 translate-y-20 opacity-0 pointer-events-none border border-white/10';
+          document.body.appendChild(toast);
+        }
+        toast.innerText = msg;
+        toast.classList.remove('translate-y-20', 'opacity-0');
+        setTimeout(() => {
+          toast.classList.add('translate-y-20', 'opacity-0');
+        }, 2500);
+      }
+    </script>
+  </section>
+  <section th:fragment="comboDetail(combo, comboId)" class="pt-40 pb-32 max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
+    <nav class="flex items-center space-x-2 text-sm text-on-surface-variant mb-10 font-medium">
+      <a th:href="@{/}" href="/" class="hover:text-primary">Trang chủ</a>
+      <span class="material-symbols-outlined text-xs">chevron_right</span>
+      <a th:href="@{/combos}" href="/combos" class="hover:text-primary">Combo</a>
+      <span class="material-symbols-outlined text-xs">chevron_right</span>
+      <span class="text-primary truncate font-bold" th:text="${combo != null ? combo.name : 'N/A'}">Combo Name</span>
+    </nav>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+      <!-- Left side: Image and Included Items -->
+      <div class="lg:col-span-7 space-y-12">
+        <div
+          class="aspect-[16/9] bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm relative group border border-outline-variant/10">
+          <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+            th:src="${(combo != null and combo.imageUrl != null and !#strings.isEmpty(combo.imageUrl)) ? combo.imageUrl : 'https://images.unsplash.com/photo-1511537190424-bbbab87ac5eb?w=1200&q=80'}"
+            alt="Combo Image" />
+          <div
+            class="absolute top-4 left-4 bg-green-600 text-white px-4 py-1.5 text-[10px] font-black tracking-[0.2em] uppercase rounded-sm shadow-lg">
+            Gói Tiết Kiệm
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="flex items-center gap-4">
+            <h2 class="text-xl font-black font-headline uppercase tracking-tight text-primary">Sản phẩm trong combo</h2>
+            <div class="h-px flex-1 bg-outline-variant/30"></div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div th:each="item : ${combo.items}"
+              class="flex items-center gap-4 p-4 rounded-xl bg-surface-container-low/30 border border-outline-variant/10 hover:border-primary/20 transition-all duration-300 group">
+              <div
+                class="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-stone-100 border border-outline-variant/10">
+                <img th:src="${item.imageUrl}" th:alt="${item.productName}"
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+              </div>
+              <div class="min-w-0">
+                <p class="text-xs font-black uppercase tracking-tight text-on-surface truncate"
+                  th:text="${item.productName}">Product</p>
+                <p class="text-[10px] text-on-surface-variant font-medium mt-0.5" th:text="${item.variantName}">Variant
+                </p>
+                <p class="text-xs font-bold text-primary mt-1" th:text="'Số lượng: ' + ${item.quantity}">SL: 1</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right side: Purchase Info -->
+      <div class="lg:col-span-5 space-y-8">
+        <div class="space-y-4">
+          <div
+            class="inline-flex items-center gap-2 px-3 py-1 bg-primary/5 text-primary rounded-full border border-primary/10">
+            <span class="material-symbols-outlined text-sm">auto_awesome</span>
+            <span class="text-[10px] font-black uppercase tracking-widest">Ưu đãi độc quyền</span>
+          </div>
+          <h1 class="text-4xl font-headline font-extrabold text-primary leading-tight tracking-tight uppercase"
+            th:text="${combo != null ? combo.name : 'COMBO DETAIL'}">COMBO DETAIL</h1>
+          <p class="text-sm text-on-surface-variant leading-relaxed font-medium"
+            th:text="${combo != null ? combo.description : ''}">Description</p>
+        </div>
+
+        <div class="pt-8 border-t border-outline-variant/30 space-y-6">
+          <div class="flex flex-col gap-1">
+            <span class="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/50">Giá Combo Ưu
+              Đãi</span>
+            <div class="flex items-baseline gap-3">
+              <span class="text-4xl font-black text-primary"
+                th:text="${combo != null and combo.price != null ? #numbers.formatDecimal(combo.price, 0, 'COMMA', 0, 'POINT') + ' ₫' : '0 ₫'}">0
+                ₫</span>
+              <span class="text-lg line-through text-on-surface-variant/50 font-bold"
+                th:text="${combo != null and combo.originalPrice != null ? #numbers.formatDecimal(combo.originalPrice, 0, 'COMMA', 0, 'POINT') + ' ₫' : ''}">0
+                ₫</span>
+            </div>
+            <div
+              class="mt-2 inline-flex items-center gap-2 text-green-700 font-black text-[10px] uppercase tracking-widest">
+              <span class="material-symbols-outlined text-sm">savings</span>
+              Tiết kiệm <span
+                th:text="${combo != null and combo.savings != null ? #numbers.formatDecimal(combo.savings, 0, 'COMMA', 0, 'POINT') + ' ₫' : '0 ₫'}">0
+                ₫</span>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <div class="space-y-2">
+              <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/70">Số lượng
+                combo</label>
+              <div class="flex flex-col sm:flex-row items-center gap-3">
+                <div
+                  class="flex items-center bg-surface-container-low rounded-xl p-1 border border-outline-variant/20 w-fit">
+                  <button onclick="changeQty(-1)"
+                    class="w-10 h-10 flex items-center justify-center hover:bg-surface-container transition-colors rounded-lg group"
+                    type="button">
+                    <span
+                      class="material-symbols-outlined text-base group-active:scale-90 transition-transform text-on-surface-variant">remove</span>
+                  </button>
+                  <input id="product-qty"
+                    class="w-14 text-center border-none bg-transparent font-black text-base text-primary focus:ring-0 p-0"
+                    type="number" value="1" min="1" />
+                  <button onclick="changeQty(1)"
+                    class="w-10 h-10 flex items-center justify-center hover:bg-surface-container transition-colors rounded-lg group"
+                    type="button">
+                    <span
+                      class="material-symbols-outlined text-base group-active:scale-90 transition-transform text-on-surface-variant">add</span>
+                  </button>
+                </div>
+
+                <div class="flex-1 w-full flex">
+                  <button type="button" onclick="addComboToCart()"
+                    class="w-full bg-primary text-on-primary h-12 rounded-xl font-black uppercase tracking-[0.2em] text-xs hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center justify-center gap-2 active:scale-[0.98]">
+                    <span class="material-symbols-outlined text-lg">shopping_cart</span>
+                    Thêm combo vào giỏ
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-8 border-t border-outline-variant/30 space-y-6">
+          <div class="grid grid-cols-1 gap-3">
+            <div
+              class="flex items-center gap-3 p-4 rounded-xl bg-surface-container-low/50 border border-outline-variant/10">
+              <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
+                <span class="material-symbols-outlined text-lg">schedule</span>
+              </div>
+              <div>
+                <p class="text-[9px] font-black uppercase tracking-[0.2em] text-on-surface-variant/50">Thời gian áp dụng
+                </p>
+                <p class="text-xs font-black uppercase tracking-tight">Thứ 2 - Thứ 6 hàng tuần</p>
+              </div>
+            </div>
+            <div
+              class="flex items-center gap-3 p-4 rounded-xl bg-surface-container-low/50 border border-outline-variant/10">
+              <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
+                <span class="material-symbols-outlined text-lg">local_shipping</span>
+              </div>
+              <div>
+                <p class="text-[9px] font-black uppercase tracking-[0.2em] text-on-surface-variant/50">Vận chuyển</p>
+                <p class="text-xs font-black uppercase tracking-tight">Miễn phí cho đơn từ 500k</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script th:inline="javascript">
+      function changeQty(delta) {
+        const input = document.getElementById('product-qty');
+        if (!input) return;
+        let val = parseInt(input.value || '1', 10) + delta;
+        if (Number.isNaN(val) || val < 1) val = 1;
+        input.value = val;
+      }
+
+      function addComboToCart() {
+        if (!window.CartSystem) return;
+
+        const qtyInput = document.getElementById('product-qty');
+        if (!qtyInput) return;
+
+        const combo = {
+          id: 'combo-' + (/*[[${comboId}]]*/ 0),
+          comboId: /*[[${comboId}]]*/ 0,
+          name: /*[[${combo != null ? combo.name : 'Combo'}]]*/ 'Combo',
+          price: /*[[${combo != null and combo.price != null ? combo.price : 0}]]*/ 0,
+          image: /*[[${combo != null and combo.imageUrl != null ? combo.imageUrl : ''}]]*/ '',
+          variant: '__combo__',
+          quantity: parseInt(qtyInput.value || '1', 10)
+        };
+
+        window.CartSystem.addToCart(combo);
+        showToast('Đã thêm combo vào giỏ hàng');
       }
 
       function showToast(msg) {

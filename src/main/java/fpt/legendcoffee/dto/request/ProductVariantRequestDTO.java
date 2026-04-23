@@ -2,6 +2,9 @@ package fpt.legendcoffee.dto.request;
 
 import java.math.BigDecimal;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -12,6 +15,7 @@ import lombok.NoArgsConstructor;
 public class ProductVariantRequestDTO {
 
     /** Tên biến thể (ví dụ: Robusta 60kg Xay mịn). */
+    @NotBlank(message = "Tên biến thể không được để trống")
     private String variantName;
 
     /** Hình thức đóng gói (ví dụ: Túi, Bao, Lon). */
@@ -21,9 +25,13 @@ public class ProductVariantRequestDTO {
     private Integer size;
 
     /** Đơn giá bán của biến thể. */
+    @NotNull(message = "Giá không được để trống")
+    @Min(value = 1000, message = "Giá không được nhỏ hơn 1.000")
     private BigDecimal price;
 
     /** Số lượng tồn kho. */
+    @NotNull(message = "Số lượng tồn kho không được để trống")
+    @Min(value = 0, message = "Số lượng không được nhỏ hơn 0")
     private Integer stockQuantity;
 
     /** Trạng thái kích hoạt biến thể. */

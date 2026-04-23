@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
 
 import fpt.legendcoffee.dto.request.ProductRequestDTO;
 import fpt.legendcoffee.dto.response.ProductDetailDTO;
@@ -72,8 +74,8 @@ public class ProductController {
             Model model, Authentication authentication) {
 
         Boolean activeFilter = "true".equalsIgnoreCase(active) ? Boolean.TRUE
-                             : "false".equalsIgnoreCase(active) ? Boolean.FALSE
-                             : null;
+                : "false".equalsIgnoreCase(active) ? Boolean.FALSE
+                        : null;
 
         List<ProductResponseDTO> products = productService.searchProducts(keyword, activeFilter);
 
@@ -133,8 +135,15 @@ public class ProductController {
 
     @PostMapping("/add")
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
-    public String addProduct(@ModelAttribute("request") ProductRequestDTO request,
+    public String addProduct(@Valid @ModelAttribute("request") ProductRequestDTO request,
+            BindingResult bindingResult,
+            Model model,
             RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("categories", productService.getAllCategories());
+            model.addAttribute("editMode", false);
+            return "product/product-form";
+        }
         try {
             productService.addProduct(request);
             log.info("[Product] Thêm sản phẩm thành công - name={}", request.getName());
@@ -202,8 +211,19 @@ public class ProductController {
     @PostMapping("/{id}/update")
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public String updateProduct(@PathVariable Long id,
-            @ModelAttribute("request") ProductRequestDTO request,
+            @Valid @ModelAttribute("request") ProductRequestDTO request,
+            BindingResult bindingResult,
+            Model model,
             RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            Product product = productService.getProductById(id);
+            model.addAttribute("productId", id);
+            model.addAttribute("currentImageUrl", product.getImageUrl());
+            model.addAttribute("categories", productService.getAllCategories());
+            model.addAttribute("existingVariants", productVariantService.getVariantsByProductId(id));
+            model.addAttribute("editMode", true);
+            return "product/product-form";
+        }
         try {
             productService.updateProduct(id, request);
             log.info("[Product] Cập nhật sản phẩm thành công - id={}", id);

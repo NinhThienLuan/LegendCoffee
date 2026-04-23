@@ -182,29 +182,21 @@
                             <span class="material-symbols-outlined text-lg">payments</span>
                             THANH TOÁN
                         </h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1">
                             <label
-                                class="relative flex items-center p-6 bg-surface-container-lowest border border-outline-variant/10 rounded-xl cursor-pointer hover:bg-white hover:shadow-md transition-all group">
-                                <input type="radio" th:field="*{paymentTypeId}" value="1"
+                                class="relative flex items-center p-6 bg-surface-container-lowest border-2 border-primary rounded-xl cursor-pointer hover:bg-white hover:shadow-md transition-all group">
+                                <input type="radio" th:field="*{paymentTypeId}" value="1" checked
                                     class="w-5 h-5 text-primary border-outline-variant focus:ring-0" />
                                 <div class="ml-4">
-                                    <span class="block font-black text-primary uppercase text-xs tracking-tight">Đối tác
-                                        thanh toán</span>
+                                    <span class="block font-black text-primary uppercase text-xs tracking-tight">Cổng
+                                        thanh toán điện tử (VNPay)</span>
                                     <span
-                                        class="block text-[9px] text-on-surface-variant font-bold uppercase mt-1 tracking-widest">Hợp
-                                        đồng B2B</span>
+                                        class="block text-[9px] text-on-surface-variant font-bold uppercase mt-1 tracking-widest">Thanh
+                                        toán an toàn qua ATM / QR Code / Visa / Master Card</span>
                                 </div>
-                            </label>
-                            <label
-                                class="relative flex items-center p-6 bg-surface-container-lowest border border-outline-variant/10 rounded-xl cursor-pointer hover:bg-white hover:shadow-md transition-all group">
-                                <input type="radio" th:field="*{paymentTypeId}" value="2"
-                                    class="w-5 h-5 text-primary border-outline-variant focus:ring-0" />
-                                <div class="ml-4">
-                                    <span class="block font-black text-primary uppercase text-xs tracking-tight">Tiền
-                                        mặt (COD)</span>
-                                    <span
-                                        class="block text-[9px] text-on-surface-variant font-bold uppercase mt-1 tracking-widest">Trả
-                                        sau khi nhận</span>
+                                <div class="ml-auto flex items-center gap-2">
+                                    <img src="https://vnpay.vn/wp-content/uploads/2020/07/Logo-VNPAYQR.png" alt="VNPay"
+                                        class="h-4 grayscale group-hover:grayscale-0 transition-all" />
                                 </div>
                             </label>
                         </div>
@@ -280,13 +272,18 @@
                         </div>
                         <div class="flex justify-between items-end pt-8 border-t-2 border-primary/30">
                             <div class="flex flex-col gap-1">
-                                <span class="text-primary font-black uppercase tracking-[0.3em] text-[10px] font-headline">Tổng cộng</span>
-                                <span class="text-[9px] text-on-surface-variant/50 uppercase font-black tracking-[0.15em] font-label">
+                                <span
+                                    class="text-primary font-black uppercase tracking-[0.3em] text-[10px] font-headline">Tổng
+                                    cộng</span>
+                                <span
+                                    class="text-[9px] text-on-surface-variant/50 uppercase font-black tracking-[0.15em] font-label">
                                     (Đã bao gồm VAT)
                                 </span>
                             </div>
                             <div class="text-right">
-                                <span id="summary-total" class="text-4xl font-black text-primary font-headline tracking-tighter leading-none">0 ₫</span>
+                                <span id="summary-total"
+                                    class="text-4xl font-black text-primary font-headline tracking-tighter leading-none">0
+                                    ₫</span>
                             </div>
                         </div>
                     </div>
@@ -301,21 +298,55 @@
         </div> <!-- End Grid -->
     </main> <!-- End Main -->
 
+    <div th:replace="~{fragments/toast :: errorToast('checkout-toast')}"></div>
+    <script th:if="${checkoutError}">
+        sessionStorage.removeItem('orderInProgress');
+    </script>
     <script th:inline="javascript">
         function formatCurrency(num) {
             return new Intl.NumberFormat('vi-VN').format(num) + ' ₫';
         }
 
+        function showToast(message, type = 'error') {
+            const toast = document.getElementById('checkout-toast');
+            if (!toast) return;
+
+            toast.textContent = message;
+
+            // Reset and set appearance
+            toast.classList.remove('opacity-0', 'translate-y-[-8px]', 'pointer-events-none');
+
+            // Hide after 4 seconds
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-[-8px]', 'pointer-events-none');
+            }, 4000);
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
+            // Display server-side error message if exists
+            const serverError = [[${errorMessage}]];
+            if (serverError) {
+                showToast(serverError);
+            }
+            // Chống quay lại trang checkout bằng nút Back của trình duyệt (bfcache)
+            window.addEventListener('pageshow', (event) => {
+                if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+                    // Page was restored from bfcache (back navigation)
+                    window.location.reload();
+                }
+            });
+
             const cart = window.CartSystem ? window.CartSystem.getCart() : [];
-            
+
             // Guard: Redirect if cart is empty
             if (cart.length === 0) {
-                alert('Giỏ hàng của bạn đang trống. Vui lòng thêm sản phẩm trước khi thanh toán.');
-                window.location.href = '/cart';
+                showToast('Giỏ hàng của bạn đang trống. Đang quay lại...');
+                setTimeout(() => {
+                    window.location.href = '/cart';
+                }, 2000);
                 return;
             }
-            
+
             renderSummary(cart);
             bindCheckoutItems(cart);
 
@@ -326,10 +357,62 @@
             const shippingContainer = document.getElementById('shipping-options-container');
             const checkoutForm = document.getElementById('checkout-form');
 
+            // Force reset all selects and hidden fields on load
+            if (provinceSelect) provinceSelect.value = '';
+            if (districtSelect) {
+                districtSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
+                districtSelect.value = '';
+            }
+            if (wardSelect) {
+                wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+                wardSelect.value = '';
+            }
+            const hiddenToReset = [
+                'provinceName', 'districtName', 'wardName',
+                'selectedServiceId', 'selectedServiceName', 'selectedShippingFee'
+            ];
+            hiddenToReset.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            updateFinalSummary(0);
+
             if (checkoutForm) {
-                checkoutForm.addEventListener('submit', function () {
+                checkoutForm.addEventListener('submit', function (e) {
                     const latestCart = window.CartSystem ? window.CartSystem.getCart() : [];
+                    
+                    // 1. Client-side validation using values from Backend
+                    const MAX_ITEM_QTY = [[${maxItemQty}]];
+                    const MAX_TOTAL_QTY = [[${maxTotalQty}]];
+                    let totalQty = 0;
+                    let hasExceededItemLimit = false;
+
+                    latestCart.forEach(item => {
+                        const qty = parseInt(item.quantity) || 0;
+                        totalQty += qty;
+                        if (qty > MAX_ITEM_QTY) {
+                            hasExceededItemLimit = true;
+                        }
+                    });
+
+                    if (hasExceededItemLimit || totalQty > MAX_TOTAL_QTY) {
+                        e.preventDefault();
+                        showToast('Đặt quá giới hạn online. Vui lòng liên hệ tổng đài để được hỗ trợ');
+                        return;
+                    }
+
+                    // 2. Validate shipping selection
+                    const shippingFee = document.getElementById('selectedShippingFee').value;
+                    if (!shippingFee || shippingFee === '') {
+                        e.preventDefault();
+                        showToast('Vui lòng chọn dịch vụ vận chuyển để tiếp tục.');
+                        return;
+                    }
+                    
                     bindCheckoutItems(latestCart);
+                    
+                    // Đánh dấu đơn hàng đang được xử lý để xoá giỏ hàng ở trang tiếp theo
+                    sessionStorage.setItem('orderInProgress', 'true');
                 });
             }
 
@@ -339,12 +422,26 @@
                 const provinceName = this.options[this.selectedIndex].text;
                 document.getElementById('provinceName').value = provinceName;
 
-                // Reset sub-levels
+                // Reset EVERYTHING dependent on province
                 districtSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
+                districtSelect.value = '';
                 wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
-                shippingContainer.innerHTML = '<div class="col-span-full py-8 text-center bg-surface-container-low rounded-md border border-dashed border-outline-variant/30"><p class="text-on-surface-variant text-sm italic">Đang tải danh sách quận huyện...</p></div>';
+                wardSelect.value = '';
 
-                if (!provinceId) return;
+                document.getElementById('districtName').value = '';
+                document.getElementById('wardName').value = '';
+                document.getElementById('selectedServiceId').value = '';
+                document.getElementById('selectedServiceName').value = '';
+                document.getElementById('selectedShippingFee').value = '';
+
+                updateFinalSummary(0);
+
+                shippingContainer.innerHTML = '<div class="col-span-full py-12 text-center bg-surface-container-lowest/50 rounded-xl border border-dashed border-outline-variant/30"><p class="text-on-surface-variant text-xs italic font-medium uppercase tracking-widest">Đang tải danh sách quận huyện...</p></div>';
+
+                if (!provinceId) {
+                    shippingContainer.innerHTML = '<div class="col-span-full py-12 text-center bg-surface-container-lowest/50 rounded-xl border border-dashed border-outline-variant/30"><p class="text-on-surface-variant text-xs italic font-medium uppercase tracking-widest">Vui lòng chọn địa chỉ để xem các dịch vụ.</p></div>';
+                    return;
+                }
 
                 try {
                     const response = await fetch(`/api/shipping/districts?provinceId=${provinceId}`);
@@ -358,6 +455,11 @@
                     shippingContainer.innerHTML = '<div class="col-span-full py-8 text-center bg-surface-container-low rounded-md border border-dashed border-outline-variant/30"><p class="text-on-surface-variant text-sm italic">Vui lòng chọn quận/huyện và phường/xã.</p></div>';
                 } catch (e) {
                     console.error('Error loading districts:', e);
+                    showToast('Lỗi khi tải danh sách quận huyện. Vui lòng thử lại.');
+                    this.value = ''; // Reset province select
+                    districtSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
+                    wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+                    shippingContainer.innerHTML = '<div class="col-span-full py-8 text-center bg-surface-container-low rounded-md border border-dashed border-outline-variant/30"><p class="text-on-surface-variant text-sm italic">Vui lòng chọn lại tỉnh thành.</p></div>';
                 }
             });
 
@@ -366,8 +468,20 @@
                 const districtName = this.options[this.selectedIndex].text;
                 document.getElementById('districtName').value = districtName;
 
+                // Reset EVERYTHING dependent on district
                 wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
-                if (!districtId) return;
+                wardSelect.value = '';
+                document.getElementById('wardName').value = '';
+                document.getElementById('selectedServiceId').value = '';
+                document.getElementById('selectedServiceName').value = '';
+                document.getElementById('selectedShippingFee').value = '';
+
+                updateFinalSummary(0);
+
+                if (!districtId) {
+                    shippingContainer.innerHTML = '<div class="col-span-full py-12 text-center bg-surface-container-lowest/50 rounded-xl border border-dashed border-outline-variant/30"><p class="text-on-surface-variant text-xs italic font-medium uppercase tracking-widest">Vui lòng chọn quận/huyện và phường/xã.</p></div>';
+                    return;
+                }
 
                 try {
                     const response = await fetch(`/api/shipping/wards?districtId=${districtId}`);
@@ -380,6 +494,9 @@
                     });
                 } catch (e) {
                     console.error('Error loading wards:', e);
+                    showToast('Lỗi khi tải danh sách phường xã. Vui lòng thử lại.');
+                    this.value = ''; // Reset district select
+                    wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
                 }
             });
 
@@ -423,7 +540,9 @@
                     renderShippingOptions(options, shippingError);
                 } catch (e) {
                     console.error('Error loading shipping options:', e);
-                    shippingContainer.innerHTML = '<p class="text-error text-center p-4">Không thể tải dịch vụ vận chuyển lúc này. Vui lòng thử lại.</p>';
+                    showToast('Không thể tải dịch vụ vận chuyển. Vui lòng kiểm tra lại địa chỉ.');
+                    wardSelect.value = ''; // Reset ward select if shipping fails
+                    shippingContainer.innerHTML = '<p class="text-error text-center p-4 uppercase text-[10px] font-bold tracking-widest">Lỗi kết nối logistics</p>';
                 }
             }
 
@@ -450,7 +569,8 @@
                 `).join('');
 
                 // Re-bind change event for new radio buttons
-                document.querySelectorAll('input[name="shipping-option"]').forEach(radio => {
+                const radios = document.querySelectorAll('input[name="shipping-option"]');
+                radios.forEach(radio => {
                     radio.addEventListener('change', function () {
                         document.getElementById('selectedServiceId').value = this.value;
                         document.getElementById('selectedServiceName').value = this.dataset.name;
@@ -458,6 +578,17 @@
                         updateFinalSummary(parseInt(this.dataset.fee));
                     });
                 });
+
+                // Auto-select the first option if available
+                if (radios.length > 0) {
+                    const firstRadio = radios[0];
+                    firstRadio.checked = true;
+                    // Manually trigger the update logic for the first selection
+                    document.getElementById('selectedServiceId').value = firstRadio.value;
+                    document.getElementById('selectedServiceName').value = firstRadio.dataset.name;
+                    document.getElementById('selectedShippingFee').value = firstRadio.dataset.fee;
+                    updateFinalSummary(parseInt(firstRadio.dataset.fee));
+                }
             }
 
             function renderSummary(cart) {
@@ -514,15 +645,12 @@
                     const quantity = Number(item.quantity) || 0;
                     if (quantity <= 0) return;
 
-                    const variantId = item.variantId || item.id;
-                    const comboId = item.comboId;
-
-                    if (variantId) {
+                    // Strictly enforce: variantId OR comboId, never both.
+                    if (item.comboId) {
+                        hiddenContainer.appendChild(createHiddenField(`items[${index}].comboId`, item.comboId));
+                    } else {
+                        const variantId = item.variantId || item.id;
                         hiddenContainer.appendChild(createHiddenField(`items[${index}].variantId`, variantId));
-                    }
-
-                    if (comboId) {
-                        hiddenContainer.appendChild(createHiddenField(`items[${index}].comboId`, comboId));
                     }
 
                     hiddenContainer.appendChild(createHiddenField(`items[${index}].quantity`, quantity));

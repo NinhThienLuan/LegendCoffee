@@ -236,6 +236,10 @@ public class GHNServiceImpl implements GHNService {
 
     @Override
     public OrderDetailResponseDTO getOrderDetail(String orderCode) {
+        if (orderCode == null || orderCode.isBlank()) {
+            log.warn("[GHN] getOrderDetail called with null or blank orderCode");
+            return null;
+        }
         log.info("[GHN] Getting order detail for orderCode={}", orderCode);
         Map<String, String> body = Map.of("order_code", orderCode);
         return post("/v2/shipping-order/detail", body,
@@ -244,6 +248,10 @@ public class GHNServiceImpl implements GHNService {
 
     @Override
     public boolean cancelOrder(List<String> orderCodes) {
+        if (orderCodes == null || orderCodes.isEmpty()) {
+            log.warn("[GHN] No order codes provided for cancellation.");
+            return true;
+        }
         log.info("[GHN] Cancelling orders: {}", orderCodes);
         Map<String, List<String>> body = Map.of("order_codes", orderCodes);
         try {

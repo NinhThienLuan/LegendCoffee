@@ -99,7 +99,7 @@
                                     <th sec:authorize="hasRole('ADMIN')"
                                         class="px-6 py-4 text-xs font-bold uppercase tracking-widest text-center">Thao
                                         tác</th>
-                                    <th class="px-6 py-4 text-xs font-bold uppercase tracking-widest"></th>
+                                    <th class="px-6 py-4 text-xs font-bold uppercase tracking-widest text-center">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-outline-variant/5">
@@ -166,9 +166,28 @@
                                             </button>
                                         </form>
                                     </td>
-                                    <td class="px-6 py-5 text-right">
-                                        <a class="text-primary text-xs font-bold uppercase hover:underline"
-                                           th:href="@{/orders/{id}(id=${ord.id})}">Chi tiết</a>
+                                    <td class="px-6 py-5 text-center">
+                                        <div class="flex items-center justify-center gap-4">
+                                            <form th:if="${ord.shippingStatus == 'ready_to_pick'}"
+                                                  th:action="@{/orders/{id}/cancel(id=${ord.id})}"
+                                                  method="post"
+                                                  onsubmit="return confirm('Xác nhận huỷ đơn hàng này? Thao tác không thể hoàn tác.');"
+                                                  class="inline">
+                                                <button type="submit"
+                                                        class="text-error text-xs font-black uppercase hover:underline flex items-center gap-1">
+                                                    <span class="material-symbols-outlined text-sm">cancel</span>
+                                                    Huỷ đơn
+                                                </button>
+                                            </form>
+                                            <a th:if="${ord.paymentUrl != null}"
+                                               th:href="${ord.paymentUrl}"
+                                               class="text-amber-600 text-xs font-black uppercase hover:underline flex items-center gap-1">
+                                                <span class="material-symbols-outlined text-sm">payments</span>
+                                                Thanh toán
+                                            </a>
+                                            <a class="text-primary text-xs font-bold uppercase hover:underline"
+                                               th:href="@{/orders/{id}(id=${ord.id})}">Chi tiết</a>
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>

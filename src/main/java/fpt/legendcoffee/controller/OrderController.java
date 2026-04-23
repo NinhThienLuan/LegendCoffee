@@ -10,12 +10,14 @@ import fpt.legendcoffee.entity.User;
 import fpt.legendcoffee.entity.enumeration.OrderStatus;
 import fpt.legendcoffee.repository.OrderItemRepository;
 import fpt.legendcoffee.repository.OrderRepository;
+import fpt.legendcoffee.repository.PaymentRepository;
 import fpt.legendcoffee.repository.ShippingInfoRepository;
 import fpt.legendcoffee.repository.UserRepository;
 import fpt.legendcoffee.service.OrderService;
 import fpt.legendcoffee.service.ShippingService;
 import fpt.legendcoffee.service.VNPayApplicationService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +25,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import java.time.LocalDateTime;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -43,6 +46,7 @@ public class OrderController {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final ShippingInfoRepository shippingInfoRepository;
+    private final PaymentRepository paymentRepository;
 
     // =========================================================================
     // Trang danh sách đơn hàng & chi tiết
@@ -102,6 +106,17 @@ public class OrderController {
         return "redirect:/orders";
     }
 
+    @PostMapping("/admin/orders/{orderId}/complete-delivery")
+    public String completeDelivery(@PathVariable Long orderId, RedirectAttributes redirectAttributes) {
+        try {
+            orderService.completeDelivery(orderId);
+            redirectAttributes.addFlashAttribute("successMessage", "Đã xác nhận khách hàng nhận hàng thành công");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/orders";
+    }
+
     @GetMapping("/orders/{orderId}")
     public String orderDetailPage(@PathVariable("orderId") Long orderId, Model model,
             RedirectAttributes redirectAttributes) {
@@ -142,6 +157,12 @@ public class OrderController {
             model.addAttribute("totalAmount", totalAmount);
             model.addAttribute("orderId", orderId);
 
+            // Tìm URL thanh toán VNPay nếu đơn hàng đang chờ thanh toán
+            paymentRepository.findByOrderIdAndStatus(orderId, fpt.legendcoffee.entity.enumeration.PaymentStatus.PENDING)
+                    .filter(p -> p.getCreatedAt() == null
+                            || p.getCreatedAt().plusMinutes(15).isAfter(LocalDateTime.now()))
+                    .ifPresent(p -> model.addAttribute("paymentUrl", p.getPaymentUrl()));
+
             // Tích hợp dữ liệu tracking trực tiếp vào trang detail
             try {
                 model.addAttribute("orderStatus", shippingService.getOrderStatus(orderId));
@@ -177,7 +198,13 @@ public class OrderController {
      */
     @GetMapping("/checkout")
     public String checkoutPage(@RequestHeader(value = "Referer", required = false) String referer,
+            HttpServletResponse response,
             Model model) {
+
+        // Ngăn chặn cache để nút Back không load lại trang checkout cũ
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Expires", "0");
 
         // Kiểm tra luồng: Phải đi từ /cart (trừ khi đang ở chính trang /checkout -
         // refresh)
@@ -212,6 +239,8 @@ public class OrderController {
         }
 
         model.addAttribute("checkoutRequest", checkoutRequest);
+        model.addAttribute("maxItemQty", orderService.getMaxQuantityPerItem());
+        model.addAttribute("maxTotalQty", orderService.getMaxTotalQuantity());
         return "cart/checkout";
     }
 
@@ -231,6 +260,9 @@ public class OrderController {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("provinces", shippingService.getProvinces());
+            model.addAttribute("maxItemQty", orderService.getMaxQuantityPerItem());
+            model.addAttribute("maxTotalQty", orderService.getMaxTotalQuantity());
+            model.addAttribute("checkoutError", true);
             return "cart/checkout";
         }
 
@@ -255,6 +287,9 @@ public class OrderController {
             log.error("[Checkout] Đặt hàng thất bại: {}", e.getMessage(), e);
             model.addAttribute("errorMessage", "Đặt hàng thất bại: " + e.getMessage());
             model.addAttribute("provinces", shippingService.getProvinces());
+            model.addAttribute("maxItemQty", orderService.getMaxQuantityPerItem());
+            model.addAttribute("maxTotalQty", orderService.getMaxTotalQuantity());
+            model.addAttribute("checkoutError", true);
             return "cart/checkout";
         }
     }
@@ -275,7 +310,8 @@ public class OrderController {
         }
 
         Optional<Order> orderOpt = orderRepository.findById(orderId);
-        if (orderOpt.isEmpty() || orderOpt.get().getUser() == null || !orderOpt.get().getUser().getId().equals(currentUser.get().getId())) {
+        if (orderOpt.isEmpty() || orderOpt.get().getUser() == null
+                || !orderOpt.get().getUser().getId().equals(currentUser.get().getId())) {
             redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền theo dõi đơn hàng này.");
             return "redirect:/orders";
         }
@@ -300,6 +336,7 @@ public class OrderController {
      */
     @PostMapping("/orders/{orderId}/cancel")
     public String cancelOrder(@PathVariable Long orderId,
+            HttpServletRequest request,
             RedirectAttributes redirectAttributes) {
         Optional<User> currentUser = getCurrentUser();
         if (currentUser.isEmpty()) {
@@ -307,7 +344,8 @@ public class OrderController {
         }
 
         Optional<Order> orderOpt = orderRepository.findById(orderId);
-        if (orderOpt.isEmpty() || orderOpt.get().getUser() == null || !orderOpt.get().getUser().getId().equals(currentUser.get().getId())) {
+        if (orderOpt.isEmpty() || orderOpt.get().getUser() == null
+                || !orderOpt.get().getUser().getId().equals(currentUser.get().getId())) {
             redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền huỷ đơn hàng này.");
             return "redirect:/orders";
         }
@@ -322,6 +360,11 @@ public class OrderController {
             }
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Lỗi: " + e.getMessage());
+        }
+
+        String referer = request.getHeader("Referer");
+        if (referer != null && referer.contains("/orders") && !referer.contains("/orders/")) {
+            return "redirect:/orders";
         }
         return "redirect:/orders/" + orderId;
     }

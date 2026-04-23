@@ -55,6 +55,13 @@
                         Tiếp tục mua sắm
                     </a>
                     
+                    <!-- Continue Payment Button -->
+                    <a th:if="${paymentUrl != null}" th:href="${paymentUrl}" 
+                       class="px-6 py-3 bg-primary text-on-primary font-bold rounded-lg hover:bg-primary-container hover:text-on-primary-container transition-all active:scale-95 text-sm uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-primary/20">
+                        <span class="material-symbols-outlined text-sm">payments</span>
+                        Tiếp tục thanh toán
+                    </a>
+                    
                     <!-- Cancel Button -->
                     <form th:if="${orderStatus != null and orderStatus.status == 'ready_to_pick'}" 
                           th:action="@{/orders/{id}/cancel(id=${orderId})}" 

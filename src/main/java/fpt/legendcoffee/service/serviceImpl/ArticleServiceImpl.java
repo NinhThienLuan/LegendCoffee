@@ -21,6 +21,11 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
+    public List<Article> getPublishedArticles() {
+        return articleRepository.findByStatusOrderByPublishedAtDesc(fpt.legendcoffee.entity.enumeration.ArticleStatus.PUBLISHED);
+    }
+
+    @Override
     public Article getArticleById(Long id) {
         return articleRepository.findById(id).orElse(null);
     }
