@@ -26,7 +26,7 @@ public class ProductVariantRequestDTO {
 
     /** Đơn giá bán của biến thể. */
     @NotNull(message = "Giá không được để trống")
-    @Min(value = 0, message = "Giá không được nhỏ hơn 0")
+    @Min(value = 1000, message = "Giá không được nhỏ hơn 1.000")
     private BigDecimal price;
 
     /** Số lượng tồn kho. */
