@@ -123,7 +123,7 @@
                       <div class="flex items-center gap-3">
                         <div class="h-10 w-10 rounded bg-surface-container-low flex-shrink-0 overflow-hidden">
                           <img
-                            th:src="${product.imageUrl != null} ? ${product.imageUrl} : 'https://images.unsplash.com/photo-1511537190424-bbbab87ac5eb?w=80&q=80'"
+                            th:src="${product.imageUrl != null and !#strings.isEmpty(product.imageUrl)} ? ${product.imageUrl} : 'https://plus.unsplash.com/premium_photo-1671379523824-c8aae61cb52a?q=80&w=600&auto=format&fit=crop'"
                             class="h-full w-full object-cover" th:alt="${product.name}" />
                         </div>
                         <div>

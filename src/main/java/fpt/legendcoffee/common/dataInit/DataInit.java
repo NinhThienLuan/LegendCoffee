@@ -228,7 +228,7 @@ public class DataInit implements CommandLineRunner {
                                         .category(accessories)
                                         .name("Phin pha cà phê inox")
                                         .description("Phin inox cao cấp, giữ nhiệt tốt.")
-                                        .imageUrl("https://unsplash.com/photos/a-jar-filled-with-coffee-beans-next-to-a-box-jddERMaoNmY")
+                                        .imageUrl("https://images.unsplash.com/photo-1719488757646-711cdaa7ca2c?q=80&w=735&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")
                                         .origin("Việt Nam")
                                         .isActive(true)
                                         .build();
@@ -244,7 +244,7 @@ public class DataInit implements CommandLineRunner {
                                         .category(accessories)
                                         .name("Phễu pha V60 Hario")
                                         .description("Phễu pha cà phê pour-over bằng sứ.")
-                                        .imageUrl("https://unsplash.com/photos/clear-glass-coffee-pitcher-ZMnBy_vwlCY")
+                                        .imageUrl("https://images.unsplash.com/photo-1573518378653-55e125da29e5?q=80&auto=format&fit=max&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")
                                         .origin("Nhật Bản")
                                         .isActive(true)
                                         .build();
