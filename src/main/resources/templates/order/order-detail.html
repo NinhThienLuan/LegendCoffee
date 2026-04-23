@@ -259,6 +259,10 @@
                             <span th:text="${#numbers.formatDecimal(order != null && order.subTotal != null ? order.subTotal : 0, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0 ₫</span>
                         </div>
                         <div class="flex justify-between items-center text-xs font-bold uppercase tracking-widest text-on-primary/60">
+                            <span>Thuế VAT (8%)</span>
+                            <span th:text="${#numbers.formatDecimal(order != null && order.subTotal != null ? order.subTotal * 0.08 : 0, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0 ₫</span>
+                        </div>
+                        <div class="flex justify-between items-center text-xs font-bold uppercase tracking-widest text-on-primary/60">
                             <span>Phí vận chuyển</span>
                             <span th:text="${#numbers.formatDecimal(shippingFee != null ? shippingFee : 0, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0 ₫</span>
                         </div>
