@@ -10,6 +10,7 @@ import fpt.legendcoffee.service.WithdrawalService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -34,26 +35,22 @@ public class WalletController {
     // User — Trang ví & yêu cầu rút tiền
     // =========================================================================
 
-    /**
-     * GET /wallet
-     * Hiển thị trang ví: số dư available, reserved, lịch sử yêu cầu rút tiền.
-     */
     @GetMapping("/wallet")
     public String walletPage(Model model) {
         Optional<User> currentUser = getCurrentUser();
-        if (currentUser.isEmpty()) return "redirect:/login";
+        if (currentUser.isEmpty())
+            return "redirect:/login";
 
         Long userId = currentUser.get().getId();
         boolean isAdmin = isCurrentUserAdmin();
 
+        if (isAdmin) {
+            return "redirect:/admin/wallet";
+        }
+
         Wallet wallet = walletService.getWallet(userId);
         model.addAttribute("wallet", wallet);
-        model.addAttribute("isAdmin", isAdmin);
-
-        if (isAdmin) {
-            // Admin: chỉ xem số dư ví hệ thống, không có form rút tiền
-            return "wallet/wallet";
-        }
+        model.addAttribute("isAdmin", false);
 
         // User: xem số dư + form rút tiền + lịch sử yêu cầu
         List<WithdrawalRequest> myRequests = withdrawalService.getRequestsByUser(userId);
@@ -62,58 +59,27 @@ public class WalletController {
         return "wallet/wallet";
     }
 
-    /**
-     * POST /wallet/withdraw
-     * User tạo yêu cầu rút tiền.
-     */
-    @PostMapping("/wallet/withdraw")
-    public String requestWithdrawal(
-            @Valid @ModelAttribute("withdrawalRequest") WithdrawalRequestDTO dto,
-            BindingResult bindingResult,
-            Model model,
-            RedirectAttributes redirectAttributes) {
-
-        Optional<User> currentUser = getCurrentUser();
-        if (currentUser.isEmpty()) return "redirect:/login";
-
-        // Guard: Admin không được tạo yêu cầu rút tiền qua route này
-        if (isCurrentUserAdmin()) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Admin không thể tạo yêu cầu rút tiền.");
-            return "redirect:/wallet";
-        }
-
-        if (bindingResult.hasErrors()) {
-            Long userId = currentUser.get().getId();
-            model.addAttribute("wallet", walletService.getWallet(userId));
-            model.addAttribute("myRequests", withdrawalService.getRequestsByUser(userId));
-            model.addAttribute("isAdmin", false);
-            return "wallet/wallet";
-        }
-
-        try {
-            withdrawalService.requestWithdrawal(currentUser.get().getId(), dto);
-            redirectAttributes.addFlashAttribute("successMessage",
-                    "Yêu cầu rút tiền đã được gửi. Vui lòng đợi admin xét duyệt.");
-        } catch (Exception e) {
-            log.error("[Wallet] Tạo yêu cầu rút tiền thất bại: {}", e.getMessage());
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-        }
-        return "redirect:/wallet";
-    }
-
     // =========================================================================
     // Admin — Quản lý yêu cầu rút tiền
     // =========================================================================
 
     /**
-     * GET /admin/withdrawals
+     * GET /admin/wallet
      * Admin xem tất cả yêu cầu rút tiền.
      */
-    @GetMapping("/admin/withdrawals")
-    public String adminWithdrawalsPage(Model model) {
+    @GetMapping("/admin/wallet")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String adminWalletPage(Model model) {
+        Optional<User> currentUser = getCurrentUser();
+        if (currentUser.isEmpty())
+            return "redirect:/login";
+
+        Wallet wallet = walletService.getWallet(currentUser.get().getId());
         List<WithdrawalRequest> allRequests = withdrawalService.getAllRequests();
+
+        model.addAttribute("wallet", wallet);
         model.addAttribute("withdrawalRequests", allRequests);
-        return "admin/withdrawals";
+        return "admin/wallet";
     }
 
     /**
@@ -169,7 +135,8 @@ public class WalletController {
 
     private boolean isCurrentUserAdmin() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null) return false;
+        if (auth == null)
+            return false;
         return auth.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
     }

@@ -4,6 +4,7 @@ import fpt.legendcoffee.entity.*;
 import fpt.legendcoffee.entity.enumeration.ArticleStatus;
 import fpt.legendcoffee.entity.enumeration.OrderStatus;
 import fpt.legendcoffee.entity.enumeration.UserRole;
+import fpt.legendcoffee.entity.enumeration.WithdrawalStatus;
 import fpt.legendcoffee.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +48,9 @@ public class DataInit implements CommandLineRunner {
         private final ArticleRepository articleRepository;
         private final CategoryRepository categoryRepository;
         private final ShippingInfoRepository shippingInfoRepository;
+        private final WalletRepository walletRepository;
+        private final WithdrawalRequestRepository withdrawalRequestRepository;
+        private final WalletTransactionRepository walletTransactionRepository;
         private final PasswordEncoder passwordEncoder;
 
         @Override
@@ -58,6 +62,7 @@ public class DataInit implements CommandLineRunner {
                 seedData();
                 seedCombos();
                 seedOrders();
+                seedWalletsAndWithdrawals();
 
                 log.info("Data initialization completed.");
         }
@@ -680,6 +685,94 @@ public class DataInit implements CommandLineRunner {
                 }
 
                 log.info("Seeded combo data successfully.");
+        }
+
+        private void seedWalletsAndWithdrawals() {
+                if (walletRepository.count() > 0) {
+                        return;
+                }
+
+                log.info("Seeding wallets and withdrawal requests...");
+
+                List<User> allUsers = userRepository.findAll();
+                Random random = new Random();
+
+                for (User user : allUsers) {
+                        // 1. Create Wallet
+                        BigDecimal available = BigDecimal.valueOf(random.nextInt(5000000) + 1000000); // 1M to 6M
+                        BigDecimal reserved = BigDecimal.ZERO;
+
+                        // For some users, make a pending withdrawal to test 'reserved'
+                        if (user.getRole() == UserRole.USER && random.nextBoolean()) {
+                                reserved = BigDecimal.valueOf(200000);
+                                available = available.subtract(reserved);
+                        }
+
+                        Wallet wallet = Wallet.builder()
+                                        .user(user)
+                                        .availableAmount(available)
+                                        .reservedAmount(reserved)
+                                        .build();
+                        walletRepository.save(wallet);
+
+                        // 2. Create some Transactions
+                        saveTx(wallet, available.add(reserved), "INCOME", "Số dư khởi tạo hệ thống");
+
+                        // 3. Create Withdrawal Requests for Regular Users
+                        if (user.getRole() == UserRole.USER) {
+                                // Add one historical approved withdrawal
+                                WithdrawalRequest approved = WithdrawalRequest.builder()
+                                                .user(user)
+                                                .amount(BigDecimal.valueOf(150000))
+                                                .bankName("Vietcombank")
+                                                .bankCode("VCB")
+                                                .accountNumber("001100" + random.nextInt(1000000))
+                                                .accountHolder(user.getUsername().toUpperCase())
+                                                .status(WithdrawalStatus.APPROVED)
+                                                .processedAt(LocalDateTime.now().minusDays(5))
+                                                .build();
+                                withdrawalRequestRepository.save(approved);
+                                saveTx(wallet, approved.getAmount(), "EXPENSE", "Đã rút tiền về ngân hàng VCB");
+
+                                // Add one rejected withdrawal
+                                WithdrawalRequest rejected = WithdrawalRequest.builder()
+                                                .user(user)
+                                                .amount(BigDecimal.valueOf(50000))
+                                                .bankName("Techcombank")
+                                                .bankCode("TCB")
+                                                .accountNumber("1903" + random.nextInt(1000000))
+                                                .accountHolder(user.getUsername().toUpperCase())
+                                                .status(WithdrawalStatus.REJECTED)
+                                                .rejectReason("Thông tin tài khoản không trùng khớp")
+                                                .processedAt(LocalDateTime.now().minusDays(2))
+                                                .build();
+                                withdrawalRequestRepository.save(rejected);
+
+                                // Add one pending withdrawal if we set reserved earlier
+                                if (reserved.compareTo(BigDecimal.ZERO) > 0) {
+                                        WithdrawalRequest pending = WithdrawalRequest.builder()
+                                                        .user(user)
+                                                        .amount(reserved)
+                                                        .bankName("MB Bank")
+                                                        .bankCode("MB")
+                                                        .accountNumber("9999" + random.nextInt(1000000))
+                                                        .accountHolder(user.getUsername().toUpperCase())
+                                                        .status(WithdrawalStatus.PENDING)
+                                                        .build();
+                                        withdrawalRequestRepository.save(pending);
+                                }
+                        }
+                }
+        }
+
+        private void saveTx(Wallet wallet, BigDecimal amount, String type, String desc) {
+                WalletTransaction tx = WalletTransaction.builder()
+                                .wallet(wallet)
+                                .amount(amount)
+                                .transactionType(type)
+                                .description(desc)
+                                .build();
+                walletTransactionRepository.save(tx);
         }
 
         private ProductVariant findVariant(List<ProductVariant> variants, String productName, String variantName) {

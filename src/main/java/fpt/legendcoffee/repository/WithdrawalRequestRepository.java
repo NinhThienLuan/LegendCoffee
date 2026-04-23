@@ -15,6 +15,9 @@ public interface WithdrawalRequestRepository extends JpaRepository<WithdrawalReq
 
     List<WithdrawalRequest> findByStatusOrderByCreatedAtAsc(WithdrawalStatus status);
 
+    @org.springframework.data.jpa.repository.Query("SELECT wr FROM WithdrawalRequest wr JOIN FETCH wr.user ORDER BY wr.createdAt DESC")
+    List<WithdrawalRequest> findAllWithUserOrderByCreatedAtDesc();
+
     List<WithdrawalRequest> findAllByOrderByCreatedAtDesc();
 
     /** Kiểm tra user có yêu cầu PENDING nào chưa xử lý không */
