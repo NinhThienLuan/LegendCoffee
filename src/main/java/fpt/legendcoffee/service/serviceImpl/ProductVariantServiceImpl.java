@@ -27,6 +27,14 @@ public class ProductVariantServiceImpl implements ProductVariantService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<ProductVariant> getActiveVariantsByProductId(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy sản phẩm với ID: " + productId));
+        return productVariantRepository.findByProductAndIsActiveTrue(product);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<ProductVariant> findByProduct(Product product) {
         return productVariantRepository.findByProduct(product);
     }

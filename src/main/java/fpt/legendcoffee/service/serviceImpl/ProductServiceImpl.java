@@ -254,7 +254,7 @@ public class ProductServiceImpl implements ProductService {
                         existing.setSize(variantDTO.getSize());
                         existing.setPrice(variantDTO.getPrice());
                         existing.setStockQuantity(variantDTO.getStockQuantity());
-                        existing.setIsActive(variantDTO.getIsActive() != null ? variantDTO.getIsActive() : Boolean.TRUE);
+                        existing.setIsActive(Boolean.TRUE.equals(variantDTO.getIsActive()));
                         productVariantRepository.save(existing);
                     } else {
                         // Trường hợp ID không khớp (có thể do lỗi dữ liệu từ client)
@@ -311,7 +311,7 @@ public class ProductServiceImpl implements ProductService {
                 .size(dto.getSize())
                 .price(dto.getPrice())
                 .stockQuantity(dto.getStockQuantity())
-                .isActive(dto.getIsActive() != null ? dto.getIsActive() : Boolean.TRUE)
+                .isActive(Boolean.TRUE.equals(dto.getIsActive()))
                 .build();
     }
 
@@ -338,6 +338,20 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(readOnly = true)
     public ProductRequestDTO getProductRequestById(Long id) {
         Product product = getProductById(id);
+        List<ProductVariant> variants = productVariantRepository.findByProduct(product);
+        
+        List<ProductVariantRequestDTO> variantDTOs = variants.stream()
+                .map(v -> ProductVariantRequestDTO.builder()
+                        .id(v.getId())
+                        .variantName(v.getVariantName())
+                        .packaging(v.getPackaging())
+                        .size(v.getSize())
+                        .price(v.getPrice())
+                        .stockQuantity(v.getStockQuantity())
+                        .isActive(v.getIsActive())
+                        .build())
+                .collect(Collectors.toList());
+
         return ProductRequestDTO.builder()
                 .name(product.getName())
                 .description(product.getDescription())
@@ -346,6 +360,7 @@ public class ProductServiceImpl implements ProductService {
                 .expiryDate(product.getExpiryDate())
                 .categoryId(product.getCategory() != null ? product.getCategory().getId() : null)
                 .isActive(product.getIsActive())
+                .variants(variantDTOs)
                 .build();
     }
 

@@ -16,6 +16,7 @@ public interface ProductVariantRepository extends JpaRepository<ProductVariant, 
 
     /** Lấy danh sách biến thể theo sản phẩm (dùng để hiển thị khi edit). */
     List<ProductVariant> findByProduct(Product product);
+    List<ProductVariant> findByProductAndIsActiveTrue(Product product);
 
     /** Xóa tất cả biến thể của một sản phẩm (dùng khi update). */
     void deleteByProduct(Product product);
