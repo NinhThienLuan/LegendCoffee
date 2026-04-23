@@ -42,7 +42,7 @@
               <th class="px-6 py-4 w-[20%]">Giá ưu đãi</th>
               <th class="px-6 py-4 w-[20%]">Giá gốc</th>
               <th class="px-6 py-4 w-[18%]">Hiệu lực</th>
-              <th class="px-6 py-4 w-[10%]">Trạng thái</th>
+              <th class="px-6 py-4 w-[10%] text-center">Trạng thái</th>
               <th class="px-6 py-4 w-[10%] text-right">Hành động</th>
             </tr>
             </thead>
@@ -58,10 +58,25 @@
               <td class="px-6 py-5 text-sm whitespace-nowrap"
                   th:text="${#numbers.formatDecimal(combo.originalPrice, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0 ₫</td>
               <td class="px-6 py-5 text-sm whitespace-nowrap">
-                <div th:text="${#temporals.format(combo.startDate, 'dd/MM/yyyy HH:mm')}">start</div>
-                <div class="text-[10px] text-on-surface-variant">→ <span th:text="${#temporals.format(combo.endDate, 'dd/MM/yyyy HH:mm')}">end</span></div>
+                <div class="flex flex-col gap-0.5">
+                  <div class="flex items-center gap-2">
+                    <span class="w-3 flex justify-center">
+                      <span class="material-symbols-outlined text-[10px] text-primary">radio_button_unchecked</span>
+                    </span>
+                    <span th:text="${#temporals.format(combo.startDate, 'dd/MM/yyyy HH:mm')}">start</span>
+                  </div>
+                  <div class="w-3 flex justify-center py-0.5">
+                    <span class="material-symbols-outlined text-[10px] text-on-surface-variant/30 leading-none">south</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="w-3 flex justify-center">
+                      <span class="material-symbols-outlined text-[10px] text-on-surface-variant">radio_button_unchecked</span>
+                    </span>
+                    <span th:text="${#temporals.format(combo.endDate, 'dd/MM/yyyy HH:mm')}">end</span>
+                  </div>
+                </div>
               </td>
-              <td class="px-6 py-5">
+              <td class="px-6 py-5 text-center">
                 <span th:if="${combo.availableNow}" class="inline-block px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold uppercase rounded">Đang bán</span>
                 <span th:unless="${combo.availableNow}" class="inline-block px-2 py-1 bg-stone-100 text-stone-500 text-[10px] font-bold uppercase rounded">Ngoài lịch</span>
               </td>

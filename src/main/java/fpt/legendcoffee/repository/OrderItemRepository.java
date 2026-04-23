@@ -25,6 +25,15 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 			""")
 	List<OrderItem> findByOrderIdWithDetails(@Param("orderId") Long orderId);
 	@Query("""
+			SELECT SUM(oi.quantity)
+			FROM OrderItem oi
+			LEFT JOIN oi.variant v
+			WHERE v.product.id = :productId
+			AND oi.order.status NOT IN (fpt.legendcoffee.entity.enumeration.OrderStatus.CANCELLED)
+			""")
+	Integer sumQuantityByProductId(@Param("productId") Long productId);
+
+	@Query("""
 			SELECT p.name, SUM(oi.quantity) as totalSold
 			FROM OrderItem oi
 			LEFT JOIN oi.variant v

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html class="light" lang="vi" xmlns:th="http://www.thymeleaf.org">
 
@@ -155,11 +155,14 @@
                       <span th:text="${product.soldCount}">0</span>
                     </td>
                     <td class="px-6 py-5">
-                      <span th:if="${product.isActive}"
+                      <span th:if="${!product.isActive}"
+                        class="inline-block px-2 py-1 bg-red-100 text-red-600 text-[10px] font-bold uppercase rounded">Ẩn</span>
+                      <span th:if="${product.isActive && product.stockQuantity > 0}"
                         class="inline-block px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold uppercase rounded">Còn
                         hàng</span>
-                      <span th:unless="${product.isActive}"
-                        class="inline-block px-2 py-1 bg-red-100 text-red-600 text-[10px] font-bold uppercase rounded">Ẩn</span>
+                      <span th:if="${product.isActive && product.stockQuantity <= 0}"
+                        class="inline-block px-2 py-1 bg-amber-100 text-amber-700 text-[10px] font-bold uppercase rounded">Hết
+                        hàng</span>
                     </td>
                     <td class="px-6 py-5 text-right">
                       <div class="flex items-center justify-end gap-1">

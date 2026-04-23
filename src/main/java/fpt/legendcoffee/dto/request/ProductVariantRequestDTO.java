@@ -15,6 +15,9 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ProductVariantRequestDTO {
 
+    /** ID của biến thể (dùng khi cập nhật). */
+    private Long id;
+
     /** Tên biến thể (ví dụ: Robusta 60kg Xay mịn). */
     @NotBlank(message = "Tên biến thể không được để trống")
     @Size(min = 10, message = "Tên biến thể phải có ít nhất 10 ký tự")
@@ -40,6 +43,14 @@ public class ProductVariantRequestDTO {
 
     /** Trạng thái kích hoạt biến thể. */
     private Boolean isActive;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getVariantName() {
         return variantName;

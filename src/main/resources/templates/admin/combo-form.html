@@ -56,6 +56,9 @@
                 <div class="md:col-span-2">
                   <label class="block text-sm font-semibold text-on-surface mb-2" for="name">Tên combo <span class="text-red-500">*</span></label>
                   <input id="name" type="text" th:field="*{name}" maxlength="255" placeholder="Ví dụ: Combo Discovery 3 vị"
+                         pattern="^[a-zA-Z0-9À-ỹ\s]+$"
+                         oninput="this.value = this.value.replace(/[^a-zA-Z0-9À-ỹ\s]/g, '')"
+                         title="Tên combo chỉ được chứa chữ cái, số và khoảng trắng"
                          class="w-full rounded-lg bg-surface-container-low border-0 px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/40 focus:outline-none" />
                 </div>
                 <div class="md:col-span-2">
@@ -65,7 +68,10 @@
                 </div>
                 <div>
                   <label class="block text-sm font-semibold text-on-surface mb-2" for="price">Giá combo (₫) <span class="text-red-500">*</span></label>
-                  <input id="price" type="number" th:field="*{price}" min="1" placeholder="540000"
+                  <input id="price" type="text" th:field="*{price}" placeholder="540000"
+                         oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                         required
+                         title="Vui lòng chỉ nhập số dương"
                          class="w-full rounded-lg bg-surface-container-low border-0 px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/40 focus:outline-none" />
                 </div>
                 <div>
@@ -77,12 +83,16 @@
                 </div>
                 <div>
                   <label class="block text-sm font-semibold text-on-surface mb-2" for="startDate">Ngày bắt đầu <span class="text-red-500">*</span></label>
-                  <input id="startDate" type="datetime-local" th:field="*{startDate}"
+                  <input id="startDate" type="datetime-local" 
+                         th:name="startDate"
+                         th:value="${request.startDate != null ? #temporals.format(request.startDate, 'yyyy-MM-dd''T''HH:mm') : ''}"
                          class="w-full rounded-lg bg-surface-container-low border-0 px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/40 focus:outline-none" />
                 </div>
                 <div>
                   <label class="block text-sm font-semibold text-on-surface mb-2" for="endDate">Ngày kết thúc <span class="text-red-500">*</span></label>
-                  <input id="endDate" type="datetime-local" th:field="*{endDate}"
+                  <input id="endDate" type="datetime-local" 
+                         th:name="endDate"
+                         th:value="${request.endDate != null ? #temporals.format(request.endDate, 'yyyy-MM-dd''T''HH:mm') : ''}"
                          class="w-full rounded-lg bg-surface-container-low border-0 px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/40 focus:outline-none" />
                 </div>
               </div>
@@ -105,14 +115,41 @@
                   <div th:each="item, stat : *{items}" class="combo-item-row grid grid-cols-12 gap-3 items-end bg-surface-container-low rounded-lg p-4">
                     <div class="col-span-12 md:col-span-8">
                       <label class="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Biến thể <span class="text-red-500">*</span></label>
-                      <select th:field="*{items[__${stat.index}__].variantId}" class="combo-variant w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none">
-                        <option value="">-- Chọn biến thể --</option>
-                        <option th:each="variant : ${variants}" th:value="${variant.id}" th:text="${variant.product != null ? variant.product.name + ' - ' + variant.variantName : variant.variantName}"></option>
-                      </select>
+                      <div class="relative searchable-select">
+                        <input type="text" readonly 
+                               th:value="${item.variantId != null ? (item.variantId) : ''}"
+                               th:data-selected-label="${item.variantId}"
+                               placeholder="-- Click để chọn biến thể --"
+                               onclick="toggleDropdown(this)"
+                               class="select-display w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none cursor-pointer" />
+                        <input type="hidden" th:field="*{items[__${stat.index}__].variantId}" class="variant-id-hidden" />
+                        
+                        <div class="dropdown-menu absolute z-50 w-full bg-white shadow-xl rounded-lg hidden max-h-60 overflow-y-auto border border-surface-container-low overscroll-contain"
+                             onclick="event.stopPropagation()">
+                          <div class="p-2 sticky top-0 bg-white border-b border-surface-container-low">
+                            <input type="text" placeholder="Tìm kiếm biến thể..." 
+                                   oninput="this.value = this.value.replace(/[^a-zA-Z0-9À-ỹ\s]/g, ''); filterVariants(this)"
+                                   class="search-input w-full px-3 py-1.5 text-xs bg-surface-container-low border-0 rounded focus:ring-1 focus:ring-primary/40 focus:outline-none" />
+                          </div>
+                          <div class="options-list">
+                            <div th:each="v : ${variants}" 
+                                 th:data-id="${v.id}"
+                                 th:data-label="${v.product != null ? v.product.name + ' - ' + v.variantName : v.variantName}"
+                                 onclick="selectVariant(this)"
+                                 class="option-item px-4 py-2.5 text-xs hover:bg-primary/5 cursor-pointer border-b border-surface-container-low last:border-0 transition-colors">
+                              <p class="font-bold text-primary mb-0.5" th:text="${v.product != null ? v.product.name : 'Sản phẩm'}"></p>
+                              <p class="text-on-surface-variant" th:text="${v.variantName}"></p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                     <div class="col-span-6 md:col-span-3">
                       <label class="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Số lượng <span class="text-red-500">*</span></label>
-                      <input type="number" th:field="*{items[__${stat.index}__].quantity}" min="1" placeholder="1" class="combo-quantity w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none" />
+                      <input type="text" th:field="*{items[__${stat.index}__].quantity}" placeholder="1" 
+                             oninput="this.value = this.value.replace(/[^0-9]/g, ''); if(this.value === '0') this.value = '1';"
+                             title="Số lượng phải là số dương"
+                             class="combo-quantity w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none" />
                     </div>
                     <div class="col-span-6 md:col-span-1 flex justify-end pb-1">
                       <button type="button" onclick="removeRow(this)" class="p-1.5 text-stone-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors">
@@ -143,14 +180,39 @@
             <div class="combo-item-row grid grid-cols-12 gap-3 items-end bg-surface-container-low rounded-lg p-4">
               <div class="col-span-12 md:col-span-8">
                 <label class="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Biến thể <span class="text-red-500">*</span></label>
-                <select name="items[__INDEX__].variantId" class="combo-variant w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none">
-                  <option value="">-- Chọn biến thể --</option>
-                  <option th:each="variant : ${variants}" th:value="${variant.id}" th:text="${variant.product != null ? variant.product.name + ' - ' + variant.variantName : variant.variantName}"></option>
-                </select>
+                <div class="relative searchable-select">
+                  <input type="text" readonly 
+                         placeholder="-- Click để chọn biến thể --"
+                         onclick="toggleDropdown(this)"
+                         class="select-display w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none cursor-pointer" />
+                  <input type="hidden" name="items[__INDEX__].variantId" class="variant-id-hidden" />
+                  
+                  <div class="dropdown-menu absolute z-50 w-full bg-white shadow-xl rounded-lg hidden max-h-60 overflow-y-auto border border-surface-container-low overscroll-contain"
+                       onclick="event.stopPropagation()">
+                    <div class="p-2 sticky top-0 bg-white border-b border-surface-container-low">
+                      <input type="text" placeholder="Tìm kiếm biến thể..." 
+                             oninput="this.value = this.value.replace(/[^a-zA-Z0-9À-ỹ\s]/g, ''); filterVariants(this)"
+                             class="search-input w-full px-3 py-1.5 text-xs bg-surface-container-low border-0 rounded focus:ring-1 focus:ring-primary/40 focus:outline-none" />
+                    </div>
+                    <div class="options-list">
+                      <div th:each="v : ${variants}" 
+                           th:data-id="${v.id}"
+                           th:data-label="${v.product != null ? v.product.name + ' - ' + v.variantName : v.variantName}"
+                           onclick="selectVariant(this)"
+                           class="option-item px-4 py-2.5 text-xs hover:bg-primary/5 cursor-pointer border-b border-surface-container-low last:border-0 transition-colors">
+                        <p class="font-bold text-primary mb-0.5" th:text="${v.product != null ? v.product.name : 'Sản phẩm'}"></p>
+                        <p class="text-on-surface-variant" th:text="${v.variantName}"></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
               <div class="col-span-6 md:col-span-3">
                 <label class="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Số lượng <span class="text-red-500">*</span></label>
-                <input type="number" name="items[__INDEX__].quantity" min="1" value="1" class="combo-quantity w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none" />
+                <input type="text" name="items[__INDEX__].quantity" value="1" 
+                       oninput="this.value = this.value.replace(/[^0-9]/g, ''); if(this.value === '0') this.value = '1';"
+                       title="Số lượng phải là số dương"
+                       class="combo-quantity w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none" />
               </div>
               <div class="col-span-6 md:col-span-1 flex justify-end pb-1">
                 <button type="button" onclick="removeRow(this)" class="p-1.5 text-stone-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors">
@@ -208,6 +270,75 @@
     reindexRows();
     updateEmptyState();
   }
+
+  // --- Searchable Select Logic ---
+  function toggleDropdown(input) {
+    if (event) event.stopPropagation();
+    const container = input.closest('.searchable-select');
+    const dropdown = container.querySelector('.dropdown-menu');
+    const isHidden = dropdown.classList.contains('hidden');
+    
+    // Close all other dropdowns
+    document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.add('hidden'));
+    
+    if (isHidden) {
+      // Calculate position
+      const rect = input.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const dropdownHeight = 250; // max-h-60 is ~240px + padding
+      
+      if (spaceBelow < dropdownHeight && rect.top > dropdownHeight) {
+        dropdown.classList.remove('mt-1');
+        dropdown.classList.add('bottom-full', 'mb-1');
+      } else {
+        dropdown.classList.remove('bottom-full', 'mb-1');
+        dropdown.classList.add('mt-1');
+      }
+
+      dropdown.classList.remove('hidden');
+      const searchInput = dropdown.querySelector('.search-input');
+      searchInput.value = '';
+      searchInput.focus();
+      filterVariants(searchInput);
+    }
+  }
+
+  function filterVariants(searchInput) {
+    const term = searchInput.value.toLowerCase();
+    const options = searchInput.parentElement.nextElementSibling.querySelectorAll('.option-item');
+    options.forEach(opt => {
+      const label = opt.getAttribute('data-label').toLowerCase();
+      opt.classList.toggle('hidden', !label.includes(term));
+    });
+  }
+
+  function selectVariant(option) {
+    const id = option.getAttribute('data-id');
+    const label = option.getAttribute('data-label');
+    const container = option.closest('.searchable-select');
+    
+    container.querySelector('.variant-id-hidden').value = id;
+    container.querySelector('.select-display').value = label;
+    container.querySelector('.dropdown-menu').classList.add('hidden');
+  }
+
+  // Close dropdown on click outside
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.searchable-select')) {
+      document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.add('hidden'));
+    }
+  });
+
+  // Initialize selected labels on load
+  document.querySelectorAll('.searchable-select').forEach(container => {
+    const hiddenId = container.querySelector('.variant-id-hidden').value;
+    if (hiddenId) {
+      const option = container.querySelector(`.option-item[data-id="${hiddenId}"]`);
+      if (option) {
+        container.querySelector('.select-display').value = option.getAttribute('data-label');
+      }
+    }
+  });
 
   updateEmptyState();
 </script>

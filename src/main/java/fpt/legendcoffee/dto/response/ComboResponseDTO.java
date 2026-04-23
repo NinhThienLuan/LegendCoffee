@@ -24,6 +24,7 @@ public class ComboResponseDTO {
     private String imageUrl;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
+    private LocalDateTime createdAt;
     private Boolean active;
     private boolean availableNow;
     private List<ComboItemResponseDTO> items = new ArrayList<>();
