@@ -10,11 +10,6 @@ import fpt.legendcoffee.entity.ShippingInfo;
 import fpt.legendcoffee.entity.User;
 import fpt.legendcoffee.entity.enumeration.OrderStatus;
 import fpt.legendcoffee.entity.enumeration.PaymentStatus;
-import fpt.legendcoffee.repository.OrderItemRepository;
-import fpt.legendcoffee.repository.OrderRepository;
-import fpt.legendcoffee.repository.PaymentRepository;
-import fpt.legendcoffee.repository.ShippingInfoRepository;
-import fpt.legendcoffee.repository.UserRepository;
 import fpt.legendcoffee.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -54,8 +49,8 @@ public class OrderController {
 
     @GetMapping("/orders")
     public String orderPage(@RequestParam(required = false) String status,
-                            @RequestParam(required = false, defaultValue = "1") Integer page,
-                            Model model) {
+            @RequestParam(required = false, defaultValue = "1") Integer page,
+            Model model) {
         Optional<User> currentUser = getCurrentUser();
         if (currentUser.isEmpty()) {
             return "redirect:/login";
@@ -121,26 +116,30 @@ public class OrderController {
     }
 
     @PostMapping("/admin/orders/{orderId}/start-delivering")
-    public String startDelivering(@PathVariable Long orderId, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+    public String startDelivering(@PathVariable Long orderId, HttpServletRequest request,
+            RedirectAttributes redirectAttributes) {
         try {
             orderService.startDelivering(orderId);
-            redirectAttributes.addFlashAttribute("infoMessage", "Ghi chú hệ thống: Đơn hàng #" + orderId + " đã được chuyển sang trạng thái Đang giao hàng.");
+            redirectAttributes.addFlashAttribute("infoMessage",
+                    "Ghi chú hệ thống: Đơn hàng #" + orderId + " đã được chuyển sang trạng thái Đang giao hàng.");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Cập nhật thất bại: " + e.getMessage());
         }
-        
+
         return "redirect:/orders/" + orderId;
     }
 
     @PostMapping("/admin/orders/{orderId}/complete-delivery")
-    public String completeDelivery(@PathVariable Long orderId, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+    public String completeDelivery(@PathVariable Long orderId, HttpServletRequest request,
+            RedirectAttributes redirectAttributes) {
         try {
             orderService.completeDelivery(orderId);
-            redirectAttributes.addFlashAttribute("infoMessage", "Ghi chú hệ thống: Đã xác nhận hoàn thành đơn hàng #" + orderId + " (Khách đã nhận hàng).");
+            redirectAttributes.addFlashAttribute("infoMessage",
+                    "Ghi chú hệ thống: Đã xác nhận hoàn thành đơn hàng #" + orderId + " (Khách đã nhận hàng).");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Xác nhận thất bại: " + e.getMessage());
         }
-        
+
         return "redirect:/orders/" + orderId;
     }
 
@@ -164,7 +163,6 @@ public class OrderController {
         boolean isAdmin = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
-
         if (!isAdmin && (order.getUser() == null || !order.getUser().getId().equals(currentUser.get().getId()))) {
             redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền xem đơn hàng này.");
             return "redirect:/orders";
@@ -185,7 +183,7 @@ public class OrderController {
             model.addAttribute("orderItems", orderItems);
             model.addAttribute("shippingInfo", shippingInfo);
             model.addAttribute("shippingFee", shippingFee);
-            //model.addAttribute("vat", vat);
+            // model.addAttribute("vat", vat);
             model.addAttribute("totalAmount", totalAmount);
             model.addAttribute("orderId", orderId);
 
@@ -197,10 +195,14 @@ public class OrderController {
 
             // Fallback label based on internal order status
             String fallbackLabel = "Đang xử lý";
-            if (order.getStatus() == OrderStatus.PENDING) fallbackLabel = "Chờ thanh toán";
-            else if (order.getStatus() == OrderStatus.CONFIRMED) fallbackLabel = "Đã xác nhận";
-            else if (order.getStatus() == OrderStatus.CANCELLED) fallbackLabel = "Đã hủy";
-            else if (order.getStatus() == OrderStatus.COMPLETED) fallbackLabel = "Đã hoàn thành";
+            if (order.getStatus() == OrderStatus.PENDING)
+                fallbackLabel = "Chờ thanh toán";
+            else if (order.getStatus() == OrderStatus.CONFIRMED)
+                fallbackLabel = "Đã xác nhận";
+            else if (order.getStatus() == OrderStatus.CANCELLED)
+                fallbackLabel = "Đã hủy";
+            else if (order.getStatus() == OrderStatus.COMPLETED)
+                fallbackLabel = "Đã hoàn thành";
             model.addAttribute("orderStatusLabel", fallbackLabel);
 
             // Tích hợp dữ liệu tracking trực tiếp vào trang detail
