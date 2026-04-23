@@ -12,13 +12,13 @@
     <main class="pt-24 pb-20 px-8 sm:px-12 lg:px-20 max-w-7xl mx-auto">
 
         <!-- Error/Success Messages -->
-        <div th:if="${errorMessage}" 
-             class="mb-6 p-4 bg-error-container text-on-error-container rounded-lg border border-error/20 flex items-center gap-3">
+        <div th:if="${errorMessage}"
+            class="mb-6 p-4 bg-error-container text-on-error-container rounded-lg border border-error/20 flex items-center gap-3">
             <span class="material-symbols-outlined">report</span>
             <span th:text="${errorMessage}">Lỗi hệ thống</span>
         </div>
-        <div th:if="${successMessage}" 
-             class="mb-6 p-4 bg-secondary-container text-on-secondary-container rounded-lg border border-secondary/20 flex items-center gap-3">
+        <div th:if="${successMessage}"
+            class="mb-6 p-4 bg-secondary-container text-on-secondary-container rounded-lg border border-secondary/20 flex items-center gap-3">
             <span class="material-symbols-outlined">check_circle</span>
             <span th:text="${successMessage}">Thao tác thành công</span>
         </div>
@@ -27,7 +27,8 @@
         <header class="mb-12">
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                    <nav class="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-4">
+                    <nav
+                        class="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-4">
                         <a href="/" class="hover:text-primary transition-colors flex items-center gap-1">
                             <span class="material-symbols-outlined text-[14px]">home</span>
                             Trang chủ
@@ -35,7 +36,8 @@
                         <span class="material-symbols-outlined text-[10px]">arrow_forward_ios</span>
                         <a href="/orders" class="hover:text-primary transition-colors">Đơn hàng</a>
                         <span class="material-symbols-outlined text-[10px]">arrow_forward_ios</span>
-                        <span class="text-primary">#ORD-<span th:text="${order != null ? order.id : orderId}">1</span></span>
+                        <span class="text-primary">#ORD-<span
+                                th:text="${order != null ? order.id : orderId}">1</span></span>
                     </nav>
                     <h1 class="font-headline text-5xl font-black text-primary tracking-tighter mb-3">
                         #ORD-<span th:text="${order != null ? order.id : orderId}">1</span>
@@ -43,32 +45,34 @@
                     <div class="flex items-center gap-4 text-on-surface-variant">
                         <span class="flex items-center gap-1.5 text-sm font-medium">
                             <span class="material-symbols-outlined text-sm">calendar_today</span>
-                            <span th:text="${order != null && order.orderDate != null ? 'Đặt ngày ' + #temporals.format(order.orderDate, 'dd/MM/yyyy') : 'Ngày đặt: -'}">24/05/2024</span>
+                            <span
+                                th:text="${order != null && order.orderDate != null ? 'Đặt ngày ' + #temporals.format(order.orderDate, 'dd/MM/yyyy') : 'Ngày đặt: -'}">24/05/2024</span>
                         </span>
                         <span class="w-1 h-1 bg-outline-variant rounded-full"></span>
-                        <span class="text-sm font-bold uppercase tracking-widest px-3 py-1 bg-surface-container rounded-full"
-                              th:if="${orderStatus != null}" th:text="${orderStatus.statusLabel}">Chờ lấy hàng</span>
+                        <span
+                            class="text-sm font-bold uppercase tracking-widest px-3 py-1 bg-surface-container rounded-full"
+                            th:if="${orderStatus != null}" th:text="${orderStatus.statusLabel}">Chờ lấy hàng</span>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
-                    <a href="/" class="px-6 py-3 bg-surface-container-highest text-on-surface font-bold rounded-lg hover:bg-surface-container-high transition-all active:scale-95 text-sm uppercase tracking-widest">
+                    <a href="/"
+                        class="px-6 py-3 bg-surface-container-highest text-on-surface font-bold rounded-lg hover:bg-surface-container-high transition-all active:scale-95 text-sm uppercase tracking-widest">
                         Tiếp tục mua sắm
                     </a>
-                    
+
                     <!-- Continue Payment Button -->
-                    <a th:if="${paymentUrl != null}" th:href="${paymentUrl}" 
-                       class="px-6 py-3 bg-primary text-on-primary font-bold rounded-lg hover:bg-primary-container hover:text-on-primary-container transition-all active:scale-95 text-sm uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-primary/20">
+                    <a th:if="${paymentUrl != null}" th:href="${paymentUrl}"
+                        class="px-6 py-3 bg-primary text-on-primary font-bold rounded-lg hover:bg-primary-container hover:text-on-primary-container transition-all active:scale-95 text-sm uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-primary/20">
                         <span class="material-symbols-outlined text-sm">payments</span>
                         Tiếp tục thanh toán
                     </a>
-                    
+
                     <!-- Cancel Button -->
-                    <form th:if="${orderStatus != null and orderStatus.status == 'ready_to_pick'}" 
-                          th:action="@{/orders/{id}/cancel(id=${orderId})}" 
-                          method="post" 
-                          onsubmit="return confirm('Xác nhận huỷ đơn hàng này? Thao tác không thể hoàn tác.');">
-                        <button type="submit" 
-                                class="px-6 py-3 bg-error text-on-error font-bold rounded-lg hover:bg-error-container hover:text-on-error-container transition-all active:scale-95 text-sm uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-error/20">
+                    <form th:if="${orderStatus != null and orderStatus.status == 'ready_to_pick'}"
+                        th:action="@{/orders/{id}/cancel(id=${orderId})}" method="post"
+                        onsubmit="return confirm('Xác nhận huỷ đơn hàng này? Thao tác không thể hoàn tác.');">
+                        <button type="submit"
+                            class="px-6 py-3 bg-error text-on-error font-bold rounded-lg hover:bg-error-container hover:text-on-error-container transition-all active:scale-95 text-sm uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-error/20">
                             <span class="material-symbols-outlined text-sm">cancel</span>
                             Huỷ đơn hàng
                         </button>
@@ -78,17 +82,19 @@
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
-            
+
             <!-- Left Column: Tracking & Progress -->
             <div class="lg:col-span-8 space-y-10">
-                
+
                 <!-- Section: Delivery Progress Timeline -->
-                <section class="bg-surface-container-lowest p-8 md:p-10 rounded-2xl border border-outline-variant/10 shadow-sm relative overflow-hidden">
+                <section
+                    class="bg-surface-container-lowest p-8 md:p-10 rounded-2xl border border-outline-variant/10 shadow-sm relative overflow-hidden">
                     <div class="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
                         <span class="material-symbols-outlined text-9xl">local_shipping</span>
                     </div>
-                    
-                    <h2 class="font-headline text-xl font-black uppercase tracking-tight text-primary mb-6 flex items-center gap-3">
+
+                    <h2
+                        class="font-headline text-xl font-black uppercase tracking-tight text-primary mb-6 flex items-center gap-3">
                         <span class="p-2 bg-primary/10 rounded-lg">
                             <span class="material-symbols-outlined text-primary">route</span>
                         </span>
@@ -96,146 +102,194 @@
                     </h2>
 
                     <!-- GHN Meta Block -->
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 p-6 mb-10 bg-surface-container-low rounded-xl border border-outline-variant/10 z-10 relative">
+                    <div
+                        class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 p-6 mb-10 bg-surface-container-low rounded-xl border border-outline-variant/10 z-10 relative">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
                                 <span class="material-symbols-outlined text-primary">local_shipping</span>
                             </div>
                             <div>
-                                <p class="text-[10px] font-black uppercase tracking-tighter text-on-surface-variant">Vận chuyển bởi</p>
+                                <p class="text-[10px] font-black uppercase tracking-tighter text-on-surface-variant">Vận
+                                    chuyển bởi</p>
                                 <p class="font-black text-sm text-primary tracking-tight">Giao Hàng Nhanh (GHN)</p>
                             </div>
                         </div>
-                        <div class="px-5 py-3 bg-surface-container rounded-xl flex-grow sm:flex-grow-0 sm:min-w-[200px]">
-                            <span class="block text-[9px] font-black uppercase tracking-widest text-on-surface-variant mb-1">Mã vận đơn</span>
+                        <div
+                            class="px-5 py-3 bg-surface-container rounded-xl flex-grow sm:flex-grow-0 sm:min-w-[200px]">
+                            <span
+                                class="block text-[9px] font-black uppercase tracking-widest text-on-surface-variant mb-1">Mã
+                                vận đơn</span>
                             <div class="flex items-center justify-between gap-4">
-                                <code class="font-mono font-black text-lg text-primary tracking-wider" th:text="${orderStatus != null ? orderStatus.ghnOrderCode : 'Đang xử lý'}">GHN-CODE</code>
-                                <button type="button" class="w-8 h-8 rounded bg-surface hover:bg-surface-container-high flex items-center justify-center transition-colors shadow-sm" onclick="alert('Đã copy mã: ' + this.previousElementSibling.innerText)">
-                                    <span class="material-symbols-outlined text-sm text-on-surface-variant">content_copy</span>
+                                <code class="font-mono font-black text-lg text-primary tracking-wider"
+                                    th:text="${orderStatus != null ? orderStatus.ghnOrderCode : 'Đang xử lý'}">GHN-CODE</code>
+                                <button type="button"
+                                    class="w-8 h-8 rounded bg-surface hover:bg-surface-container-high flex items-center justify-center transition-colors shadow-sm"
+                                    onclick="alert('Đã copy mã: ' + this.previousElementSibling.innerText)">
+                                    <span
+                                        class="material-symbols-outlined text-sm text-on-surface-variant">content_copy</span>
                                 </button>
                             </div>
                         </div>
                     </div>
 
                     <!-- Timeline Logic -->
-                    <div th:if="${orderStatus != null and orderStatus.logs != null and !orderStatus.logs.isEmpty()}" class="relative pl-8 space-y-10 before:content-[''] before:absolute before:left-3 before:top-2 before:bottom-2 before:w-[2px] before:bg-outline-variant/30">
-                        
+                    <div th:if="${orderStatus != null and orderStatus.logs != null and !orderStatus.logs.isEmpty()}"
+                        class="relative pl-8 space-y-10 before:content-[''] before:absolute before:left-3 before:top-2 before:bottom-2 before:w-[2px] before:bg-outline-variant/30">
+
                         <div th:each="log, iter : ${orderStatus.logs}" class="relative group">
                             <!-- Indicator -->
-                            <div class="absolute -left-8 top-1 w-6 h-6 rounded-full border-4 border-surface bg-outline-variant group-first:bg-primary transition-colors z-10"></div>
-                            
+                            <div
+                                class="absolute -left-8 top-1 w-6 h-6 rounded-full border-4 border-surface bg-outline-variant group-first:bg-primary transition-colors z-10">
+                            </div>
+
                             <div class="space-y-1">
                                 <div class="flex items-center gap-3">
-                                    <span class="text-xs font-bold uppercase tracking-widest text-on-surface-variant group-first:text-primary" 
-                                          th:text="${#strings.replace(log.time, 'T', ' ')}">26/05/2024 10:45</span>
-                                    <span th:if="${iter.first}" class="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-black uppercase tracking-tighter rounded">Mới nhất</span>
+                                    <span
+                                        class="text-xs font-bold uppercase tracking-widest text-on-surface-variant group-first:text-primary"
+                                        th:text="${#strings.replace(log.time, 'T', ' ')}">26/05/2024 10:45</span>
+                                    <span th:if="${iter.first}"
+                                        class="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-black uppercase tracking-tighter rounded">Mới
+                                        nhất</span>
                                 </div>
-                                <p class="text-lg font-bold text-primary" th:text="${log.statusLabel}">Đang vận chuyển</p>
-                                <p class="text-sm text-on-surface-variant leading-relaxed italic" 
-                                   th:text="'Ghi chú hệ thống: ' + ${log.status}">Trạng thái hệ thống</p>
+                                <p class="text-lg font-bold text-primary" th:text="${log.statusLabel}">Đang vận chuyển
+                                </p>
+                                <p class="text-sm text-on-surface-variant leading-relaxed italic"
+                                    th:text="'Ghi chú hệ thống: ' + ${log.status}">Trạng thái hệ thống</p>
                             </div>
                         </div>
 
                     </div>
 
                     <!-- No Logs Scenario -->
-                    <div th:if="${orderStatus != null and (orderStatus.logs == null or orderStatus.logs.isEmpty())}" 
-                         class="p-12 text-center bg-surface-container-low rounded-xl border border-dashed border-outline-variant">
-                         <span class="material-symbols-outlined text-4xl text-on-surface-variant mb-4">inventory</span>
-                         <p class="text-on-surface-variant font-medium">Đơn hàng vừa được khởi tạo. Vui lòng chờ đối tác vận chuyển cập nhật lịch trình.</p>
+                    <div th:if="${orderStatus != null and (orderStatus.logs == null or orderStatus.logs.isEmpty())}"
+                        class="p-12 text-center bg-surface-container-low rounded-xl border border-dashed border-outline-variant">
+                        <span class="material-symbols-outlined text-4xl text-on-surface-variant mb-4">inventory</span>
+                        <p class="text-on-surface-variant font-medium">Đơn hàng vừa được khởi tạo. Vui lòng chờ đối tác
+                            vận chuyển cập nhật lịch trình.</p>
                     </div>
 
                     <!-- No OrderStatus Scenario -->
-                    <div th:if="${orderStatus == null}" 
-                         class="p-12 text-center bg-surface-container-low rounded-xl border border-dashed border-outline-variant">
-                         <span class="material-symbols-outlined text-4xl text-on-surface-variant mb-4">pending_actions</span>
-                         <p class="text-on-surface-variant font-medium">Thông tin vận chuyển đang được xử lý.</p>
+                    <div th:if="${orderStatus == null}"
+                        class="p-12 text-center bg-surface-container-low rounded-xl border border-dashed border-outline-variant">
+                        <span
+                            class="material-symbols-outlined text-4xl text-on-surface-variant mb-4">pending_actions</span>
+                        <p class="text-on-surface-variant font-medium">Thông tin vận chuyển đang được xử lý.</p>
                     </div>
                 </section>
 
                 <!-- Card: Recipient Info (Moved under timeline) -->
                 <div class="bg-surface-container-lowest p-8 rounded-2xl border border-outline-variant/10 shadow-sm">
                     <div class="flex items-center justify-between mb-8 border-b border-outline-variant/10 pb-6">
-                        <h3 class="font-headline text-lg font-black uppercase tracking-tight text-primary flex items-center gap-3">
+                        <h3
+                            class="font-headline text-lg font-black uppercase tracking-tight text-primary flex items-center gap-3">
                             <span class="p-2 bg-primary/10 rounded-lg">
                                 <span class="material-symbols-outlined text-primary">person_pin_circle</span>
                             </span>
                             Thông tin giao hàng
                         </h3>
                     </div>
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
                         <!-- Contact Info Block -->
-                        <div class="md:col-span-5 p-5 bg-surface-container-low rounded-xl border border-outline-variant/5 flex gap-4 transition-colors hover:bg-surface-container">
-                            <div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center flex-shrink-0">
+                        <div
+                            class="md:col-span-5 p-5 bg-surface-container-low rounded-xl border border-outline-variant/5 flex gap-4 transition-colors hover:bg-surface-container">
+                            <div
+                                class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center flex-shrink-0">
                                 <span class="material-symbols-outlined text-primary">person</span>
                             </div>
                             <div>
-                                <span class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-1">Người nhận</span>
-                                <p class="font-black text-primary text-xl tracking-tight" th:text="${orderStatus != null ? orderStatus.toName : (order != null ? order.user.username : 'Khách hàng')}">Fullname</p>
+                                <span
+                                    class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-1">Người
+                                    nhận</span>
+                                <p class="font-black text-primary text-xl tracking-tight"
+                                    th:text="${shippingInfo != null ? shippingInfo.recipientName : (order != null ? order.user.username : 'Khách hàng')}">
+                                    Fullname</p>
                                 <p class="text-sm font-bold text-on-surface-variant flex items-center gap-1 mt-1.5">
                                     <span class="material-symbols-outlined text-[14px]">call</span>
-                                    <span th:text="${orderStatus != null ? orderStatus.toPhone : (order != null ? order.user.phone : '')}">Phone</span>
+                                    <span
+                                        th:text="${shippingInfo != null ? shippingInfo.recipientPhone : (orderStatus != null ? orderStatus.toPhone : (order != null ? order.user.phone : ''))}">Phone</span>
                                 </p>
                             </div>
                         </div>
-                        
+
                         <!-- Address Info Block -->
-                        <div class="md:col-span-7 p-5 bg-surface-container-low rounded-xl border border-outline-variant/5 flex gap-4 transition-colors hover:bg-surface-container">
-                            <div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center flex-shrink-0">
+                        <div
+                            class="md:col-span-7 p-5 bg-surface-container-low rounded-xl border border-outline-variant/5 flex gap-4 transition-colors hover:bg-surface-container">
+                            <div
+                                class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center flex-shrink-0">
                                 <span class="material-symbols-outlined text-primary">location_on</span>
                             </div>
                             <div>
-                                <span class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-1">Địa chỉ</span>
-                                <p class="text-sm font-medium text-on-surface-variant leading-relaxed" 
-                                   th:text="${shippingInfo != null ? shippingInfo.recipientAddress + ', ' + shippingInfo.wardName + ', ' + shippingInfo.districtName + ', ' + shippingInfo.provinceName : (order != null ? order.user.address : 'N/A')}">Address</p>
+                                <span
+                                    class="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-1">Địa
+                                    chỉ</span>
+                                <p class="text-sm font-medium text-on-surface-variant leading-relaxed"
+                                    th:text="${shippingInfo != null ? shippingInfo.recipientAddress + ', ' + shippingInfo.wardName + ', ' + shippingInfo.districtName + ', ' + shippingInfo.provinceName : (orderStatus != null ? orderStatus.toAddress : (order != null ? order.user.address : 'N/A'))}">
+                                    Address</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Section: Order Items -->
-                <section class="bg-surface-container-low rounded-2xl overflow-hidden border border-outline-variant/10 shadow-sm">
+                <section
+                    class="bg-surface-container-low rounded-2xl overflow-hidden border border-outline-variant/10 shadow-sm">
                     <div class="p-8 border-b border-outline-variant/10 flex items-center justify-between">
-                        <h2 class="font-headline text-xl font-black uppercase tracking-tight text-primary">Sản phẩm cung ứng</h2>
-                        <span class="px-3 py-1 bg-primary text-on-primary text-xs font-black rounded-full" 
-                              th:text="${orderItems != null ? #lists.size(orderItems) + ' items' : '0 item'}">
+                        <h2 class="font-headline text-xl font-black uppercase tracking-tight text-primary">Sản phẩm cung
+                            ứng</h2>
+                        <span class="px-3 py-1 bg-primary text-on-primary text-xs font-black rounded-full"
+                            th:text="${orderItems != null ? #lists.size(orderItems) + ' items' : '0 item'}">
                             0 items
                         </span>
                     </div>
-                    
+
                     <div class="divide-y divide-outline-variant/10">
-                        <div th:each="item : ${orderItems}" class="p-8 flex flex-col sm:flex-row items-center gap-8 group hover:bg-surface-container transition-colors">
-                            <div class="w-24 h-24 rounded-xl bg-surface-container-highest overflow-hidden flex-shrink-0 flex items-center justify-center p-2 relative">
-                                <img th:if="${item.variant != null and item.variant.product != null and item.variant.product.imageUrl != null}" 
-                                     th:src="${item.variant.product.imageUrl}" class="w-full h-full object-cover rounded-md" alt="Product Image">
-                                <img th:if="${item.combo != null and item.combo.imageUrl != null}" 
-                                     th:src="${item.combo.imageUrl}" class="w-full h-full object-cover rounded-md" alt="Combo Image">
-                                <span th:if="${(item.variant == null or item.variant.product == null or item.variant.product.imageUrl == null) and (item.combo == null or item.combo.imageUrl == null)}" 
-                                      class="material-symbols-outlined text-on-surface-variant text-4xl">coffee_bean</span>
-                                <div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                            </div>
-                            <div class="flex-grow text-center sm:text-left">
-                                <h3 class="font-headline text-lg font-black text-primary leading-tight mb-2"
-                                    th:text="${item.variant != null ? (item.variant.product != null ? item.variant.product.name + ' - ' + item.variant.variantName : item.variant.variantName) : (item.combo != null ? item.combo.name : 'Combo Legend')}">
-                                    Product Name
-                                </h3>
-                                <div class="flex flex-wrap justify-center sm:justify-start gap-4 text-xs font-bold uppercase tracking-widest text-on-surface-variant">
-                                    <span class="flex items-center gap-1">
-                                        <span class="material-symbols-outlined text-sm">shopping_basket</span>
-                                        Số lượng: <span class="text-primary" th:text="${item.quantity}">0</span>
-                                    </span>
-                                    <span class="w-1 h-1 bg-outline-variant rounded-full mt-1.5"></span>
-                                    <span class="flex items-center gap-1">
-                                        <span class="material-symbols-outlined text-sm">sell</span>
-                                        Đơn giá: <span class="text-primary" th:text="${#numbers.formatDecimal(item.unitPrice, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0 ₫</span>
-                                    </span>
+                        <div th:each="item : ${orderItems}"
+                            class="p-8 flex flex-col sm:flex-row gap-8 bg-surface-container-lowest group hover:bg-surface-container-low transition-colors duration-300">
+                            <!-- Image block -->
+                            <div
+                                class="w-full sm:w-48 h-48 flex-shrink-0 overflow-hidden rounded-md bg-stone-100 relative">
+                                <img th:if="${item.variant != null and item.variant.product != null and item.variant.product.imageUrl != null}"
+                                    th:src="${item.variant.product.imageUrl}"
+                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                    alt="Product Image">
+                                <img th:if="${item.combo != null and item.combo.imageUrl != null}"
+                                    th:src="${item.combo.imageUrl}"
+                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                    alt="Combo Image">
+                                <span
+                                    th:if="${(item.variant == null or item.variant.product == null or item.variant.product.imageUrl == null) and (item.combo == null or item.combo.imageUrl == null)}"
+                                    class="w-full h-full flex items-center justify-center bg-surface-container-highest">
+                                    <span
+                                        class="material-symbols-outlined text-on-surface-variant text-4xl">coffee_bean</span>
+                                </span>
+                                <div
+                                    class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity">
                                 </div>
                             </div>
-                            <div class="flex flex-col items-center sm:items-end flex-shrink-0">
-                                <span class="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant mb-1">Thành tiền</span>
-                                <p class="font-headline text-2xl font-black text-primary"
-                                   th:text="${#numbers.formatDecimal(item.totalAmount, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0 ₫</p>
+
+                            <!-- Content block -->
+                            <div class="flex-1 flex flex-col justify-start pt-2">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h3 class="text-xl font-bold text-primary"
+                                        th:text="${item.variant != null ? (item.variant.product != null ? item.variant.product.name : 'Sản phẩm') : (item.combo != null ? item.combo.name : 'Combo Legend')}">
+                                        Product Name
+                                    </h3>
+                                    <p class="text-xl font-extrabold text-primary"
+                                        th:text="${#numbers.formatDecimal(item.totalAmount, 0, 'COMMA', 0, 'POINT') + ' ₫'}">
+                                        0 ₫
+                                    </p>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm font-bold tracking-widest text-on-surface-variant uppercase"
+                                        th:text="${item.variant != null ? item.variant.variantName : 'Gói Combo'}">
+                                        Variant
+                                    </span>
+                                    <p class="text-sm font-medium text-on-surface-variant"
+                                        th:text="${#numbers.formatDecimal(item.unitPrice, 0, 'COMMA', 0, 'POINT') + ' ₫ x ' + item.quantity}">
+                                        Price x Quantity
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -244,48 +298,89 @@
 
             <!-- Right Column: Details & Summary -->
             <div class="lg:col-span-4 relative">
-                
+
                 <div class="sticky top-28 space-y-10">
-                    <!-- Card: Financial Summary -->
-                    <div class="bg-primary text-on-primary p-10 rounded-2xl shadow-2xl relative overflow-hidden group">
-                    <!-- Dynamic Accent -->
-                    <div class="absolute -right-20 -top-20 w-64 h-64 bg-white/5 rounded-full blur-[100px] group-hover:bg-white/10 transition-all duration-700"></div>
-                    
-                    <h3 class="font-headline text-lg font-black uppercase tracking-widest mb-10 relative z-10">Tài chính</h3>
-                    
-                    <div class="space-y-6 relative z-10">
-                        <div class="flex justify-between items-center text-xs font-bold uppercase tracking-widest text-on-primary/60">
-                            <span>Giá trị hàng hóa</span>
-                            <span th:text="${#numbers.formatDecimal(order != null && order.subTotal != null ? order.subTotal : 0, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0 ₫</span>
-                        </div>
-                        <div class="flex justify-between items-center text-xs font-bold uppercase tracking-widest text-on-primary/60">
-                            <span>Phí vận chuyển</span>
-                            <span th:text="${#numbers.formatDecimal(shippingFee != null ? shippingFee : 0, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0 ₫</span>
-                        </div>
-                        <div th:if="${order != null && order.discount != null && order.discount > 0}" class="flex justify-between items-center text-xs font-bold uppercase tracking-widest text-on-primary/60">
-                            <span>Giảm giá</span>
-                            <span th:text="${'-' + #numbers.formatDecimal(order.discount, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0 ₫</span>
-                        </div>
-                        
-                        <div class="pt-8 border-t border-white/10">
-                            <span class="block text-[10px] font-black uppercase tracking-[0.3em] text-on-primary/40 mb-3">Tổng cộng thanh toán</span>
-                            <div class="flex justify-between items-end">
-                                <span class="material-symbols-outlined text-4xl opacity-20">receipt_long</span>
-                                <span class="text-5xl font-black tracking-tighter"
-                                      th:text="${#numbers.formatDecimal(totalAmount != null ? totalAmount : 0, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0 ₫</span>
+                    <!-- Mini Items List (Standardized with Cart/Checkout) -->
+                    <div
+                        class="bg-surface-container-lowest p-8 rounded-2xl border border-outline-variant/10 shadow-sm relative overflow-hidden">
+                        <h3
+                            class="text-xs font-bold uppercase tracking-[0.2em] text-on-surface-variant mb-6 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-sm">inventory_2</span>
+                            Danh mục tóm tắt
+                        </h3>
+
+                        <div
+                            class="space-y-4 mb-8 max-h-[300px] overflow-y-auto pr-2 border-b border-outline-variant/10 pb-6 custom-scrollbar">
+                            <div th:each="item : ${orderItems}" class="space-y-1">
+                                <div class="flex justify-between items-center">
+                                    <p class="text-sm font-bold text-primary truncate pr-4"
+                                        th:text="${item.variant != null ? (item.variant.product != null ? item.variant.product.name : 'Sản phẩm') : (item.combo != null ? item.combo.name : 'Combo Legend')}">
+                                        Product Name</p>
+                                    <p class="text-sm font-black text-primary"
+                                        th:text="${#numbers.formatDecimal(item.totalAmount, 0, 'COMMA', 0, 'POINT') + ' ₫'}">
+                                        0 ₫</p>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <p class="text-[10px] text-on-surface-variant uppercase font-medium line-clamp-1"
+                                        th:text="${item.variant != null ? item.variant.variantName : 'Gói Combo'}">
+                                        Variant</p>
+                                    <p class="text-[10px] text-on-surface-variant font-bold"
+                                        th:text="${#numbers.formatDecimal(item.unitPrice, 0, 'COMMA', 0, 'POINT') + ' ₫ x ' + item.quantity}">
+                                        Price x Quantity</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div class="mt-8 pt-8 border-t border-white/10 flex items-center gap-4 group/support cursor-pointer">
-                        <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center group-hover/support:bg-white/20 transition-colors">
-                            <span class="material-symbols-outlined text-sm">support_agent</span>
+
+                        <!-- Card: Financial Summary -->
+                        <div class="space-y-6">
+                            <div class="flex justify-between items-center pb-4 border-b border-outline-variant/20">
+                                <span class="text-on-surface-variant font-medium text-sm"
+                                    th:text="${'Tạm tính (' + (orderItems != null ? #lists.size(orderItems) : 0) + ' món)'}">Tạm
+                                    tính (0 món)</span>
+                                <span class="font-bold text-primary"
+                                    th:text="${#numbers.formatDecimal(order != null && order.subTotal != null ? order.subTotal : 0, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0
+                                    ₫</span>
+                            </div>
+
+                            <div th:if="${order != null && order.discount != null && order.discount > 0}"
+                                class="flex justify-between items-center text-[#ff3333] pb-4 border-b border-outline-variant/20">
+                                <span class="font-medium text-sm">Giảm giá</span>
+                                <span class="font-bold text-sm"
+                                    th:text="${'-' + #numbers.formatDecimal(order.discount, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0
+                                    ₫</span>
+                            </div>
+
+                            <div class="flex justify-between items-center text-[#ff3333]">
+                                <span class="font-medium text-sm">Phí vận chuyển</span>
+                                <span class="font-bold text-sm uppercase"
+                                    th:text="${#numbers.formatDecimal(shippingFee != null ? shippingFee : 0, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0
+                                    ₫</span>
+                            </div>
+
+                            <div class="pt-6 border-t border-primary/10">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-lg font-bold text-primary uppercase font-headline">Tổng
+                                        cộng</span>
+                                    <div class="text-right">
+                                        <p class="text-3xl font-black text-primary leading-none font-headline"
+                                            th:text="${#numbers.formatDecimal(totalAmount != null ? totalAmount : 0, 0, 'COMMA', 0, 'POINT') + ' ₫'}">
+                                            0 ₫</p>
+
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <p class="text-[10px] font-bold uppercase tracking-widest leading-relaxed text-on-primary/70">
-                            Cần hỗ trợ về tài chính?<br/><span class="text-white">Hotline: 1900 xxxx</span>
-                        </p>
+
+                        <div class="mt-10 pt-8 border-t border-outline-variant/10 flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-sm text-primary">support_agent</span>
+                            </div>
+                            <p
+                                class="text-[10px] font-bold uppercase tracking-widest leading-relaxed text-on-surface-variant">
+                                Cần hỗ trợ về tài chính?<br /><span class="text-primary">Hotline: 1900 xxxx</span>
+                            </p>
+                        </div>
                     </div>
-                </div>
                 </div> <!-- End sticky wrapper -->
 
             </div>

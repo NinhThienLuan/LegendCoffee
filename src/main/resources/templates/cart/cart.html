@@ -56,6 +56,12 @@
                 <h2 class="text-xl font-extrabold tracking-tight text-primary mb-8 uppercase font-headline">Thanh toán
                 </h2>
 
+                <!-- Sidebar Item List -->
+                <div id="sidebar-cart-items"
+                    class="space-y-4 mb-8 max-h-[300px] overflow-y-auto pr-2 border-b border-outline-variant/10 pb-6 custom-scrollbar">
+                    <!-- Mini items will be injected here -->
+                </div>
+
                 <div class="space-y-6">
                     <div class="flex justify-between items-center pb-4 border-b border-outline-variant/20">
                         <span id="subtotal-label" class="text-on-surface-variant font-medium text-sm">Tạm tính (0
@@ -63,10 +69,10 @@
                         <span id="subtotal-price" class="font-bold text-primary">0 ₫</span>
                     </div>
 
-                    <div class="flex justify-between items-center">
-                        <span class="text-on-surface-variant font-medium text-sm">Vận chuyển</span>
-                        <span id="shipping-price" class="font-bold text-primary text-xs uppercase">Tính toán ở bước
-                            sau</span>
+
+                    <div class="flex justify-between items-center text-[#ff3333]">
+                        <span class="font-medium text-sm">Vận chuyển</span>
+                        <span id="shipping-price" class="font-bold text-xs uppercase">Tính toán ở bước sau</span>
                     </div>
 
                     <div class="pt-6 border-t border-primary/10">
@@ -124,12 +130,15 @@
                         <div class="flex-1 flex flex-col justify-between">
                             <div>
                                 <div class="flex justify-between items-start mb-4">
-                                    <div>
-                                        <h3 class="text-xl font-bold text-primary mb-1">${item.name}</h3>
-                                        <span class="text-xs font-bold tracking-widest text-on-surface-variant uppercase">${item.comboId ? 'Gói Combo' : item.variant}</span>
-                                    </div>
-                                    <div class="text-right">
-                                        <p class="text-xl font-extrabold text-primary">${formatCurrency(item.price)}</p>
+                                    <div class="w-full">
+                                        <div class="flex justify-between items-center mb-1">
+                                            <h3 class="text-xl font-bold text-primary">${item.name}</h3>
+                                            <p class="text-xl font-extrabold text-primary">${formatCurrency(item.price * item.quantity)}</p>
+                                        </div>
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-sm font-bold tracking-widest text-on-surface-variant uppercase">${item.comboId ? 'Gói Combo' : item.variant}</span>
+                                            <p class="text-sm font-medium text-on-surface-variant">${formatCurrency(item.price)} x ${item.quantity}</p>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-3 gap-4 mb-6">
@@ -174,12 +183,42 @@
                 const cart = window.CartSystem.getCart();
                 const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-                document.getElementById('subtotal-label').innerText = `Tạm tính (${totalItems})`;
-                document.getElementById('cart-count-header').innerText = totalItems;
-                document.getElementById('subtotal-price').innerText = formatCurrency(totals.subtotal);
-                // Shipping is displayed as text "Tính toán ở bước sau" in HTML by default or updated here
-                document.getElementById('shipping-price').innerText = totals.subtotal > 0 ? 'Tính toán ở bước sau' : '0 ₫';
-                document.getElementById('total-price').innerText = formatCurrency(totals.total);
+                // Update totals labels
+                const subtotalLabel = document.getElementById('subtotal-label');
+                if (subtotalLabel) subtotalLabel.innerText = `Tạm tính (${totalItems} món)`;
+
+                const cartCountHeader = document.getElementById('cart-count-header');
+                if (cartCountHeader) cartCountHeader.innerText = totalItems;
+
+                const subtotalPrice = document.getElementById('subtotal-price');
+                if (subtotalPrice) subtotalPrice.innerText = formatCurrency(totals.subtotal);
+
+                const shippingPrice = document.getElementById('shipping-price');
+                if (shippingPrice) shippingPrice.innerText = totals.subtotal > 0 ? 'Tính toán ở bước sau' : '0 ₫';
+
+                const totalPrice = document.getElementById('total-price');
+                if (totalPrice) totalPrice.innerText = formatCurrency(totals.total);
+
+                // Update Sidebar Item List
+                const sidebarContainer = document.getElementById('sidebar-cart-items');
+                if (sidebarContainer) {
+                    if (cart.length === 0) {
+                        sidebarContainer.innerHTML = '<p class="text-xs text-on-surface-variant/60 italic">Chưa có sản phẩm nào</p>';
+                    } else {
+                        sidebarContainer.innerHTML = cart.map(item => `
+                            <div class="space-y-1">
+                                <div class="flex justify-between items-center">
+                                    <p class="text-sm font-bold text-primary truncate pr-4">${item.name}</p>
+                                    <p class="text-sm font-black text-primary">${formatCurrency(item.price * item.quantity)}</p>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <p class="text-[10px] text-on-surface-variant uppercase font-medium line-clamp-1">${item.comboId ? 'Gói Combo' : item.variant}</p>
+                                    <p class="text-[10px] text-on-surface-variant font-bold">${formatCurrency(item.price)} x ${item.quantity}</p>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                }
             }
 
             window.addEventListener('load', renderCartItems);

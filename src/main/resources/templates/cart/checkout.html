@@ -62,9 +62,9 @@
                 để đảm bảo quy trình logistics vận tải công nghiệp diễn ra đúng tiến độ.</p>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+        <div class="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
             <!-- Left Column: Form Content -->
-            <div class="lg:col-span-8 space-y-12">
+            <div class="flex-1 min-w-0 space-y-12">
                 <!-- Checkout Form -->
                 <form id="checkout-form" th:action="@{/checkout/place-order}" th:object="${checkoutRequest}"
                     method="post" class="space-y-10">
@@ -184,49 +184,30 @@
                         </h3>
                         <div class="grid grid-cols-1">
                             <label
-                                class="relative flex items-center p-6 bg-surface-container-lowest border-2 border-primary rounded-xl cursor-pointer hover:bg-white hover:shadow-md transition-all group">
-                                <input type="radio" th:field="*{paymentTypeId}" value="1" checked
-                                    class="w-5 h-5 text-primary border-outline-variant focus:ring-0" />
-                                <div class="ml-4">
-                                    <span class="block font-black text-primary uppercase text-xs tracking-tight">Cổng
-                                        thanh toán điện tử (VNPay)</span>
-                                    <span
-                                        class="block text-[9px] text-on-surface-variant font-bold uppercase mt-1 tracking-widest">Thanh
-                                        toán an toàn qua ATM / QR Code / Visa / Master Card</span>
+                                class="relative flex items-center p-6 bg-surface-container-lowest border-2 border-primary rounded-xl transition-all group">
+                                <input type="radio" th:field="*{paymentTypeId}" value="1" checked class="hidden" />
+                                <div class="flex items-center gap-3">
+                                    <div
+                                        class="w-5 h-5 rounded-full border-4 border-primary bg-primary flex items-center justify-center">
+                                        <div class="w-1.5 h-1.5 bg-on-primary rounded-full"></div>
+                                    </div>
+                                    <div>
+                                        <span
+                                            class="block font-black text-primary uppercase text-xs tracking-tight">Cổng
+                                            thanh toán điện tử (VNPay)</span>
+                                        <span
+                                            class="block text-[9px] text-on-surface-variant font-bold uppercase mt-1 tracking-widest">Thanh
+                                            toán an toàn qua ATM / QR Code / Visa / Master Card</span>
+                                    </div>
                                 </div>
                                 <div class="ml-auto flex items-center gap-2">
-                                    <img src="https://vnpay.vn/wp-content/uploads/2020/07/Logo-VNPAYQR.png" alt="VNPay"
-                                        class="h-4 grayscale group-hover:grayscale-0 transition-all" />
+                                    <img src="https://vinadesign.vn/uploads/images/2023/05/vnpay-logo-vinadesign-25-12-57-55.jpg"
+                                        alt="VNPay" class="h-6 transition-all" />
                                 </div>
                             </label>
                         </div>
                     </section>
 
-                    <!-- Discount Code Section -->
-                    <section class="p-8 bg-surface-container-low rounded-2xl space-y-6 transition-all hover:shadow-sm">
-                        <h3
-                            class="text-xs font-black text-primary flex items-center gap-3 uppercase tracking-[0.25em] font-label">
-                            <span class="material-symbols-outlined text-lg">sell</span>
-                            MÃ ƯU ĐÃI & ĐỐI TÁC
-                        </h3>
-                        <div class="flex flex-col md:flex-row gap-4">
-                            <div
-                                class="flex-grow p-1 bg-surface-container-lowest rounded-xl border border-outline-variant/10 focus-within:border-primary/30 transition-all shadow-inner">
-                                <input
-                                    class="w-full bg-transparent border-none text-xs font-bold p-4 focus:ring-0 placeholder:text-on-surface-variant/30 uppercase tracking-widest"
-                                    placeholder="IE-PARTNER-2024" type="text" />
-                            </div>
-                            <button type="button"
-                                class="bg-primary text-on-primary px-10 py-4 text-[10px] font-black uppercase tracking-[0.25em] rounded-xl hover:bg-primary-container active:scale-95 transition-all shadow-xl shadow-primary/10 font-label">
-                                Áp dụng mã
-                            </button>
-                        </div>
-                        <p
-                            class="text-[9px] text-on-surface-variant/60 font-bold uppercase tracking-widest mt-2 flex items-center gap-2">
-                            <span class="material-symbols-outlined text-xs">info</span>
-                            Nhập mã ưu đãi của đối tác hoặc thẻ thành viên để nhận chiết khấu.
-                        </p>
-                    </section>
                     <!-- Navigation Buttons -->
                     <div class="flex items-center pt-12 border-t border-outline-variant/10">
                         <button type="button"
@@ -243,47 +224,45 @@
             </div> <!-- End lg:col-span-8 -->
 
             <!-- Right Column: Order Summary -->
-            <aside class="lg:col-span-4 sticky top-32">
-                <div
-                    class="bg-surface-container-low p-8 rounded-2xl space-y-10 border border-outline-variant/10 shadow-sm">
-                    <h2 class="text-xs font-black text-primary uppercase tracking-[0.3em] font-headline">Tóm tắt đơn
-                        hàng</h2>
-                    <!-- Item List (Compact) -->
-                    <div id="checkout-items-summary" class="space-y-6">
-                        <!-- Dynamic items from cart will be injected here -->
-                    </div>
-                    <!-- Calculation -->
-                    <div class="space-y-4 pt-10 border-t border-outline-variant/20">
-                        <div class="flex justify-between text-[11px]">
-                            <span class="text-on-surface-variant uppercase tracking-[0.15em] font-medium">Giá tạm
-                                tính</span>
-                            <span id="summary-subtotal" class="font-black text-primary">0 ₫</span>
-                        </div>
-                        <div class="flex justify-between text-[11px]">
-                            <span class="text-on-surface-variant uppercase tracking-[0.15em] font-medium">Vận chuyển
-                                quốc nội</span>
-                            <span id="summary-shipping" class="font-black text-primary uppercase tracking-tighter">Tự
-                                động tính</span>
-                        </div>
-                        <div class="flex justify-between items-end pt-8 border-t-2 border-primary/30">
-                            <div class="flex flex-col gap-1">
-                                <span
-                                    class="text-primary font-black uppercase tracking-[0.3em] text-[10px] font-headline">Tổng
-                                    cộng</span>
-                            </div>
-                            <div class="text-right">
-                                <span id="summary-total"
-                                    class="text-4xl font-black text-primary font-headline tracking-tighter leading-none">0
-                                    ₫</span>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Submit Button -->
-                    <button type="submit" form="checkout-form"
-                        class="w-full bg-primary text-on-primary py-5 rounded-xl font-black uppercase tracking-[0.2em] text-xs hover:bg-primary-container active:scale-95 transition-all shadow-xl shadow-primary/10 font-label">
-                        Tiếp tục Thanh toán
-                    </button>
+            <aside class="w-full lg:w-[420px] sticky top-32">
+                <div class="bg-surface-container-low p-8 rounded-2xl border border-outline-variant/10 shadow-sm">
+                    <h2 class="text-xl font-extrabold tracking-tight text-primary mb-8 uppercase font-headline">Tóm tắt
+                        đơn hàng</h2>
 
+                    <!-- Sidebar Item List -->
+                    <div id="checkout-items-summary"
+                        class="space-y-4 mb-8 max-h-[400px] overflow-y-auto pr-2 border-b border-outline-variant/10 pb-6 custom-scrollbar">
+                        <!-- Mini items will be injected here -->
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="flex justify-between items-center pb-4 border-b border-outline-variant/20">
+                            <span id="summary-subtotal-label" class="text-on-surface-variant font-medium text-sm">Tạm
+                                tính (0 món)</span>
+                            <span id="summary-subtotal" class="font-bold text-primary">0 ₫</span>
+                        </div>
+
+                        <div class="flex justify-between items-center text-[#ff3333]">
+                            <span class="font-medium text-sm">Phí vận chuyển</span>
+                            <span id="summary-shipping" class="font-bold text-xs uppercase text-right">Tự động
+                                tính</span>
+                        </div>
+
+                        <div class="pt-6 border-t border-primary/10">
+                            <div class="flex justify-between items-center mb-8">
+                                <span class="text-lg font-bold text-primary uppercase font-headline">Tổng cộng</span>
+                                <div class="text-right">
+                                    <p id="summary-total"
+                                        class="text-3xl font-black text-primary leading-none font-headline">0 ₫</p>
+                                </div>
+                            </div>
+
+                            <button type="submit" form="checkout-form"
+                                class="w-full bg-primary text-on-primary py-5 rounded-xl font-black uppercase tracking-[0.2em] text-xs hover:bg-primary-container active:scale-95 transition-all shadow-xl shadow-primary/10 font-label">
+                                Tiếp tục Thanh toán
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </aside>
         </div> <!-- End Grid -->
@@ -315,7 +294,7 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             // Display server-side error message if exists
-            const serverError = [[${errorMessage}]];
+            const serverError = [[${ errorMessage }]];
             if (serverError) {
                 showToast(serverError);
             }
@@ -371,10 +350,10 @@
             if (checkoutForm) {
                 checkoutForm.addEventListener('submit', function (e) {
                     const latestCart = window.CartSystem ? window.CartSystem.getCart() : [];
-                    
+
                     // 1. Client-side validation using values from Backend
-                    const MAX_ITEM_QTY = [[${maxItemQty}]];
-                    const MAX_TOTAL_QTY = [[${maxTotalQty}]];
+                    const MAX_ITEM_QTY = [[${ maxItemQty }]];
+                    const MAX_TOTAL_QTY = [[${ maxTotalQty }]];
                     let totalQty = 0;
                     let hasExceededItemLimit = false;
 
@@ -399,9 +378,9 @@
                         showToast('Vui lòng chọn dịch vụ vận chuyển để tiếp tục.');
                         return;
                     }
-                    
+
                     bindCheckoutItems(latestCart);
-                    
+
                     // Đánh dấu đơn hàng đang được xử lý để xoá giỏ hàng ở trang tiếp theo
                     sessionStorage.setItem('orderInProgress', 'true');
                 });
@@ -511,7 +490,7 @@
 
                     const response = await fetch('/api/shipping/options', {
                         method: 'POST',
-                        headers: { 
+                        headers: {
                             'Content-Type': 'application/json',
                             [csrfHeader]: csrfToken
                         },
@@ -587,41 +566,43 @@
                 if (!container) return;
 
                 if (cart.length === 0) {
-                    container.innerHTML = '<p class="text-center text-on-surface-variant italic py-4">Giỏ hàng trống</p>';
-                    return;
-                }
-
-                container.innerHTML = cart.map(item => `
-                    <div class="flex gap-4 items-center">
-                        <div class="relative w-12 h-12 bg-surface-container-highest rounded-lg flex-shrink-0 transition-transform hover:scale-105 duration-300">
-                            <img src="${item.image}" class="w-full h-full object-cover rounded-lg shadow-sm" />
-                            <span class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-primary text-on-primary text-[9px] font-black rounded-full flex items-center justify-center shadow-lg ring-2 ring-surface z-10 font-label">
-                                ${item.quantity}
-                            </span>
-                        </div>
-                        <div class="flex-grow min-w-0">
-                            <h4 class="text-[13px] font-black text-primary uppercase leading-tight tracking-tight truncate font-headline">${item.name}</h4>
-                            <div class="flex justify-between items-center mt-1">
-                                <p class="text-[10px] text-on-surface-variant font-black uppercase tracking-[0.15em] font-label leading-none">
-                                    ${item.variant || 'Standard'} — <span class="text-primary font-black">${formatCurrency(item.price * item.quantity)}</span>
-                                </p>
+                    container.innerHTML = '<p class="text-[10px] text-on-surface-variant/60 italic">Giỏ hàng trống</p>';
+                } else {
+                    container.innerHTML = cart.map(item => `
+                        <div class="space-y-1">
+                            <div class="flex justify-between items-center">
+                                <p class="text-sm font-bold text-primary truncate pr-4">${item.name}</p>
+                                <p class="text-sm font-black text-primary">${formatCurrency(item.price * item.quantity)}</p>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <p class="text-[10px] text-on-surface-variant uppercase font-medium line-clamp-1">${item.comboId ? 'Gói Combo' : item.variant}</p>
+                                <p class="text-[10px] text-on-surface-variant font-bold">${formatCurrency(item.price)} x ${item.quantity}</p>
                             </div>
                         </div>
-                    </div>
-                `).join('');
-
-                const totals = window.CartSystem.calculateTotals();
+                    `).join('');
+                }
                 updateFinalSummary(0);
             }
 
             function updateFinalSummary(shippingFee) {
                 const baseTotals = window.CartSystem.calculateTotals();
+                const cart = window.CartSystem.getCart();
+                const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+
                 const subtotal = baseTotals.subtotal;
                 const total = subtotal + shippingFee;
 
-                document.getElementById('summary-subtotal').textContent = formatCurrency(subtotal);
-                document.getElementById('summary-shipping').textContent = shippingFee > 0 ? formatCurrency(shippingFee) : 'Chưa tính';
-                document.getElementById('summary-total').textContent = formatCurrency(total);
+                const subtotalLabel = document.getElementById('summary-subtotal-label');
+                if (subtotalLabel) subtotalLabel.innerText = `Tạm tính (${totalItems} món)`;
+
+                const subtotalPrice = document.getElementById('summary-subtotal');
+                if (subtotalPrice) subtotalPrice.innerText = formatCurrency(subtotal);
+
+                const shippingPrice = document.getElementById('summary-shipping');
+                if (shippingPrice) shippingPrice.innerText = shippingFee > 0 ? formatCurrency(shippingFee) : 'Tự động tính';
+
+                const totalPrice = document.getElementById('summary-total');
+                if (totalPrice) totalPrice.innerText = formatCurrency(total);
             }
 
             function bindCheckoutItems(cart) {
