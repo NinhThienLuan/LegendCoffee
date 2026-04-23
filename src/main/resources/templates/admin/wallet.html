@@ -38,14 +38,14 @@
                         <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Yêu cầu
                             chờ duyệt</p>
                         <p class="text-3xl font-black text-amber-600 font-manrope"
-                            th:text="${#lists.size(withdrawalRequests.?[status == T(fpt.legendcoffee.entity.enumeration.WithdrawalStatus).PENDING])}">
+                            th:text="${#lists.size(withdrawalRequests.?[status.name() == 'PENDING'])}">
                             0</p>
                     </div>
                     <div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10">
                         <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Tổng
                             tiền chờ rút</p>
                         <p class="text-3xl font-black text-on-surface font-manrope"
-                            th:text="${#numbers.formatDecimal(#aggregates.sum(withdrawalRequests.?[status == T(fpt.legendcoffee.entity.enumeration.WithdrawalStatus).PENDING].![amount]) ?: 0, 0, 'COMMA', 0, 'POINT')} + ' ₫'">
+                            th:text="${#numbers.formatDecimal(#aggregates.sum(withdrawalRequests.?[status.name() == 'PENDING'].![amount]) ?: 0, 0, 'COMMA', 0, 'POINT')} + ' ₫'">
                             0 ₫</p>
                     </div>
                 </section>
@@ -102,16 +102,13 @@
                                         th:text="${#temporals.format(req.createdAt, 'dd/MM/yyyy HH:mm')}"></p>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <span
-                                        th:if="${req.status == T(fpt.legendcoffee.entity.enumeration.WithdrawalStatus).PENDING}"
+                                    <span th:if="${req.status.name() == 'PENDING'}"
                                         class="px-2 py-1 bg-amber-100 text-amber-700 text-[10px] font-bold uppercase rounded">Chờ
                                         duyệt</span>
-                                    <span
-                                        th:if="${req.status == T(fpt.legendcoffee.entity.enumeration.WithdrawalStatus).APPROVED}"
+                                    <span th:if="${req.status.name() == 'APPROVED'}"
                                         class="px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold uppercase rounded">Hoàn
                                         thành</span>
-                                    <span
-                                        th:if="${req.status == T(fpt.legendcoffee.entity.enumeration.WithdrawalStatus).REJECTED}"
+                                    <span th:if="${req.status.name() == 'REJECTED'}"
                                         class="px-2 py-1 bg-red-100 text-red-700 text-[10px] font-bold uppercase rounded group/reason relative cursor-help">
                                         Từ chối
                                         <!-- Tooltip for reject reason -->
@@ -121,23 +118,23 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-right">
-                                    <div th:if="${req.status == T(fpt.legendcoffee.entity.enumeration.WithdrawalStatus).PENDING}"
+                                    <div th:if="${req.status.name() == 'PENDING'}"
                                         class="flex items-center justify-end gap-2">
                                         <form th:action="@{/admin/withdrawals/{id}/approve(id=${req.id})}" method="POST"
                                             onsubmit="return confirm('Bạn có chắc chắn muốn duyệt yêu cầu rút tiền này?')">
                                             <button type="submit"
-                                                class="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                                                class="h-9 w-9 flex items-center justify-center text-green-600 hover:bg-green-50 rounded-full border border-green-200 transition-all active:scale-90"
                                                 title="Duyệt">
-                                                <span class="material-symbols-outlined text-lg">check_circle</span>
+                                                <span class="material-symbols-outlined text-[20px]">check_circle</span>
                                             </button>
                                         </form>
-                                        <button class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                        <button
+                                            class="h-9 w-9 flex items-center justify-center text-red-600 hover:bg-red-50 rounded-full border border-red-200 transition-all active:scale-90"
                                             title="Từ chối" th:onclick="'openRejectModal(' + ${req.id} + ')'">
-                                            <span class="material-symbols-outlined text-lg">cancel</span>
+                                            <span class="material-symbols-outlined text-[20px]">cancel</span>
                                         </button>
                                     </div>
-                                    <span
-                                        th:unless="${req.status == T(fpt.legendcoffee.entity.enumeration.WithdrawalStatus).PENDING}"
+                                    <span th:unless="${req.status.name() == 'PENDING'}"
                                         class="text-[10px] font-bold text-on-surface-variant/40"
                                         th:text="${req.processedAt != null ? #temporals.format(req.processedAt, 'HH:mm dd/MM') : ''}"></span>
                                 </td>
@@ -157,6 +154,9 @@
             <p class="text-xs text-on-surface-variant mb-6 uppercase tracking-widest font-bold">Lý do từ chối</p>
 
             <form id="rejectForm" method="POST">
+                <!-- CSRF Token required for non-thymeleaf forms -->
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
                 <textarea name="reason" rows="4" required placeholder="Nhập lý do tại sao yêu cầu này bị từ chối..."
                     class="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm mb-6"></textarea>
 

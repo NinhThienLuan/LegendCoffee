@@ -3,6 +3,7 @@ package fpt.legendcoffee.repository;
 import fpt.legendcoffee.entity.WithdrawalRequest;
 import fpt.legendcoffee.entity.enumeration.WithdrawalStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,7 +16,10 @@ public interface WithdrawalRequestRepository extends JpaRepository<WithdrawalReq
 
     List<WithdrawalRequest> findByStatusOrderByCreatedAtAsc(WithdrawalStatus status);
 
-    @org.springframework.data.jpa.repository.Query("SELECT wr FROM WithdrawalRequest wr JOIN FETCH wr.user ORDER BY wr.createdAt DESC")
+    @Query("SELECT wr FROM WithdrawalRequest wr JOIN FETCH wr.user WHERE wr.id = :id")
+    Optional<WithdrawalRequest> findByIdWithUser(Long id);
+
+    @Query("SELECT wr FROM WithdrawalRequest wr JOIN FETCH wr.user ORDER BY wr.createdAt DESC")
     List<WithdrawalRequest> findAllWithUserOrderByCreatedAtDesc();
 
     List<WithdrawalRequest> findAllByOrderByCreatedAtDesc();
