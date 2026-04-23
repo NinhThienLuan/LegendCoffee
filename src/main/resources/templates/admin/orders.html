@@ -67,7 +67,7 @@
                             <span
                                 class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">filter_list</span>
                             <span class="text-xs text-on-surface-variant pl-10 py-2 block"
-                                th:text="'Hiển thị ' + ${#lists.size(orders)} + ' / ' + ${totalOrders} + ' đơn hàng'">Hiển thị 0 đơn hàng</span>
+                                th:text="'Hiển thị ' + ${startCount} + ' - ' + ${endCount} + ' trong số ' + ${totalOrders} + ' đơn hàng'">Hiển thị 0 đơn hàng</span>
                         </div>
                     </div>
                 </div>
@@ -130,7 +130,8 @@
                                         </div>
                                     </td>
                                     <td class="px-6 py-5 text-right font-bold text-primary"
-                                        th:text="|${ord.totalAmount != null ? ord.totalAmount : 0} ₫|">0 ₫</td>
+                                        th:text="${#numbers.formatDecimal(ord.totalAmount != null ? ord.totalAmount : 0, 0, 'COMMA', 0, 'POINT') + ' ₫'}">
+                                        0 ₫</td>
                                     <td class="px-6 py-5">
                                         <div class="flex justify-center">
                                             <span
@@ -178,7 +179,7 @@
                     <div
                         class="p-4 border-t border-outline-variant/10 flex flex-col sm:flex-row justify-between items-center bg-surface-container-low gap-4">
                         <span class="text-xs text-on-surface-variant font-medium"
-                            th:text="'Trang ' + ${currentPage} + ' / ' + ${totalPages}">Trang 1 / 1</span>
+                            th:text="'Hiển thị ' + ${startCount} + ' - ' + ${endCount} + ' trong số ' + ${totalOrders} + ' đơn hàng'">Hiển thị 0 - 0 trong số 0 đơn hàng</span>
                         <div class="flex items-center gap-2 flex-wrap">
                             <a th:if="${hasPreviousPage}"
                                 th:href="@{/orders(page=${previousPage}, status=${selectedStatus})}"

@@ -79,34 +79,38 @@ public class OrderController {
             allOrders = orderService.getAllOrdersForList();
         }
 
-        int totalOrders = allOrders.size();
-        int currentPage = Math.max(page, 1);
-        int pageSize = 10;
-        int totalPages = Math.max(1, (int) Math.ceil(totalOrders / (double) pageSize));
-
         // Non-admin users can only see their own orders
         if (!isAdmin) {
             final Long userId = currentUser.get().getId();
-            allOrders = allOrders.stream().filter(dto -> orderService.findById(dto.getId())
-                    .map(Order::getUser)
-                    .map(User::getId).orElse(-1L).equals(userId)).toList();
-        } else {
-            currentPage = Math.min(currentPage, totalPages);
-            int fromIndex = Math.min((currentPage - 1) * pageSize, totalOrders);
-            int toIndex = Math.min(fromIndex + pageSize, totalOrders);
-            allOrders = allOrders.subList(fromIndex, toIndex);
-
-            model.addAttribute("currentPage", currentPage);
-            model.addAttribute("totalPages", totalPages);
-            model.addAttribute("totalOrders", totalOrders);
-            model.addAttribute("pageNumbers", IntStream.rangeClosed(1, totalPages).boxed().toList());
-            model.addAttribute("hasPreviousPage", currentPage > 1);
-            model.addAttribute("hasNextPage", currentPage < totalPages);
-            model.addAttribute("previousPage", Math.max(1, currentPage - 1));
-            model.addAttribute("nextPage", Math.min(totalPages, currentPage + 1));
+            allOrders = allOrders.stream()
+                    .filter(dto -> orderService.findById(dto.getId())
+                            .map(Order::getUser)
+                            .map(User::getId)
+                            .orElse(-1L).equals(userId))
+                    .toList();
         }
 
-        model.addAttribute("orders", allOrders);
+        int totalOrders = allOrders.size();
+        int pageSize = 10;
+        int totalPages = Math.max(1, (int) Math.ceil(totalOrders / (double) pageSize));
+        int currentPage = Math.min(Math.max(page, 1), totalPages);
+
+        int fromIndex = Math.min((currentPage - 1) * pageSize, totalOrders);
+        int toIndex = Math.min(fromIndex + pageSize, totalOrders);
+
+        List<OrderListDTO> pagedOrders = allOrders.subList(fromIndex, toIndex);
+
+        model.addAttribute("orders", pagedOrders);
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("totalOrders", totalOrders);
+        model.addAttribute("startCount", totalOrders > 0 ? fromIndex + 1 : 0);
+        model.addAttribute("endCount", toIndex);
+        model.addAttribute("pageNumbers", IntStream.rangeClosed(1, totalPages).boxed().toList());
+        model.addAttribute("hasPreviousPage", currentPage > 1);
+        model.addAttribute("hasNextPage", currentPage < totalPages);
+        model.addAttribute("previousPage", Math.max(1, currentPage - 1));
+        model.addAttribute("nextPage", Math.min(totalPages, currentPage + 1));
         model.addAttribute("selectedStatus", status != null ? status.toUpperCase() : "");
 
         if (isAdmin) {
