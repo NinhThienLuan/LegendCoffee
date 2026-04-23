@@ -17,11 +17,26 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Random;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class DataInit implements CommandLineRunner {
+
+        private static final Integer SEED_PROVINCE_ID = 201;
+        private static final String SEED_PROVINCE_NAME = "Thành phố Hồ Chí Minh";
+        private static final Integer SEED_DISTRICT_ID = 1442;
+        private static final String SEED_DISTRICT_NAME = "Quận 1";
+        private static final String SEED_WARD_CODE = "20308";
+        private static final String SEED_WARD_NAME = "Phường Bến Nghé";
+        private static final String EXTRA_ORDER_NOTE_PREFIX = "legendcoffee-seed-extra-orders";
+        private static final List<String> SEED_CUSTOMER_EMAILS = List.of(
+                        "user@gmail.com",
+                        "customer2@legendcoffee.com",
+                        "customer3@legendcoffee.com",
+                        "customer4@legendcoffee.com",
+                        "customer5@legendcoffee.com");
 
         private final UserRepository userRepository;
         private final ProductRepository productRepository;
@@ -42,14 +57,15 @@ public class DataInit implements CommandLineRunner {
                 seedUsers();
                 seedData();
                 seedCombos();
+                seedOrders();
 
                 log.info("Data initialization completed.");
         }
 
         private void seedUsers() {
-                if (userRepository.count() == 0) {
-                        log.info("Seeding users...");
+                log.info("Seeding users...");
 
+                if (userRepository.findByEmail("admin@legendcoffee.com").isEmpty()) {
                         User admin = User.builder()
                                         .username("Admin Legend")
                                         .email("admin@legendcoffee.com")
@@ -58,18 +74,37 @@ public class DataInit implements CommandLineRunner {
                                         .role(UserRole.ADMIN)
                                         .isActive(true)
                                         .build();
-
-                        User customer = User.builder()
-                                        .username("John Doe")
-                                        .email("user@gmail.com")
-                                        .password(passwordEncoder.encode("user123"))
-                                        .phone("0333444555")
-                                        .role(UserRole.USER)
-                                        .isActive(true)
-                                        .build();
-
-                        userRepository.saveAll(List.of(admin, customer));
+                        userRepository.save(admin);
                 }
+
+                createCustomerIfMissing("John Doe", "user@gmail.com", "user123", "0333444555");
+                createCustomerIfMissing("Jane Smith", "customer2@legendcoffee.com", "user123", "0333444556");
+                createCustomerIfMissing("Minh Tran", "customer3@legendcoffee.com", "user123", "0333444557");
+                createCustomerIfMissing("Lan Nguyen", "customer4@legendcoffee.com", "user123", "0333444558");
+                createCustomerIfMissing("Huy Pham", "customer5@legendcoffee.com", "user123", "0333444559");
+        }
+
+        private void createCustomerIfMissing(String username, String email, String rawPassword, String phone) {
+                if (userRepository.findByEmail(email).isPresent()) {
+                        return;
+                }
+
+                User customer = User.builder()
+                                .username(username)
+                                .email(email)
+                                .password(passwordEncoder.encode(rawPassword))
+                                .phone(phone)
+                                .role(UserRole.USER)
+                                .isActive(true)
+                                .build();
+                userRepository.save(customer);
+        }
+
+        private List<User> getSeedCustomers() {
+                return SEED_CUSTOMER_EMAILS.stream()
+                                .map(email -> userRepository.findByEmail(email).orElse(null))
+                                .filter(user -> user != null)
+                                .toList();
         }
 
         private void seedData() {
@@ -359,215 +394,204 @@ public class DataInit implements CommandLineRunner {
                                         .status(ArticleStatus.PUBLISHED).publishedAt(LocalDateTime.now().minusDays(4))
                                         .isActive(true).build();
 
-                        User customer = userRepository.findByEmail("user@gmail.com").orElse(null);
-
-                        // Lấy variants đã seed để gắn vào OrderItem
-                        List<ProductVariant> allVariants = productVariantRepository.findAll();
-                        ProductVariant variant1 = allVariants.size() > 0 ? allVariants.get(0) : null;
-                        ProductVariant variant2 = allVariants.size() > 1 ? allVariants.get(1) : null;
-                        ProductVariant variant3 = allVariants.size() > 2 ? allVariants.get(2) : null;
-
-                        // === Order 1: ready_to_pick (để test nút Admin "Giao hàng") ===
-                        Order order1 = Order.builder()
-                                        .user(customer)
-                                        .orderDate(LocalDateTime.now().minusDays(2))
-                                        .subTotal(new BigDecimal("125000000"))
-                                        .discount(BigDecimal.ZERO)
-                                        .totalAmount(new BigDecimal("125000000"))
-                                        .status(OrderStatus.CONFIRMED)
-                                        .build();
-                        orderRepository.save(order1);
-
-                        if (variant1 != null) {
-                                OrderItem item1 = OrderItem.builder()
-                                                .order(order1).variant(variant1).quantity(500)
-                                                .unitPrice(variant1.getPrice())
-                                                .subTotal(new BigDecimal("125000000"))
-                                                .discount(BigDecimal.ZERO)
-                                                .totalAmount(new BigDecimal("125000000"))
-                                                .status("CONFIRMED")
-                                                .build();
-                                orderItemRepository.save(item1);
-                        }
-
-                        ShippingInfo ship1 = ShippingInfo.builder()
-                                        .order(order1)
-                                        .ghnOrderCode("GHN-TEST-001")
-                                        .recipientName("Nguyễn Văn A")
-                                        .recipientPhone("0901234567")
-                                        .recipientAddress("123 Lê Lợi, Q.1, TP.HCM")
-                                        .districtId(1442).wardCode("20101")
-                                        .status("ready_to_pick")
-                                        .build();
-                        shippingInfoRepository.save(ship1);
-
-                        // === Order 2: delivering ===
-                        Order order2 = Order.builder()
-                                        .user(customer)
-                                        .orderDate(LocalDateTime.now().minusDays(5))
-                                        .subTotal(new BigDecimal("58000000"))
-                                        .discount(BigDecimal.ZERO)
-                                        .totalAmount(new BigDecimal("58000000"))
-                                        .status(OrderStatus.SHIPPING)
-                                        .build();
-                        orderRepository.save(order2);
-
-                        if (variant2 != null) {
-                                OrderItem item2 = OrderItem.builder()
-                                                .order(order2).variant(variant2).quantity(200)
-                                                .unitPrice(variant2.getPrice())
-                                                .subTotal(new BigDecimal("58000000"))
-                                                .discount(BigDecimal.ZERO)
-                                                .totalAmount(new BigDecimal("58000000"))
-                                                .status("SHIPPING")
-                                                .build();
-                                orderItemRepository.save(item2);
-                        }
-
-                        ShippingInfo ship2 = ShippingInfo.builder()
-                                        .order(order2)
-                                        .ghnOrderCode("GHN-TEST-002")
-                                        .recipientName("Trần Thị B")
-                                        .recipientPhone("0907654321")
-                                        .recipientAddress("456 Nguyễn Huệ, Q.1, TP.HCM")
-                                        .districtId(1442).wardCode("20102")
-                                        .status("delivering")
-                                        .build();
-                        shippingInfoRepository.save(ship2);
-
-                        // === Order 3: delivered ===
-                        Order order3 = Order.builder()
-                                        .user(customer)
-                                        .orderDate(LocalDateTime.now().minusDays(10))
-                                        .subTotal(new BigDecimal("192000000"))
-                                        .discount(BigDecimal.ZERO)
-                                        .totalAmount(new BigDecimal("192000000"))
-                                        .status(OrderStatus.COMPLETED)
-                                        .build();
-                        orderRepository.save(order3);
-
-                        if (variant3 != null) {
-                                OrderItem item3 = OrderItem.builder()
-                                                .order(order3).variant(variant3).quantity(800)
-                                                .unitPrice(variant3.getPrice())
-                                                .subTotal(new BigDecimal("192000000"))
-                                                .discount(BigDecimal.ZERO)
-                                                .totalAmount(new BigDecimal("192000000"))
-                                                .status("COMPLETED")
-                                                .build();
-                                orderItemRepository.save(item3);
-                        }
-
-                        ShippingInfo ship3 = ShippingInfo.builder()
-                                        .order(order3)
-                                        .ghnOrderCode("GHN-TEST-003")
-                                        .recipientName("Lê Văn C")
-                                        .recipientPhone("0912345678")
-                                        .recipientAddress("789 Pasteur, Q.3, TP.HCM")
-                                        .districtId(1443).wardCode("20201")
-                                        .status("delivered")
-                                        .build();
-                        shippingInfoRepository.save(ship3);
-
-                        // === Order 4: Pending ===
-                        Order order4 = Order.builder()
-                                        .user(customer)
-                                        .orderDate(LocalDateTime.now().minusHours(2))
-                                        .subTotal(new BigDecimal("150000"))
-                                        .discount(BigDecimal.ZERO)
-                                        .totalAmount(new BigDecimal("150000"))
-                                        .status(OrderStatus.PENDING)
-                                        .build();
-                        orderRepository.save(order4);
-
-                        if (variant1 != null) {
-                                OrderItem item4 = OrderItem.builder().order(order4).variant(variant1).quantity(1)
-                                                .unitPrice(variant1.getPrice()).subTotal(new BigDecimal("150000"))
-                                                .discount(BigDecimal.ZERO).totalAmount(new BigDecimal("150000"))
-                                                .status("PENDING").build();
-                                orderItemRepository.save(item4);
-                        }
-                        ShippingInfo ship4 = ShippingInfo.builder().order(order4).ghnOrderCode("")
-                                        .recipientName("Hoàng Văn D")
-                                        .recipientPhone("0988777666")
-                                        .recipientAddress("111 Đinh Tiên Hoàng, Q.1, TP.HCM")
-                                        .districtId(1442).wardCode("20101").status("ready_to_pick").build();
-                        shippingInfoRepository.save(ship4);
-
-                        // === Order 5: Cancelled ===
-                        Order order5 = Order.builder()
-                                        .user(customer)
-                                        .orderDate(LocalDateTime.now().minusDays(1))
-                                        .subTotal(new BigDecimal("280000"))
-                                        .discount(BigDecimal.ZERO)
-                                        .totalAmount(new BigDecimal("280000"))
-                                        .status(OrderStatus.CANCELLED)
-                                        .build();
-                        orderRepository.save(order5);
-
-                        if (variant1 != null) {
-                                OrderItem item5 = OrderItem.builder().order(order5).variant(variant1).quantity(2)
-                                                .unitPrice(variant1.getPrice()).subTotal(new BigDecimal("280000"))
-                                                .discount(BigDecimal.ZERO).totalAmount(new BigDecimal("280000"))
-                                                .status("CANCELLED").build();
-                                orderItemRepository.save(item5);
-                        }
-                        ShippingInfo ship5 = ShippingInfo.builder().order(order5).ghnOrderCode("")
-                                        .recipientName("Phạm Thị E")
-                                        .recipientPhone("0977888999").recipientAddress("222 Lý Tự Trọng, Q.1, TP.HCM")
-                                        .districtId(1442).wardCode("20102").status("cancel").build();
-                        shippingInfoRepository.save(ship5);
-
-                        // === Order 6: Returned ===
-                        Order order6 = Order.builder()
-                                        .user(customer)
-                                        .orderDate(LocalDateTime.now().minusDays(6))
-                                        .subTotal(new BigDecimal("220000"))
-                                        .discount(BigDecimal.ZERO)
-                                        .totalAmount(new BigDecimal("220000"))
-                                        .status(OrderStatus.REFUNDED)
-                                        .build();
-                        orderRepository.save(order6);
-
-                        if (variant2 != null) {
-                                OrderItem item6 = OrderItem.builder().order(order6).variant(variant2).quantity(1)
-                                                .unitPrice(variant2.getPrice()).subTotal(new BigDecimal("220000"))
-                                                .discount(BigDecimal.ZERO).totalAmount(new BigDecimal("220000"))
-                                                .status("RETURNED").build();
-                                orderItemRepository.save(item6);
-                        }
-                        ShippingInfo ship6 = ShippingInfo.builder().order(order6).ghnOrderCode("GHN-RET-001")
-                                        .recipientName("Vũ Văn F")
-                                        .recipientPhone("0966555444").recipientAddress("333 CMT8, Q.3, TP.HCM")
-                                        .districtId(1443).wardCode("20201").status("returned").build();
-                        shippingInfoRepository.save(ship6);
-
-                        // === Order 7: Shipping ===
-                        Order order7 = Order.builder()
-                                        .user(customer)
-                                        .orderDate(LocalDateTime.now().minusDays(3))
-                                        .subTotal(new BigDecimal("500000"))
-                                        .discount(BigDecimal.ZERO)
-                                        .totalAmount(new BigDecimal("500000"))
-                                        .status(OrderStatus.SHIPPING)
-                                        .build();
-                        orderRepository.save(order7);
-
-                        if (variant3 != null) {
-                                OrderItem item7 = OrderItem.builder().order(order7).variant(variant3).quantity(2)
-                                                .unitPrice(variant3.getPrice()).subTotal(new BigDecimal("500000"))
-                                                .discount(BigDecimal.ZERO).totalAmount(new BigDecimal("500000"))
-                                                .status("SHIPPING").build();
-                                orderItemRepository.save(item7);
-                        }
-                        ShippingInfo ship7 = ShippingInfo.builder().order(order7).ghnOrderCode("GHN-TEST-004")
-                                        .recipientName("Đỗ Thị G")
-                                        .recipientPhone("0955444333")
-                                        .recipientAddress("444 Điện Biên Phủ, Q.Bình Thạnh, TP.HCM")
-                                        .districtId(1444).wardCode("20301").status("delivering").build();
-                        shippingInfoRepository.save(ship7);
-
                         articleRepository.saveAll(List.of(article1, article2, article3, article4, article5, article6));
+                }
+        }
+
+        private void seedOrders() {
+                List<User> customers = getSeedCustomers();
+                List<ProductVariant> variants = productVariantRepository.findAll();
+
+                if (customers.isEmpty() || variants.isEmpty()) {
+                        return;
+                }
+
+                if (orderRepository.count() == 0) {
+                        log.info("Seeding order history from January to now...");
+
+                        Random random = new Random();
+                        LocalDateTime now = LocalDateTime.now();
+
+                        // Jan: 6, Feb: 6, Mar: 8, Apr: 7 (Total 27 orders)
+                        int[] monthlyCounts = {6, 6, 8, 7};
+                        int orderSequence = 0;
+
+                        for (int monthIdx = 0; monthIdx < monthlyCounts.length; monthIdx++) {
+                                int month = monthIdx + 1;
+                                int count = monthlyCounts[monthIdx];
+
+                                for (int i = 0; i < count; i++) {
+                                        // Random date in month
+                                        int day = random.nextInt(25) + 1;
+                                        int hour = random.nextInt(10) + 9; // 9 AM to 7 PM
+                                        LocalDateTime orderDate = LocalDateTime.of(2026, month, day, hour, random.nextInt(60));
+
+                                        if (orderDate.isAfter(now)) {
+                                                orderDate = now.minusMinutes(random.nextInt(120));
+                                        }
+
+                                        int userIndex = orderSequence % customers.size();
+                                        User customer = customers.get(userIndex);
+
+                                        Order order = Order.builder()
+                                                        .user(customer)
+                                                        .orderDate(orderDate)
+                                                        .discount(BigDecimal.ZERO)
+                                                        .status(OrderStatus.COMPLETED)
+                                                        .build();
+
+                                        // Variety in status for current month
+                                        if (month == 4) {
+                                                if (i == 0) order.setStatus(OrderStatus.PENDING);
+                                                else if (i == 1) order.setStatus(OrderStatus.SHIPPING);
+                                                else if (i == 2) order.setStatus(OrderStatus.CONFIRMED);
+                                        } else if (i == count - 1) {
+                                                order.setStatus(OrderStatus.CANCELLED);
+                                        }
+
+                                        order = orderRepository.save(order);
+
+                                        int numItems = random.nextInt(2) + 1;
+                                        BigDecimal subTotal = BigDecimal.ZERO;
+
+                                        for (int j = 0; j < numItems; j++) {
+                                                ProductVariant v = variants.get(random.nextInt(variants.size()));
+                                                int qty = random.nextInt(2) + 1;
+                                                BigDecimal itemTotal = v.getPrice().multiply(BigDecimal.valueOf(qty));
+
+                                                OrderItem item = OrderItem.builder()
+                                                                .order(order)
+                                                                .variant(v)
+                                                                .quantity(qty)
+                                                                .unitPrice(v.getPrice())
+                                                                .subTotal(itemTotal)
+                                                                .discount(BigDecimal.ZERO)
+                                                                .totalAmount(itemTotal)
+                                                                .status(order.getStatus().name())
+                                                                .build();
+                                                orderItemRepository.save(item);
+                                                subTotal = subTotal.add(itemTotal);
+                                        }
+
+                                        order.setSubTotal(subTotal);
+                                        order.setTotalAmount(subTotal.add(new BigDecimal("30000"))); // Flat 30k shipping
+                                        orderRepository.save(order);
+
+                                        // Shipping Info
+                                        String shipStatus = "pending";
+                                        switch (order.getStatus()) {
+                                                case COMPLETED -> shipStatus = "delivered";
+                                                case SHIPPING -> shipStatus = "delivering";
+                                                case CANCELLED -> shipStatus = "cancel";
+                                                case CONFIRMED -> shipStatus = "ready_to_pick";
+                                                case PENDING -> shipStatus = "pending";
+                                        }
+
+                                        ShippingInfo ship = ShippingInfo.builder()
+                                                        .order(order)
+                                                        .recipientName(customer.getUsername())
+                                                        .recipientPhone(customer.getPhone())
+                                                        .recipientAddress("Số " + (i + 1) + " Đường " + month + ", TP. Hồ Chí Minh")
+                                                        .provinceId(SEED_PROVINCE_ID)
+                                                        .provinceName(SEED_PROVINCE_NAME)
+                                                        .districtId(SEED_DISTRICT_ID)
+                                                        .districtName(SEED_DISTRICT_NAME)
+                                                        .wardCode(SEED_WARD_CODE)
+                                                        .wardName(SEED_WARD_NAME)
+                                                        .status(shipStatus)
+                                                        .build();
+                                        shippingInfoRepository.save(ship);
+                                        orderSequence++;
+                                }
+                        }
+                }
+
+                seedExtraOrders(customers, variants);
+        }
+
+        private void seedExtraOrders(List<User> customers, List<ProductVariant> variants) {
+                boolean alreadySeeded = shippingInfoRepository.findAll().stream()
+                                .anyMatch(info -> info.getNote() != null
+                                                && info.getNote().startsWith(EXTRA_ORDER_NOTE_PREFIX));
+                if (alreadySeeded) {
+                        return;
+                }
+
+                log.info("Seeding extra admin orders with target statuses...");
+
+                LocalDateTime now = LocalDateTime.now();
+                Random random = new Random();
+                List<OrderStatus> targetStatuses = List.of(
+                                OrderStatus.PENDING, OrderStatus.PENDING, OrderStatus.PENDING, OrderStatus.PENDING,
+                                OrderStatus.PENDING,
+                                OrderStatus.CONFIRMED, OrderStatus.CONFIRMED, OrderStatus.CONFIRMED,
+                                OrderStatus.CONFIRMED, OrderStatus.CONFIRMED,
+                                OrderStatus.SHIPPING, OrderStatus.SHIPPING, OrderStatus.SHIPPING,
+                                OrderStatus.SHIPPING, OrderStatus.SHIPPING,
+                                OrderStatus.CANCELLED, OrderStatus.CANCELLED, OrderStatus.CANCELLED);
+
+                for (int i = 0; i < targetStatuses.size(); i++) {
+                        OrderStatus status = targetStatuses.get(i);
+                        LocalDateTime orderDate = now.minusDays(i + 1L);
+                        User customer = customers.get(i % customers.size());
+                        String shipStatus = switch (status) {
+                                case COMPLETED -> "delivered";
+                                case SHIPPING -> "delivering";
+                                case CANCELLED -> "cancel";
+                                case CONFIRMED -> "ready_to_pick";
+                                case PENDING -> "pending";
+                                default -> "pending";
+                        };
+
+                        Order order = Order.builder()
+                                        .user(customer)
+                                        .orderDate(orderDate)
+                                        .discount(BigDecimal.ZERO)
+                                        .status(status)
+                                        .build();
+                        order = orderRepository.save(order);
+
+                        int numItems = random.nextInt(2) + 1;
+                        BigDecimal subTotal = BigDecimal.ZERO;
+
+                        for (int j = 0; j < numItems; j++) {
+                                ProductVariant v = variants.get(random.nextInt(variants.size()));
+                                int qty = random.nextInt(2) + 1;
+                                BigDecimal itemTotal = v.getPrice().multiply(BigDecimal.valueOf(qty));
+
+                                OrderItem item = OrderItem.builder()
+                                                .order(order)
+                                                .variant(v)
+                                                .quantity(qty)
+                                                .unitPrice(v.getPrice())
+                                                .subTotal(itemTotal)
+                                                .discount(BigDecimal.ZERO)
+                                                .totalAmount(itemTotal)
+                                                .status(order.getStatus().name())
+                                                .build();
+                                orderItemRepository.save(item);
+                                subTotal = subTotal.add(itemTotal);
+                        }
+
+                        order.setSubTotal(subTotal);
+                        order.setTotalAmount(subTotal.add(new BigDecimal("30000")));
+                        orderRepository.save(order);
+
+                        ShippingInfo ship = ShippingInfo.builder()
+                                        .order(order)
+                                        .recipientName(customer.getUsername())
+                                        .recipientPhone(customer.getPhone())
+                                        .recipientAddress("Seed bổ sung đơn #" + (i + 1))
+                                        .provinceId(SEED_PROVINCE_ID)
+                                        .provinceName(SEED_PROVINCE_NAME)
+                                        .districtId(SEED_DISTRICT_ID)
+                                        .districtName(SEED_DISTRICT_NAME)
+                                        .wardCode(SEED_WARD_CODE)
+                                        .wardName(SEED_WARD_NAME)
+                                        .status(shipStatus)
+                                        .note(EXTRA_ORDER_NOTE_PREFIX + "-" + (i + 1))
+                                        .build();
+                        shippingInfoRepository.save(ship);
                 }
         }
 

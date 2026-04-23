@@ -20,7 +20,7 @@ public class HomeController {
     private final ProductService productService;
     private final ArticleService articleService;
 
-    @GetMapping({ "/" })
+    @GetMapping({ "/","/index","/home" })
     public String index(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {

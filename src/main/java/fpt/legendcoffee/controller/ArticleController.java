@@ -5,7 +5,6 @@ import fpt.legendcoffee.dto.request.ArticleRequestDTO;
 import fpt.legendcoffee.dto.response.ArticleResponseDTO;
 import fpt.legendcoffee.entity.Article;
 import fpt.legendcoffee.entity.enumeration.ArticleStatus;
-import fpt.legendcoffee.repository.UserRepository;
 import fpt.legendcoffee.service.ArticleService;
 import fpt.legendcoffee.service.UserService;
 import jakarta.validation.Valid;
