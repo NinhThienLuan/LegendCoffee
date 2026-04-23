@@ -25,35 +25,25 @@ public class DashboardServiceImpl implements DashboardService {
     private final UserRepository userRepository;
     private final OrderItemRepository orderItemRepository;
     private final ProductService productService;
+    private final fpt.legendcoffee.repository.WithdrawalRequestRepository withdrawalRequestRepository;
 
     @Override
     public DashboardResponseDTO getDashboardStats() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startOfMonth = now.withDayOfMonth(1).with(LocalTime.MIN);
-        LocalDateTime startOfLastMonth = now.minusMonths(1).withDayOfMonth(1).with(LocalTime.MIN);
-        LocalDateTime startOfToday = now.with(LocalTime.MIN);
         LocalDateTime sixMonthsAgo = now.minusMonths(6).withDayOfMonth(1).with(LocalTime.MIN);
-
         List<OrderStatus> revenueStatuses = Arrays.asList(OrderStatus.CONFIRMED, OrderStatus.SHIPPING, OrderStatus.COMPLETED);
 
-        // KPIs
-        BigDecimal monthlyRevenue = orderRepository.sumRevenueSince(startOfMonth, revenueStatuses);
-        BigDecimal lastMonthRevenue = orderRepository.sumRevenueBetween(startOfLastMonth, startOfMonth, revenueStatuses);
-
-        if (monthlyRevenue == null) monthlyRevenue = BigDecimal.ZERO;
-        if (lastMonthRevenue == null) lastMonthRevenue = BigDecimal.ZERO;
-
-        double growth = 0;
-        if (lastMonthRevenue.compareTo(BigDecimal.ZERO) > 0) {
-            growth = (monthlyRevenue.subtract(lastMonthRevenue))
-                    .divide(lastMonthRevenue, 4, java.math.RoundingMode.HALF_UP)
-                    .doubleValue() * 100;
-        }
-
-        long todayOrders = orderRepository.countOrdersSince(startOfToday, revenueStatuses);
-        long activeProducts = productService.countActiveProducts();
-        long lowStockProducts = productService.countLowStockProducts();
         long newUsers = userRepository.countUsersSince(startOfMonth);
+
+        // System-wide Financials
+        BigDecimal totalRevenue = orderRepository.sumTotalRevenue(revenueStatuses);
+        BigDecimal totalShippingFees = orderRepository.sumTotalShippingFee(revenueStatuses);
+        BigDecimal totalWithdrawals = withdrawalRequestRepository.sumTotalWithdrawals(fpt.legendcoffee.entity.enumeration.WithdrawalStatus.APPROVED);
+
+        if (totalRevenue == null) totalRevenue = BigDecimal.ZERO;
+        if (totalShippingFees == null) totalShippingFees = BigDecimal.ZERO;
+        if (totalWithdrawals == null) totalWithdrawals = BigDecimal.ZERO;
 
         // Order Status distribution
         List<Object[]> statusCounts = orderRepository.countOrdersByStatus();
@@ -95,11 +85,9 @@ public class DashboardServiceImpl implements DashboardService {
         }
 
         return DashboardResponseDTO.builder()
-                .monthlyRevenue(monthlyRevenue)
-                .revenueGrowth(growth)
-                .todayOrders(todayOrders)
-                .activeProducts(activeProducts)
-                .lowStockProducts(lowStockProducts)
+                .totalRevenue(totalRevenue)
+                .totalShippingFees(totalShippingFees)
+                .totalWithdrawals(totalWithdrawals)
                 .newUsers(newUsers)
                 .orderStatusDistribution(statusMap)
                 .topProductLabels(topLabels)

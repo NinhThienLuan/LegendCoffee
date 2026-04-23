@@ -29,21 +29,20 @@
             </div>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-1">
               <div class="bg-surface-container-low p-6">
-                <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Doanh thu tháng
+                <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Doanh Thu (Tổng của hệ thống)
                 </p>
-                <p class="text-3xl font-bold text-primary" th:text="${#numbers.formatDecimal(stats.monthlyRevenue / 1000000.0, 1, 'POINT', 1, 'COMMA') + ' tr'}">842 tr</p>
+                <p class="text-3xl font-bold text-primary" th:text="${#numbers.formatDecimal(stats.totalRevenue / 1000000.0, 1, 'POINT', 1, 'COMMA') + ' tr'}">842 tr</p>
               </div>
               <div class="bg-surface-container-low p-6">
-                <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Đơn hàng hôm nay
+                <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Phí ship
                 </p>
-                <p class="text-3xl font-bold text-primary" th:text="${stats.todayOrders}">127</p>
-                <p class="text-xs text-on-surface-variant mt-2">Đơn hàng mới trong ngày</p>
+                <p class="text-3xl font-bold text-primary" th:text="${#numbers.formatDecimal(stats.totalShippingFees / 1000000.0, 1, 'POINT', 1, 'COMMA') + ' tr'}">12 tr</p>
+                <p class="text-xs text-on-surface-variant mt-2">Tổng phí vận chuyển</p>
               </div>
               <div class="bg-surface-container-low p-6">
-                <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Sản phẩm đang
-                  bán</p>
-                <p class="text-3xl font-bold text-primary" th:text="${stats.activeProducts}">64</p>
-                <p class="text-xs text-on-surface-variant mt-2" th:text="${stats.lowStockProducts + ' sắp hết hàng'}">3 sắp hết hàng</p>
+                <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Rút tiền</p>
+                <p class="text-3xl font-bold text-primary" th:text="${#numbers.formatDecimal(stats.totalWithdrawals / 1000000.0, 1, 'POINT', 1, 'COMMA') + ' tr'}">24 tr</p>
+                <p class="text-xs text-on-surface-variant mt-2">Tổng tiền đã rút</p>
               </div>
               <div class="bg-surface-container-low p-6">
                 <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Người dùng mới
@@ -308,11 +307,6 @@
     });
   </script>
 
-  <!-- FAB -->
-  <button
-    class="fixed bottom-8 right-8 bg-primary text-white h-14 w-14 rounded-full shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-50 group">
-    <span class="material-symbols-outlined text-2xl group-hover:rotate-90 transition-transform">add</span>
-  </button>
 
 </body>
 

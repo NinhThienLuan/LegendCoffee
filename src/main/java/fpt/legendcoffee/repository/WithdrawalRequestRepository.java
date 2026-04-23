@@ -4,6 +4,7 @@ import fpt.legendcoffee.entity.WithdrawalRequest;
 import fpt.legendcoffee.entity.enumeration.WithdrawalStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -28,4 +29,6 @@ public interface WithdrawalRequestRepository extends JpaRepository<WithdrawalReq
     Optional<WithdrawalRequest> findByUserIdAndStatus(Long userId, WithdrawalStatus status);
 
     boolean existsByUserIdAndStatus(Long userId, WithdrawalStatus status);
+    @Query("SELECT SUM(wr.amount) FROM WithdrawalRequest wr WHERE wr.status = :status")
+    java.math.BigDecimal sumTotalWithdrawals(@Param("status") WithdrawalStatus status);
 }

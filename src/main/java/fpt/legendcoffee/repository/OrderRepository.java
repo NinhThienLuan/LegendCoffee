@@ -51,14 +51,11 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 	@Query("SELECT o.status, COUNT(o) FROM Order o GROUP BY o.status")
 	List<Object[]> countOrdersByStatus();
 
-	@Query("SELECT SUM(o.subTotal) FROM Order o WHERE o.status IN :statuses AND o.orderDate >= :startDate AND o.orderDate < :endDate")
-	java.math.BigDecimal sumRevenueBetween(@Param("startDate") java.time.LocalDateTime startDate, @Param("endDate") java.time.LocalDateTime endDate, @Param("statuses") List<OrderStatus> statuses);
+	@Query("SELECT SUM(o.totalAmount) FROM Order o WHERE o.status IN :statuses")
+	java.math.BigDecimal sumTotalRevenue(@Param("statuses") java.util.List<OrderStatus> statuses);
 
-	@Query("SELECT SUM(o.subTotal) FROM Order o WHERE o.status IN :statuses AND o.orderDate >= :startDate")
-	java.math.BigDecimal sumRevenueSince(@Param("startDate") java.time.LocalDateTime startDate, @Param("statuses") List<OrderStatus> statuses);
-
-	@Query("SELECT COUNT(o) FROM Order o WHERE o.status IN :statuses AND o.orderDate >= :startDate")
-	long countOrdersSince(@Param("startDate") java.time.LocalDateTime startDate, @Param("statuses") List<OrderStatus> statuses);
+	@Query("SELECT SUM(s.shippingFee) FROM Order o JOIN o.shippingInfo s WHERE o.status IN :statuses")
+	java.math.BigDecimal sumTotalShippingFee(@Param("statuses") java.util.List<OrderStatus> statuses);
 
 	@Query("SELECT MONTH(o.orderDate), SUM(o.subTotal) FROM Order o " +
 			"WHERE o.status IN :statuses " +

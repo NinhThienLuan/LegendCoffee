@@ -12,11 +12,9 @@ import java.util.Map;
 @AllArgsConstructor
 @Builder
 public class DashboardResponseDTO {
-    private BigDecimal monthlyRevenue;
-    private double revenueGrowth; // percentage
-    private long todayOrders;
-    private long activeProducts;
-    private long lowStockProducts;
+    private BigDecimal totalRevenue;
+    private BigDecimal totalShippingFees;
+    private BigDecimal totalWithdrawals;
     private long newUsers;
 
     private List<String> revenueLabels;
