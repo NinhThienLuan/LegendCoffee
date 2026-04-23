@@ -3,6 +3,10 @@ package fpt.legendcoffee.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+
 @Controller
 public class TestController {
 
@@ -26,12 +30,10 @@ public class TestController {
         return "admin/products";
     }
 
-<<<<<<< Updated upstream
-=======
 
 
     private Map<String, Object> createTransaction(String type, String amountStr, String desc, double amount,
-            LocalDateTime date) {
+                                                  LocalDateTime date) {
         Map<String, Object> t = new HashMap<>();
         t.put("type", type);
         t.put("amountStr", amountStr);
@@ -42,5 +44,4 @@ public class TestController {
         t.put("id", "TX-" + System.currentTimeMillis() % 1000000);
         return t;
     }
->>>>>>> Stashed changes
 }

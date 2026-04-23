@@ -111,11 +111,11 @@ public class RefundServiceImpl implements RefundService {
         .orElseThrow(() -> new IllegalStateException("Không tìm thấy ví Admin/Hệ thống để trừ tiền"));
 
 // Đảm bảo ví admin không bị âm (tuỳ policy của bạn, có thể bỏ qua nếu cho phép ví hệ thống âm)
-if (adminWallet.getAmount().compareTo(refundAmount) < 0) {
+if (adminWallet.getBalance().compareTo(refundAmount) < 0) {
     throw new IllegalStateException("Số dư ví hệ thống không đủ để hoàn tiền");
 }
 
-adminWallet.setAmount(adminWallet.getAmount().subtract(refundAmount));
+adminWallet.setBalance(adminWallet.getBalance().subtract(refundAmount));
 walletRepository.save(adminWallet);
         orderRepository.save(order);
 

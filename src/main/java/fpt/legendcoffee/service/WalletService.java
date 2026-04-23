@@ -1,20 +1,13 @@
 package fpt.legendcoffee.service;
-
-<<<<<<< Updated upstream
-import java.util.List;
-
-import fpt.legendcoffee.entity.Wallet;
-
-public interface WalletService {
-    List<Wallet> getAllWallets();
-=======
-import fpt.legendcoffee.dto.request.WithDrawRequestDTO;
-import fpt.legendcoffee.entity.Wallet;
-import fpt.legendcoffee.entity.WalletTransaction;
 import java.math.BigDecimal;
 import java.util.List;
 
+import fpt.legendcoffee.dto.request.WithDrawRequestDTO;
+import fpt.legendcoffee.entity.Wallet;
+import fpt.legendcoffee.entity.WalletTransaction;
+
 public interface WalletService {
+    List<Wallet> getAllWallets();
     void creditWallet(Long userId, BigDecimal amount, String description);
     void debitWallet(Long userId, BigDecimal amount, String description);
     void creditAdminWallet(BigDecimal amount, String description);
@@ -24,5 +17,4 @@ public interface WalletService {
     List<WalletTransaction> getTransactionsByUserId(Long userId);
     BigDecimal getWalletBalance(Long userId);
     Wallet getWalletByUserId(Long userId);
->>>>>>> Stashed changes
 }

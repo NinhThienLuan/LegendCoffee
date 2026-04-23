@@ -1,7 +1,5 @@
 package fpt.legendcoffee.service.serviceImpl;
 
-<<<<<<< Updated upstream
-=======
 import fpt.legendcoffee.common.util.SecurityUtils;
 import fpt.legendcoffee.dto.request.WithDrawRequestDTO;
 import fpt.legendcoffee.entity.User;
@@ -20,26 +18,22 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
->>>>>>> Stashed changes
+
 import java.util.List;
 
-import org.springframework.stereotype.Service;
-
-import fpt.legendcoffee.entity.Wallet;
-import fpt.legendcoffee.repository.WalletRepository;
-import fpt.legendcoffee.service.WalletService;
-import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class WalletServiceImpl implements WalletService {
     private final WalletRepository walletRepository;
+    private final UserRepository userRepository;
+    private final WalletTransactionRepository walletTransactionRepository;
 
-<<<<<<< Updated upstream
     @Override
     public List<Wallet> getAllWallets() {
         return walletRepository.findAll();
-=======
+    }
     // Thêm đoạn này vào bên trong WalletServiceImpl
 
     @Override
@@ -169,7 +163,7 @@ public class WalletServiceImpl implements WalletService {
     }
 
     private User findAdmin() {
-        return userRepository.findByRole(UserRole.ADMIN).stream().findFirst()
+        return userRepository.findByRole(UserRole.ADMIN.toString()).stream().findFirst()
                 .orElseThrow(() -> new IllegalStateException("Không tìm thấy ADMIN"));
     }
 
@@ -184,6 +178,5 @@ public class WalletServiceImpl implements WalletService {
                 .createdAt(LocalDateTime.now()) // Đảm bảo có ngày tạo để sắp xếp
                 .build();
         walletTransactionRepository.save(transaction);
->>>>>>> Stashed changes
     }
 }

@@ -193,7 +193,7 @@ public class VNPayApplicationServiceImpl implements VNPayApplicationService {
           BigDecimal orderTotal = order.getTotalAmount(); 
 
         // Cộng tiền cho hệ thống (Admin)
-        adminWallet.setAmount(adminWallet.getAmount().add(orderTotal));
+        adminWallet.setBalance(adminWallet.getBalance().add(orderTotal));
          
             walletRepository.save(adminWallet);
 
