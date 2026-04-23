@@ -413,7 +413,7 @@ public class DataInit implements CommandLineRunner {
                         LocalDateTime now = LocalDateTime.now();
 
                         // Jan: 6, Feb: 6, Mar: 8, Apr: 7 (Total 27 orders)
-                        int[] monthlyCounts = {6, 6, 8, 7};
+                        int[] monthlyCounts = { 6, 6, 8, 7 };
                         int orderSequence = 0;
 
                         for (int monthIdx = 0; monthIdx < monthlyCounts.length; monthIdx++) {
@@ -424,7 +424,8 @@ public class DataInit implements CommandLineRunner {
                                         // Random date in month
                                         int day = random.nextInt(25) + 1;
                                         int hour = random.nextInt(10) + 9; // 9 AM to 7 PM
-                                        LocalDateTime orderDate = LocalDateTime.of(2026, month, day, hour, random.nextInt(60));
+                                        LocalDateTime orderDate = LocalDateTime.of(2026, month, day, hour,
+                                                        random.nextInt(60));
 
                                         if (orderDate.isAfter(now)) {
                                                 orderDate = now.minusMinutes(random.nextInt(120));
@@ -442,9 +443,12 @@ public class DataInit implements CommandLineRunner {
 
                                         // Variety in status for current month
                                         if (month == 4) {
-                                                if (i == 0) order.setStatus(OrderStatus.PENDING);
-                                                else if (i == 1) order.setStatus(OrderStatus.SHIPPING);
-                                                else if (i == 2) order.setStatus(OrderStatus.CONFIRMED);
+                                                if (i == 0)
+                                                        order.setStatus(OrderStatus.PENDING);
+                                                else if (i == 1)
+                                                        order.setStatus(OrderStatus.SHIPPING);
+                                                else if (i == 2)
+                                                        order.setStatus(OrderStatus.CONFIRMED);
                                         } else if (i == count - 1) {
                                                 order.setStatus(OrderStatus.CANCELLED);
                                         }
@@ -474,7 +478,8 @@ public class DataInit implements CommandLineRunner {
                                         }
 
                                         order.setSubTotal(subTotal);
-                                        order.setTotalAmount(subTotal.add(new BigDecimal("30000"))); // Flat 30k shipping
+                                        order.setTotalAmount(subTotal.add(new BigDecimal("30000"))); // Flat 30k
+                                                                                                     // shipping
                                         orderRepository.save(order);
 
                                         // Shipping Info
@@ -491,7 +496,8 @@ public class DataInit implements CommandLineRunner {
                                                         .order(order)
                                                         .recipientName(customer.getUsername())
                                                         .recipientPhone(customer.getPhone())
-                                                        .recipientAddress("Số " + (i + 1) + " Đường " + month + ", TP. Hồ Chí Minh")
+                                                        .recipientAddress("Số " + (i + 1) + " Đường " + month
+                                                                        + ", TP. Hồ Chí Minh")
                                                         .provinceId(SEED_PROVINCE_ID)
                                                         .provinceName(SEED_PROVINCE_NAME)
                                                         .districtId(SEED_DISTRICT_ID)
@@ -499,6 +505,7 @@ public class DataInit implements CommandLineRunner {
                                                         .wardCode(SEED_WARD_CODE)
                                                         .wardName(SEED_WARD_NAME)
                                                         .status(shipStatus)
+                                                        .shippingFee(30000L)
                                                         .build();
                                         shippingInfoRepository.save(ship);
                                         orderSequence++;
@@ -590,6 +597,7 @@ public class DataInit implements CommandLineRunner {
                                         .wardName(SEED_WARD_NAME)
                                         .status(shipStatus)
                                         .note(EXTRA_ORDER_NOTE_PREFIX + "-" + (i + 1))
+                                        .shippingFee(30000L)
                                         .build();
                         shippingInfoRepository.save(ship);
                 }
@@ -622,9 +630,12 @@ public class DataInit implements CommandLineRunner {
                                         .endDate(LocalDateTime.now().plusMonths(3))
                                         .isActive(true)
                                         .build();
-                        discoveryCombo.getComboItems().add(ComboItem.builder().combo(discoveryCombo).variant(arabica250).quantity(2).build());
-                        discoveryCombo.getComboItems().add(ComboItem.builder().combo(discoveryCombo).variant(robusta500).quantity(2).build());
-                        discoveryCombo.getComboItems().add(ComboItem.builder().combo(discoveryCombo).variant(ground200).quantity(2).build());
+                        discoveryCombo.getComboItems().add(ComboItem.builder().combo(discoveryCombo).variant(arabica250)
+                                        .quantity(2).build());
+                        discoveryCombo.getComboItems().add(ComboItem.builder().combo(discoveryCombo).variant(robusta500)
+                                        .quantity(2).build());
+                        discoveryCombo.getComboItems().add(ComboItem.builder().combo(discoveryCombo).variant(ground200)
+                                        .quantity(2).build());
                         comboRepository.save(discoveryCombo);
                 }
 
@@ -638,8 +649,10 @@ public class DataInit implements CommandLineRunner {
                                         .endDate(LocalDateTime.now().plusMonths(6))
                                         .isActive(true)
                                         .build();
-                        starterCombo.getComboItems().add(ComboItem.builder().combo(starterCombo).variant(phin).quantity(2).build());
-                        starterCombo.getComboItems().add(ComboItem.builder().combo(starterCombo).variant(robusta500).quantity(2).build());
+                        starterCombo.getComboItems()
+                                        .add(ComboItem.builder().combo(starterCombo).variant(phin).quantity(2).build());
+                        starterCombo.getComboItems().add(ComboItem.builder().combo(starterCombo).variant(robusta500)
+                                        .quantity(2).build());
                         comboRepository.save(starterCombo);
                 }
 
@@ -653,10 +666,14 @@ public class DataInit implements CommandLineRunner {
                                         .endDate(LocalDateTime.now().plusMonths(6))
                                         .isActive(true)
                                         .build();
-                        proCombo.getComboItems().add(ComboItem.builder().combo(proCombo).variant(grinder).quantity(2).build());
-                        proCombo.getComboItems().add(ComboItem.builder().combo(proCombo).variant(v60).quantity(2).build());
-                        proCombo.getComboItems().add(ComboItem.builder().combo(proCombo).variant(paperFilter).quantity(2).build());
-                        proCombo.getComboItems().add(ComboItem.builder().combo(proCombo).variant(arabica500).quantity(2).build());
+                        proCombo.getComboItems()
+                                        .add(ComboItem.builder().combo(proCombo).variant(grinder).quantity(2).build());
+                        proCombo.getComboItems()
+                                        .add(ComboItem.builder().combo(proCombo).variant(v60).quantity(2).build());
+                        proCombo.getComboItems().add(
+                                        ComboItem.builder().combo(proCombo).variant(paperFilter).quantity(2).build());
+                        proCombo.getComboItems().add(
+                                        ComboItem.builder().combo(proCombo).variant(arabica500).quantity(2).build());
                         comboRepository.save(proCombo);
                 }
 
@@ -665,8 +682,8 @@ public class DataInit implements CommandLineRunner {
 
         private ProductVariant findVariant(List<ProductVariant> variants, String productName, String variantName) {
                 return variants.stream()
-                                .filter(v -> v.getProduct() != null 
-                                                && productName.equals(v.getProduct().getName()) 
+                                .filter(v -> v.getProduct() != null
+                                                && productName.equals(v.getProduct().getName())
                                                 && variantName.equals(v.getVariantName()))
                                 .findFirst()
                                 .orElse(null);

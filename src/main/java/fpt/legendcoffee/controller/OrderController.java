@@ -157,7 +157,12 @@ public class OrderController {
 
         Order order = orderOpt.get();
         // Ownership check
-        if (order.getUser() == null || !order.getUser().getId().equals(currentUser.get().getId())) {
+
+        boolean isAdmin = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+
+        if (!isAdmin && (order.getUser() == null || !order.getUser().getId().equals(currentUser.get().getId()))) {
             redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền xem đơn hàng này.");
             return "redirect:/orders";
         }
@@ -177,7 +182,7 @@ public class OrderController {
             model.addAttribute("orderItems", orderItems);
             model.addAttribute("shippingInfo", shippingInfo);
             model.addAttribute("shippingFee", shippingFee);
-            model.addAttribute("vat", vat);
+            //model.addAttribute("vat", vat);
             model.addAttribute("totalAmount", totalAmount);
             model.addAttribute("orderId", orderId);
 

@@ -22,9 +22,9 @@
         <section class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
           <div class="lg:col-span-8 flex flex-col justify-between">
             <div>
-              <p class="text-on-surface-variant font-medium tracking-tight mb-2 uppercase text-xs">Danh mục sản phẩm</p>
+              <p class="text-on-surface-variant font-medium tracking-tight mb-2 uppercase text-xs">Sản phẩm</p>
               <h3 class="text-4xl font-extrabold text-primary font-manrope tracking-tighter leading-tight mb-6">Quản lý
-                toàn diện<br />danh mục cà phê thương mại.</h3>
+                toàn diện sản phẩm của bạn</h3>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-1">
               <div class="bg-surface-container-low p-6">
@@ -32,14 +32,12 @@
                 </p>
                 <p class="text-3xl font-bold text-primary" th:text="${totalProducts}"></p>
                 <p class="text-xs text-green-600 mt-2 flex items-center gap-1 font-semibold">
-                  <span class="material-symbols-outlined text-xs">trending_up</span> +6 sản phẩm mới
                 </p>
               </div>
               <div class="bg-surface-container-low p-6">
                 <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Đang kinh doanh
                 </p>
                 <p class="text-3xl font-bold text-primary" th:text="${activeProducts}"></p>
-                <p class="text-xs text-on-surface-variant mt-2">Trên 8 danh mục</p>
               </div>
               <div class="bg-surface-container-low p-6">
                 <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">Sắp hết hàng</p>
@@ -69,7 +67,7 @@
             class="bg-surface-container-lowest border border-surface-container-low rounded-lg shadow-sm overflow-hidden">
             <div
               class="p-6 border-b border-surface-container-low flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-              <h4 class="font-bold text-primary uppercase tracking-widest text-xs">Danh mục sản phẩm</h4>
+              <h4 class="font-bold text-primary uppercase tracking-widest text-xs">Sản phẩm</h4>
               <div class="flex gap-2 w-full sm:w-auto items-center">
                 <a th:href="@{/products/form-add}"
                   class="flex items-center gap-2 px-6 py-2.5 text-xs font-bold bg-primary text-on-primary rounded shadow-lg shadow-primary/10 hover:bg-primary-container hover:text-primary transition-all uppercase tracking-wider">
