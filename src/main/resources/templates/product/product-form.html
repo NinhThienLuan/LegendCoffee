@@ -277,7 +277,7 @@
                                                     class="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Giá
                                                     (₫) <span class="text-red-500">*</span></label>
                                                 <input type="number" th:name="'variants[' + ${vStat.index} + '].price'"
-                                                    th:value="${v.price}" placeholder="500000" min="0" required
+                                                    th:value="${v.price}" placeholder="500000" min="1000" required
                                                     class="variant-price w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none" />
                                             </div>
 
@@ -398,7 +398,7 @@
         </div>
         <div class="col-span-6 sm:col-span-2">
           <label class="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Giá (₫) <span class="text-red-500">*</span></label>
-          <input type="number" name="variants[${index}].price" placeholder="500000" min="0" required
+          <input type="number" name="variants[${index}].price" placeholder="500000" min="1000" required
                  class="variant-price w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none" />
         </div>
         <div class="col-span-6 sm:col-span-2">
@@ -501,7 +501,7 @@
                 } else if (nameInput) {
                     nameInput.classList.remove('ring-2', 'ring-red-400');
                 }
-                if (priceInput && (priceInput.value === '' || Number(priceInput.value) < 0)) {
+                if (priceInput && (priceInput.value === '' || Number(priceInput.value) < 1000)) {
                     priceInput.classList.add('ring-2', 'ring-red-400');
                     valid = false;
                 } else if (priceInput) {
