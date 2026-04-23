@@ -19,12 +19,6 @@
                         <p class="text-on-surface-variant font-body">Theo dõi quy trình từ rang xay đến vận chuyển quy
                             mô
                             công nghiệp.</p>
-                        <div class="pt-4 flex gap-3">
-                            <button
-                                class="bg-primary text-on-primary px-6 py-2.5 rounded-md text-sm font-bold tracking-tight hover:bg-primary-container transition-colors active:scale-95 duration-150 shadow-sm">
-                                Yêu cầu báo giá mới
-                            </button>
-                        </div>
                     </div>
                 </div>
                 <!-- Filter & Search Bar -->
@@ -75,7 +69,8 @@
                             <span
                                 class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">filter_list</span>
                             <span class="text-xs text-on-surface-variant pl-10 py-2 block"
-                                th:text="'Hiển thị ' + ${startCount} + ' - ' + ${endCount} + ' trong số ' + ${totalOrders} + ' đơn hàng'">Hiển thị 0 đơn hàng</span>
+                                th:text="'Hiển thị ' + ${startCount} + ' - ' + ${endCount} + ' trong số ' + ${totalOrders} + ' đơn hàng'">Hiển
+                                thị 0 đơn hàng</span>
                         </div>
                     </div>
                 </div>
@@ -199,9 +194,11 @@
                     <div
                         class="p-4 border-t border-outline-variant/10 flex flex-col sm:flex-row justify-between items-center bg-surface-container-low gap-4">
                         <span class="text-xs text-on-surface-variant font-medium"
-                            th:text="'Hiển thị ' + ${startCount} + ' - ' + ${endCount} + ' trong số ' + ${totalOrders} + ' đơn hàng'">Hiển thị 1 - 4 trong số 248 đơn hàng</span>
+                            th:text="'Hiển thị ' + ${startCount} + ' - ' + ${endCount} + ' trong số ' + ${totalOrders} + ' đơn hàng'">Hiển
+                            thị 1 - 4 trong số 248 đơn hàng</span>
                         <div class="flex gap-2">
-                            <a th:if="${hasPreviousPage}" th:href="@{/orders(page=${previousPage}, status=${selectedStatus})}"
+                            <a th:if="${hasPreviousPage}"
+                                th:href="@{/orders(page=${previousPage}, status=${selectedStatus})}"
                                 class="p-2 border border-outline-variant/30 rounded hover:bg-surface-container-lowest transition-colors flex items-center">
                                 <span class="material-symbols-outlined text-sm">chevron_left</span>
                             </a>
@@ -211,10 +208,9 @@
                             </span>
 
                             <th:block th:each="pageNum : ${pageNumbers}">
-                                <a th:if="${pageNum != currentPage}" 
-                                   th:href="@{/orders(page=${pageNum}, status=${selectedStatus})}"
-                                   th:text="${pageNum}"
-                                   class="px-3 py-1 hover:bg-surface-container-lowest rounded text-xs font-medium border border-transparent hover:border-outline-variant/30 flex items-center">1</a>
+                                <a th:if="${pageNum != currentPage}"
+                                    th:href="@{/orders(page=${pageNum}, status=${selectedStatus})}" th:text="${pageNum}"
+                                    class="px-3 py-1 hover:bg-surface-container-lowest rounded text-xs font-medium border border-transparent hover:border-outline-variant/30 flex items-center">1</a>
                                 <span th:if="${pageNum == currentPage}" th:text="${pageNum}"
                                     class="px-3 py-1 bg-primary text-on-primary rounded text-xs font-bold flex items-center">1</span>
                             </th:block>
@@ -295,6 +291,7 @@
         </a>
     </nav>
     <script src="assets/cart-badge.js" th:src="@{/assets/cart-badge.js}"></script>
+    <script src="assets/smooth-scroll.js" th:src="@{/assets/smooth-scroll.js}"></script>
 </body>
 
 </html>
