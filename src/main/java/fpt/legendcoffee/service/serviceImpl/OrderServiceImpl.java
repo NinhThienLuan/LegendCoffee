@@ -278,6 +278,12 @@ public class OrderServiceImpl implements OrderService {
 
         log.info("[OrderService] Cancelling order #{} and restoring stock", orderId);
         order.setStatus(OrderStatus.CANCELLED);
+        
+        // Cập nhật trạng thái vận chuyển đồng bộ
+        if (order.getShippingInfo() != null) {
+            order.getShippingInfo().setStatus("cancel");
+        }
+        
         orderRepository.save(order);
 
         // Restore stock
