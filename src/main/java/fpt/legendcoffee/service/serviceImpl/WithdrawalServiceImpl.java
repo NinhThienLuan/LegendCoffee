@@ -116,10 +116,10 @@ public class WithdrawalServiceImpl implements WithdrawalService {
                                 "Rút tiền thành công: " + amount.toPlainString() + " ₫ → " + request.getBankName() + " "
                                                 + request.getAccountNumber());
 
-                // 2. Trừ ví ADMIN (admin thực sự chuyển tiền ra ngân hàng của user)
-                String adminDesc = "Chuyển tiền rút cho UserId=" + request.getUser().getId()
-                                + " (#" + requestId + ") → " + request.getBankName() + " " + request.getAccountNumber();
-                walletService.debitAdminWallet(amount, adminDesc);
+//                // 2. Trừ ví ADMIN (admin thực sự chuyển tiền ra ngân hàng của user)
+//                String adminDesc = "Chuyển tiền rút cho UserId=" + request.getUser().getId()
+//                                + " (#" + requestId + ") → " + request.getBankName() + " " + request.getAccountNumber();
+//                walletService.debitAdminWallet(amount, adminDesc);
 
                 // Cập nhật trạng thái request
                 request.setStatus(WithdrawalStatus.APPROVED);
