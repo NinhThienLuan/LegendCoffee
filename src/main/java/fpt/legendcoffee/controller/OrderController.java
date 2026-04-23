@@ -8,14 +8,13 @@ import fpt.legendcoffee.entity.OrderItem;
 import fpt.legendcoffee.entity.ShippingInfo;
 import fpt.legendcoffee.entity.User;
 import fpt.legendcoffee.entity.enumeration.OrderStatus;
+import fpt.legendcoffee.entity.enumeration.PaymentStatus;
 import fpt.legendcoffee.repository.OrderItemRepository;
 import fpt.legendcoffee.repository.OrderRepository;
 import fpt.legendcoffee.repository.PaymentRepository;
 import fpt.legendcoffee.repository.ShippingInfoRepository;
 import fpt.legendcoffee.repository.UserRepository;
-import fpt.legendcoffee.service.OrderService;
-import fpt.legendcoffee.service.ShippingService;
-import fpt.legendcoffee.service.VNPayApplicationService;
+import fpt.legendcoffee.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -33,6 +32,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 @Slf4j
 @Controller
@@ -42,18 +42,19 @@ public class OrderController {
     private final ShippingService shippingService;
     private final OrderService orderService;
     private final VNPayApplicationService vnPayApplicationService;
-    private final UserRepository userRepository;
-    private final OrderRepository orderRepository;
-    private final OrderItemRepository orderItemRepository;
-    private final ShippingInfoRepository shippingInfoRepository;
-    private final PaymentRepository paymentRepository;
+    private final UserService userService;
+    private final OrderItemService orderItemService;
+    private final ShippingInfoService shippingInfoService;
+    private final PaymentService paymentService;
 
     // =========================================================================
     // Trang danh sách đơn hàng & chi tiết
     // =========================================================================
 
     @GetMapping("/orders")
-    public String orderPage(@RequestParam(required = false) String status, Model model) {
+    public String orderPage(@RequestParam(required = false) String status,
+                            @RequestParam(required = false, defaultValue = "1") Integer page,
+                            Model model) {
         Optional<User> currentUser = getCurrentUser();
         if (currentUser.isEmpty()) {
             return "redirect:/login";
@@ -81,12 +82,35 @@ public class OrderController {
         // Non-admin users can only see their own orders
         if (!isAdmin) {
             final Long userId = currentUser.get().getId();
-            allOrders = allOrders.stream().filter(dto -> orderRepository.findById(dto.getId())
-                    .map(Order::getUser)
-                    .map(User::getId).orElse(-1L).equals(userId)).toList();
+            allOrders = allOrders.stream()
+                    .filter(dto -> orderService.findById(dto.getId())
+                            .map(Order::getUser)
+                            .map(User::getId)
+                            .orElse(-1L).equals(userId))
+                    .toList();
         }
 
-        model.addAttribute("orders", allOrders);
+        int totalOrders = allOrders.size();
+        int pageSize = 10;
+        int totalPages = Math.max(1, (int) Math.ceil(totalOrders / (double) pageSize));
+        int currentPage = Math.min(Math.max(page, 1), totalPages);
+
+        int fromIndex = Math.min((currentPage - 1) * pageSize, totalOrders);
+        int toIndex = Math.min(fromIndex + pageSize, totalOrders);
+
+        List<OrderListDTO> pagedOrders = allOrders.subList(fromIndex, toIndex);
+
+        model.addAttribute("orders", pagedOrders);
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("totalOrders", totalOrders);
+        model.addAttribute("startCount", totalOrders > 0 ? fromIndex + 1 : 0);
+        model.addAttribute("endCount", toIndex);
+        model.addAttribute("pageNumbers", IntStream.rangeClosed(1, totalPages).boxed().toList());
+        model.addAttribute("hasPreviousPage", currentPage > 1);
+        model.addAttribute("hasNextPage", currentPage < totalPages);
+        model.addAttribute("previousPage", Math.max(1, currentPage - 1));
+        model.addAttribute("nextPage", Math.min(totalPages, currentPage + 1));
         model.addAttribute("selectedStatus", status != null ? status.toUpperCase() : "");
 
         if (isAdmin) {
@@ -125,7 +149,7 @@ public class OrderController {
             return "redirect:/login";
         }
 
-        Optional<Order> orderOpt = orderRepository.findByIdWithUser(orderId);
+        Optional<Order> orderOpt = orderService.findByIdWithUser(orderId);
         if (orderOpt.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy đơn hàng.");
             return "redirect:/orders";
@@ -138,8 +162,8 @@ public class OrderController {
             return "redirect:/orders";
         }
 
-        List<OrderItem> orderItems = orderItemRepository.findByOrderIdWithDetails(orderId);
-        ShippingInfo shippingInfo = shippingInfoRepository.findByOrderId(orderId).orElse(null);
+        List<OrderItem> orderItems = orderItemService.findByOrderIdWithDetails(orderId);
+        ShippingInfo shippingInfo = shippingInfoService.findByOrderId(orderId).orElse(null);
 
         BigDecimal shippingFee = shippingInfo != null && shippingInfo.getShippingFee() != null
                 ? BigDecimal.valueOf(shippingInfo.getShippingFee())
@@ -158,7 +182,7 @@ public class OrderController {
             model.addAttribute("orderId", orderId);
 
             // Tìm URL thanh toán VNPay nếu đơn hàng đang chờ thanh toán
-            paymentRepository.findByOrderIdAndStatus(orderId, fpt.legendcoffee.entity.enumeration.PaymentStatus.PENDING)
+            paymentService.findByOrderIdAndStatus(orderId, PaymentStatus.PENDING)
                     .filter(p -> p.getCreatedAt() == null
                             || p.getCreatedAt().plusMinutes(15).isAfter(LocalDateTime.now()))
                     .ifPresent(p -> model.addAttribute("paymentUrl", p.getPaymentUrl()));
@@ -220,7 +244,7 @@ public class OrderController {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
                 String email = auth.getName(); // Spring Security mặc định dùng email/username làm Name
-                Optional<fpt.legendcoffee.entity.User> userOpt = userRepository.findByEmail(email);
+                Optional<fpt.legendcoffee.entity.User> userOpt = userService.findByEmail(email);
 
                 userOpt.ifPresent(u -> {
                     checkoutRequest.setRecipientName(u.getUsername()); // fullname
@@ -309,7 +333,7 @@ public class OrderController {
             return "redirect:/login";
         }
 
-        Optional<Order> orderOpt = orderRepository.findById(orderId);
+        Optional<Order> orderOpt = orderService.findById(orderId);
         if (orderOpt.isEmpty() || orderOpt.get().getUser() == null
                 || !orderOpt.get().getUser().getId().equals(currentUser.get().getId())) {
             redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền theo dõi đơn hàng này.");
@@ -343,7 +367,7 @@ public class OrderController {
             return "redirect:/login";
         }
 
-        Optional<Order> orderOpt = orderRepository.findById(orderId);
+        Optional<Order> orderOpt = orderService.findById(orderId);
         if (orderOpt.isEmpty() || orderOpt.get().getUser() == null
                 || !orderOpt.get().getUser().getId().equals(currentUser.get().getId())) {
             redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền huỷ đơn hàng này.");
@@ -374,6 +398,6 @@ public class OrderController {
         if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
             return Optional.empty();
         }
-        return userRepository.findByEmail(auth.getName());
+        return userService.findByEmail(auth.getName());
     }
 }

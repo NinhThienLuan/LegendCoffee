@@ -27,7 +27,7 @@ const CartSystem = {
     addToCart(item) {
         // item: { id, variantId, comboId, name, price, image, variant, quantity }
         const cart = this.getCart();
-        
+
         // Auto-detect comboId if ID starts with combo-
         let detectedComboId = item.comboId;
         if (!detectedComboId && String(item.id).startsWith('combo-')) {
@@ -92,7 +92,7 @@ const CartSystem = {
             const iVariantId = i.variantId || i.id;
             return String(iVariantId) === String(id) && normalizeVariant(i.variant) === normalizeVariant(variant);
         });
-        
+
         if (item) {
             item.quantity = quantity;
             this.saveCart(cart);
@@ -105,9 +105,7 @@ const CartSystem = {
 
     calculateTotals() {
         const subtotal = this.getCart().reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        const vat = Math.round(subtotal * 0.08);
-        const total = subtotal + vat;
-        return { subtotal, vat, total, shipping: 0 };
+        return { subtotal, vat: 0, total: subtotal, shipping: 0 };
     },
 
     clearCart() {
@@ -119,7 +117,7 @@ const CartSystem = {
 window.CartSystem = CartSystem;
 
 // Tự động xoá giỏ hàng nếu vừa đặt hàng xong (chuyển trang từ checkout)
-(function() {
+(function () {
     const orderInProgress = sessionStorage.getItem('orderInProgress');
     if (orderInProgress === 'true') {
         if (!window.location.pathname.includes('/checkout')) {

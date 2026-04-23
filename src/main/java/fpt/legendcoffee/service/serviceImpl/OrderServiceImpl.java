@@ -327,6 +327,16 @@ public class OrderServiceImpl implements OrderService {
         return MAX_TOTAL_QUANTITY;
     }
 
+    @Override
+    public Optional<Order> findById(Long orderId) {
+        return orderRepository.findById(orderId);
+    }
+
+    @Override
+    public Optional<Order> findByIdWithUser(Long orderId) {
+        return orderRepository.findByIdWithUser(orderId);
+    }
+
     private List<OrderItem> buildOrderItems(List<CheckoutItemRequestDTO> itemRequests) {
         if (itemRequests == null || itemRequests.isEmpty()) {
             return List.of();

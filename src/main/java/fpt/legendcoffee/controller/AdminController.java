@@ -36,10 +36,12 @@ public class AdminController {
      */
     @GetMapping("/orders")
     public String adminOrders(@RequestParam(required = false) String status,
+                              @RequestParam(required = false, defaultValue = "1") Integer page,
                               RedirectAttributes ra) {
         if (status != null && !status.isBlank()) {
             ra.addAttribute("status", status);
         }
+        ra.addAttribute("page", page);
         return "redirect:/orders";
     }
 
