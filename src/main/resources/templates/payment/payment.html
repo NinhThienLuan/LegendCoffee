@@ -33,7 +33,7 @@
                                 của bạn đã được xác nhận.</p>
                         </div>
                     </div>
-                    <div
+                    <div th:if="${payment.success}"
                         class="grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-12 border-t border-outline-variant/20 pt-10 text-center md:text-left">
                         <div class="flex flex-col items-center md:items-start">
                             <span
@@ -106,7 +106,7 @@
                             data-icon="track_changes">track_changes</span>
                         <span>Theo dõi đơn hàng</span>
                     </a>
-                    <a th:href="@{/checkout(orderId=${payment.orderId})}" th:if="${!payment.success}"
+                    <a th:href="@{/checkout(orderId=${payment.orderId})}" th:if="${!payment.success and !payment.message.contains('truy cập') and !payment.message.contains('tìm thấy')}"
                         class="bg-error text-on-error px-10 py-4 rounded-md font-bold tracking-tight hover:opacity-90 transition-all flex items-center justify-center space-x-2 group shadow-md">
                         <span class="material-symbols-outlined" data-icon="refresh">refresh</span>
                         <span>Thử thanh toán lại</span>

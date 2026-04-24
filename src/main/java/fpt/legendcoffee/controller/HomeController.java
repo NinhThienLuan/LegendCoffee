@@ -32,7 +32,7 @@ public class HomeController {
             articles = articles.subList(0, 3);
         }
         model.addAttribute("articles", articles);
-        List<ProductResponseDTO> products = productService.getAllProductResponses();
+        List<ProductResponseDTO> products = productService.searchProducts(null, true);
         if (products.size() > 3) {
             products = products.subList(0, 3);
         }
