@@ -5,6 +5,7 @@ import fpt.legendcoffee.repository.OrderItemRepository;
 import fpt.legendcoffee.repository.OrderRepository;
 import fpt.legendcoffee.repository.UserRepository;
 import fpt.legendcoffee.entity.enumeration.OrderStatus;
+import fpt.legendcoffee.repository.WithdrawalRequestRepository;
 import fpt.legendcoffee.service.DashboardService;
 import fpt.legendcoffee.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class DashboardServiceImpl implements DashboardService {
     private final UserRepository userRepository;
     private final OrderItemRepository orderItemRepository;
     private final ProductService productService;
-    private final fpt.legendcoffee.repository.WithdrawalRequestRepository withdrawalRequestRepository;
+    private final WithdrawalRequestRepository withdrawalRequestRepository;
 
     @Override
     public DashboardResponseDTO getDashboardStats() {

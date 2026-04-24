@@ -119,7 +119,8 @@ public class ProductServiceImpl implements ProductService {
 
             int soldCount = 0;
             try {
-                Integer totalSold = orderItemRepository.sumQuantityByProductId(product.getId());
+                List<String> successStatuses = List.of("CONFIRMED", "SHIPPING", "COMPLETED");
+                Integer totalSold = orderItemRepository.sumQuantityByProductId(product.getId(), successStatuses);
                 soldCount = totalSold != null ? totalSold : 0;
             } catch (Exception e) {
                 log.warn("Failed to calculate sold count for product {}: {}", product.getId(), e.getMessage());
@@ -173,16 +174,16 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(readOnly = true)
     public ProductDetailDTO getProductDetail(Long id) {
         Product product = getProductById(id);
-        
+
         return ProductDetailDTO.builder()
                 .id(product.getId())
                 .name(product.getName())
                 .description(product.getDescription())
                 .origin(product.getOrigin())
                 .imageUrl(product.getImageUrl())
-                .categoryName(product.getCategory() != null 
-                    ? product.getCategory().getCategoryName()  // lazy load ở đây, session còn sống → fine
-                    : null)
+                .categoryName(product.getCategory() != null
+                        ? product.getCategory().getCategoryName() // lazy load ở đây, session còn sống → fine
+                        : null)
                 .build();
     }
 
@@ -237,7 +238,7 @@ public class ProductServiceImpl implements ProductService {
             List<ProductVariant> toDelete = currentVariants.stream()
                     .filter(v -> !requestIds.contains(v.getId()))
                     .collect(Collectors.toList());
-            
+
             if (!toDelete.isEmpty()) {
                 productVariantRepository.deleteAll(toDelete);
             }
@@ -248,7 +249,7 @@ public class ProductServiceImpl implements ProductService {
                             .filter(v -> v.getId().equals(variantDTO.getId()))
                             .findFirst()
                             .orElse(null);
-                    
+
                     if (existing != null) {
                         existing.setVariantName(variantDTO.getVariantName());
                         existing.setPackaging(variantDTO.getPackaging());
@@ -340,7 +341,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductRequestDTO getProductRequestById(Long id) {
         Product product = getProductById(id);
         List<ProductVariant> variants = productVariantRepository.findByProduct(product);
-        
+
         List<ProductVariantRequestDTO> variantDTOs = variants.stream()
                 .map(v -> ProductVariantRequestDTO.builder()
                         .id(v.getId())

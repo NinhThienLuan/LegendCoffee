@@ -27,14 +27,23 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 			WHERE oi.order.id = :orderId
 			""")
 	List<OrderItem> findByOrderIdWithDetails(@Param("orderId") Long orderId);
-	@Query("""
-			SELECT SUM(oi.quantity)
-			FROM OrderItem oi
-			LEFT JOIN oi.variant v
-			WHERE v.product.id = :productId
-			AND oi.order.status NOT IN (fpt.legendcoffee.entity.enumeration.OrderStatus.CANCELLED)
-			""")
-	Integer sumQuantityByProductId(@Param("productId") Long productId);
+
+	@Query(value = """
+			SELECT
+			  (SELECT ISNULL(SUM(oi.quantity), 0)
+			   FROM order_items oi
+			   JOIN product_variants pv ON oi.variant_id = pv.id
+			   JOIN orders o ON oi.order_id = o.id
+			   WHERE pv.product_id = :productId AND o.status IN (:statuses))
+			  +
+			  (SELECT ISNULL(SUM(oi.quantity * ci.quantity), 0)
+			   FROM order_items oi
+			   JOIN combo_items ci ON oi.combo_id = ci.combo_id
+			   JOIN product_variants pv ON ci.variant_id = pv.id
+			   JOIN orders o ON oi.order_id = o.id
+			   WHERE pv.product_id = :productId AND o.status IN (:statuses))
+			""", nativeQuery = true)
+	Integer sumQuantityByProductId(@Param("productId") Long productId, @Param("statuses") List<String> statuses);
 
 	@Query("""
 			SELECT p.name, SUM(oi.quantity) as totalSold
@@ -47,4 +56,3 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 			""")
 	List<Object[]> getTopSellingProducts(@Param("statuses") List<OrderStatus> statuses, Pageable pageable);
 }
-
