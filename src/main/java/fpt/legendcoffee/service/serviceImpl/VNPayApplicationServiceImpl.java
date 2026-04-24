@@ -132,7 +132,8 @@ public class VNPayApplicationServiceImpl implements VNPayApplicationService {
             if (currentUserId == null || !order.getUser().getId().equals(currentUserId)) {
                 log.warn("[VNPay Return] Truy cập trái phép! OrderId={} User={} CurrentUser={}",
                         order.getId(), order.getUser().getId(), currentUserId);
-                return PaymentReturnDTO.failure("Bạn không có quyền truy cập thông tin giao dịch này", responseCode, txnRef);
+                return PaymentReturnDTO.failure("Bạn không có quyền truy cập thông tin giao dịch này", responseCode,
+                        txnRef);
             }
         }
 
@@ -232,7 +233,7 @@ public class VNPayApplicationServiceImpl implements VNPayApplicationService {
         } else {
             log.warn("[VNPay IPN] Thanh toán thất bại - TxnRef={}, ResponseCode={}",
                     txnRef, responseCode);
-            
+
             // Tự động hủy đơn và hoàn kho khi thanh toán thất bại
             Order order = payment.getOrder();
             if (order != null && order.getStatus() == OrderStatus.PENDING) {
@@ -240,7 +241,8 @@ public class VNPayApplicationServiceImpl implements VNPayApplicationService {
                     orderService.cancelOrder(order.getId());
                     log.info("[VNPay IPN] Đã hủy đơn #{} và hoàn kho do thanh toán thất bại", order.getId());
                 } catch (Exception e) {
-                    log.error("[VNPay IPN] Lỗi khi hủy đơn #{} sau thanh toán thất bại: {}", order.getId(), e.getMessage());
+                    log.error("[VNPay IPN] Lỗi khi hủy đơn #{} sau thanh toán thất bại: {}", order.getId(),
+                            e.getMessage());
                 }
             }
         }

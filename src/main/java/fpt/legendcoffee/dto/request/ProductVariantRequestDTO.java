@@ -28,7 +28,7 @@ public class ProductVariantRequestDTO {
     private String packaging;
 
     /** Kích cỡ / khối lượng (đơn vị: gram). */
-    @Min(value = 250, message = "Kích cỡ thấp nhất là 250")
+    @NotNull(message = "Kích cỡ không được để trống")
     private Integer size;
 
     /** Đơn giá bán của biến thể. */
