@@ -1,6 +1,7 @@
 package fpt.legendcoffee.controller;
 
 import fpt.legendcoffee.dto.response.ProductResponseDTO;
+import fpt.legendcoffee.service.DashboardService;
 import fpt.legendcoffee.service.ProductService;
 import fpt.legendcoffee.service.ProductVariantService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class AdminController {
 
     private final ProductVariantService productVariantService;
     private final ProductService productService;
-    private final fpt.legendcoffee.service.DashboardService dashboardService;
+    private final DashboardService dashboardService;
 
     @GetMapping("")
     public String adminHome(Model model) {

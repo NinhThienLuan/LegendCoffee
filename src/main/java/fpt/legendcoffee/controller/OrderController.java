@@ -3,17 +3,13 @@ package fpt.legendcoffee.controller;
 import fpt.legendcoffee.common.util.WebUtils;
 import fpt.legendcoffee.dto.app.CheckoutRequestDTO;
 import fpt.legendcoffee.dto.app.OrderListDTO;
+import fpt.legendcoffee.dto.app.OrderStatusDTO;
 import fpt.legendcoffee.entity.Order;
 import fpt.legendcoffee.entity.OrderItem;
 import fpt.legendcoffee.entity.ShippingInfo;
 import fpt.legendcoffee.entity.User;
 import fpt.legendcoffee.entity.enumeration.OrderStatus;
 import fpt.legendcoffee.entity.enumeration.PaymentStatus;
-import fpt.legendcoffee.repository.OrderItemRepository;
-import fpt.legendcoffee.repository.OrderRepository;
-import fpt.legendcoffee.repository.PaymentRepository;
-import fpt.legendcoffee.repository.ShippingInfoRepository;
-import fpt.legendcoffee.repository.UserRepository;
 import fpt.legendcoffee.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -53,8 +49,8 @@ public class OrderController {
 
     @GetMapping("/orders")
     public String orderPage(@RequestParam(required = false) String status,
-                            @RequestParam(required = false, defaultValue = "1") Integer page,
-                            Model model) {
+            @RequestParam(required = false, defaultValue = "1") Integer page,
+            Model model) {
         Optional<User> currentUser = getCurrentUser();
         if (currentUser.isEmpty()) {
             return "redirect:/login";
@@ -120,25 +116,31 @@ public class OrderController {
     }
 
     @PostMapping("/admin/orders/{orderId}/start-delivering")
-    public String startDelivering(@PathVariable Long orderId, RedirectAttributes redirectAttributes) {
+    public String startDelivering(@PathVariable Long orderId, HttpServletRequest request,
+            RedirectAttributes redirectAttributes) {
         try {
             orderService.startDelivering(orderId);
-            redirectAttributes.addFlashAttribute("successMessage", "Đã chuyển sang trạng thái Đang giao hàng");
+            redirectAttributes.addFlashAttribute("infoMessage",
+                    "Ghi chú hệ thống: Đơn hàng #" + orderId + " đã được chuyển sang trạng thái Đang giao hàng.");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "Cập nhật thất bại: " + e.getMessage());
         }
-        return "redirect:/orders";
+
+        return "redirect:/orders/" + orderId;
     }
 
     @PostMapping("/admin/orders/{orderId}/complete-delivery")
-    public String completeDelivery(@PathVariable Long orderId, RedirectAttributes redirectAttributes) {
+    public String completeDelivery(@PathVariable Long orderId, HttpServletRequest request,
+            RedirectAttributes redirectAttributes) {
         try {
             orderService.completeDelivery(orderId);
-            redirectAttributes.addFlashAttribute("successMessage", "Đã xác nhận khách hàng nhận hàng thành công");
+            redirectAttributes.addFlashAttribute("infoMessage",
+                    "Ghi chú hệ thống: Đã xác nhận hoàn thành đơn hàng #" + orderId + " (Khách đã nhận hàng).");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "Xác nhận thất bại: " + e.getMessage());
         }
-        return "redirect:/orders";
+
+        return "redirect:/orders/" + orderId;
     }
 
     @GetMapping("/orders/{orderId}")
@@ -161,7 +163,6 @@ public class OrderController {
         boolean isAdmin = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
-
         if (!isAdmin && (order.getUser() == null || !order.getUser().getId().equals(currentUser.get().getId()))) {
             redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền xem đơn hàng này.");
             return "redirect:/orders";
@@ -182,7 +183,7 @@ public class OrderController {
             model.addAttribute("orderItems", orderItems);
             model.addAttribute("shippingInfo", shippingInfo);
             model.addAttribute("shippingFee", shippingFee);
-            //model.addAttribute("vat", vat);
+            // model.addAttribute("vat", vat);
             model.addAttribute("totalAmount", totalAmount);
             model.addAttribute("orderId", orderId);
 
@@ -192,13 +193,29 @@ public class OrderController {
                             || p.getCreatedAt().plusMinutes(15).isAfter(LocalDateTime.now()))
                     .ifPresent(p -> model.addAttribute("paymentUrl", p.getPaymentUrl()));
 
+            // Fallback label based on internal order status
+            String fallbackLabel = "Đang xử lý";
+            if (order.getStatus() == OrderStatus.PENDING)
+                fallbackLabel = "Chờ thanh toán";
+            else if (order.getStatus() == OrderStatus.CONFIRMED)
+                fallbackLabel = "Đã xác nhận";
+            else if (order.getStatus() == OrderStatus.CANCELLED)
+                fallbackLabel = "Đã hủy";
+            else if (order.getStatus() == OrderStatus.COMPLETED)
+                fallbackLabel = "Đã hoàn thành";
+            model.addAttribute("orderStatusLabel", fallbackLabel);
+
             // Tích hợp dữ liệu tracking trực tiếp vào trang detail
             try {
-                model.addAttribute("orderStatus", shippingService.getOrderStatus(orderId));
+                OrderStatusDTO os = shippingService.getOrderStatus(orderId);
+                model.addAttribute("orderStatus", os);
             } catch (Exception e) {
                 log.warn("[Tracking] Không tìm thấy thông tin vận chuyển cho orderId={}", orderId);
             }
 
+            if (isAdmin) {
+                return "admin/order-detail";
+            }
             return "order/order-detail";
         } catch (Exception e) {
             log.error("Error rendering order-detail for ID {}: {}", orderId, e.getMessage());

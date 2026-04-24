@@ -170,6 +170,15 @@
       const qtyInput = document.getElementById('combo-qty');
       if (!qtyInput) return;
 
+      const comboItemsData = [];
+      /*[# th:each="ci : ${combo.items}"]*/
+      comboItemsData.push({
+          productName: /*[[${ci.productName}]]*/ '',
+          variantName: /*[[${ci.variantName}]]*/ '',
+          quantity: /*[[${ci.quantity}]]*/ 1
+      });
+      /*[/]*/
+
       const item = {
         id: 'combo-' + /*[[${combo != null ? combo.id : 0}]]*/ 0,
         comboId: /*[[${combo != null ? combo.id : 0}]]*/ 0,
@@ -177,7 +186,8 @@
         price: /*[[${combo != null and combo.price != null ? combo.price : 0}]]*/ 0,
         image: /*[[${combo != null and combo.imageUrl != null ? combo.imageUrl : ''}]]*/ '',
         variant: '__combo__',
-        quantity: parseInt(qtyInput.value || '1', 10)
+        quantity: parseInt(qtyInput.value || '1', 10),
+        comboItems: comboItemsData
       };
 
       window.CartSystem.addToCart(item);

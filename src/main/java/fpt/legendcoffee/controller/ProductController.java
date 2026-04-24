@@ -77,19 +77,21 @@ public class ProductController {
                 : "false".equalsIgnoreCase(active) ? Boolean.FALSE
                         : null;
 
-        List<ProductResponseDTO> products = productService.searchProducts(keyword, activeFilter);
-
-        model.addAttribute("products", products);
-        model.addAttribute("totalProducts", productService.countProducts());
-        model.addAttribute("activeProducts", productService.countActiveProducts());
-        model.addAttribute("lowStockProducts", productService.countLowStockProducts());
-        model.addAttribute("selectedKeyword", keyword != null ? keyword : "");
-        model.addAttribute("selectedActive", active != null ? active : "");
-
         if (authentication != null && authentication.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN") || a.getAuthority().equals("ROLE_STAFF"))) {
+            List<ProductResponseDTO> products = productService.searchProducts(keyword, activeFilter);
+            model.addAttribute("products", products);
+            model.addAttribute("totalProducts", productService.countProducts());
+            model.addAttribute("activeProducts", productService.countActiveProducts());
+            model.addAttribute("lowStockProducts", productService.countLowStockProducts());
+            model.addAttribute("selectedKeyword", keyword != null ? keyword : "");
+            model.addAttribute("selectedActive", active != null ? active : "");
             return "product/products";
         }
+
+        // Khách hàng hoặc user thường chỉ xem sản phẩm đang active
+        List<ProductResponseDTO> products = productService.searchProducts(keyword, true);
+        model.addAttribute("products", products);
         model.addAttribute("pageType", "products");
         return "product/catalogs";
     }
@@ -98,7 +100,7 @@ public class ProductController {
     public String viewProduct(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         try {
             ProductDetailDTO product = productService.getProductDetail(id);
-            List<ProductVariant> variants = productVariantService.getVariantsByProductId(id);
+            List<ProductVariant> variants = productVariantService.getActiveVariantsByProductId(id);
             ProductVariant selectedVariant = null;
             for (ProductVariant variant : variants) {
                 if (Boolean.TRUE.equals(variant.getIsActive())) {
@@ -193,11 +195,8 @@ public class ProductController {
                 model.addAttribute("request", productService.getProductRequestById(id));
             }
 
-            List<ProductVariant> existingVariants = productVariantService.findByProduct(product);
-
             model.addAttribute("productId", id);
             model.addAttribute("currentImageUrl", product.getImageUrl());
-            model.addAttribute("existingVariants", existingVariants);
             model.addAttribute("categories", productService.getAllCategories());
             model.addAttribute("editMode", true);
             return "product/product-form";
@@ -220,7 +219,6 @@ public class ProductController {
             model.addAttribute("productId", id);
             model.addAttribute("currentImageUrl", product.getImageUrl());
             model.addAttribute("categories", productService.getAllCategories());
-            model.addAttribute("existingVariants", productVariantService.getVariantsByProductId(id));
             model.addAttribute("editMode", true);
             return "product/product-form";
         }
@@ -283,6 +281,27 @@ public class ProductController {
             log.error("[Product][{}] Lỗi không xác định khi xóa sản phẩm - id={} | type={} | rootCause={}",
                     errorCode, id, e.getClass().getName(), getRootCauseMessage(e), e);
             redirectAttributes.addFlashAttribute("error", "Lỗi hệ thống, vui lòng thử lại. Mã lỗi: " + errorCode);
+        }
+        return "redirect:/products";
+    }
+
+    @PostMapping("/{id}/toggle-status")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    public String toggleProductStatus(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            Product product = productService.getProductById(id);
+            product.setIsActive(!Boolean.TRUE.equals(product.getIsActive()));
+            
+            ProductRequestDTO request = productService.getProductRequestById(id);
+            request.setIsActive(product.getIsActive());
+            
+            productService.updateProduct(id, request);
+            
+            log.info("[Product] Thay đổi trạng thái sản phẩm - id={} | status={}", id, product.getIsActive());
+            redirectAttributes.addFlashAttribute("success", "Đã " + (product.getIsActive() ? "kích hoạt" : "ẩn") + " sản phẩm.");
+        } catch (Exception e) {
+            log.error("[Product] Lỗi khi thay đổi trạng thái sản phẩm - id={}", id, e);
+            redirectAttributes.addFlashAttribute("error", "Lỗi khi thay đổi trạng thái sản phẩm.");
         }
         return "redirect:/products";
     }

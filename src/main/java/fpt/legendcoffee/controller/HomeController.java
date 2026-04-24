@@ -1,6 +1,7 @@
 package fpt.legendcoffee.controller;
 
 import fpt.legendcoffee.dto.response.ProductResponseDTO;
+import fpt.legendcoffee.entity.Article;
 import fpt.legendcoffee.service.ArticleService;
 import fpt.legendcoffee.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ public class HomeController {
             return "redirect:/admin";
         }
 
-        List<fpt.legendcoffee.entity.Article> articles = articleService.getPublishedArticles();
+        List<Article> articles = articleService.getPublishedArticles();
         if (articles.size() > 3) {
             articles = articles.subList(0, 3);
         }

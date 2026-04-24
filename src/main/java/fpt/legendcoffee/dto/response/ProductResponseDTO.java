@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class ProductResponseDTO {
     private Long id;
     private String name;
+    private String description;
     private String categoryName;
     private BigDecimal price;
     private Integer stockQuantity;

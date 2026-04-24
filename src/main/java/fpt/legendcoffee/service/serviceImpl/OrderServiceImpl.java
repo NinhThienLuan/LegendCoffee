@@ -369,7 +369,11 @@ public class OrderServiceImpl implements OrderService {
                                 "Không tìm thấy biến thể với ID: " + request.getVariantId()));
                 if (!Boolean.TRUE.equals(variant.getIsActive())) {
                     throw new IllegalArgumentException(
-                            "Biến thể với ID " + request.getVariantId() + " đang không hoạt động");
+                            "Sản phẩm '" + variant.getVariantName() + "' đang ngừng kinh doanh");
+                }
+                if (variant.getProduct() != null && !Boolean.TRUE.equals(variant.getProduct().getIsActive())) {
+                    throw new IllegalArgumentException(
+                            "Sản phẩm '" + variant.getProduct().getName() + "' đang ngừng kinh doanh");
                 }
                 unitPrice = variant.getPrice();
             } else {
@@ -378,7 +382,20 @@ public class OrderServiceImpl implements OrderService {
                                 "Không tìm thấy combo với ID: " + request.getComboId()));
                 if (!Boolean.TRUE.equals(combo.getIsActive())) {
                     throw new IllegalArgumentException(
-                            "Combo với ID " + request.getComboId() + " đang không hoạt động");
+                            "Combo '" + combo.getName() + "' đang ngừng kinh doanh");
+                }
+                // Kiểm tra các sản phẩm trong combo
+                if (combo.getComboItems() != null) {
+                    for (fpt.legendcoffee.entity.ComboItem comboItem : combo.getComboItems()) {
+                        ProductVariant v = comboItem.getVariant();
+                        if (v != null) {
+                            if (!Boolean.TRUE.equals(v.getIsActive()) || 
+                                (v.getProduct() != null && !Boolean.TRUE.equals(v.getProduct().getIsActive()))) {
+                                throw new IllegalArgumentException(
+                                    "Combo '" + combo.getName() + "' chứa sản phẩm '" + v.getVariantName() + "' đã ngừng kinh doanh");
+                            }
+                        }
+                    }
                 }
                 LocalDateTime now = LocalDateTime.now();
                 if (combo.getStartDate() != null && now.isBefore(combo.getStartDate())) {

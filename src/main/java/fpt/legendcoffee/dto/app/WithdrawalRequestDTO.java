@@ -30,5 +30,6 @@ public class WithdrawalRequestDTO {
     private String accountNumber;
 
     @NotBlank(message = "Vui lòng nhập tên chủ tài khoản")
+    @jakarta.validation.constraints.Pattern(regexp = "^[A-Z ]+$", message = "Tên chủ tài khoản phải là chữ in hoa không dấu")
     private String accountHolder;
 }

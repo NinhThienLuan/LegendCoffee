@@ -20,7 +20,7 @@ public class ProductVariantRequestDTO {
 
     /** Tên biến thể (ví dụ: Robusta 60kg Xay mịn). */
     @NotBlank(message = "Tên biến thể không được để trống")
-    @Size(min = 10, message = "Tên biến thể phải có ít nhất 10 ký tự")
+    @Size(min = 6, message = "Tên biến thể phải có ít nhất 6 ký tự")
     private String variantName;
 
     /** Hình thức đóng gói (ví dụ: Túi, Bao, Lon). */

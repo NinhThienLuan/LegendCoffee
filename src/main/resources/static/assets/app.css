@@ -213,3 +213,43 @@ section {
 .editor-lab-muted {
   color: #827471;
 }
+
+/* Global Premium Breadcrumb Styles */
+nav[aria-label="Breadcrumb"], nav[aria-label="breadcrumb"] {
+  font-family: "Manrope", sans-serif !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.15em !important;
+  font-weight: 900 !important;
+  font-size: 11px !important;
+  margin-bottom: 1.5rem !important;
+}
+
+nav[aria-label="Breadcrumb"] a, nav[aria-label="breadcrumb"] a {
+  color: #77574d !important;
+  transition: all 0.3s ease !important;
+  text-decoration: none !important;
+}
+
+nav[aria-label="Breadcrumb"] a:hover, nav[aria-label="breadcrumb"] a:hover {
+  color: #351f1b !important;
+  text-decoration: underline !important;
+}
+
+nav[aria-label="Breadcrumb"] [aria-current="page"] span:not(.material-symbols-outlined),
+nav[aria-label="breadcrumb"] [aria-current="page"] span:not(.material-symbols-outlined),
+nav[aria-label="Breadcrumb"] li:last-child span:not(.material-symbols-outlined) {
+  color: #351f1b !important;
+  background-color: rgba(53, 31, 27, 0.08) !important;
+  padding: 0.4rem 1rem !important;
+  border-radius: 9999px !important;
+  border: 1px solid rgba(53, 31, 27, 0.15) !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+}
+
+nav[aria-label="Breadcrumb"] .material-symbols-outlined, 
+nav[aria-label="breadcrumb"] .material-symbols-outlined {
+  color: rgba(53, 31, 27, 0.3) !important;
+  font-size: 14px !important;
+  vertical-align: middle !important;
+  margin: 0 0.25rem !important;
+}
