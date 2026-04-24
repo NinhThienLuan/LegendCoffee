@@ -14,6 +14,7 @@ import fpt.legendcoffee.service.VNPayService;
 import fpt.legendcoffee.repository.OrderRepository;
 import fpt.legendcoffee.repository.PaymentRepository;
 import fpt.legendcoffee.service.WalletService;
+import fpt.legendcoffee.common.util.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -114,6 +115,26 @@ public class VNPayApplicationServiceImpl implements VNPayApplicationService {
 
         String responseCode = get(queryParams, "vnp_ResponseCode");
         String txnRef = getOrDefault(queryParams, "vnp_TxnRef", "");
+
+        // 1. Kiểm tra ownership - CHỈ CHẤP NHẬN NẾU ĐƠN HÀNG THUỘC VỀ USER HIỆN TẠI
+        Optional<Payment> paymentOpt = paymentRepository.findByTransRef(txnRef);
+        if (paymentOpt.isEmpty()) {
+            log.warn("[VNPay Return] Không tìm thấy Payment với TxnRef={}", txnRef);
+            return PaymentReturnDTO.failure("Không tìm thấy thông tin giao dịch", responseCode, txnRef);
+        }
+
+        Payment payment = paymentOpt.get();
+        Order order = payment.getOrder();
+        Long currentUserId = SecurityUtils.getCurrentUserId();
+
+        if (order != null && order.getUser() != null) {
+            if (currentUserId == null || !order.getUser().getId().equals(currentUserId)) {
+                log.warn("[VNPay Return] Truy cập trái phép! OrderId={} User={} CurrentUser={}",
+                        order.getId(), order.getUser().getId(), currentUserId);
+                return PaymentReturnDTO.failure("Bạn không có quyền truy cập thông tin giao dịch này", responseCode, txnRef);
+            }
+        }
+
         boolean isSuccess = "00".equals(responseCode);
 
         if (isSuccess) {

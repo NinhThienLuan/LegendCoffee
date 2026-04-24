@@ -330,7 +330,9 @@ public class ShippingServiceImpl implements ShippingService {
                 .width(20)
                 .height(10)
                 .insuranceValue(0L)
-                .codAmount(info.getPaymentTypeId() != null && info.getPaymentTypeId() == GhnPaymentTypeId.CUSTOMER_PAYS.getValue() ? info.getShippingFee() : 0L)
+                .codAmount(info.getPaymentTypeId() != null
+                        && info.getPaymentTypeId() == GhnPaymentTypeId.CUSTOMER_PAYS.getValue() ? info.getShippingFee()
+                                : 0L)
                 .note(info.getNote())
                 .requiredNote("CHOTHUHANG")
                 .items(List.of(
@@ -511,7 +513,8 @@ public class ShippingServiceImpl implements ShippingService {
                     try {
                         processRefund(order);
                     } catch (Exception e) {
-                        log.error("[Webhook] Lỗi hoàn tiền cho đơn hàng #{} khi GHN huỷ đơn: {}", order.getId(), e.getMessage());
+                        log.error("[Webhook] Lỗi hoàn tiền cho đơn hàng #{} khi GHN huỷ đơn: {}", order.getId(),
+                                e.getMessage());
                     }
                 }
             });
@@ -556,7 +559,7 @@ public class ShippingServiceImpl implements ShippingService {
             orderService.cancelOrder(order.getId());
 
             log.info("[Shipping] Order {} cancelled successfully and stock restored", info.getGhnOrderCode());
-            
+
             // Xử lý hoàn tiền trực tiếp nếu đã thanh toán
             try {
                 processRefund(order);
@@ -569,8 +572,9 @@ public class ShippingServiceImpl implements ShippingService {
 
     private void processRefund(Order order) {
         // Tìm thanh toán thành công của đơn hàng
-        java.util.Optional<Payment> paymentOpt = paymentRepository.findByOrderIdAndStatus(order.getId(), PaymentStatus.SUCCESS);
-        
+        java.util.Optional<Payment> paymentOpt = paymentRepository.findByOrderIdAndStatus(order.getId(),
+                PaymentStatus.SUCCESS);
+
         if (paymentOpt.isPresent()) {
             Payment payment = paymentOpt.get();
             java.math.BigDecimal refundAmount = payment.getAmount();
@@ -585,7 +589,8 @@ public class ShippingServiceImpl implements ShippingService {
                 // 2. Cộng tiền cho user
                 if (order.getUser() != null) {
                     walletService.creditWallet(order.getUser().getId(), refundAmount, userDesc);
-                    log.info("[Shipping] Đã hoàn {} cho UserId={} từ đơn hàng #{}", refundAmount, order.getUser().getId(), order.getId());
+                    log.info("[Shipping] Đã hoàn {} cho UserId={} từ đơn hàng #{}", refundAmount,
+                            order.getUser().getId(), order.getId());
                 } else {
                     log.warn("[Shipping] Không tìm thấy User để hoàn tiền cho đơn hàng #{}", order.getId());
                 }
