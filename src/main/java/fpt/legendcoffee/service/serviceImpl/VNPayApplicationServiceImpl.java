@@ -106,6 +106,7 @@ public class VNPayApplicationServiceImpl implements VNPayApplicationService {
     // =========================================================================
 
     @Override
+    @Transactional(readOnly = true)
     public PaymentReturnDTO handleReturn(Map<String, String> queryParams) {
         // Validate chữ ký để tránh giả mạo
         if (!vnPayService.validateSignature(queryParams)) {
