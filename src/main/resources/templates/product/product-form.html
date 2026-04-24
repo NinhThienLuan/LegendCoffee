@@ -139,8 +139,7 @@
                                             Xuất xứ <span class="text-red-500">*</span>
                                         </label>
                                         <input id="origin" type="text" th:field="*{origin}" required maxlength="255"
-                                            placeholder="Ví dụ: Đà Lạt, Lâm Đồng"
-                                            pattern="^[a-zA-Z0-9À-ỹ\s,]+$"
+                                            placeholder="Ví dụ: Đà Lạt, Lâm Đồng" pattern="^[a-zA-Z0-9À-ỹ\s,]+$"
                                             oninput="this.value = this.value.replace(/[^a-zA-Z0-9À-ỹ\s,]/g, '')"
                                             title="Xuất xứ chỉ được chứa chữ cái, số, dấu phẩy và khoảng trắng"
                                             class="w-full rounded-lg bg-surface-container-low border-0 px-4 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:ring-2 focus:ring-primary/40 focus:outline-none transition"
@@ -256,8 +255,7 @@
                                                     biến thể <span class="text-red-500">*</span></label>
                                                 <input type="text"
                                                     th:field="*{variants[__${vStat.index}__].variantName}"
-                                                    placeholder="Ví dụ: Robusta 60kg"
-                                                    required minlength="6"
+                                                    placeholder="Ví dụ: Robusta 60kg" required minlength="6"
                                                     pattern="^[a-zA-Z0-9À-ỹ\s]+$"
                                                     oninput="this.value = this.value.replace(/[^a-zA-Z0-9À-ỹ\s]/g, '')"
                                                     class="variant-name w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none" />
@@ -267,10 +265,8 @@
                                                 <label
                                                     class="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Đóng
                                                     gói</label>
-                                                <input type="text"
-                                                    th:field="*{variants[__${vStat.index}__].packaging}"
-                                                    placeholder="Ví dụ: Bao, Túi"
-                                                    minlength="3"
+                                                <input type="text" th:field="*{variants[__${vStat.index}__].packaging}"
+                                                    placeholder="Ví dụ: Bao, Túi" minlength="3"
                                                     pattern="^[a-zA-Z0-9À-ỹ\s]+$"
                                                     oninput="this.value = this.value.replace(/[^a-zA-Z0-9À-ỹ\s]/g, '')"
                                                     class="variant-packaging w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none" />
@@ -281,7 +277,7 @@
                                                     class="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Kích
                                                     cỡ (g)</label>
                                                 <input type="text" th:field="*{variants[__${vStat.index}__].size}"
-                                                    placeholder="250"
+                                                    placeholder="Khối lượng (ví dụ: 500)"
                                                     oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                                     class="variant-size w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none" />
                                             </div>
@@ -291,8 +287,7 @@
                                                     class="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Giá
                                                     (₫) <span class="text-red-500">*</span></label>
                                                 <input type="text" th:field="*{variants[__${vStat.index}__].price}"
-                                                    placeholder="500000"
-                                                    required
+                                                    placeholder="500000" required
                                                     oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                                     class="variant-price w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none" />
                                             </div>
@@ -418,10 +413,6 @@
             return '';
         }
 
-        function validateSize(val) {
-            if (val && Number(val) < 250) return 'Kích cỡ phải từ 250 trở lên.';
-            return '';
-        }
 
         function validateVariantStock(val) {
             if (val === '' || val === null) return 'Tồn kho là bắt buộc.';
@@ -464,13 +455,7 @@
                 });
             }
 
-            if (sizeInput) {
-                const errEl = getOrCreateError(sizeInput, 'vsize');
-                sizeInput.addEventListener('input', () => {
-                    const msg = validateSize(sizeInput.value);
-                    msg ? showError(sizeInput, errEl, msg) : clearError(sizeInput, errEl);
-                });
-            }
+            // validation removed for size field
 
             if (priceInput) {
                 const errEl = getOrCreateError(priceInput, 'vprice');
@@ -564,7 +549,7 @@
         </div>
         <div class="col-span-6 sm:col-span-1">
           <label class="block text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-1.5">Kích cỡ (g)</label>
-          <input type="text" name="variants[${index}].size" placeholder="250"
+          <input type="text" name="variants[${index}].size" placeholder="Khối lượng..."
                  oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                  class="variant-size w-full rounded-md bg-white border-0 px-3 py-2 text-xs focus:ring-2 focus:ring-primary/40 focus:outline-none" />
         </div>
@@ -669,7 +654,7 @@
 
                 if (vn) { const m = validateVariantName(vn.value); if (m) { showError(vn, rowErr(vn, 'vname'), m); valid = false; } else clearError(vn, rowErr(vn, 'vname')); }
                 if (vpck) { const m = validatePackaging(vpck.value); if (m) { showError(vpck, rowErr(vpck, 'vpack'), m); valid = false; } else clearError(vpck, rowErr(vpck, 'vpack')); }
-                if (vsz) { const m = validateSize(vsz.value); if (m) { showError(vsz, rowErr(vsz, 'vsize'), m); valid = false; } else clearError(vsz, rowErr(vsz, 'vsize')); }
+                // size validation removed
                 if (vp) { const m = validateVariantPrice(vp.value); if (m) { showError(vp, rowErr(vp, 'vprice'), m); valid = false; } else clearError(vp, rowErr(vp, 'vprice')); }
                 if (vs) { const m = validateVariantStock(vs.value); if (m) { showError(vs, rowErr(vs, 'vstock'), m); valid = false; } else clearError(vs, rowErr(vs, 'vstock')); }
             });
